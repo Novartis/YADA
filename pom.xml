@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>yada</groupId>
   <artifactId>YADA</artifactId>
-  <version>6.0.0-SNAPSHOT</version>
+  <version>6.0.0</version>
   <name>YADA</name>
   <description>YADA (Yet Another Data Abstraction) Thin Server Framework</description>
   <packaging>pom</packaging>
