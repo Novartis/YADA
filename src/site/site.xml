@@ -1,0 +1,36 @@
+<project xmlns="http://maven.apache.org/DECORATION/1.6.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.6.0 http://maven.apache.org/xsd/decoration-1.6.0.xsd"
+  name="yada-war">
+  <body>
+    <!-- http://maven.apache.org/doxia/doxia-sitetools/doxia-decoration-model/decoration.html 
+    <item collapse=.. ref=.. name=.. href="README" img=.. position=.. alt=.. border=.. width=.. height=.. target=.. title=.. >
+    -->
+    <menu name="Getting Started">
+      <item href="readme.html" name="ReadMe" />
+      <item href="deployment.html" name="Quickstart/Deployment Guide"/>
+    </menu>
+    <menu name="Advanced Documentation">
+      <item href="admin.html" name="Admin Guide for Query Authors"/>
+      <item href="guide.html" name="User/Developer Guide"/>
+      <item href="plugins.html" name="Plugin Guide"/>
+      <item href="security.html" name="Security Guide"/>
+      <item href="testing.html" name="Testing Notes"/>
+    </menu>
+    <menu name="Feature Specifications">
+      <item href="yada-api/apidocs/index.html" name="JavaDoc"/>
+      <item href="uml.html" name="Java Visual Reference"/>
+      <item href="params.html" name="YADA Parameters Reference"/>
+      <item href="jsonparams.html" name="JSONParams Specification"/>
+      <item href="filters.html" name="Filters Specification"/>
+      <item href="harmony.html" name="Harmony Map Specification"/>
+      <item href="mail.html" name="Mail Specification"/>
+    </menu>
+    <!-- <menu ref="modules"/> -->
+    <menu ref="reports"/>
+  </body>
+  <skin>
+      <groupId>org.apache.maven.skins</groupId>
+      <artifactId>maven-fluido-skin</artifactId>
+      <version>1.3.0</version>
+  </skin>
+</project>

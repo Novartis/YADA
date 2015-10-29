@@ -1,0 +1,11 @@
+q=YADA test UPDATE DATE with LITERAL&p=A
+q=YADA test UPDATE DATE with LITERAL and INS&p=A,B,Z
+
+q=YADA test UPDATE TIME with LITERAL&p=A
+q=YADA test UPDATE TIME with LITERAL and INS&p=A,B,C
+
+qname=YADA test UPDATE DATE with LITERAL&params=A
+qname=YADA test UPDATE DATE with LITERAL and INS&params=A,B,Z
+
+qname=YADA test UPDATE TIME with LITERAL&params=A
+qname=YADA test UPDATE TIME with LITERAL and INS&params=A,B,C

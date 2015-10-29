@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- <suite name="Suite" parallel="methods" thread-count="20" data-provider-thread-count="20" > -->
+<suite name="SQLite-suite">
+	<parameter name="properties" value="/conf/TestNG_YADA_SQLite.properties"/>
+  <test enabled="true" name="API-SQLite" preserve-order="true">
+  	<groups>
+  		<run>
+  			<include name="core"/>
+  			<!-- <include name="sqlite_debug"/> -->
+			  <include name="json"/>
+  			<include name="standard"/>
+  			<include name="api"/>
+    		<include name="options"/>
+ 			  <include name="plugins"/>
+  		</run>
+  	</groups>
+    <classes>
+      <class name="com.novartis.opensource.yada.test.FinderTest"/>
+      <class name="com.novartis.opensource.yada.test.ConnectionFactoryTest"/>
+      <class name="com.novartis.opensource.yada.test.ServiceTest"/>
+    </classes>
+  </test> 
+  <test enabled="false" name="Perf">
+  	<groups>
+	  	<run>
+	  		<include name="perf"/>
+	  	</run>
+	  </groups>
+	  <classes>
+	  	<class name="com.novartis.opensource.yada.test.ConnectionFactoryTest"/>
+      <class name="com.novartis.opensource.yada.test.PerfTest"/>
+	  </classes>
+  </test>
+</suite> <!-- Suite -->

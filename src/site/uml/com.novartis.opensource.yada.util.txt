@@ -1,0 +1,25 @@
+@startuml
+skinparam class {
+  BackgroundColor #FED300
+  BorderColor #923222
+  ArrowColor #923222
+}
+package "com.novartis.opensource.yada.util" {
+class YADAUtils
+class QueryUtils
+class FileUtils
+class MailUtils
+class XmlUtils
+class Log4jInit 
+class YADAInit
+}
+
+package "com.novartis.opensource.yada.util PROVISIONAL" {
+class YADARewriteRule
+class YADARewriteMatch
+class SqlldrUtil
+class RegexFilenameFilter
+}
+
+hide members
+@enduml

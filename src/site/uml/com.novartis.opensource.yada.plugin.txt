@@ -1,0 +1,36 @@
+@startuml
+skinparam class {
+  BackgroundColor #FED300
+  BorderColor #923222
+  ArrowColor #923222
+}
+
+package "com.novartis.opensource.yada.plugin" {
+abstract class AbstractPostprocessor
+abstract class AbstractPreprocessor
+abstract class AbstractBypass
+interface Bypass <|.. AbstractBypass
+AbstractPostprocessor <|-- class CachedQueryUpdater
+AbstractBypass <|-- class CacheUpdater
+AbstractBypass <|-- class EmailBypassPlugin
+interface Postprocess <|.. AbstractPostprocessor
+interface Preprocess <|.. AbstractPreprocessor
+AbstractBypass <|-- class ScriptBypass
+AbstractPostprocessor <|-- class ScriptPostprocessor
+AbstractPreprocessor <|-- class ScriptPreprocessor
+AbstractPostprocessor <|-- class XSLPostprocessor
+class YADAPluginException --|> class com.novartis.opensource.yada.YADAException
+
+Preprocess : YADARequest engage(YADARequest)
+Preprocess : YADARequest engage(YADARequest, YADAQuery)
+Postprocess : String engage(YADARequest, String)
+Postprocess : String engage(YADAQuery)
+Bypass : String engage(YADARequest)
+Bypass : YADAQueryResult engage(YADARequest, YADAQuery)
+
+ScriptPostprocessor -[hidden]d- Bypass
+Preprocess -[hidden]r- Bypass
+}
+
+hide members
+@enduml

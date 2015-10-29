@@ -1,0 +1,53 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam activity {
+  StartColor #634929
+  EndColor #634929
+  BackgroundColor #FED300
+  BorderColor #923222
+  ArrowColor #923222
+}
+start
+:HTTP request\nfor yada.jsp;
+:init Service;
+:init YADARequest;
+if(is multipart content?) then (yes)
+ :handle upload;
+ note left: details forthcoming
+else (no)
+ :populate parameter values\nin YADARequest;
+ :init QueryManager;
+ :do QueryManager stuff;
+ note right: lots of stuff to detail in here\nincluding query retrieval, \ncode parsing and conforming, etc.
+ :Service._execute;
+ :engageBypass\n(YADARequest);
+ if(Result is null?) then (yes)
+   :engagePreprocess\n(YADARequest);
+   repeat
+     :engageBypass
+      (YADAQuery);
+     if(Result is null?) then (yes)
+       :engagePreprocess\n(YADAQuery);
+       :execute\nquery with adaptor;
+       if(commitQuery?) then (yes)
+       :commit;
+       else (no)
+       endif
+       :engagePostprocess\n(YADAQuery);
+     else (no)
+     endif
+   repeat while(more YADAQuery objects?) is (yes) not (no)
+ :commit\non all connections; 
+ :compose Response;
+ note left: details forthcoming
+ :engage Postprocess\n(String);
+ if(export?) then (yes)
+   :export result;
+   note left: details forthcoming
+ else (no)
+ endif
+ else (no)
+ endif
+endif
+end
+@enduml

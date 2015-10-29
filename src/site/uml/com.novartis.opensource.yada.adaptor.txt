@@ -1,0 +1,51 @@
+@startuml
+skinparam class {
+  BackgroundColor #FED300
+  BorderColor #923222
+  ArrowColor #923222
+}
+
+package "com.novartis.opensource.yada.adaptor" {
+abstract class Adaptor
+class FileSystemAdaptor
+class JDBCAdaptor
+class RESTAdaptor
+class SOAPAdaptor
+Adaptor <|-- JDBCAdaptor
+Adaptor <|-- FileSystemAdaptor
+Adaptor <|-- RESTAdaptor
+Adaptor <|-- SOAPAdaptor
+
+FileSystemAdaptor -[hidden]r- RESTAdaptor
+RESTAdaptor -[hidden]r- SOAPAdaptor
+Adaptor -[hidden]r- YADAAbstractResultSet
+MySQLAdaptor -[hidden]u- OracleAdaptor
+SQLServerAdaptor -[hidden]u- VerticaAdaptor
+SQLiteAdaptor -[hidden]u- PostgreSQLAdaptor
+
+class MySQLAdaptor
+class OracleAdaptor
+class PostgreSQLAdaptor
+class SQLiteAdaptor
+class SQLServerAdaptor
+class VerticaAdaptor
+JDBCAdaptor <|-- MySQLAdaptor
+JDBCAdaptor <|-- OracleAdaptor
+JDBCAdaptor <|-- PostgreSQLAdaptor
+JDBCAdaptor <|-- SQLiteAdaptor
+JDBCAdaptor <|-- SQLServerAdaptor
+JDBCAdaptor <|-- VerticaAdaptor
+
+abstract class YADAAbstractResultSet
+class YADAResultSet
+YADAAbstractResultSet <|-- YADAResultSet 
+YADAAbstractResultSet ..|> interface java.sql.ResultSet
+}
+
+package "com.novartis.opensource.yada.adaptor Exceptions" {
+class YADAAdaptorException --|> class com.novartis.opensource.yada.YADAException
+class YADAAdaptorExecutionException --|> com.novartis.opensource.yada.YADAException
+}
+
+hide members
+@enduml

@@ -1,0 +1,2 @@
+q=YADAFSIN test read dir&p=/
+qname=YADAFSIN test read dir&params=/

@@ -1,0 +1,26 @@
+@startuml
+skinparam package {
+  BackgroundColor #FED300
+  BorderColor #923222
+  ArrowColor #923222
+}
+skinparam packageStyle rect
+package com.novartis.opensource { }
+package yada { }
+package adaptor { }
+package format { }
+package io { }
+package plugin { }
+package plugin.util { }
+package test { }
+package util { }
+com.novartis.opensource -- yada
+yada -- adaptor
+yada -- format
+yada -- io
+yada -- plugin
+yada -- test
+yada -- util
+plugin -- plugin.util
+hide members
+@enduml

@@ -1,0 +1,37 @@
+@startuml
+skinparam class {
+  BackgroundColor #FED300
+  BorderColor #923222
+  ArrowColor #923222
+}
+
+package "com.novartis.opensource.yada.io" {
+class ADFHelper
+class FileHelper
+class TabHelper
+class VCFHelper
+class XMLFileHelper
+class YADABufferedReader
+
+YADABufferedReader : JSONObject readLine2JSON()
+YADABufferedReader : void setFileHelper()
+FileHelper : void setReader()
+'XMLFileHelper -[hidden]r- YADAIOException
+
+class YADAIOException -r-|> com.novartis.opensource.yada.YADAException
+TabHelper -[hidden]- YADAIOException
+
+FileHelper <|-- TabHelper
+FileHelper <|-- class ADFHelper
+FileHelper <|-- class VCFHelper
+
+YADABufferedReader --* FileHelper
+YADABufferedReader *-- FileHelper
+YADABufferedReader --|> java.io.BufferedReader
+}
+
+
+hide members
+show YADABufferedReader methods
+show FileHelper methods
+@enduml

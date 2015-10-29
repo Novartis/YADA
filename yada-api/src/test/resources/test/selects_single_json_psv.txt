@@ -1,0 +1,27 @@
+j=[{"qname":"YADA test SELECT","DATA":[{}]}]&f=psv
+j=[{"qname":"YADA test SELECT INTEGER with INS","DATA":[{"COL2":"1,2,3,10"}]}]&f=psv
+j=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":["A","B","Z"]}]}]&f=psv
+j=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"}]}]&f=psv
+j=[{"qname":"YADA test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":"10"}]}]&f=psv
+j=[{"qname":"YADA test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":10}]}]&f=psv
+
+JSONParams=[{"qname":"YADA test SELECT","DATA":[{}]}]&format=psv
+JSONParams=[{"qname":"YADA test SELECT INTEGER with INS","DATA":[{"COL2":"1,2,3,10"}]}]&format=psv
+JSONParams=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":["A","B","Z"]}]}]&format=psv
+JSONParams=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"}]}]&format=psv
+JSONParams=[{"qname":"YADA test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":"10"}]}]&format=psv
+JSONParams=[{"qname":"YADA test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":10}]}]&format=psv
+
+j=[{"qname":"YADA test SELECT","DATA":[{}]}]&f=pipe
+j=[{"qname":"YADA test SELECT INTEGER with INS","DATA":[{"COL2":"1,2,3,10"}]}]&f=pipe
+j=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":["A","B","Z"]}]}]&f=pipe
+j=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"}]}]&f=pipe
+j=[{"qname":"YADA test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":"10"}]}]&f=pipe
+j=[{"qname":"YADA test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":10}]}]&f=pipe
+
+JSONParams=[{"qname":"YADA test SELECT","DATA":[{}]}]&format=pipe
+JSONParams=[{"qname":"YADA test SELECT INTEGER with INS","DATA":[{"COL2":"1,2,3,10"}]}]&format=pipe
+JSONParams=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":["A","B","Z"]}]}]&format=pipe
+JSONParams=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"}]}]&format=pipe
+JSONParams=[{"qname":"YADA test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":"10"}]}]&format=pipe
+JSONParams=[{"qname":"YADA test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":10}]}]&format=pipe

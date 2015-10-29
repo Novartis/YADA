@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="ehcache.xsd"
+  name="YADAIndexManager"
+  updateCheck="false" 
+  monitoring="off" 
+  dynamicConfig="false">
+         
+	<!-- Uncomment if diskStore is desired -->
+  <!--<diskStore path="java.io.tmpdir"/> -->
+         
+  <!-- Default Cache configuration (super configuration) -->
+           
+  <defaultCache maxEntriesLocalHeap="0"
+                eternal="false"
+                timeToIdleSeconds="1200"
+                timeToLiveSeconds="1200"/>
+         
+  <!-- YADA Index cache -->
+  <cache name="YADAIndex"
+         maxEntriesLocalHeap="0"
+         eternal="true"/>
+         
+</ehcache>

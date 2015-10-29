@@ -1,0 +1,55 @@
+@startuml
+skinparam class {
+  BackgroundColor #FED300
+  BorderColor #923222
+  ArrowColor #923222
+}
+package "com.novartis.opensource.yada Exceptions" {
+class YADAException <|-- class YADAConnectionException
+YADAException <|-d- class YADAExecutionException
+YADAException <|-r- class YADAFinderException
+YADAException <|-d- class YADAParserException
+YADAException <|-u- class YADAQueryConfigurationException
+YADAException <|-l- class YADARequestException
+YADAException <|-u- class YADAResourceException
+YADAException <|-d- class YADASQLException
+YADAException <|-u- class YADAUnsupportedAdaptorException
+}
+
+package "com.novartis.opensource.yada" {
+class ConnectionFactory
+class Finder
+class JSONParams -r-|> java.util.LinkedHashMap
+class JSONParamsEntry
+class Parser
+class QueryManager
+class Service
+class YADAExpressionDeParser
+class YADASelectDeParser
+class YADAParam
+class YADAQuery
+class YADAQueryResult
+class YADARequest
+
+Service "1" o-- "1" QueryManager : inits
+Service "1" o-- "1" YADARequest : inits
+QueryManager "1" o-- "1" YADARequest : uses
+QueryManager "1" o-- "n" Finder : inits
+QueryManager "1" o-- "1" JSONParams : uses
+Finder "1" o-- "1" ConnectionFactory : uses
+Finder "1" o-- "1" YADAQuery : returns
+QueryManager "1" o-- "n" YADAQuery : inits
+YADARequest "1" o-- "1" JSONParams : inits
+JSONParams "1" o-- "n" JSONParamsEntry : has
+YADAQuery "1" o-- "1"  YADAQueryResult : has
+YADAQuery "1" o-- "n" YADAParam : has
+Parser "1" o-- "1" YADAExpressionDeParser : has
+Parser "1" o-- "1" YADASelectDeParser : has
+YADASelectDeParser "1" o-- "1" YADAExpressionDeParser : has
+}
+
+"com.novartis.opensource.yada" -[hidden]--  "com.novartis.opensource.yada Exceptions"
+
+hide members
+
+@enduml

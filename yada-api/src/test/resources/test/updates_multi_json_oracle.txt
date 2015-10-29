@@ -1,0 +1,11 @@
+j=[{"qname":"YADA test UPDATE DATE with ORACLE LITERAL","DATA":[{"COL1":"Z"},{"COL1":"ZZ"}]}]
+j=[{"qname":"YADA test UPDATE DATE with ORACLE LITERAL and INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"A,B,ZZ"}]}]
+
+JSONParams=[{"qname":"YADA test UPDATE DATE with ORACLE LITERAL","DATA":[{"COL1":"Z"},{"COL1":"ZZ"}]}]
+JSONParams=[{"qname":"YADA test UPDATE DATE with ORACLE LITERAL and INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"A,B,ZZ"}]}]
+
+j=[{"qname":"YADA test UPDATE TIME with ORACLE LITERAL","DATA":[{"COL1":"Z"},{"COL1":"ZZ"}]}]
+j=[{"qname":"YADA test UPDATE TIME with ORACLE LITERAL and INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"A,B,ZZ"}]}]
+
+JSONParams=[{"qname":"YADA test UPDATE TIME with ORACLE LITERAL","DATA":[{"COL1":"Z"},{"COL1":"ZZ"}]}]
+JSONParams=[{"qname":"YADA test UPDATE TIME with ORACLE LITERAL and INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"A,B,ZZ"}]}]

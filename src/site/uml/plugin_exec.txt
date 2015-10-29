@@ -1,0 +1,30 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam activity {
+  StartColor #634929
+  EndColor #634929
+  BackgroundColor #FED300
+  BorderColor #923222
+  ArrowColor #923222
+}
+start
+:_execute;
+:engageBypass\n(YADARequest);
+if(Result is null?) then (yes)
+  :engagePreprocess\n(YADARequest);
+  repeat
+    :engageBypass
+     (YADAQuery);
+    if(Result is null?) then (yes)
+      :engagePreprocess\n(YADAQuery);
+      :execute\nquery with adaptor;
+      :engagePostprocess\n(YADAQuery);
+    else (no)
+    endif
+    repeat while(more YADAQuery objects?) is (yes) not (no)
+:compose Response;
+:engage Postprocess\n(String);
+else (no)
+endif
+end
+@enduml

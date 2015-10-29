@@ -1,0 +1,25 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam activity {
+  StartColor #634929
+  EndColor #634929
+  BackgroundColor #FED300
+  BorderColor #923222
+  ArrowColor #923222
+}
+start
+:set "cookie"\nYADA Param in\nrequest;
+note right: this will be a\ncomma-separated list of\ncookie names
+if (query type = REST) then (yes)
+:extract designated cookies\nfrom request;
+:store cookies in\nYADAQuery\ncookie array;
+else (no)
+endif
+:prepare to\nexecute REST query;
+if(YADAQuery has cookies) then (yes)
+:add headers;
+else (no)
+endif
+:execute REST query;
+end
+@enduml

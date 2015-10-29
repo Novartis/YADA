@@ -1,0 +1,123 @@
+@startuml
+skinparam sequence {
+  ParticipantBackgroundColor #FED300
+  ParticipantBorderColor #923222
+  ActorBackgroundColor #FED300
+  ActorBorderColor #923222
+  ParticipantBackgroundColor #FED300
+  LifelineBorderColor #923222
+  ArrowColor #923222
+}
+
+actor Client
+Participant yada.jsp
+Participant Service
+Participant Response
+Participant Converter
+Participant YADARequest
+Participant QueryManager
+Participant QueryUtils
+Participant Adaptor
+Participant Finder
+Participant ConnectionFactory
+Participant Cache
+Participant YADAQuery
+Participant YADAParam
+
+database "YADA Index"
+database "Data Source"
+'Participant ResultSet
+'Participant ResultSetForCount
+
+|||
+'Activate Client
+'Activate yada.jsp
+'Activate ConnectionFactory
+'Activate Cache
+'Activate "YADA Index"
+'Activate "Data Source"
+Client -> yada.jsp
+yada.jsp -> Service : new()
+Activate Service
+Service -> YADARequest : new()
+Activate YADARequest
+YADARequest --> Service
+Service -> Service : handleRequest
+Service -> YADARequest : <<YADA Parameter setters>>
+YADARequest --> Service
+Service --> yada.jsp
+yada.jsp -> Service : execute()
+Service -> QueryManager : new()
+Activate QueryManager
+QueryManager -> QueryUtils : new()
+Activate QueryUtils
+QueryManager -> Finder : new()
+Activate Finder
+Finder -> Finder : getQuery()
+Finder -> ConnectionFactory : getCacheConnection()
+ConnectionFactory -> Cache : get()
+Cache -> YADAQuery : get()
+Activate YADAQuery
+Activate YADAParam
+YADAParam --> YADAQuery 
+YADAQuery --> Cache : YADAQuery
+Cache --> Finder : YADAQuery
+Finder --> QueryManager : YADAQuery
+Deactivate Finder
+QueryManager -> YADAQuery : getSource, getConformedCode, getData
+YADAQuery --> QueryManager
+QueryManager -> QueryUtils : processStatement()
+QueryUtils -> YADAQuery : getAdaptorClass(), setType()
+YADAQuery --> QueryUtils
+QueryUtils --> QueryManager
+QueryManager -> YADAQuery : apply parameters
+YADAQuery --> QueryManager
+QueryManager -> QueryUtils : getAdaptor()
+QueryUtils -> Adaptor : newInstance()
+Activate Adaptor
+QueryManager -> Adaptor : build conformed query
+Adaptor --> QueryManager
+
+
+QueryManager -> QueryManager : store conformed query
+QueryManager -> QueryUtils : set query parameter values
+QueryUtils --> QueryManager
+QueryManager --> Service
+Service -> Service : _execute()
+Service -> Service : engage Bypass and Preprocessors
+Service -> Adaptor : execute(YADAQuery)
+Adaptor -> "Data Source" : execute
+"Data Source" --> Adaptor : data/result
+Adaptor -> YADAQuery : addResult()
+YADAQuery --> Adaptor
+Adaptor --> Service
+Service -> Response : compose()
+Activate Response
+Response -> Response : create()
+Response -> Response : append()
+Response -> Converter : getConverter()
+Activate Converter
+Converter --> Response
+Response -> Converter : convert()
+Converter --> Response
+Deactivate Converter
+Response --> Service
+Deactivate Response
+Service -> Service : engage PostProcessor
+Service --> yada.jsp : result
+Deactivate Service
+Deactivate Adaptor
+Deactivate QueryManager
+Deactivate QueryUtils
+Deactivate YADAQuery
+Deactivate YADAParam
+Deactivate YADARequest
+yada.jsp --> Client : result
+'Deactivate ConnectionFactory
+'Deactivate Cache
+'Deactivate "YADA Index"
+'Deactivate "Data Source"
+'Deactivate yada.jsp
+Deactivate Client
+|||
+@enduml

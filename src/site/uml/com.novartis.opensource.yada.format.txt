@@ -1,0 +1,56 @@
+@startuml
+skinparam class {
+  BackgroundColor #FED300
+  BorderColor #923222
+  ArrowColor #923222
+}
+
+package "com.novartis.opensource.yada.format" {
+interface Converter
+abstract class AbstractConverter
+class FileSystemResultJSONConverter
+class RESTResultJSONConverter
+class ResultSetResultDelimitedConverter
+class ResultSetResultHTMLConverter
+class ResultSetResultJSONConverter
+class ResultSetResultXMLConverter
+class SOAPResultXMLConverter
+
+Converter <|.. AbstractConverter
+AbstractConverter <|-l- FileSystemResultJSONConverter
+AbstractConverter <|-d- RESTResultJSONConverter
+AbstractConverter <|-u- ResultSetResultDelimitedConverter
+AbstractConverter <|-r- ResultSetResultHTMLConverter
+AbstractConverter <|-d- ResultSetResultJSONConverter
+AbstractConverter <|-d- ResultSetResultXMLConverter
+AbstractConverter <|-u- SOAPResultXMLConverter
+
+interface Response
+abstract class AbstractResponse
+class CountResponse
+class DelimitedResponse
+class HTMLResponse
+class JSONResponse
+class RESTPassThruResponse
+class SOAPPassThruResponse
+class XMLResponse
+
+Response <|.. AbstractResponse 
+AbstractResponse <|-d- CountResponse
+AbstractResponse <|-r- DelimitedResponse
+AbstractResponse <|-l- HTMLResponse
+AbstractResponse <|-u- JSONResponse
+AbstractResponse <|-d- RESTPassThruResponse
+AbstractResponse <|-u- SOAPPassThruResponse
+AbstractResponse <|-d- XMLResponse
+
+ResultSetResultJSONConverter -[hidden]d- JSONResponse
+}
+
+package "com.novartis.opensource.yada.format Exceptions" {
+class YADAConverterException --|> class com.novartis.opensource.yada.YADAException
+class YADAResponseException --|> com.novartis.opensource.yada.YADAException
+}
+
+hide members
+@enduml

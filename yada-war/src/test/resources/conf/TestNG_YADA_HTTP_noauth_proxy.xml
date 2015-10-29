@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- <suite name="Suite" parallel="methods" thread-count="20" data-provider-thread-count="20" > -->
+<suite name="http-noauth-suite" parallel="false" preserve-order="true">
+	<parameter name="properties" value="${test.run.properties}"/>
+  <test enabled="true" name="HTTP_yada_host">
+ 		<groups>
+  		<run>
+  			<include name="proxy"/>
+  		</run>
+  	</groups>
+  	<classes>
+  		<class name="com.novartis.opensource.yada.test.ConnectionFactoryTest"/>
+  		<class name="com.novartis.opensource.yada.test.ServiceTest"/>
+  	</classes>
+  </test>
+  
+</suite> <!-- Suite -->

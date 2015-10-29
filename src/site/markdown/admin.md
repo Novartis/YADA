@@ -1,0 +1,1 @@
+# Admin Guide for Query Authors
