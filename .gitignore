@@ -3,3 +3,5 @@
 .project
 .svn
 target
+/site.log
+/YADA.pdf
