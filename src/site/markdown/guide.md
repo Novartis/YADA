@@ -207,18 +207,18 @@ For UI developers, most commonly, YADA will be called from jQuery plugins or sim
 
 ## Multiple Oracle Sequence Values
 
-[Beginners' Guide/FAQ]: faq.html
-[Getting into the YADA Mindset]: readme.html#mindset
-[JSONParams Specification]: jsonparams.html
-[Filter Specification]: filters.html
-[HarmonyMap Specification]: harmonymap.html
-[Mail Specification]: mail.html
-[Plugin Guide]: plugins.html
+[Beginners' Guide/FAQ]: faq.md
+[Getting into the YADA Mindset]: index.md#mindset
+[JSONParams Specification]: jsonparams.md
+[Filter Specification]: filters.md
+[HarmonyMap Specification]: harmonymap.md
+[Mail Specification]: mail.md
+[Plugin Guide]: pluginguide.md
 
-[standard parameters]: params.html#params
-[format]: params.html#format
-[delimiter]: params.html#delimiter
-[bypassargs]: params.html#bypassargs
+[standard parameters]: params.md#params
+[format]: params.md#format
+[delimiter]: params.md#delimiter
+[bypassargs]: params.md#bypassargs
 
 [Go to top]: #top
 [Using YADA]: #using

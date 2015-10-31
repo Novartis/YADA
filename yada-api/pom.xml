@@ -12,6 +12,7 @@
   <artifactId>yada-api</artifactId>
   <version>${project.parent.version}</version>
   <name>yada-api</name>
+  <url>http://opensource.nibr.com/yada/yada-api</url>
   <distributionManagement>
     <site>
       <id>yada.site</id>
@@ -491,6 +492,10 @@
             <id>stub-assembly</id>
             <phase />
           </execution>
+          <execution>
+          	<id>html-it</id>
+          	<phase />
+          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -511,8 +516,10 @@
         <version>2.10.3</version>
         <configuration>
           <show>private</show>
+          <detectLinks>true</detectLinks>
+          <detectOfflineLinks>true</detectOfflineLinks>
           <links>
-            <link>http://docs.oracle.com/javase/6/docs/api</link>
+            <link>http://docs.oracle.com/javase/7/docs/api</link>
 
             <link>http://jsqlparser.sourceforge.net/docs</link>
             <link>http://www.json.org/javadoc</link>

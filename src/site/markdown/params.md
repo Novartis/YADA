@@ -572,11 +572,11 @@ Custom delimiters are now supported, which automatically set the format to `deli
 **Accepted Values**: any positive integer  
 **Description**: For use in user interfaces when a "View All" selection (vs paginated) would still return too many rows.
 
-[JSONParams Specification]: jsonparams.html
-[HarmonyMap Specification]: harmony.html
-[Plugin Guide]: plugins.html
-[Filter Specification]: filters.html
-[Mail Specification]: mail.html
+[JSONParams Specification]: jsonparams.md
+[HarmonyMap Specification]: harmony.md
+[Plugin Guide]: pluginguide.md
+[Filter Specification]: filters.md
+[Mail Specification]: mail.md
 
 [args]: #args
 [bypassargs]: #bypassargs

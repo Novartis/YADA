@@ -58,7 +58,6 @@ This document contains an overview of the framework and quick start instructions
 * [Plugin Use and Development Guide]
 * TODO [Security Guide]
 * [Testing Notes]
-* [TestNG Test Results]
 
 ## Specifications
 * [Javadoc]
@@ -119,7 +118,7 @@ Maybe you have to provide a RESTful interface to an existing application, and ne
 * Support for Oracle, MySQL, Vertica, PostgreSQL, SQLite
 * Tomcat 7 and JDK 1.7-compatible (YADA 6)
 
-* _Currently in 5.1 beta_: Ad hoc Harmonization (i.e., single http request to multiple data sources with harmonized results)
+* _Currently in 6.1 beta_: Ad hoc Harmonization (i.e., single http request to multiple data sources with harmonized results)
 
 * _Coming Soon_: ElasticSearch support
 * _Coming Soon_: ElasticSearch-based result and aggregate-result caching
@@ -138,12 +137,12 @@ Maybe you have to provide a RESTful interface to an existing application, and ne
 A quick overview of the architecture
 ## Generic
 About as basic as it can be...
-![generic architecture](images/generic-arch.png "Generic Architecture")
+![generic architecture](src/site/resources/images/generic-arch.png "Generic Architecture")
 
 
 ## Specific
 ...and a little bit more specific:
-![specific architecture](images/specific-arch.png "Specific Architecture")
+![specific architecture](src/site/resources/images/specific-arch.png "Specific Architecture")
 
 <a name="history"></a>
 # History
@@ -194,7 +193,7 @@ For detailed information about plugin use and development, see the [Plugin Use a
 
 The plugin API is versatile.  Plugins can be written in java, or in any scripting language supported on the YADA server.  Plugins can be applied at the request level, affecting the entire request, or it's output, or at the query level, affecting just a single query in a request.  The conceptual, or implementation hierarchy of the plugin API (not to be confused with the actual package hierarchy) is reflected in the diagram below, from two different perspectives.
 
-![Plugin Concept](images/plugin-concept.png "Plugin Concept")
+![Plugin Concept](src/site/resources/images/plugin-concept.png "Plugin Concept")
 
 ## Plugin Types
 ### Pre-Processors
@@ -210,7 +209,7 @@ These are intended to modify results returned by queries.  For example, an XSL P
 These circumvent conventional YADA query processing.  Effectively, anything is possible in a Bypass.  Bypass plugins are popular ETL tools and bulk data loaders.
 
 <a name="issues"></a>
-# Known Issues (last updated 25-OCT-2015)
+## Known Issues (last updated 25-OCT-2015)
 
 * Date and time value syntax, just like in the real world, are database-vendor specific. Use vendor-specific literals and functions.  Check the test queries for guidance.
 * Speaking of dates and times, right now the TestNG tests which validate date and time values pass only on machines in the "America/NewYork" timezone. This is likely because the insert statements used to put the test data into the test table is not specific.   
@@ -224,24 +223,23 @@ These circumvent conventional YADA query processing.  Effectively, anything is p
 [YADA Apps and Uses]: #apps
 [Data Sources]: #sources
 [Plugins]: #plugins
-[Installation]: deployment.html
 [Known Issues]: #issues
 
-[User Guide]: guide.html
-[YADA Admin Guide]: admin.html
-[Beginners' Guide/FAQ]: faq.html
-[YADA Parameter Specification]: params.html
-[JSONParams Specification]: jsonparams.html
-[JAVA Visual Reference]: uml.html
-[Harmony Map Specification]: harmony.html
-[Filters Specification]: filters.html
-[Mail Specification]: mail.html
-[Plugin Use and Development Guide]: plugins.html
-[Security Guide]: security.html
-[Quickstart/Deployment Guide]: deployment.html
-[Javadoc]: yada-api/apidocs/index.html
-[TestNG Test Results]: project-reports.html
-[Testing Notes]: testing.html
+[Installation]: src/site/markdown/deployment.md
+[User Guide]: src/site/markdown/guide.md
+[YADA Admin Guide]: src/site/markdown/admin.md
+[Beginners' Guide/FAQ]: src/site/markdown/faq.md
+[YADA Parameter Specification]: src/site/markdown/params.md
+[JSONParams Specification]: src/site/markdown/jsonparams.md
+[JAVA Visual Reference]: src/site/markdown/uml.md
+[Harmony Map Specification]: src/site/markdown/harmony.md
+[Filters Specification]: src/site/markdown/filters.md
+[Mail Specification]: src/site/markdown/mail.md
+[Plugin Use and Development Guide]: src/site/markdown/pluginguide.md
+[Security Guide]: src/site/markdown/security.md
+[Quickstart/Deployment Guide]: src/site/markdown/deployment.md
+[Testing Notes]: src/site/markdown/testing.md
 
+[Javadoc]: http://opensource.nibr.com/yada/yada-api/apidocs/index.html
 [Thin Server Architecture]: http://bit.ly/1dhuiRY
 [raisons d'etre]: http://bit.ly/1SHuiAd

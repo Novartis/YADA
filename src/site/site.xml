@@ -6,18 +6,19 @@
     <item collapse=.. ref=.. name=.. href="README" img=.. position=.. alt=.. border=.. width=.. height=.. target=.. title=.. >
     -->
     <menu name="Getting Started">
-      <item href="readme.html" name="ReadMe" />
+      <item href="index.html" name="ReadMe" />
       <item href="deployment.html" name="Quickstart/Deployment Guide"/>
     </menu>
     <menu name="Advanced Documentation">
       <item href="admin.html" name="Admin Guide for Query Authors"/>
       <item href="guide.html" name="User/Developer Guide"/>
-      <item href="plugins.html" name="Plugin Guide"/>
+      <item href="pluginguide.html" name="Plugin Guide"/>
       <item href="security.html" name="Security Guide"/>
       <item href="testing.html" name="Testing Notes"/>
     </menu>
     <menu name="Feature Specifications">
       <item href="yada-api/apidocs/index.html" name="JavaDoc"/>
+      <item href="yada-api/testapidocs/index.html" name="Test JavaDoc"/>
       <item href="uml.html" name="Java Visual Reference"/>
       <item href="params.html" name="YADA Parameters Reference"/>
       <item href="jsonparams.html" name="JSONParams Specification"/>

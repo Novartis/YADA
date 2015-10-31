@@ -28,7 +28,7 @@ Definition: Validation of execution of features in a variety of contexts includi
     * Integer `?i`
     * Date `?d`
     * Time `?t`
-* All [YADA Parameters](params.html)
+* All [YADA Parameters](params.md)
 * Combinations of parameters to success and failure
 
 Tests are also segmented to take advantage of context-specific scenarios such as database-vendor-specific features, or path-style URIs.

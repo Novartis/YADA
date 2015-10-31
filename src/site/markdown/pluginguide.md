@@ -18,7 +18,7 @@ There are two plugin API at your disposal:
 
    Enables any os-compatible executable stored on the server in the correct location (yada_bin) to be executed by the YADA service.  The ScriptPlugin API actually is an abstraction of the JAVA Plugin API, using special Java classes to make system calls to desired scripts. For the moment, Script Plugins can only be evaluated at the request level.
       
-![Plugin Execution](images/plugin-arch.png)  
+![Plugin Execution](../resources/images/plugin-arch.png)  
 *Request-level plugins execute in red boxes*
 ## JAVA Plugins
 
@@ -531,7 +531,7 @@ Obviously, anything is possible in this script. The author could leverage argume
 
 Here is flowchart of the `Service._execute` method as it relates to plugin discovery and execution. Some steps have been omitted for clarity.
 
-![Plugin Execution Flowchart](images/plugin_exec.png)
+![Plugin Execution Flowchart](../resources/images/plugin_exec.png)
 
 Here is the pertinent snippet from `Service._execute`. Some code has been omitted for clarity.
 
@@ -580,6 +580,6 @@ Here is the pertinent snippet from `Service._execute`. Some code has been omitte
     .
     .
 ```
-[YADARequest]: http://yada.na.novartis.net/help/yada-api/apidocs/com/novartis/opensource/yada/YADARequest.html
-[Service]: http://yada.na.novartis.net/help/yada-api/apidocs/com/novartis/opensource/yada/Service.html
-[Security Guide]: security.html
+[YADARequest]: http://opensource.nibr.com/yada/yada-api/apidocs/com/novartis/opensource/yada/YADARequest.html
+[Service]: http://opensource.nibr.com/yada/yada-api/apidocs/com/novartis/opensource/yada/Service.html
+[Security Guide]: security.md

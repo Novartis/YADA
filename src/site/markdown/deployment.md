@@ -1,11 +1,7 @@
-#set($h1 = '#')
-#set($h2 = '##')
-#set($h3 = '###')
-#set($h4 = '####')
-#set($h5 = '#####')
-$h1 Deployment Guide  
 
-$h2 Table of Contents  
+# Deployment Guide  
+
+##  Table of Contents  
 
 1. [Quickstart](#tocQuickstart)
   2. [Get YADA](#tocGetYADA) 
@@ -30,20 +26,20 @@ $h2 Table of Contents
 
 
 <a name="tocQuickstart"></a>
-$h2 Quickstart  
+##  Quickstart  
 
 <a name="tocGetYADA"></a>
-$h3 Get YADA  
+###  Get YADA  
 
 First, acquire the [YADA-Quickstart] application in one of the following ways:
 
-* Click any of the [YADA-Quickstart] links throughout this document to download the `YADA-Quickstart-${projectVersion}.war` file, or
+* Click any of the [YADA-Quickstart] links throughout this document to download the `YADA-Quickstart-6.0.0.war` file, or
 * Clone the YADA-Quickstart github repo (link pending)
 
 Refer to the appropriate section below, either [I downloaded the war file](#tocWarDownload) or [I cloned the github repo](#tocGitClone):
 
 <a name="tocWarDownload"></a>
-$h3 I downloaded the war file 
+###  I downloaded the war file 
 
 If you cloned from github, skip to the next section.
 
@@ -56,7 +52,7 @@ The pre-built war uses a local [sqlite] file for the YADA index. This is not lik
 Refer to the [Sanity Check](#tocSanity) to validate your install. If you have issues, check [Additional Filesystem Configuration](#tocFilesys) and [Caveats](#tocQuickstartCaveats).
 
 <a name="tocGitClone"></a>
-$h3 I cloned the github repo 
+###  I cloned the github repo 
 
 You will soon run the maven `package` goal. 
 
@@ -64,12 +60,12 @@ First, however, you have an opportunity to ensure maven builds the war file with
 
 If the `local` properties file is left unchanged, the default `local` build will create a warfile identical to the downloadable version referenced in the previous section. It is preferable to modify `build.properties` before building, rather than to modify `context.xml` afterward. This is because in the future, you can automate deployment of the warfile using a variety of methods, including maven-cargo-plugin, custom scripts, or continuous integration (CI) services, and you won't want to, or won't be enabled to modify the     `context.xml` between build and deployment. Information about the settings in `build.properties` can be found inline, in the file.
 
-After making your desired changes, simply run `mvn package` in the `YADA-Quickstart` directory.  This will result in a `YADA-Quickstart-${project.version}.war` file in the `target` subdirectory.  This warfile can now be copied to your tomcat container.
+After making your desired changes, simply run `mvn package` in the `YADA-Quickstart` directory.  This will result in a `YADA-Quickstart-6.0.0.war` file in the `target` subdirectory.  This warfile can now be copied to your tomcat container.
 
 
 
 <a name="tocSanity"></a>
-$h3 Sanity check  
+###  Sanity check  
 
 To confirm YADA is running, access the following url:
 `http://host.domain:port/yada.jsp?q=YADA+default&py=true`
@@ -91,7 +87,7 @@ Your result should be the a JSON object string containing `YADA is alive!` in yo
 }
 ```
 <a name="tocFilesys"></a>
-$h3 Additional Filesystem Configuration  
+###  Additional Filesystem Configuration  
 
 As alluded to above, there are a few filesystem touchpoints that need to be configured. If you've read the comments embedded in `build.properties` and `context.xml` you already know what to expect. The easiest (and default) configuration is to create a filesystem path `/apps/yada` and deploy, create, or link all other relevent directories beneath.
 
@@ -131,22 +127,22 @@ Your filesystem should could like this:
 ```
 
 <a name="tocQuickstartCaveats"></a>
-$h3 Caveats  
+###  Caveats  
 
-$h4 JDBC Drivers  
+####  JDBC Drivers  
 
 [YADA-Quickstart] contains all the necessary jars in `WEB-INF/lib`. However, some versions of Tomcat require JDBC-driver jars to be installed in `$TOMCAT_HOME/lib` instead, probably so they are loaded by a different class loader (not sure why this matters.) In any event, if you're having driver issues, this could be why.
 
-$h4 Proxies and Authentication  
+####  Proxies and Authentication  
 
-Some networks use proxy servers and others require the passing of credentials. It is highly unlikely in the initial setup and testing of JDBC queries, that you've encountered any proxy or authentication issues.  Nevertheless, YADA has features to enable the use of proxies to access third party resources via REST requests on a per-request basis.  YADA also enables the inclusion (pass-thru) of named cookies to internally authenticated resources on a per-request basis. If you experience proxy or authentication related issues, consult the [YADA Parameters Reference](params.html), in particular the sections on the [proxy](params.html#proxy) and [cookies](params.html#cookies) params.
+Some networks use proxy servers and others require the passing of credentials. It is highly unlikely in the initial setup and testing of JDBC queries, that you've encountered any proxy or authentication issues.  Nevertheless, YADA has features to enable the use of proxies to access third party resources via REST requests on a per-request basis.  YADA also enables the inclusion (pass-thru) of named cookies to internally authenticated resources on a per-request basis. If you experience proxy or authentication related issues, consult the [YADA Parameters Reference](params.md), in particular the sections on the [proxy](params.md#proxy) and [cookies](params.md#cookies) params.
 
 
 <a name="tocAdvanced"></a>
-$h2 Advanced Topics  
+##  Advanced Topics  
 
 <a name="tocYADAIndex"></a>
-$h3 The YADA Index database  
+###  The YADA Index database  
 
 The [YADA-Quickstart] default settings include a [sqlite] pre-populated implementation of the YADA Index. If you want to use a different database engine, namely [MySQL], [PostgreSQL], or [Oracle], you must have an instance of your desired engine at the ready, and run the appropriate database script. 
 
@@ -174,7 +170,7 @@ YADA-Quickstart
 In addition to the vendor-specific configuration script, one must run `YADA_query_essentials.sql` as well. `YADA_query_tests.sql` need only be executed if it is intended to run the TestNG tests.
 
 <a name="tocAutomation"></a>
-$h3 Automation  
+###  Automation  
 
 YADA is a versatile platform which can be installed in a variety of environments with a range of options and dependency configurations. For example, an admin may wish to deploy YADA 
 
@@ -390,10 +386,10 @@ The deployment script is typically executed by the `exec-maven-plugin`. You can 
 ```
 
 <a name="tocServerConfig"></a>
-$h2 Server Configuration  
+##  Server Configuration  
 
 <a name="tocUnix"></a>
-$h3 The *nix Environment  
+###  The *nix Environment  
 
 Your environment may need to be conformed or prepared, even with the [YADA-Quickstart].  Here is a typical sequence of steps:
 
@@ -454,7 +450,7 @@ ln -s /path/to/httpd web
 ```
 
 <a name="tocApache"></a>
-$h3 Configuring Apache HTTP  
+###  Configuring Apache HTTP  
 
 As stated in the `yada.httpd.conf` file itself:
 
@@ -473,7 +469,7 @@ absolute values. You also might need to build and install [mod_jk](http://tomcat
 ```sh
 # copy yada.httpd.conf to deployment directory
 cd /apps/yada/web/conf.d
-cp ~/YADA-Quickstart-${projectVersion}/src/main/resources/dev/yada.httpd.conf .
+cp ~/YADA-Quickstart-6.0.0/src/main/resources/dev/yada.httpd.conf .
 
 # Edit yada.httpd.conf for your environment.
 # Look for 'SET THIS' comments, in particular.  
@@ -487,9 +483,9 @@ vi /apps/yada/web/conf.d/yada.httpd.conf
 ```
 
 <a name="tocTomcat"></a>
-$h3 Configuring Tomcat  
+###  Configuring Tomcat  
 
-$h4 psi-probe  
+####  psi-probe  
 
 [psi-probe] is a great Tomcat manager. YADA's `deploy.sh` script supports it–by default, in fact. It is not required for YADA warfile deployment.
 
@@ -512,7 +508,7 @@ mvn package
 cp psi-probe/web/target/probe.war /apps/yada/tomcat/webapps
 ```
 
-$h5 tomcat-users.xml  
+#####  tomcat-users.xml  
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -562,9 +558,9 @@ $h5 tomcat-users.xml
 ```
 
 <a name="tocMaven"></a>
-$h3 Maven  
+###  Maven  
 
-$h4 Intro  
+####  Intro  
 
 You can effectively just download the [YADA-Quickstart] and drop it into your running Tomcat instance to get started. Though you will likely want to set some custom values for properties, the defaults may work for you. 
 
@@ -575,7 +571,7 @@ Once the repo is cloned to local filesystem, simply update the properties with y
 Detailed instructions follow. 
 
 <a name="tocVars"></a>
-$h4 Environment Variables
+####  Environment Variables
 
 As elucidated in the `build.properties` and `context.xml` files, there are a few environment variables which can (and should) be used to more securely pass values to the build. These include usernames, password, et al.
 
@@ -606,12 +602,12 @@ YADA.index.password=${env.YADA_INDEX_PASSWORD}
 ```
 
 <a name="tocProps"></a>
-$h4 build.properties  
+####  build.properties  
 
 The `build.properties` file is well-documented. Please refer to it for required and optional property settings, necessary for building.
 
 <a name="tocProfiles"></a>
-$h4 Build Profiles
+####  Build Profiles
 
 The [pom.xml] is liberally documented. Below is the `profiles` section to illuminate the build logic. The [pom.xml] has a lot more documentation than what is shown below. A key takeaway here is that regarding the `war-deploy` profile: 
 
@@ -711,7 +707,7 @@ The [pom.xml] is liberally documented. Below is the `profiles` section to illumi
 ```
 
 <a name="tocExecOptions"></a>
-$h4 exec-maven-plugin Configuration
+####  exec-maven-plugin Configuration
 
 This is the section of the pom concerning automated deployment via `deploy.sh`
 
@@ -753,7 +749,7 @@ This is the section of the pom concerning automated deployment via `deploy.sh`
 ```
 
 <a name="tocExamples"></a>
-$h4 Examples  
+####  Examples  
 
 ```c
 # build the default 'local' package. This will not deploy anywhere.
@@ -778,8 +774,8 @@ mvn verify -P dev,war-deploy
 
 
 [YADA]: URL
-[YADA-Quickstart]: downloads/YADA-Quickstart-${projectVersion}.war
-[warfile]: downloads/YADA-Quickstart-${projectVersion}.zip
+[YADA-Quickstart]: downloads/YADA-Quickstart-6.0.0.war
+[warfile]: downloads/YADA-Quickstart-6.0.0.zip
 [pom.xml]: downloads/pom.xml
 [sqlite]: https://www.sqlite.org/
 [MySQL]: http://dev.mysql.com/
