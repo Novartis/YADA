@@ -56,7 +56,7 @@
 						</goals>
 						<configuration>
 							<executable>/usr/bin/java</executable>
-							<commandlineArgs>-Xmx4096M -jar ${plantuml_jar} -o ../../../src/site/resources/images src/site/uml</commandlineArgs>
+							<commandlineArgs>-Xmx4096M -jar ${plantuml_jar} -o ../resources/images src/site/uml</commandlineArgs>
 						</configuration>
 					</execution>
 				</executions>
@@ -113,15 +113,6 @@
 										<include name="index.md"/>
 									</fileset>
 								</replaceregexp>
-								
-								<!-- update hyperlinks in index -->
-								<replaceregexp byline="true">
-									<regexp pattern="src/site/markdown/(.+\.)md(#.+)?"/>
-									<substitution expression="\1html\2"/>
-									<fileset dir="${basedir}/src/site/markdown/">
-										<include name="index.md"/>
-									</fileset>
-								</replaceregexp>
 							</target>
 						</configuration>
 					</execution>
@@ -135,11 +126,35 @@
 							<target>
 								<!-- convert .md hrefs into .html -->
 								<replaceregexp flags="g" byline="true">
-									<regexp pattern="href=&quot;(.+)\.md(#.+)?&quot;"/>
-									<substitution expression="href=&quot;\1.html\2&quot;"/>
+									<regexp pattern="((href=&quot;(src/site/markdown/)?(\w+)\.md(#\w+)?&quot;)+)"/>
+									<substitution expression="href=&quot;\4.html\5&quot;"/>
 									<fileset dir="${basedir}/target/site/">
 										<include name="*.html"/>
 									</fileset>
+								</replaceregexp>
+								
+								<replaceregexp file="${basedir}/target/site/index.html">
+									<regexp pattern="(&lt;body\s.+&gt;)"/>
+									<substitution expression="\1
+---
+name: YADA
+abbreviation: YADA
+projectName: YADA
+launched: 2015-11-01
+icon: YADA.png
+summary: Access any data, at any source, in any format, from any environment, using just a URL, with just one-time configuration.
+description: |  
+    **YADA** exists to simplify data access and eliminate work.  
+    **YADA** is a lightweight framework for data retrieval, searching, storage, and manipulation.  
+    **YADA** is an instant web service for your data.  
+    **YADA** is a tool to enable efficient development of interfaces and data-processing pipelines.  
+    **YADA** is as an implementation of [Thin Server Architecture](http://bit.ly/1dhuiRY).  
+    **YADA** is anti-middleware.  
+    **YADA** is an acronym for &quot;Yet Another Data Abstraction.&quot;  
+  
+    Its [raisons d'etre](http://bit.ly/1SHuiAd) are to enable efficient, non-redundent development of data-dependent applications and utilities, data source querying, data analysis, processing pipelines, extract, transform, and load (ETL) processes, etc.  **YADA** does all this while preserving total decoupling between data access and other aspects of application architecture such as user interface.  	
+---
+"/>									
 								</replaceregexp>
 								
 								<!-- update image refs in html files -->
@@ -150,6 +165,21 @@
 										<include name="*.html"/>
 									</fileset>
 								</replaceregexp>
+							</target>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-to-quickstart</id>
+						<phase>post-site</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<copy file="readme.md" todir="${basedir}/../YADA-Quickstart/"/>
+								<copy todir="${basedir}/../YADA-Quickstart/src/site">
+									<fileset dir="src/site" />
+								</copy>
 							</target>
 						</configuration>
 					</execution>

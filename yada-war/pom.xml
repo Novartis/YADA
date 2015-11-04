@@ -475,6 +475,10 @@
           	<id>html-it</id>
           	<phase />
           </execution>
+          <execution>
+			<id>copy-to-quickstart</id>
+			<phase />
+		  </execution>
         </executions>
       </plugin>
     </plugins>

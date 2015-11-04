@@ -8,7 +8,7 @@ What if you could access
 * in *any* format
 * from *any* environment
 * using *just* a URL
-* with *just* one-time configuration?
+* with just *one-time* configuration?
 
 That'd be pretty cool.
 
@@ -32,7 +32,7 @@ Its [raisons d'etre] are to enable efficient, non-redundent development of data-
 
 # What's in this document?
 
-This document contains an overview of the framework and quick start instructions. Check out the [User Guide] or the [Beginners' Guide/FAQ] for details.
+This document contains an overview of the framework and features. Check out the [Quickstart/Deployment Guide] for details on getting started.
 
 ## Table of Contents
 
