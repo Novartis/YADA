@@ -1,5 +1,10 @@
 Skip to the [Quickstart/Deployment Guide]
+
 # Why YADA? 
+
+<div style="float:right;margin-top:-43px;">
+    <img src="src/site/resources/images/blox250.png"/>
+</div>  
 
 What if you could access 
 

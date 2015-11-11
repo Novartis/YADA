@@ -113,6 +113,15 @@
 										<include name="index.md"/>
 									</fileset>
 								</replaceregexp>
+								
+								<!-- update pure html image refs in index -->
+								<replaceregexp byline="true">
+									<regexp pattern="(&lt;img src=&quot;)src/site/resources/(images/.+)"/>
+									<substitution expression="\1\2"/>
+									<fileset dir="${basedir}/src/site/markdown/">
+										<include name="index.md"/>
+									</fileset>
+								</replaceregexp>
 							</target>
 						</configuration>
 					</execution>
@@ -141,7 +150,7 @@ name: YADA
 abbreviation: YADA
 projectName: YADA
 launched: 2015-11-01
-icon: YADA.png
+icon: images/blox250.png
 summary: Access any data, at any source, in any format, from any environment, using just a URL, with just one-time configuration.
 description: |  
     **YADA** exists to simplify data access and eliminate work.  
@@ -165,6 +174,13 @@ description: |
 										<include name="*.html"/>
 									</fileset>
 								</replaceregexp>
+								
+								<!-- add float to icon -->
+								<replaceregexp file="${basedir}/target/site/index.html">
+									<regexp pattern="(&lt;img src=&quot;images/blox250.png.+)"/>
+									<substitution expression="&lt;div style=&quot;float:right;margin-top:-43px;&quot;&gt;\1&lt;/div&gt;"/>
+								</replaceregexp>						
+
 							</target>
 						</configuration>
 					</execution>
