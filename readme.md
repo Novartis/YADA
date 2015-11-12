@@ -58,7 +58,7 @@ This document contains an overview of the framework and features. Check out the 
 * [Quickstart/Deployment Guide]
 
 ## Advanced Documentation
-* TODO [YADA Admin Guide]
+* [YADA Admin Guide]
 * [User Guide]
 * [Plugin Use and Development Guide]
 * TODO [Security Guide]

@@ -1,6 +1,11 @@
 
 # Deployment Guide  
 
+<div style="float:right;margin-top:-43px;">
+    <img src="../resources/images/blox250.png"/>
+</div> 
+
+
 ##  Table of Contents  
 
 1. [Quickstart](#tocQuickstart)

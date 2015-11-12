@@ -1,6 +1,11 @@
 <a name="top"></a>
 # What's here?
 
+<div style="float:right;margin-top:-43px;">
+    <img src="../resources/images/blox250.png"/>
+</div> 
+
+
 
 If you know your way around a computer, like a developer or data expert, this is a good place to be. If you need a bit more help, like a spreadsheet jockey or designer, use the [Beginners' Guide/FAQ]
 
@@ -29,6 +34,7 @@ For authoring queries, use the following markup for parameter symbols:
 |?i    |INTEGER, INT           |Any integer data type        |
 |?n    |NUMBER, DECIMAL        |Any floating point data type |
 |?d    |DATE                   |Any date data type           |
+|?t    |TIME                   |Any time data type           |
 
 
 ## Definitions
@@ -42,7 +48,7 @@ Some terms that are used repeatedly throughout the documentation:
 |default parameter |a YADA request parameter that is stored with a query in the YADA Index and attached automatically to each request that references the query
 |default value     |a parameter for which the default value is set by YADA, e.g., `format=json`
 |protocols         |a reference to one of the supported protocols, i.e., JDBC, SOAP, REST, or FILE
-|YADA markup       |The modification of the query parameter symbol to indicate the datatype of the parameter in the query itself, e.g., `?v, ?i, ?d, ?n`
+|YADA markup       |The modification of the query parameter symbol to indicate the datatype of the parameter in the query itself, e.g., `?v, ?i, ?d, ?n, ?t`
 
 # YADA Services
 

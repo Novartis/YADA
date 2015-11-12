@@ -1,6 +1,11 @@
 <a name="plugin"></a>
 # Plugin Guide
 
+<div style="float:right;margin-top:-43px;">
+    <img src="../resources/images/blox250.png"/>
+</div> 
+
+
 
 YADA plugins are intended, like most plugin implementations, to extend functionality in unexpected, unpredicted (to api authors), and incredibly useful ways. 
 

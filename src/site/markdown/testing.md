@@ -1,5 +1,10 @@
 #Testing Notes
 
+<div style="float:right;margin-top:-43px;">
+    <img src="../resources/images/blox250.png"/>
+</div> 
+
+
 ## Framework
 
 [TestNG](http://testng.org) is used for all automated testing of the API and web services.  [Selenium](http://docs.seleniumhq.org/) will be used for testing the yada-admin tool, eventually.

@@ -1,5 +1,10 @@
 # JSONParams Specification
 
+<div style="float:right;margin-top:-43px;">
+    <img src="../resources/images/blox250.png"/>
+</div> 
+
+
 The JSONParams object is a JSON object adherent to the following specific format. Due to the use of square brackets `[` and `]` in JSON notation, parentheses `(` and `)` are used to denote optional content.
 
 ## Requirements

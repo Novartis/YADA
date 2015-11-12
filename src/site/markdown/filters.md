@@ -1,5 +1,10 @@
 # Filter Specification
 
+<div style="float:right;margin-top:-43px;">
+    <img src="../resources/images/blox250.png"/>
+</div> 
+
+
 
 Filters are deep and versatile.  All manner of boolean grouping and operations are supported, with only a few exceptions. 
 

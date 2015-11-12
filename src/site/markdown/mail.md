@@ -1,5 +1,10 @@
 # Mail Specification
 
+<div style="float:right;margin-top:-43px;">
+    <img src="../resources/images/blox250.png"/>
+</div> 
+
+
 ## JSON Object
 
 Mail parameters must be passed as a stringified version of the following JSON object. The values in the JSON object must conform to the specifications of [javax.mail.Message](http://docs.oracle.com/javaee/1.4/api/javax/mail/Message.html)

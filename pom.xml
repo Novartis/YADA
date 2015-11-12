@@ -145,6 +145,7 @@
 								<replaceregexp file="${basedir}/target/site/index.html">
 									<regexp pattern="(&lt;body\s.+&gt;)"/>
 									<substitution expression="\1
+&lt;!-- 
 ---
 name: YADA
 abbreviation: YADA
@@ -163,6 +164,7 @@ description: |
   
     Its [raisons d'etre](http://bit.ly/1SHuiAd) are to enable efficient, non-redundent development of data-dependent applications and utilities, data source querying, data analysis, processing pipelines, extract, transform, and load (ETL) processes, etc.  **YADA** does all this while preserving total decoupling between data access and other aspects of application architecture such as user interface.  	
 ---
+--&gt;
 "/>									
 								</replaceregexp>
 								
@@ -176,9 +178,12 @@ description: |
 								</replaceregexp>
 								
 								<!-- add float to icon -->
-								<replaceregexp file="${basedir}/target/site/index.html">
+								<replaceregexp>
 									<regexp pattern="(&lt;img src=&quot;images/blox250.png.+)"/>
 									<substitution expression="&lt;div style=&quot;float:right;margin-top:-43px;&quot;&gt;\1&lt;/div&gt;"/>
+									<fileset dir="${basedir}/target/site">
+										<include name="*.html"/>
+									</fileset>
 								</replaceregexp>						
 
 							</target>

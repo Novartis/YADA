@@ -1,5 +1,10 @@
 #YADA Parameters  
 
+<div style="float:right;margin-top:-43px;">
+    <img src="../resources/images/blox250.png"/>
+</div> 
+
+
 ## Table of Contents
 
 * [Alphabetical Parameter List](#params)
@@ -273,7 +278,7 @@ Custom delimiters are now supported, which automatically set the format to `deli
 **Required**: No  
 **Default**: null  
 **Accepted Values**: JSON string conforming to [HarmonyMap Specification]  
-**Description**: See [HarmonyMap Specification]  
+**Description**: **_PROVISIONAL_** See [HarmonyMap Specification]  
 
 <a name="JSONParams"></a>  
 
