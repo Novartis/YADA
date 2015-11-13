@@ -196,22 +196,11 @@ http://example.com/yada.jsp?q=N&p=&r=RESTPassThruResponse
 And the result:
 
 ```
-{
+{ ... }
 ```
 
-# The `YADAQuery` class
- 
+## More to come soon!
 
-# Client-side Development
-
-For UI developers, most commonly, YADA will be called from jQuery plugins or similar ilk.
-
-## AJAX Example
-
-
-# Tips & Tricks
-
-## Multiple Oracle Sequence Values
 
 [Beginners' Guide/FAQ]: faq.md
 [Getting into the YADA Mindset]: index.md#mindset
@@ -229,10 +218,7 @@ For UI developers, most commonly, YADA will be called from jQuery plugins or sim
 [Go to top]: #top
 [Using YADA]: #using
 [YADA Requests]: #requests
-[JDBC queries with datatypes]:
+[JDBC queries with datatypes]: ''
 
-
-
-
-[Javadoc]: 
-[TestNG Results]:
+[Javadoc]: http://opensource.nibr.com/yada/yada-api/apidocs/index.html
+[TestNG Results]:''

@@ -122,9 +122,7 @@ Maybe you have to provide a RESTful interface to an existing application, and ne
 * Security (via Default Plugins)
 * Support for Oracle, MySQL, Vertica, PostgreSQL, SQLite
 * Tomcat 7 and JDK 1.7-compatible (YADA 6)
-
 * _Currently in 6.1 beta_: Ad hoc Harmonization (i.e., single http request to multiple data sources with harmonized results)
-
 * _Coming Soon_: ElasticSearch support
 * _Coming Soon_: ElasticSearch-based result and aggregate-result caching
 * _Coming Soon_: In-memory joins across query results (Ad hoc harmonization)
@@ -147,6 +145,8 @@ About as basic as it can be...
 
 ## Specific
 ...and a little bit more specific:
+> Note the image indicates Tomcat 6. It should be Tomcat **7**
+
 ![specific architecture](src/site/resources/images/specific-arch.png "Specific Architecture")
 
 <a name="history"></a>
