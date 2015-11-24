@@ -53,12 +53,12 @@ Some terms that are used repeatedly throughout the documentation:
 # YADA Services
 
 
-Most users coming to this page just want data, and probably want it from an existing YADA app.  Getting data from these sources is simple, and in fact, is precisely the way data is delivered to the single-page JavaScript application using YADA under the hood.
+Most users coming to this page just want data, and probably want it from an existing YADA app.  Getting data from these sources is simple, and in fact, is precisely the way data is delivered to the single-page Javascript application using YADA under the hood.
 
 ## Curl Example
 
 
-From the linux command-line, or any system call, a user can request any data simply using a known query, with standard parameters.  For example, the following query will return the Oracle SYSDATE of the YADA server in a standard YADA JSON string.
+From the linux command-line, or any system call, a user can request any data simply using a known query, with standard parameters.  For example, the following query will return the Oracle® SYSDATE of the YADA server in a standard YADA JSON string.
 
 ```bash
 curl "http://example.com/yada.jsp?qname=YADA+default"
@@ -108,7 +108,7 @@ This will return Joe Cool's id number.  But what if you want to enable users of 
 SELECT ID FROM MY_TABLE WHERE FIRST_NAME = ? AND LAST_NAME = ?;
 ```
 
-Internally, when a parameterized query is processed, it is typically embedded in some kind of object such as a [java.sql.PreparedStatement](http://docs.oracle.com/javase/7/docs/api/java/sql/PreparedStatement.html), which in addition to housing the statement, also offers methods for setting parameter values, such as [setString(int index, String value)](http://docs.oracle.com/javase/7/docs/api/java/sql/PreparedStatement.html#setString(int,%20java.lang.String)). Java, .NET, Perl, Python, and other platforms all offer similar methods.  YADA uses JAVA internally to apply values to the appropriate parameters.  
+Internally, when a parameterized query is processed, it is typically embedded in some kind of object such as a [java.sql.PreparedStatement](http://docs.oracle.com/javase/7/docs/api/java/sql/PreparedStatement.html), which in addition to housing the statement, also offers methods for setting parameter values, such as [setString(int index, String value)](http://docs.oracle.com/javase/7/docs/api/java/sql/PreparedStatement.html#setString(int,%20java.lang.String)). Java®, .NET®, Perl, Python, and other platforms all offer similar methods.  YADA uses Java® internally to apply values to the appropriate parameters.  
 
 When YADA [standard parameters] are in use, positional parameters correspond to the order in which they are conveyed in the request url, for example:
 

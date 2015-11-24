@@ -1,4 +1,4 @@
-# Java Visual Reference
+# Java® Visual Reference
 
 <div style="float:right;margin-top:-43px;">
     <img src="../resources/images/blox250.png"/>

@@ -34,7 +34,7 @@ import org.testng.annotations.IFactoryAnnotation;
 import org.testng.annotations.ITestAnnotation;
 
 /**
- * @author varonda1
+ * @author David Varon
  * @since  0.5.1.0
  */
 public class QueryFileTransformer implements IAnnotationTransformer2 {

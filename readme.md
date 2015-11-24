@@ -33,7 +33,10 @@ That'd be pretty cool.
 
 **YADA** is an acronym for "Yet Another Data Abstraction."
 
-Its [raisons d'etre] are to enable efficient, non-redundent development of data-dependent applications and utilities, data source querying, data analysis, processing pipelines, extract, transform, and load (ETL) processes, etc.  **YADA** does all this while preserving total decoupling between data access and other aspects of application architecture such as user interface.
+**YADA** is an open source software framework distributed by [Novartis Institutes for BioMedical Research](http://opensource.nibr.com) under the [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0.html).
+
+
+Its [raisons d'être] are to enable efficient, non-redundent development of data-dependent applications and utilities, data source querying, data analysis, processing pipelines, extract, transform, and load (ETL) processes, etc.  **YADA** does all this while preserving total decoupling between data access and other aspects of application architecture such as user interface.
 
 # What's in this document?
 
@@ -61,15 +64,13 @@ This document contains an overview of the framework and features. Check out the 
 * [YADA Admin Guide]
 * [User Guide]
 * [Plugin Use and Development Guide]
-* TODO [Security Guide]
 * [Testing Notes]
 
 ## Specifications
 * [Javadoc]
 * [YADA Parameter Specification]
 * [JSONParams Specification]
-* [JAVA Visual Reference]
-* TODO [Harmony Map Specification]
+* [Java® Visual Reference]
 * [Filters Specification]
 * [Mail Specification]
 
@@ -105,7 +106,7 @@ With **YADA**, you change your stored query, and you change the code that execut
 
 Even you, middleware guy, can benefit from **YADA**. 
 
-Maybe you have to provide a RESTful interface to an existing application, and need to deliver in such a short window, or have only a handful of users, so a fully-specified REST service is not practical. Maybe you need to access an existing REST interface and can't use your own proxy script; or, you have to grant access to a unix filesystem without mapping it in Apache or changing privileges. Perhaps the business wants to integrate some existing perl-based pipeline processes into a user interface or your Javascript UI team is already using **YADA**, and needs a Java plugin to post-process data it's retrieving from a third party. 
+Maybe you have to provide a RESTful interface to an existing application, and need to deliver in such a short window, or have only a handful of users, so a fully-specified REST service is not practical. Maybe you need to access an existing REST interface and can't use your own proxy script; or, you have to grant access to a unix filesystem without mapping it in Apache or changing privileges. Perhaps the business wants to integrate some existing perl-based pipeline processes into a user interface or your Javascript UI team is already using **YADA**, and needs a Java® plugin to post-process data it's retrieving from a third party. 
 
 # Features
 
@@ -117,21 +118,21 @@ Maybe you have to provide a RESTful interface to an existing application, and ne
 * Commits a single query or an entire request
 * Processes file uploads
 * Compatible with any client that speaks HTTP (e.g., web browser, python, curl, javascript, spotfire, curl, web service, mobile app, etc)
-* Flexible JAVA and Script plugin API to preprocess request parameters, post-process results, or override normal processing altogether
+* Flexible Java® and Script plugin API to preprocess request parameters, post-process results, or override normal processing altogether
 * EhCache query-index caching
 * Security (via Default Plugins)
-* Support for Oracle, MySQL, Vertica, PostgreSQL, SQLite
+* Support for Oracle®, MySQL®, Vertica®, PostgreSQL®, SQLite®
 * Tomcat 7 and JDK 1.7-compatible (YADA 6)
 * _Currently in 6.1 beta_: Ad hoc Harmonization (i.e., single http request to multiple data sources with harmonized results)
-* _Coming Soon_: ElasticSearch support
-* _Coming Soon_: ElasticSearch-based result and aggregate-result caching
+* _Coming Soon_: ElasticSearch® support
+* _Coming Soon_: ElasticSearch®-based result and aggregate-result caching
 * _Coming Soon_: In-memory joins across query results (Ad hoc harmonization)
 * _Coming Soon_: Spark-based result post-processor
 * _Coming Later_: SQL DDL
 * _Coming Later_: Dynamic datasource configuration
-* _Coming Later_: MongoDB support
-* _Coming Later_: SQLServer support
-* _Coming Later_: Node.js port (maybe?)
+* _Coming Later_: MongoDB® support
+* _Coming Later_: SQL Server® support
+* _Coming Later_: Node.js® port (maybe?)
 * _Coming Later_: Standalone java application
 
 <a name="arch"></a>
@@ -154,7 +155,7 @@ About as basic as it can be...
 
 YADA grew organically from a reverse-engineering effort. 
 
-Over the course of a few years, a scientist had developed an array of Perl CGI applications with thousands of lines of embedded SQL and JavaScript. 
+Over the course of a few years, a scientist had developed an array of Perl CGI applications with thousands of lines of embedded SQL and Javascript. 
 
 Then he abruptly left the company. 
 
@@ -166,30 +167,30 @@ A "finder" function was written in Perl to retrieve the SQL by name.
 
 This "finder" was extended to support the passing of parameters.  
 
-Soon thereafter, this perl utility was ported to Java. The burgeoning framework was extended further to support multiple data types, INSERT, UPDATE, and DELETE statements in addition to SELECT statements, JDBC transactions, SOAP queries, plugins, I/O, and so on.
+Soon thereafter, this perl utility was ported to Java®. The burgeoning framework was extended further to support multiple data types, INSERT, UPDATE, and DELETE statements in addition to SELECT statements, JDBC transactions, SOAP queries, plugins, I/O, and so on.
 
 <a name="apps"></a>
 # YADA "Apps" and uses
 
-Most YADA "Apps" are [single-page JavaScript applications](http://en.wikipedia.org/wiki/Single-page_application) running in web browsers. YADA is also heavily utilized by data analysts and bioinformaticians who need parameterized, delimited data subsets imported into their analysis tools such as R and Spotfire, or to be used by Perl or Python-based data processing pipelines. 
+Most YADA "Apps" are [single-page Javascript applications](http://en.wikipedia.org/wiki/Single-page_application) running in web browsers. YADA is also heavily utilized by data analysts and bioinformaticians who need parameterized, delimited data subsets imported into their analysis tools such as R and Spotfire, or to be used by Perl or Python-based data processing pipelines. 
 
 <a name="sources"></a>
 # Data Sources
 
 YADA ships with scripts for using, as the YADA Index:
 
-* MySQL
-* PostgreSQL 
-* SQLite
-* Oracle
+* MySQL®
+* PostgreSQL® 
+* SQLite®
+* Oracle®
 
-Soon the index will be stored in ElasticSearch, but ultimately, it is vendor-agnostic. Other supported data sources currently include 
+Soon the index will be stored in ElasticSearch®, but ultimately, it is vendor-agnostic. Other supported data sources currently include 
 
-* Vertica 
+* Vertica® 
 * SOAP
 * REST
 
-MongoDB, SQLServer, and other datasource compatibility will be added soon.
+MongoDB®, SQL Server®, and other datasource compatibility will be added soon.
 
 <a name="plugins"></a>
 # Plugins
@@ -218,7 +219,7 @@ These circumvent conventional YADA query processing.  Effectively, anything is p
 
 * Date and time value syntax, just like in the real world, are database-vendor specific. Use vendor-specific literals and functions.  Check the test queries for guidance.
 * Speaking of dates and times, right now the TestNG tests which validate date and time values pass only on machines in the "America/NewYork" timezone. This is likely because the insert statements used to put the test data into the test table is not specific.   
-* There are two drivers for SQLServer.  The one I picked has problems, and I haven't made time to work with the other.
+* There are two drivers for SQL Server®.  The one I picked has problems, and I haven't made time to work with the other.
  
 [Other Documentation]: #other
 [Getting into the YADA Mindset]: #mindset
@@ -236,7 +237,7 @@ These circumvent conventional YADA query processing.  Effectively, anything is p
 [Beginners' Guide/FAQ]: src/site/markdown/faq.md
 [YADA Parameter Specification]: src/site/markdown/params.md
 [JSONParams Specification]: src/site/markdown/jsonparams.md
-[JAVA Visual Reference]: src/site/markdown/uml.md
+[Java® Visual Reference]: src/site/markdown/uml.md
 [Harmony Map Specification]: src/site/markdown/harmony.md
 [Filters Specification]: src/site/markdown/filters.md
 [Mail Specification]: src/site/markdown/mail.md
@@ -247,4 +248,4 @@ These circumvent conventional YADA query processing.  Effectively, anything is p
 
 [Javadoc]: http://opensource.nibr.com/yada/yada-api/apidocs/index.html
 [Thin Server Architecture]: http://bit.ly/1dhuiRY
-[raisons d'etre]: http://bit.ly/1SHuiAd
+[raisons d'être]: http://bit.ly/1SHuiAd

@@ -465,7 +465,7 @@ Custom delimiters are now supported, which automatically set the format to `deli
 **Required**: No  
 **Default**: `Parser.JDBC`  
 **Accepted Values**: `Parser.JDBC`, `Parser.REST`, `Parser.SOAP`, `Parser.FILE`   
-**Description**: **_For internal use only_**.  This parameter is set internally to facilitate processing. It is only mentioned here as it is conveyed using the same `YADARequest` object in which other parameter values are stored, and may be noticed in the JAVA API.  
+**Description**: **_For internal use only_**.  This parameter is set internally to facilitate processing. It is only mentioned here as it is conveyed using the same `YADARequest` object in which other parameter values are stored, and may be noticed in the Java® API.  
 
 <a name="proxy"></a>  
 
@@ -476,7 +476,7 @@ Custom delimiters are now supported, which automatically set the format to `deli
 **Required**: No  
 **Default**: null  
 **Accepted Values**: host:port  
-**Description**: A string containing the HTTP proxy and port in the format host:port. This is used only for REST queries which are hosted at otherwise inaccessible sites. For this to work, you may need to set the `JAVA_OPTS`p for proxies, `-Dhttp.proxyHost=...` and `-Dhttp.proxyPort=...` in `$TOMCAT_HOME/bin/setenv.sh`
+**Description**: A string containing the HTTP proxy and port in the format host:port. This is used only for REST queries which are hosted at otherwise inaccessible sites. For this to work, you may need to set the `Java®_OPTS`p for proxies, `-Dhttp.proxyHost=...` and `-Dhttp.proxyPort=...` in `$TOMCAT_HOME/bin/setenv.sh`
 
 <a name="qname"></a>  
 
@@ -542,7 +542,7 @@ Custom delimiters are now supported, which automatically set the format to `deli
 **Required**: No  
 **Default**: `true`  
 **Accepted Values**: `true`, `false`  
-**Description**: When `true`, `Finder` will execute an additional JDBC query, `updateQueryStatistics`, in a separate thread, on each request, to increment the access count for the requested query, and record the current timestamp in as the LAST_ACCESS value. This additional database transaction can cause problems for SQLite, and is suppressable using this parameter.
+**Description**: When `true`, `Finder` will execute an additional JDBC query, `updateQueryStatistics`, in a separate thread, on each request, to increment the access count for the requested query, and record the current timestamp in as the LAST_ACCESS value. This additional database transaction can cause problems for SQLite®, and is suppressable using this parameter.
 
 <a name="uploadItems"></a>  
 

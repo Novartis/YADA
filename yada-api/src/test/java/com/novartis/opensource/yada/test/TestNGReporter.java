@@ -26,7 +26,7 @@ import org.testng.ITestResult;
 import org.testng.xml.XmlSuite;
 
 /**
- * @author varonda1
+ * @author David Varon
  *
  */
 public class TestNGReporter implements IReporter {

@@ -52,7 +52,7 @@ The downloadable war is pre-built using default values for context paths and res
 
 After conforming `META-INF/context.xml` for your environment, simply drop it into your existing tomcat container.
 
-The pre-built war uses a local [sqlite] file for the YADA index. This is not likely to be your final implementation–nor should it–however, it is possible to use it to perform sanity checks and more extensive automated testing. 
+The pre-built war uses a local [SQLite®] file for the YADA index. This is not likely to be your final implementation–nor should it–however, it is possible to use it to perform sanity checks and more extensive automated testing. 
 
 Refer to the [Sanity Check](#tocSanity) to validate your install. If you have issues, check [Additional Filesystem Configuration](#tocFilesys) and [Caveats](#tocQuickstartCaveats).
 
@@ -149,11 +149,11 @@ Some networks use proxy servers and others require the passing of credentials. I
 <a name="tocYADAIndex"></a>
 ###  The YADA Index database  
 
-The [YADA-Quickstart] default settings include a [sqlite] pre-populated implementation of the YADA Index. If you want to use a different database engine, namely [MySQL], [PostgreSQL], or [Oracle], you must have an instance of your desired engine at the ready, and run the appropriate database script. 
+The [YADA-Quickstart] default settings include a [SQLite®] pre-populated implementation of the YADA Index. If you want to use a different database engine, namely [MySQL®], [PostgreSQL®], or [Oracle®], you must have an instance of your desired engine at the ready, and run the appropriate database script. 
 
-> NOTE: An imminent future version of YADA will prefer [ElasticSearch] for the YADA Index.
+> NOTE: An imminent future version of YADA will prefer [ElasticSearch®] for the YADA Index.
 
-If you cloned the YADA-Quickstart github repo you'll find configuration scripts for Oracle, MySQL, and PostgreSQL, and scripts for inserting the essential queries to enable YADA to work, and queries to run the TestNG tests in the following directory:
+If you cloned the YADA-Quickstart github repo you'll find configuration scripts for Oracle®, MySQL®, and PostgreSQL®, and scripts for inserting the essential queries to enable YADA to work, and queries to run the TestNG tests in the following directory:
 
 ```
 YADA-Quickstart
@@ -589,7 +589,7 @@ YADA.pass=${env.YADA_PASS}    # the proxy password if proxy authentication is re
 YADA.proxy=${env.YADA_PROXY}  # the proxy host:port, if necessary (usu only for testing)
 ```
 
-In `src/main/resources/local/build.properties`, the default values specific to the local SQLite implementation of YADA Index. This is not a secured system.  When a more robust database solution is implemented that requires authentication, the property values below should replace the defaults.
+In `src/main/resources/local/build.properties`, the default values specific to the local SQLite® implementation of YADA Index. This is not a secured system.  When a more robust database solution is implemented that requires authentication, the property values below should replace the defaults.
 
 The environment variable substitutions are provided already in `src/main/resources/dev/build.properties` (see below.) 
 
@@ -782,15 +782,15 @@ mvn verify -P dev,war-deploy
 [YADA-Quickstart]: downloads/YADA-Quickstart-6.0.0.war
 [warfile]: downloads/YADA-Quickstart-6.0.0.zip
 [pom.xml]: downloads/pom.xml
-[sqlite]: https://www.sqlite.org/
-[MySQL]: http://dev.mysql.com/
-[PostgreSQL]: http://www.postgresql.org/
-[Oracle]: http://www.oracle.com/index.html
+[SQLite®]: https://www.sqlite.org/
+[MySQL®]: http://dev.mysql.com/
+[PostgreSQL®]: http://www.postgresql.org/
+[Oracle®]: http://www.oracle.com/index.html
 [maven]: https://maven.apache.org/
 [maven war plugin]: https://maven.apache.org/plugins/maven-war-plugin/
 [overlay]: https://maven.apache.org/plugins/maven-war-plugin/overlays.html
 [sparse checkout]: http://schacon.github.io/git/git-read-tree.html#_sparse_checkout
 [tutorial]: http://jasonkarns.com/blog/subdirectory-checkouts-with-git-sparse-checkout/
 [eclipse]: http://eclipse.org
-[ElasticSearch]: https://www.elastic.co/products/elasticsearch
+[ElasticSearch®]: https://www.elastic.co/products/elasticsearch
 [psi-probe]: https://github.com/psi-probe/psi-probe

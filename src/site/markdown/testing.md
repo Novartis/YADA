@@ -22,11 +22,11 @@ Definition: Validation of execution of specific methods in the framework, indepe
 Definition: Validation of execution of features in a variety of contexts including
 
 * Use of YADA Index on multiple database vendor and technology platforms
-    * MySQL
-    * Oracle
-    * PostgreSQL
-    * SQLite
-* Use of YADA JAVA and Web API
+    * MySQL®
+    * Oracle®
+    * PostgreSQL®
+    * SQLite®
+* Use of YADA Java® and Web API
 * Create, Read, Update, Delete (CRUD) queries for all supported data types: 
     * Character `?v`
     * Floating Point `?n`

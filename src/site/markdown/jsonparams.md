@@ -41,7 +41,7 @@ Parameter names are often JDBC column names, though they could be sequential dyn
 ```
 
 ## Examples
-Here is an javascript/jQuery example of using a JSONParams object used to pass data to a JDBC statement:
+Here is an javascript/jQuery® example of using a JSONParams object used to pass data to a JDBC statement:
 
 ```javascript
 // prepare the data for the Query to verify CLNumbers
