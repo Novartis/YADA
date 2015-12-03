@@ -70,12 +70,15 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.novartis.opensource.yada.JSONParams;
+import com.novartis.opensource.yada.JSONParamsEntry;
 import com.novartis.opensource.yada.Service;
 import com.novartis.opensource.yada.YADAExecutionException;
+import com.novartis.opensource.yada.YADAParam;
 import com.novartis.opensource.yada.YADAQueryConfigurationException;
 import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADARequestException;
 import com.novartis.opensource.yada.format.YADAResponseException;
+import com.novartis.opensource.yada.util.YADAUtils;
 
 // TODO tests for query creation
 // TODO tests for query updating
@@ -178,6 +181,32 @@ public class ServiceTest
   /**
    * Constant equal to: {@value}
    */
+  protected static final String COL_HM_STRING = "STRING";
+  
+  /**
+   * Constant equal to: {@value}
+   */
+  protected static final String COL_HM_INT    = "INT";
+  
+  /**
+   * Constant equal to: {@value}
+   */
+  protected static final String COL_HM_FLOAT  = "FLOAT";
+  
+  /**
+   * Constant equal to: {@value}
+   */
+  protected static final String COL_HM_DATE   = "DATE";
+  
+  /**
+   * Constant equal to: {@value}
+   */
+  protected static final String COL_HM_TIME   = "TIME";
+
+  
+  /**
+   * Constant equal to: {@value}
+   */
   protected static final String LEFT_SQUARE = "[";
 
   /**
@@ -204,6 +233,12 @@ public class ServiceTest
    * Constant equal to: {@value}
    */
   protected static final String ROWS = "ROWS";
+  
+  /**
+   * Constant equal to: {@value}
+   * @since 6.1.0
+   */
+  protected static final String RECORDS = "records";
 
   /**
    * Constant equal to: {@value}
@@ -604,8 +639,7 @@ public class ServiceTest
   }
 
   /**
-   * Executes json-based requests param query the query to execute the query to
-   * execute
+   * Executes json-based requests 
    * 
    * @param query query to test
    * @throws YADAResponseException when the test result is invalid
@@ -1143,6 +1177,147 @@ public class ServiceTest
     logJSONResult(jRes);
     String s = jRes.getJSONObject(RESULTSET).getJSONArray(ROWS).getJSONObject(0).getString("content");
     Assert.assertEquals(s,"writingappend","The json result does not contain the expected content.");
+  }
+  
+  /** 
+   * Tests many aspects of {@code harmonyMap} or {@code h} YADA parameter results including
+   * for CSV: column counts, header values, row counts, row/column content; and for JSON:
+   * singular result set, correct mapped/unmapped keys and values, record count.
+   * @param query the query to execute
+   * @throws YADAQueryConfigurationException when request creation fails
+   * @throws YADAResponseException when the test result is invalid
+   */
+  @Test(enabled = true, dataProvider = "QueryTests", groups = { "options" })
+  @QueryFile(list = {})
+  public void testHarmonyMap(String query) throws YADAQueryConfigurationException, YADAResponseException
+  {
+    String[] allKeys   = {COL_INTEGER, COL_INTEGER_LC, COL_HM_INT, COL_NUMBER, COL_NUMBER_LC, COL_HM_FLOAT, COL_DATE, COL_DATE_LC, COL_HM_DATE, COL_TIME, COL_TIME_LC, COL_HM_TIME};
+    String[] intKeys   = {COL_INTEGER, COL_INTEGER_LC, COL_HM_INT};
+    String[] floatKeys = {COL_NUMBER, COL_NUMBER_LC, COL_HM_FLOAT};
+    String[] dateKeys  = {COL_DATE, COL_DATE_LC, COL_HM_DATE};
+    String[] timeKeys  = {COL_TIME, COL_TIME_LC, COL_HM_TIME};
+    Service svc        = prepareTest(query);
+    YADARequest req    = svc.getYADARequest();
+    req.setPageSize(new String[] {"-1"});
+    JSONArray spec     = req.getHarmonyMap();
+    String result      = svc.execute();
+    
+    if (req.getFormat().equals(YADARequest.FORMAT_CSV))
+    {
+      logStringResult(result); 
+      //TODO count columns
+      //TODO confirm correct mapped/unmapped column headers
+      //TODO count rows 
+      //TODO check for "empty values" in unmapped columns
+      //TODO check for correct values in mapped columns
+    }
+    else // JSON
+    {
+      JSONParamsEntry q;
+      YADAParam p;
+      int qCount = 1, resultCount = 8;
+      if(YADAUtils.useJSONParams(req))
+      {
+        JSONParams jp = req.getJsonParams(); 
+        String[] qnameKeys = jp.getKeys();
+        qCount = qnameKeys.length;
+        for(String qname : qnameKeys)
+        {
+          q = jp.get(qname);
+          p = q.getParam(YADARequest.PS_HARMONYMAP);
+          if(null == spec)
+            spec = new JSONArray();
+          if(null != p)
+            spec.put(new JSONObject(p.getValue()));
+        }
+      }
+      JSONObject jo = new JSONObject(result);
+      logJSONResult(jo);
+        
+      // confirm singular result set
+      Assert.assertNull(jo.optJSONObject(RESULTSETS));
+      Assert.assertTrue(jo.has(RESULTSET));
+//      // check record count
+      int actualRecCount = jo.getJSONObject(RESULTSET).getInt(RECORDS);
+      int expectRecCount = qCount*resultCount;
+      Assert.assertEquals(actualRecCount, expectRecCount, "Result count invalid for query: "+query);
+      
+      // confirm correct mapped/unmapped keys
+      JSONArray rows = jo.getJSONObject(RESULTSET).getJSONArray(ROWS);
+      
+      // For each query, find the hmap
+      // test 8 records corresponding to query index
+      // NOTE: This does not test for presence of unmapped keys, but does test all values
+      for(int i=0;i<rows.length()/8;i++)          // 1-3 sets of 8
+      {
+        JSONObject currentSpec = null;                   // the hmap spec
+        if(spec.length()==1)
+          currentSpec = spec.getJSONObject(0);    // it's a global request param
+        else
+        {
+          for(int j=spec.length()-1;j>=0;j--)
+          {
+            currentSpec = spec.getJSONObject(j);    // it's an embedded param, and JSONArray returns in reverse order
+          }
+        }
+          
+        
+        // Deconstruct spec into keys and vals
+        String[] currentSpecKeys = new String[currentSpec.length()];
+        String[] currentSpecVals = new String[currentSpec.length()];
+        int j=0;
+        if(currentSpec.length() > 0)
+        {
+          for(String key : JSONObject.getNames(currentSpec))
+          {
+            currentSpecKeys[j] = key;
+            currentSpecVals[j] = currentSpec.getString(key);
+            j++;
+          }
+        }
+        
+        // check results
+        for(j=0;j<resultCount;j++)            // for each set of results
+        {
+          //int resultIndex = i*resultCount+j;      // get the index of the result
+          JSONObject row = rows.getJSONObject(j); // the "row"
+          String[] rowKeys = JSONObject.getNames(row);
+          for(String key : rowKeys)               // iterate over the row keys 
+          {
+            if(key.matches("[A-Z]+"))            // upper case are spec vals
+              Assert.assertTrue(ArrayUtils.contains(currentSpecVals, key));  // row key is in current spec vals
+            else
+            {
+              Assert.assertFalse(ArrayUtils.contains(currentSpecVals, key)); // row key is not current spec vals
+              Assert.assertFalse(ArrayUtils.contains(currentSpecKeys, key)); // row key is in current spec keys
+            }
+          }
+          
+          for(String col : allKeys)             // confirm datatype of values
+          {
+            if(row.has(col))
+            {
+              try
+              {
+                if(ArrayUtils.contains(intKeys, col))
+                  Assert.assertTrue(validateInteger(row.getString(col)));
+                else if(ArrayUtils.contains(floatKeys, col))
+                  Assert.assertTrue(validateNumber(row.getString(col)));
+                else if(ArrayUtils.contains(dateKeys, col))
+                  Assert.assertTrue(validateDate(row.getString(col)));
+                else if(ArrayUtils.contains(timeKeys, col))
+                  Assert.assertTrue(validateTime(row.getString(col)));
+              }
+              catch(ParseException e)
+              {
+                String msg = "Unable to validate result.";
+                throw new YADAResponseException(msg, e);
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   /**
