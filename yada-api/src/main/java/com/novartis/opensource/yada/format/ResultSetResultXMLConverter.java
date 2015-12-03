@@ -33,6 +33,7 @@ import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
+import com.novartis.opensource.yada.YADAQueryResult;
 import com.novartis.opensource.yada.adaptor.JDBCAdaptor;
 
 /**
@@ -82,6 +83,14 @@ public class ResultSetResultXMLConverter extends AbstractConverter {
 		}
 		
 	}
+  
+  /**
+   * Constructor with {@link YADAQueryResult}
+   * @param yqr the container for result processing artifacts
+   */
+  public ResultSetResultXMLConverter(YADAQueryResult yqr) {
+    this.setYADAQueryResult(yqr);
+  }
 	
 	/**
 	 * Wraps data in {@code result} in an xml {@link DocumentFragment}
@@ -137,7 +146,7 @@ public class ResultSetResultXMLConverter extends AbstractConverter {
 					}
 					else
 					{
-						colValue = rs.getString(col);
+						colValue = rs.getString(colName);
 					}
 					Element column = this.doc.createElement(col);
 					Text    value  = this.doc.createTextNode(colValue);

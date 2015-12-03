@@ -886,7 +886,6 @@ public class Service {
 		{
 			response = getDefaultResponse(format);
 		}
-		//TODO include YADA version information in return object, maybe set to false by default, use 'version' or 'v' param
 		//TODO enable verbose response options which include details about processing of query
 		result = response.compose(getYADAQueryResults()).toString(this.yadaReq.getPretty());
 		
@@ -1040,11 +1039,6 @@ public class Service {
 									try
 									{
 										this.qMgr.endowQuery(yq);
-									} 
-									catch (YADAFinderException e)
-									{
-										String msg = "Unable to re-endow YADAQuery with new parameters.";
-										throw new YADAPluginException(msg, e);
 									} 
 									catch (YADAQueryConfigurationException e)
 									{

@@ -300,7 +300,7 @@ public class JSONResponse extends AbstractResponse {
 		} 
 		catch (JSONException e) 
 		{
-			String msg = "There was problem appending a JSONObject the reponse.";
+			String msg = "There was problem appending a JSONObject to the reponse.";
 			throw new YADAResponseException(msg,e);
 		} 
 		catch (YADARequestException e)

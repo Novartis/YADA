@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.json.JSONObject;
+
 /**
  * A container for storing indexed query results, their converted forms, and row counts. 
  * @since 0.4.0.0
@@ -42,6 +44,12 @@ public class YADAQueryResult {
 	 */
 	private List<Object> convertedResults = new ArrayList<>();
 	/**
+   * The converted (mapped) header, i.e., list of column names. This list is the same for the entire result.
+   * These objects are to be returned to the requestor. 
+   * @since 6.1.0
+   */
+  private List<String> convertedHeader = new ArrayList<>();
+	/**
 	 * The list of results of count queries.  These results typically end up as values corresponding to {@code total} keys in 
 	 * {@code RESULTSET} objects inside YADA json.
 	 */
@@ -54,7 +62,11 @@ public class YADAQueryResult {
 	 * The number of rows processed across all iterations of the {@link YADAQuery}
 	 */
 	private int totalResultCount = 0;
-	
+	/**
+   * The container of field names to support merged result sets
+   * @since 6.1.0
+   */
+  private JSONObject globalHarmonyMap;
 	/**
 	 * Default no-arg constructor.
 	 */
@@ -101,10 +113,16 @@ public class YADAQueryResult {
 	public Object getResult(int row) { return getResults().get(row); }
 
 	/**
-	 * Standard mutator for variable
-	 * @param convertedResults the converted result list
-	 */
-	public void setConvertedResults(List<Object> convertedResults) { this.convertedResults = convertedResults; }
+   * Standard mutator for variable
+   * @param convertedResults the converted result list
+   */
+  public void setConvertedResults(List<Object> convertedResults) { this.convertedResults = convertedResults; }
+  /**
+   * Standard mutator for variable
+   * @param convertedHeader the converted header list
+   * @since 6.1.0
+   */
+  public void setConvertedHeader(List<String> convertedHeader) { this.convertedHeader = convertedHeader; }
 	/**
 	 * Adds a converted (formatted) result to the list at index {@code row}
 	 * @param row the list index at which to put the converted result 
@@ -112,10 +130,22 @@ public class YADAQueryResult {
 	 */
 	public void addConvertedResult(int row, Object convertedResult) { getConvertedResults().add(row,convertedResult); }
 	/**
+   * Adds a converted (mapped) header to the list. The header is the same for all rows.
+	 * @param convertedResult the converted (mapped) header to add to the list
+   * @since 6.1.0
+   */
+  public void addConvertedHeader(String convertedResult) { getConvertedHeader().add(convertedResult); }
+	/**
 	 * Standard accessor for variable
 	 * @return the list of converted results
 	 */
 	public List<Object> getConvertedResults() { return this.convertedResults; }
+	/**
+   * Standard accessor for variable
+   * @return the list of converted headers
+   * @since 6.1.0
+   */
+  public List<String> getConvertedHeader() { return this.convertedHeader; }
 	/**
 	 * Returns the converted (formatted) result at index {@code row}
 	 * @param row the index of the desired result
@@ -224,4 +254,22 @@ public class YADAQueryResult {
 			return true;
 		return false;
 	}
+
+  /**
+   * Enables composite header in harmonized delimited results
+   * @return the globalHarmonyMap
+   * @since 6.1.0
+   */
+  public JSONObject getGlobalHarmonyMap() {
+    return this.globalHarmonyMap;
+  }
+
+  /**
+   * Enables composite header in harmonized delimited results
+   * @param globalHarmonyMap the globalHarmonyMap to set
+   * @since 6.1.0
+   */
+  public void setGlobalHarmonyMap(JSONObject globalHarmonyMap) {
+    this.globalHarmonyMap = globalHarmonyMap;
+  }
 }

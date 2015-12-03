@@ -17,6 +17,8 @@
  */
 package com.novartis.opensource.yada.format;
 
+import com.novartis.opensource.yada.YADAQueryResult;
+
 /**
  * This is a stand-in class to comply with the dynamic instantiation process of the YADA format API, however it 
  * does not override any methods. 
@@ -33,4 +35,12 @@ public class ResultSetResultHTMLConverter extends ResultSetResultXMLConverter {
 	{
 		super();
 	}
+  
+  /**
+   * Constructor with {@link YADAQueryResult}
+   * @param yqr the container for result processing artifacts
+   */
+  public ResultSetResultHTMLConverter(YADAQueryResult yqr) {
+    super(yqr);
+  }
 }

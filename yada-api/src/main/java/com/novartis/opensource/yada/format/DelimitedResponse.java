@@ -14,7 +14,13 @@
  */
 package com.novartis.opensource.yada.format;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import com.novartis.opensource.yada.YADAQueryResult;
 import com.novartis.opensource.yada.YADARequest;
@@ -38,22 +44,78 @@ public class DelimitedResponse extends AbstractResponse {
 	 */
 	private StringBuffer buffer = new StringBuffer();
 	
+	@Override
+	protected JSONObject getHarmonyMap() 
+	{
+    return getYADAQueryResult().getGlobalHarmonyMap();
+	}
+	
 	/**
 	 * Skeletal override of method, calls {@link #append(Object)}
 	 * @see com.novartis.opensource.yada.format.AbstractResponse#compose(com.novartis.opensource.yada.YADAQueryResult[])
 	 */
-	@Override
+	@SuppressWarnings("unchecked")
+  @Override
 	public Response compose(YADAQueryResult[] yqrs)	throws YADAResponseException, YADAConverterException
 	{
 		setYADAQueryResults(yqrs);
-		for(YADAQueryResult lYqr : yqrs)
+		String colsep = YADARequest.DEFAULT_DELIMITER; 
+		String recsep = YADARequest.DEFAULT_ROW_DELIMITER;
+		for(YADAQueryResult yqr : yqrs)
 		{
-			setYADAQueryResult(lYqr);
-			for(Object result : lYqr.getResults())
+			setYADAQueryResult(yqr);
+	    colsep  = this.yqr.getYADAQueryParamValue(YADARequest.PS_DELIMITER);
+	    recsep  = this.yqr.getYADAQueryParamValue(YADARequest.PS_ROW_DELIMITER);
+			for(Object result : yqr.getResults())
 			{
-				this.append(result);
+			  // stores all results in yqr.convertedResults List
+				this.append(result); 
 			}
 		}
+		// process coverted headers into unique ordered Set
+    Set<String> globalHeader = new LinkedHashSet<>(); 
+    for(YADAQueryResult yqr : getYadaQueryResults())
+    {
+      // iterate over results and stitch together in StringBuffer
+      for(String hdr : yqr.getConvertedHeader())
+      {
+        globalHeader.add(hdr);
+      }
+    }
+    int colCount = globalHeader.size(), i=0;
+    for(String hdr : globalHeader)
+    {
+      this.buffer.append(hdr);
+      if(++i < colCount)
+        this.buffer.append(colsep);
+    }
+    this.buffer.append(recsep);
+    
+    // process converted data
+    for(YADAQueryResult yqr : getYadaQueryResults())
+    {
+      List<String> localHeader = yqr.getConvertedHeader();
+      List<Object> convertedResults = yqr.getConvertedResults();
+      for(i=0;i<convertedResults.size();i++)
+      {
+        List<List<String>> convertedResult = (List<List<String>>)convertedResults.get(i);
+        for(List<String> row : convertedResult)
+        {
+          int j=0;
+          for(String globalHdr : globalHeader)
+          {
+            String val = "";
+            int localHdrIdx = localHeader.indexOf(globalHdr);
+            if(localHdrIdx > -1)
+              val = row.get(localHdrIdx);
+            this.buffer.append(val);
+            if(++j<colCount)
+              this.buffer.append(colsep);
+          }
+          this.buffer.append(recsep);
+        }
+      }
+    }
 		return this;
 	}
 
@@ -81,8 +143,11 @@ public class DelimitedResponse extends AbstractResponse {
 			Converter converter = getConverter(this.yqr);
 			if(getHarmonyMap() != null)
 				converter.setHarmonyMap(getHarmonyMap());
-			StringBuffer rows = (StringBuffer)converter.convert(o,colsep,recsep);
-			this.buffer.append(rows);
+			converter.convert(o,colsep,recsep);
+			
+			
+//			StringBuffer rows = (StringBuffer)converter.convert(o,colsep,recsep);
+			//this.buffer.append(rows);
 		} 
 		catch (YADARequestException e)
 		{

@@ -31,6 +31,9 @@ import java.util.Set;
 import javax.xml.soap.SOAPConnection;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.novartis.opensource.yada.adaptor.Adaptor;
 import com.novartis.opensource.yada.adaptor.FileSystemAdaptor;
@@ -165,7 +168,6 @@ public class YADAQuery {
 	 * Values can be {@link JDBCAdaptor#DATE}, {@link JDBCAdaptor#INTEGER}, {@link JDBCAdaptor#VARCHAR}, or {@link JDBCAdaptor#NUMBER}
 	 * @see JDBCAdaptor
 	 */
-	@SuppressWarnings({ "javadoc" })
   private List<char[]>            dataTypes     = new ArrayList<>();
 	/**
 	 * The values for query parameters in the code, corresponding to indices in {@link #data}
@@ -199,7 +201,11 @@ public class YADAQuery {
 	 * The non-overridable YADA request parameter keys
 	 */
 	private Map<String,YADAParam>   immutableKeys = new HashMap<>();
-	
+	/**
+   * The container of field names to support merged result sets
+   * @since 6.1.0
+   */
+  private JSONObject globalHarmonyMap;
 	
 	
 	/**
@@ -253,7 +259,12 @@ public class YADAQuery {
 	 * Standard mutator for variable
 	 * @param yqr the result object stored in the query
 	 */
-	public void setResult(YADAQueryResult yqr) { this.yadaQueryResult = yqr; }
+	public void setResult(YADAQueryResult yqr) 
+	{ 
+	  this.yadaQueryResult = yqr;
+	  if(yqr.getGlobalHarmonyMap() == null && getGlobalHarmonyMap() != null)
+	    yqr.setGlobalHarmonyMap(getGlobalHarmonyMap());
+	}
 	
 	/**
 	 * Checks if instance variable {@link #yadaQueryResult} is {@code null}, and if so, creates a 
@@ -263,7 +274,9 @@ public class YADAQuery {
 	{
 		if(getResult() == null)
 		{
-			setResult(new YADAQueryResult(getYADAQueryParams()));
+		  YADAQueryResult yqr = new YADAQueryResult(getYADAQueryParams());
+		  yqr.setGlobalHarmonyMap(getGlobalHarmonyMap());
+			setResult(yqr);
 		}
 	}
 	
@@ -562,18 +575,35 @@ public class YADAQuery {
 	 * This method is distinct from {@link #addYADAQueryParams(List)} in that it will not replace a parameter value
 	 * already associated to the query even if it's overrideable
 	 * @param params list of parameter objects
+	 * @param index the position of the query in the request when using {@link JSONParams}, otherwise {@code 0}
+	 * @since 0.6.1.0
 	 */
-	public void addRequestParams(List<YADAParam> params) {
+	public void addRequestParams(List<YADAParam> params, int index) {
 		for(YADAParam param : params)
 		{
 			String key = param.getName();
+			if(key.equals(YADARequest.PS_HARMONYMAP) || key.equals(YADARequest.PL_HARMONYMAP))
+			{
+			  JSONArray  hMap = new JSONArray(param.getValue());
+			  int idx = hMap.length() > 1 ? index : 0;
+			  param.setValue(hMap.getJSONObject(idx).toString());
+			}
 			if(!hasParam(key) || hasOverridableParam(key)) //TODO do we need this check, maybe this is bad?  Maybe we always want to replace?
 			{
 				addParam(param);
 			}
 		}
 	}
- 	
+	
+	/**
+	 * The zero-index-only implementation of this method, for requests with "standard params" (i.e., not {@link JSONParams}
+	 * @param params list of parameter objects
+	 */
+	public void addRequestParams(List<YADAParam> params) {
+    addRequestParams(params,0);
+  }
+	
+
 	/**
 	 * Stores the query-level parameters in the {@link YADAQuery} object for easier downstream utilization.  Care is taken 
 	 * to ensure non-overrideable default parameters are not mutated, nor duplicate parameters are added. 
@@ -1072,6 +1102,42 @@ public class YADAQuery {
 	}
 
 	/**
+   * @return the globalHarmonyMap
+   * @since 6.1.0
+   */
+  public JSONObject getGlobalHarmonyMap() {
+    return this.globalHarmonyMap;
+  }
+
+  /**
+   * @param globalHarmonyMap the globalHarmonyMap to set
+   * @since 6.1.0
+   */
+  public void setGlobalHarmonyMap(JSONObject globalHarmonyMap) {
+    this.globalHarmonyMap = globalHarmonyMap;
+  }
+  
+  /**
+   * Adds an entry with a unique key to the {@link #globalHarmonyMap}
+   * @param key the original column name
+   * @param value the mapped, replacement column name
+   * @since 6.1.0
+   */
+  public void addHarmonyMapEntry(String key, String value) {
+    try
+    {
+      if(getGlobalHarmonyMap() == null)
+        setGlobalHarmonyMap(new JSONObject());
+      getGlobalHarmonyMap().putOnce(key, value);
+    }
+    catch(JSONException e)
+    {
+      String msg = "Key ["+key+"] already exists in global harmony map.";
+      l.warn(msg);
+    }
+  }
+
+  /**
 	 * Standard accessor for variable.
 	 * @return the conformedCode
 	 */

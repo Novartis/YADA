@@ -23,6 +23,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.novartis.opensource.yada.YADAQueryResult;
+
 /**
  * @since 0.4.0.0
  * @author David Varon
@@ -37,6 +39,21 @@ public class RESTResultJSONConverter extends AbstractConverter
 	private static Logger l = Logger.getLogger(RESTResultJSONConverter.class);
 	
 	/**
+	 * Default constructor
+	 */
+	public RESTResultJSONConverter() {
+	  // default constructor
+	}
+	
+	/**
+	 * Constructor with {@link YADAQueryResult}
+	 * @param yqr the container for result processing artifacts
+	 */
+	public RESTResultJSONConverter(YADAQueryResult yqr) {
+	  this.setYADAQueryResult(yqr);
+	}
+	
+	/**
 	 * Wraps the result of the REST request in a json object
 	 * @see com.novartis.opensource.yada.format.AbstractConverter#convert(java.lang.Object)
 	 */
@@ -45,6 +62,7 @@ public class RESTResultJSONConverter extends AbstractConverter
 	{
 		//TODO implement harmony map solution for this
 		JSONArray arrayResult = new JSONArray();
+		
 		try
 		{
 			arrayResult = new JSONArray((String)result);
@@ -63,4 +81,32 @@ public class RESTResultJSONConverter extends AbstractConverter
 		}
 		return arrayResult;
 	}
+	
+//	private Object harmonize(Object o) {
+//	  JSONObject hm = (JSONObject)this.harmonyMap;
+//	  for(String key : JSONObject.getNames(hm))
+//    {
+//      if(hasKey(hm,key))
+//      {
+//        
+//      }
+//    }
+//	}
+	
+//	private boolean hasKey(JSONObject j, String key) {
+//	  boolean hasKey = false;
+//	  if(key.indexOf('.') > -1) 
+//	  {
+//	    String[] keys = key.split(".");
+//	    Object j1 = j.optJSONObject(keys[0]);
+//	    if(null == j1)
+//	      j1 = j.optJSONArray(keys[0]);
+//	    hasKey = hasKey(, keys[1] );
+//	  }
+//	  else
+//	  {
+//	    hasKey = j.has(key);
+//	  }
+//	  return hasKey;
+//	}
 }

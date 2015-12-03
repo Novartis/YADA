@@ -27,6 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.novartis.opensource.yada.YADAQueryResult;
 import com.novartis.opensource.yada.adaptor.JDBCAdaptor;
 
 /**
@@ -36,6 +37,21 @@ import com.novartis.opensource.yada.adaptor.JDBCAdaptor;
  */
 public class ResultSetResultJSONConverter extends AbstractConverter {
 	
+  /**
+   * Default constructor
+   */
+  public ResultSetResultJSONConverter() {
+    // default constructor
+  }
+  
+  /**
+   * Constructor with {@link YADAQueryResult}
+   * @param yqr the container for result processing artifacts
+   */
+  public ResultSetResultJSONConverter(YADAQueryResult yqr) {
+    this.setYADAQueryResult(yqr);
+  }
+  
 	/**
 	 * Unpacks data in a {@code ResultSet} and stuffs it in a JSON object. 
 	 * @see com.novartis.opensource.yada.format.AbstractConverter#convert(java.lang.Object)

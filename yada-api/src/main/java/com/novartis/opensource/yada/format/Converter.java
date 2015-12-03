@@ -19,6 +19,8 @@ package com.novartis.opensource.yada.format;
 
 import org.json.JSONObject;
 
+import com.novartis.opensource.yada.YADAQueryResult;
+
 /**
  * The YADA API for formatting query results for insertion into {@link Response} objects. 
  * @since 0.4.0.0
@@ -27,10 +29,17 @@ import org.json.JSONObject;
  */
 public interface Converter {
 	/**
-	 * A (usually) {@link JSONObject} implementation of the Harmony Map Spec.  As there are numerous JSON java implemtations
+	 * A (usually) {@link JSONObject} implementation of the Harmony Map Spec.  As there are numerous JSON java implementations
 	 * this object is stored as a generic {@link Object}
 	 */
 	Object harmonyMap = null;
+	
+	/**
+	 * The container for results.  This is useful in particular when harmonizing results, to store pre-processed headers separately 
+	 * and stitch results together in a subsequent step.
+	 * @since 6.1.0 
+	 */
+	YADAQueryResult yqr = null;
 	
 	/**
 	 * Intended to take raw results from a query and wrap or transform them into the proper format, including 
@@ -57,4 +66,26 @@ public interface Converter {
 	 * @param harmonyMap json object describing column header translation
 	 */
 	public void setHarmonyMap(Object harmonyMap);
+	
+	/**
+	 * Standard accessor for variable
+	 * @return the harmony map object, by default a {@link JSONObject}
+	 * @since 6.1.0
+	 */
+	public Object getHarmonyMap();
+	
+	/**
+	 * Standard mutator for variable
+	 * @param yqr The {@link YADAQueryResult} object to pass to the converter from the response
+	 * @since 6.1.0
+	 */
+	public void setYADAQueryResult(YADAQueryResult yqr);
+	
+	/**
+	 * Standard accessor for variable
+	 * @return the {@link YADAQueryResult}  passed from the {@link Response}
+	 * @since 6.1.0
+	 */
+	public YADAQueryResult getYADAQueryResult();
+	
 }

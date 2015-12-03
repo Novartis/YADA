@@ -271,7 +271,7 @@ public class JSONParamsEntry {
 	
 	/**
 	 * @param key the name of the parameter to check for immutabilitiy
-	 * @return {@code true} if there is a param with the name equal to {@code key} and a {@code rule} equal s
+	 * @return {@code true} if there is a param with the name equal to {@code key} and a {@code rule} equal {@link YADAParam#NONOVERRIDEABLE}
 	 */
 	private boolean hasNonOverrideableParam(String key) {
 		return this.immutableKeys.containsKey(key);

@@ -836,7 +836,7 @@ public class YADARequest {
 	/**
 	 * Parsed harmonyMap string
 	 */
-	private JSONObject harmonyMap;
+	private JSONArray harmonyMap;
 	/**
 	 * Flag indicating something about labels.
 	 * @since PROVISIONAL
@@ -1129,11 +1129,19 @@ public class YADARequest {
 		String keys[] = new String[] { PL+frag, PS+frag };
 		for (String key : keys)
 		{
-			try {
+			try 
+			{
 				String keyVal = (String) YADARequest.class.getField(key).get(null);
 				if(q.has(keyVal))
 				{
-					return q.getString(keyVal);
+					try
+					{
+					  return q.getString(keyVal);
+					}
+					catch(JSONException e)
+					{
+					  return q.getJSONObject(keyVal).toString();
+					}
 				}
 			} 
 			catch (SecurityException e) 
@@ -1706,18 +1714,29 @@ public class YADARequest {
 	
 	/**
 	 * Array mutator for variable, preferred for compatibility with {@link javax.servlet.http.HttpServletRequest#getParameterMap()}
+	 * The implementation supports passage of a JSONObject or JSONArray. See the Harmony Map Specification for details.
+	 * 
 	 * @since 0.4.0.0
 	 * @param harmonyMap json object conforming to harmony map spec
 	 * @throws YADARequestException when {@code harmonyMap} contains a malformed json string
 	 */
 	public void setHarmonyMap(String[] harmonyMap) throws YADARequestException {
+	  //TODO convert to ArrayList and LinkedHashMaps rather than JSONArray,JSONObject to preserve ordering
 		try
 		{
-			this.harmonyMap = new JSONObject(harmonyMap[0]); 
+			this.harmonyMap = new JSONArray(harmonyMap[0]); 
 		}
 		catch(JSONException e)
 		{
-			throw new YADARequestException(e.getMessage(),e);
+		  try
+		  {
+  		  this.harmonyMap = new JSONArray();
+  		  this.harmonyMap.put(new JSONObject(harmonyMap[0]));
+		  }
+		  catch(JSONException e1)
+		  {
+		    throw new YADARequestException(e1.getMessage(),e1);
+		  }
 		}
 	}
 
@@ -2618,9 +2637,9 @@ public class YADARequest {
 	
 	/**
 	 * Returns the {@code harmonyMap} or {@code h} parameter value as a {@link JSONObject}
-	 * @return a {@link JSONObject} built from the value of the {@code harmonyMap} or {@code h} parameter value
+	 * @return a {@link JSONArray} built from the value of the {@code harmonyMap} or {@code h} parameter value
 	 */
-	public JSONObject getHarmonyMap() {
+	public JSONArray getHarmonyMap() {
 		return this.harmonyMap;
 	}
 	

@@ -19,6 +19,8 @@ package com.novartis.opensource.yada.format;
 
 import org.json.JSONObject;
 
+import com.novartis.opensource.yada.YADAQueryResult;
+
 /**
  * Base implemetation of {@link Converter} interface.
  * @author David Varon
@@ -39,6 +41,10 @@ public abstract class AbstractConverter implements Converter {
 	 */
 	protected Object harmonyMap; 
 	/**
+	 * The container for result management
+	 */
+	protected YADAQueryResult yqr;
+	/**
 	 * Base implemetation returns {@code null}.
 	 * @see com.novartis.opensource.yada.format.Converter#convert(java.lang.Object)
 	 */
@@ -57,7 +63,7 @@ public abstract class AbstractConverter implements Converter {
 	}
 	
 	/**
-	 * Sets the {@code harmonyMap} instance variable as a new {@link JSONObject}.
+	 * Sets the {@code harmonyMap} instance variable as a new {@link JSONArray}.
 	 * @see com.novartis.opensource.yada.format.Converter#setHarmonyMap(java.lang.Object)
 	 */
 	@Override
@@ -66,13 +72,33 @@ public abstract class AbstractConverter implements Converter {
 		this.harmonyMap = harmonyMap;
 	}
 	
+	@Override
+	public Object getHarmonyMap()
+	{
+	  return this.harmonyMap;
+	}
+	
+
+	@Override
+  public void setYADAQueryResult(YADAQueryResult yqr)
+	{
+	  this.yqr = yqr;
+	}
+	
+	@Override
+	public YADAQueryResult getYADAQueryResult()
+	{
+	  return this.yqr;
+	}
 	/**
 	 * Base implementation returns {@code false}.
 	 * @return {@code true} if this object contains a popluated harmony map
 	 */
 	protected boolean isHarmonized() 
 	{
-		if(this.harmonyMap != null && JSONObject.getNames(this.harmonyMap).length > 0)
+		if(null != this.harmonyMap 
+		    && null != JSONObject.getNames(this.harmonyMap)
+		    && JSONObject.getNames(this.harmonyMap).length > 0)
 			return true;
 		return false;
 	}

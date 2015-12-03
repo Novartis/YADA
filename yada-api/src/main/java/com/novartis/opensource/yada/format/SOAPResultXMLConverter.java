@@ -31,6 +31,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.novartis.opensource.yada.YADAQueryResult;
+
 /**
  * A converter subclass for traversal and appending of SOAP results to the calling Response object.
  * @author David Varon
@@ -62,6 +64,20 @@ public class SOAPResultXMLConverter extends AbstractConverter
    */
 	private DocumentFragment       frag;
 	
+	/**
+   * Default constructor
+   */
+  public SOAPResultXMLConverter() {
+    // default constructor
+  }
+  
+  /**
+   * Constructor with {@link YADAQueryResult}
+   * @param yqr the container for result processing artifacts
+   */
+  public SOAPResultXMLConverter(YADAQueryResult yqr) {
+    this.setYADAQueryResult(yqr);
+  }
 
 	/**
 	 * Returns {@code true} if the {@code node} is a {@link org.w3c.dom.Node#TEXT_NODE} and contains only whitespace

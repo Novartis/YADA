@@ -26,6 +26,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.novartis.opensource.yada.YADAQueryResult;
+
 /**
  * @since 0.4.0.0
  * @author David Varon
@@ -47,6 +49,22 @@ public class FileSystemResultJSONConverter extends AbstractConverter
 	 * Constant equal to: {@value}
 	 */
 	private static final String KEY_CONTENT = "content";
+	
+	/**
+   * Default constructor
+   */
+  public FileSystemResultJSONConverter() {
+    // default constructor
+  }
+  
+  /**
+   * Constructor with {@link YADAQueryResult}
+   * @param yqr the container for result processing artifacts
+   */
+  public FileSystemResultJSONConverter(YADAQueryResult yqr) {
+    this.setYADAQueryResult(yqr);
+  }
+  
 	/**
 	 * Process the list of files in {@code result} and reformats it into a json object.
 	 * @see com.novartis.opensource.yada.format.AbstractConverter#convert(java.lang.Object)

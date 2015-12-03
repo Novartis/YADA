@@ -17,6 +17,9 @@
  */
 package com.novartis.opensource.yada.format;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -174,14 +177,20 @@ public abstract class AbstractResponse implements Response
 		{
 			try
 			{
-				converter = (Converter) Class.forName(converterClass).newInstance();
+			  Constructor<?> c = Class.forName(converterClass).getConstructor(new Class[] { YADAQueryResult.class });
+			  c.setAccessible(true);
+			  converter = (Converter) c.newInstance(new Object[] {yqResult});
+				//converter = (Converter) Class.forName(converterClass).newInstance();
 			} 
 			catch (Exception e)
 			{
 				l.warn("The specified class ["+converterClass+"] could not be instantiated.  Trying FQCN."); 
 				try
 				{
-					converter = (Converter) Class.forName(FORMAT_PKG+converterClass).newInstance();
+				  Constructor<?> c = Class.forName(FORMAT_PKG+converterClass).getConstructor(new Class[] { YADAQueryResult.class });
+	        c.setAccessible(true);
+	        converter = (Converter) c.newInstance(new Object[] {yqResult});
+					//converter = (Converter) Class.forName(FORMAT_PKG+converterClass).newInstance();
 				}
 				catch(Exception e1)
 				{
@@ -212,27 +221,35 @@ public abstract class AbstractResponse implements Response
 		{
 			try
 			{
+			  String className = "";
 				if(getProtocol().equals(Parser.JDBC))
 				{
-					converter = (AbstractConverter) Class.forName(FORMAT_PKG+"ResultSetResult"+format.toUpperCase()+"Converter").newInstance();
+				  className = FORMAT_PKG+"ResultSetResult"+format.toUpperCase()+"Converter";
+					//converter = (AbstractConverter) Class.forName().newInstance();
 				}
 				else if(getProtocol().equals(Parser.SOAP))
 				{
-					converter = (AbstractConverter) Class.forName(FORMAT_PKG+"SOAPResult"+format.toUpperCase()+"Converter").newInstance();
+				  className = FORMAT_PKG+"SOAPResult"+format.toUpperCase()+"Converter";
+					//converter = (AbstractConverter) Class.forName(FORMAT_PKG+"SOAPResult"+format.toUpperCase()+"Converter").newInstance();
 				}
 				else if(getProtocol().equals(Parser.REST))
 				{
-					converter = (AbstractConverter) Class.forName(FORMAT_PKG+"RESTResult"+format.toUpperCase()+"Converter").newInstance();
+				  className = FORMAT_PKG+"RESTResult"+format.toUpperCase()+"Converter";
+					//converter = (AbstractConverter) Class.forName(FORMAT_PKG+"RESTResult"+format.toUpperCase()+"Converter").newInstance();
 				}
 				else if(getProtocol().equals(Parser.FILE))
 				{
-					converter = (AbstractConverter) Class.forName(FORMAT_PKG+"FileSystemResult"+format.toUpperCase()+"Converter").newInstance();
+				  className = FORMAT_PKG+"FileSystemResult"+format.toUpperCase()+"Converter";
+					//converter = (AbstractConverter) Class.forName(FORMAT_PKG+"FileSystemResult"+format.toUpperCase()+"Converter").newInstance();
 				}
 				else
 				{
 					String msg = "The converter you are attempting to instantiate requires a protocol or class that is not supported.  This could be a configuration issue.";
 					throw new YADAConverterException(msg);
 				}
+				Constructor<?> c = Class.forName(className).getConstructor(new Class[] { YADAQueryResult.class });
+        c.setAccessible(true);
+        converter = (AbstractConverter) c.newInstance(new Object[] {yqResult});
 			} 
 			catch (InstantiationException e)
 			{
@@ -249,11 +266,31 @@ public abstract class AbstractResponse implements Response
 			{
 				String msg = "Could not find Converter class";
 				throw new YADARequestException(msg,e);
-			}
+			} 
+			catch (NoSuchMethodException e) 
+			{
+			  String msg = "There appears to be no Converter constructor accepting a YADAQueryResult parameter.";
+			  throw new YADARequestException(msg,e);
+			} 
+			catch (SecurityException e) 
+			{
+			  String msg = "There appears to be no public Converter constructor accepting a YADAQueryResult parameter.";
+        throw new YADARequestException(msg,e);
+      } 
+			catch (IllegalArgumentException e) 
+			{
+			  String msg = "There appears to be no public Converter constructor accepting a YADAQueryResult parameter.";
+        throw new YADARequestException(msg,e);
+      } 
+			catch (InvocationTargetException e) 
+			{
+			  String msg = "There appears to be no public Converter constructor accepting a YADAQueryResult parameter.";
+        throw new YADARequestException(msg,e);
+      }
 		}
 		else // delimited
 		{
-			converter = new ResultSetResultDelimitedConverter();
+			converter = new ResultSetResultDelimitedConverter(yqResult);
 		}
 		return converter;
 	}
@@ -298,11 +335,6 @@ public abstract class AbstractResponse implements Response
 	protected boolean hasMultipleResults() {
 		return !hasSingularResult() && getHarmonyMap() == null;
 	}
-	
-//	void setHarmonyMap(JSONObject harmonyMap)
-//	{
-//		this.harmonyMap = (JSONObject)harmonyMap;
-//	}
 	
 	/**
 	 * Extracts a {@link JSONObject} built from the value of {@link YADARequest#PS_HARMONYMAP} in the {@link #yqr}

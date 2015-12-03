@@ -31,7 +31,9 @@ import javax.servlet.http.Cookie;
 import javax.xml.soap.SOAPConnection;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -196,7 +198,94 @@ public class QueryManager
 			String msg = "Your request must contain a 'qname', 'q', 'JSONParams', or 'j' parameter.";
 			throw new YADARequestException(msg);
 		}
+		setGlobalHarmonyMaps();
+		setQueryHarmonyMaps();
 		prepQueriesForExecution();
+	}
+	
+	/**
+	 * Create a composite harmony map for all queries based on either {@link YADARequest#getHarmonyMap()} 
+	 * or the harmony maps stored in each query via param {@link YADAQuery#getParam(String)} 
+	 * named {@link YADARequest#PS_HARMONYMAP}.  This object, consistent in each request, enables inclusion
+	 * of both mapped and unmapped columns in a single result, specifically necessary for 
+	 * {@link YADARequest#FORMAT_CSV} and other delimited formats.
+	 * @since 6.1.0
+	 */
+	private void setGlobalHarmonyMaps() 
+	{
+	  JSONArray reqHm = this.yadaReq.getHarmonyMap();
+	  if(null == reqHm)
+	  {
+	    for(YADAQuery yq : getQueries())
+	    {
+	      YADAParam p = yq.getParam(YADARequest.PS_HARMONYMAP);
+	      if(p != null)
+	      {
+	        JSONObject j = new JSONObject(p.getValue());
+	        for(String key : JSONObject.getNames(j))
+	          yq.addHarmonyMapEntry(key, j.getString(key));
+	      }
+	    }
+	  }
+	  else
+	  {
+	    JSONObject globalHarmonyMap = new JSONObject();
+	    for(int i=0;i<reqHm.length();i++)
+	    {
+        JSONObject j = reqHm.getJSONObject(i);
+        for(String key : JSONObject.getNames(j))
+        {
+          try
+          {
+            globalHarmonyMap.putOnce(key, j.getString(key));
+          }
+          catch(JSONException e)
+          {
+            String msg = "Key ["+key+"] already exists in global harmony map.";
+            l.warn(msg);
+          }
+        }
+      }
+	    for(YADAQuery yq : getQueries())
+	      yq.setGlobalHarmonyMap(globalHarmonyMap);
+	  }  
+	}
+	
+	/**
+	 * Checks for a {@code harmonyMap} or {@code h} spec in the {@link #yadaReq}. If {@code null}, 
+	 * iterates over the queries in the request, identifying those that have embedded {@code h} specs
+	 * and those that do not. If any queries contain specs, those that do not are provided with empty maps.
+	 * 
+	 * @throws YADARequestException when the resulting harmonyMap is non-compliant
+	 * @since 6.1.0
+	 */
+	private void setQueryHarmonyMaps() throws YADARequestException 
+	{
+  	if(this.yadaReq.getHarmonyMap() == null)
+  	{
+  	  ArrayList<JSONObject> hasMap = new ArrayList<>();
+  	  ArrayList<YADAQuery> noMap  = new ArrayList<>();
+  	  for(YADAQuery yq : this.queries)
+  	  {
+  	    YADAParam p = yq.getParam(YADARequest.PS_HARMONYMAP);
+  	    if(p != null)
+  	    {
+    	    hasMap.add(new JSONObject(p.getValue()));
+  	    }
+  	    else
+  	    {
+  	      noMap.add(yq);
+  	    }
+  	  }
+  	  if(hasMap.size() > 0)
+  	  {
+  	    for(YADAQuery yq : noMap)
+  	    {
+  	      YADAParam param = new YADAParam(YADARequest.PS_HARMONYMAP,"{}",YADAParam.QUERY,YADAParam.OVERRIDEABLE);
+  	      yq.addParam(param);
+  	    }
+  	  }
+  	}
 	}
 
 	/**
@@ -745,31 +834,33 @@ public class QueryManager
 	{
 		yq.addAllData(entry.getData());
 		yq.addYADAQueryParams(entry.getParams());
-		yq.addRequestParams(this.yadaReq.getRequestParamsForQueries());
-		yq.setAdaptorClass(this.qutils.getAdaptorClass(yq.getSource()));
-		if(RESTAdaptor.class.equals(yq.getAdaptorClass()))
-	  {
-		  for(String cookieName : this.yadaReq.getCookies())
-		  {
-		    for(Cookie cookie : this.yadaReq.getRequest().getCookies())
-		    {
-		      if(cookie.getName().equals(cookieName))
-		      {
-		        yq.addCookie(cookieName, Base64.encodeBase64String(Base64.decodeBase64(cookie.getValue().getBytes())));
-		      }
-		    }
-		  }
-    }
-		yq.setConformedCode(this.qutils.getConformedCode(yq.getYADACode()));
 		yq.setParameterizedColumns(yq.getColumnNameArray());
-		this.qutils.setProtocol(yq);
-		yq.setAdaptor(this.qutils.getAdaptor(yq.getAdaptorClass(), this.yadaReq));
-		for (int row = 0; row < yq.getData().size(); row++)
-		{
-			yq.addDataTypes(row, this.qutils.getDataTypes(yq.getYADACode()));
-			yq.addParamCount(row, yq.getDataTypes().get(0).length);
-		}
-		return yq;
+		
+//		yq.addRequestParams(this.yadaReq.getRequestParamsForQueries());
+//		yq.setAdaptorClass(this.qutils.getAdaptorClass(yq.getSource()));
+//		if(RESTAdaptor.class.equals(yq.getAdaptorClass()) && this.yadaReq.hasCookies())
+//	  {
+//		  for(String cookieName : this.yadaReq.getCookies())
+//		  {
+//		    for(Cookie cookie : this.yadaReq.getRequest().getCookies())
+//		    {
+//		      if(cookie.getName().equals(cookieName))
+//		      {
+//		        yq.addCookie(cookieName, Base64.encodeBase64String(Base64.decodeBase64(cookie.getValue().getBytes())));
+//		      }
+//		    }
+//		  }
+//    }
+//		yq.setConformedCode(this.qutils.getConformedCode(yq.getYADACode()));
+//		this.qutils.setProtocol(yq);
+//		yq.setAdaptor(this.qutils.getAdaptor(yq.getAdaptorClass(), this.yadaReq));
+//		for (int row = 0; row < yq.getData().size(); row++)
+//		{
+//			yq.addDataTypes(row, this.qutils.getDataTypes(yq.getYADACode()));
+//			yq.addParamCount(row, yq.getDataTypes().get(0).length);
+//		}
+//		return yq;
+		return endowQuery(yq);
 	}
 
 	/**
@@ -792,6 +883,18 @@ public class QueryManager
 	YADAQuery endowQuery(String q) throws YADAConnectionException, YADAFinderException, YADAQueryConfigurationException, YADAResourceException, YADAUnsupportedAdaptorException
 	{
 		YADAQuery yq = new Finder().getQuery(q,this.getUpdateStats());
+		LinkedHashMap<String,String[]> data = new LinkedHashMap<>();
+    String[][] params = this.yadaReq.getParams();
+    if (params != null)
+    {
+      for (int i = 0; i < params.length; i++)
+      {
+        data.put(QueryUtils.YADA_COLUMN + String.valueOf(i + 1), params[i]);
+      }
+      yq.addData(data);
+      yq.setParameterizedColumns(yq.getColumnNameArray());
+    }
+    yq.addParam(YADARequest.PS_QNAME, yq.getQname());
 		endowQuery(yq);
 		return yq;
 	}
@@ -810,21 +913,12 @@ public class QueryManager
 	 * @throws YADAUnsupportedAdaptorException when the adaptor attached to the query object can't be found or instantiated
 	 * @throws YADAResourceException when the query {@code q} can't be found in the index
 	 */
-	YADAQuery endowQuery(YADAQuery yq) throws YADAFinderException, YADAQueryConfigurationException, YADAResourceException, YADAUnsupportedAdaptorException
+	YADAQuery endowQuery(YADAQuery yq) throws YADAQueryConfigurationException, YADAResourceException, YADAUnsupportedAdaptorException
 	{
-		LinkedHashMap<String,String[]> data = new LinkedHashMap<>();
-		String[][] params = this.yadaReq.getParams();
-		if (params != null)
-		{
-			for (int i = 0; i < params.length; i++)
-			{
-				data.put(QueryUtils.YADA_COLUMN + String.valueOf(i + 1), params[i]);
-			}
-			yq.addData(data);
-			yq.setParameterizedColumns(yq.getColumnNameArray());
-		}
-		yq.addParam(YADARequest.PS_QNAME, yq.getQname());
-		yq.addRequestParams(this.yadaReq.getRequestParamsForQueries());
+	  int index = 0;
+	  if (YADAUtils.useJSONParams(this.yadaReq))
+	    index = ArrayUtils.indexOf(getJsonParams().getKeys(), yq.getQname());
+		yq.addRequestParams(this.yadaReq.getRequestParamsForQueries(),index);
 		yq.setAdaptorClass(this.qutils.getAdaptorClass(yq.getSource()));
 		if(RESTAdaptor.class.equals(yq.getAdaptorClass()) && this.yadaReq.hasCookies())
     {
@@ -844,8 +938,8 @@ public class QueryManager
 		yq.setAdaptor(this.qutils.getAdaptor(yq.getAdaptorClass(), this.yadaReq));
 		for (int row = 0; row < yq.getData().size(); row++)
 		{
-			yq.addDataTypes(row, this.qutils.getDataTypes(yq.getYADACode()));
-			yq.addParamCount(row, yq.getDataTypes().get(0).length);
+		  yq.addDataTypes(row, this.qutils.getDataTypes(yq.getYADACode()));
+		  yq.addParamCount(row, yq.getDataTypes().get(0).length);
 		}
 		return yq;
 	}
