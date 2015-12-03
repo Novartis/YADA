@@ -1,0 +1,94 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam activity {
+  StartColor #634929
+  EndColor #634929
+  BackgroundColor #FED300
+  BorderColor #923222
+  ArrowColor #923222
+}
+start
+:init QueryManager;
+:processQueries;
+split
+ :has JSONParams;
+ :getJSONParams;
+ :endowQueries;
+   :repeat for each JSONParam}
+   :Finder.getQuery;
+   note left
+    Default YADAParams loaded here.
+    if harmonyMap is incl.
+    it must be an object, i.e., {...}     
+   end note
+   :endowQuery\n(YADAQuery,\nJSONParamsEntry);
+     :yq.addAllData;
+     :yq.addYADAQueryParams;
+     note left
+      transfers YADAParams from JSONParamsEntry
+      to YADAQuery accounting for (non)overrides
+      THIS is where a query-level harmony map can 
+      be included  
+      If incl. here, harmonyMap must be an object, i.e., {...}
+     end note
+     :yq.setParameterizedColumns;
+split again
+ :has Standard Params
+ :getQname;
+ :endowQuery\n(String);
+   :Finder.getQuery;
+   note right
+    Default YADAParams loaded here
+    If harmonyMap is incl. 
+    it must be an object, i.e., {...}
+   end note
+   if(has data params) then (yes)
+     :get data params (values);
+     repeat
+       :construct YADA_COLUMN colname;
+       :store data value;
+     repeat while(more data values) is (yes) not (no)
+   else(no)
+   endif
+   :yq.addParam(QNAME);
+endsplit
+:endowQuery\n(YADAQuery);
+   :yq.addRequestParams;
+   note right
+    transfers YADAParams from YADARequest
+    to YADAQuery accounting for (non)overrides
+
+    If incl. in request, harmony map can be
+    be an array, i.e., [{...}], or an object, 
+    i.e., {...}
+    If an object, the key/value pairs are applied
+    to all queries. If array, there must be an object
+    corresponding to each query
+   end note
+   :yq.setAdaptorClass;
+   if(is REST) then (yes)
+     if(cookies?) then (yes)
+      :transfer cookies;
+     endif
+   endif
+   :yq.setConformedCode;
+   :yq.setParameterizedColumns;
+   :QueryUtils.setProtocol;
+   :yq.setAdaptor instance;
+   repeat
+     :yq.addDataTypes;
+     :yq.addParamCount;
+   repeat while(more data values) is (yes) not (no)
+:end repeat for JSONParams}
+:setQueries;
+:conformQueriesToEmbeddedParams;
+#pink:create unified harmony map\nand store in query;
+note right
+  Along with the previous method, this will enable
+  the creation of single delimited result sets, 
+  without sacrificing the compression of json result sets
+end note
+:prepQueriesForExecution;
+
+end
+@enduml

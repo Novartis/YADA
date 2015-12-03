@@ -1,0 +1,86 @@
+@startuml
+title Delimited Response Activity
+skinparam defaultTextAlignment center
+skinparam activity {
+  StartColor #634929
+  EndColor #634929
+  BackgroundColor #FED300
+  BorderColor #923222
+  ArrowColor #923222
+}
+|Service|
+start
+:composeResponse;
+:getDefaultResponse;
+:response.compose;
+|AbstractResponse|
+:setYADAQueryResults;
+|ResultSetResultDelimitedConverter|
+|DelimitedResponse|
+:set default colsep;
+:set default recsep;
+repeat
+  :setYADAQueryResult\n(local);
+  :set local colsep;
+  :set local recsep;
+  repeat
+    :append(result);
+    :getConverter;
+    if(harmonyMap is not null) then (yes)
+      :converter\n.setHarmonyMap;
+      note right
+        Global HarmonyMap passed
+        from YADAQueryResult
+      end note
+    endif
+    :converter\n.convert;
+    |ResultSetResultDelimitedConverter|
+    :getDelimitedRows;
+    :get harmonyMap;
+    note right
+      Global HarmonyMap passed
+      from Response
+    end note
+    :get resultsetmetadata;
+    :get column count;
+    :construct header;
+    note right
+      column counts and names 
+      should be stored for later review
+      so colums can be stitched together
+      and "empty" columns accounted for
+      across result sets
+    end note
+    repeat
+      :get column name\nfrom rsmd;
+      if(isHarmonized) then (yes)
+        if(harmonyMap has col) then (yes)
+          :get mapped colname;
+        endif
+      endif
+      :addConvertedHeader to yqr;
+    repeat while(more columns) is (yes) not (no)
+    repeat
+      repeat
+        if(rs.getString by colname is null) then (yes)
+          :set colvalue = null;
+        else (no)
+          :set colvalue = rs.getString;
+        endif
+        :add colvalue to List of row values;
+      repeat while(more columns) is (yes) not (no)
+      :add list of row values to convertedResult list;
+    repeat while(more rows in rs) is (yes) not (no)
+    :add list of convertedResult lists\nto yqr.convertedResults List;
+    |DelimitedResponse|
+  repeat while(more results) is (yes) not (no)
+repeat while(more yqrs) is (yes) not (no)
+:return DelimitedResponse;
+|Service|
+:response.toString;
+if(pretty?) then (yes)
+  :prettyPrint;
+endif
+:return;
+end
+@enduml
