@@ -250,11 +250,11 @@ public class YADAUtils {
 				}
 				else if(param instanceof Integer)
 				{
-					p.setInt(i, (Integer)param);
+					p.setInt(i, ((Integer)param).intValue());
 				}
 				else if(param instanceof Float)
 				{
-					p.setFloat(i, (Float)param);
+					p.setFloat(i, ((Float)param).floatValue());
 				}
 			}
 			rs = p.executeQuery();

@@ -12,9 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
 package com.novartis.opensource.yada.format;
 
 import java.sql.ResultSet;
@@ -25,6 +22,7 @@ import java.util.List;
 
 import javax.sql.rowset.RowSetMetaDataImpl;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,17 +35,6 @@ import com.novartis.opensource.yada.adaptor.JDBCAdaptor;
  * @since 0.4.0.0
  */
 public class ResultSetResultDelimitedConverter extends AbstractConverter {
-
-  /**
-   * Local handle for column separator, defaults to
-   * {@link YADARequest#DEFAULT_DELIMITER}
-   */
-  private String colsep;
-  /**
-   * Local handle for record separator, defaults to
-   * {@link YADARequest#DEFAULT_ROW_DELIMITER}
-   */
-  private String recsep;
 
   /**
    * Default constructor
@@ -79,89 +66,110 @@ public class ResultSetResultDelimitedConverter extends AbstractConverter {
     this.colsep = newColSep;
     this.recsep = newRecSep;
 
-    try {
-      //result.append(getDelimitedRows((ResultSet) o));
+    try 
+    {
       getDelimitedRows((ResultSet) o);
-    } catch (SQLException e) {
+    } 
+    catch (SQLException e) 
+    {
       String msg = "Unable to iterate over ResultSet";
       throw new YADAConverterException(msg, e);
-    } catch (JSONException e) {
+    } 
+    catch (JSONException e) 
+    {
       String msg = "Unable to read Harmony Map";
       throw new YADAConverterException(msg, e);
     }
     return result;
   }
+  
+  /**
+   * Parses global harmony map for duplicate values, and removes key/value pairs that
+   * are not present in local harmony map.
+   * @return the parsed global harmony map
+   * @since 6.1.0
+   */
+  @Override
+  public Object getHarmonyMap()
+  {
+    JSONObject globMap = (JSONObject)this.harmonyMap;
+    JSONObject local   = new JSONObject(getYADAQueryResult().getYADAQueryParamValue(YADARequest.PS_HARMONYMAP));
+    JSONArray  vals    = local.toJSONArray(new JSONArray(JSONObject.getNames(local)));
+    ArrayList<String> locVals = new ArrayList<>(); 
+    for(int i=0;i<vals.length();i++)
+    {
+      locVals.add(vals.getString(i));
+    }
+    for(Object globalKey : globMap.keySet())
+    {
+      String gk = (String)globalKey;
+      String gv = globMap.getString(gk);
+      if(locVals.contains(gv) && !local.has(gk)) // the value is associated to a different key in the local map
+      {
+        globMap.remove(gk);
+      }
+    }
+    return globMap;
+  }
 
   /**
-   * Converts columns of data in a {@link java.sql.ResultSet} to a
-   * {@link java.lang.StringBuffer} containing tabular data delimited
-   * accordingly per request parameters
+   * Converts columns of data in a {@link java.sql.ResultSet} to collection
+   * of {@link List} objects containing values and stored in the current
+   * {@link YADAQueryResult#getConvertedResults()} structure.
    * 
    * @param rs
    *          the result set to convert
-   * @return the reformatted, delimited data
    * @throws SQLException
    *           when {@link ResultSet} or {@link ResultSetMetaData} iteration
    *           fails
    */
-  protected StringBuffer getDelimitedRows(ResultSet rs) throws SQLException {
-    StringBuffer result = new StringBuffer();
+  protected void getDelimitedRows(ResultSet rs) throws SQLException {
     JSONObject h = (JSONObject) this.harmonyMap;
     ResultSetMetaData rsmd = rs.getMetaData();
     if (rsmd == null) // TODO What happens to headers when rsmd is null, or
                       // resultSet is empty?
       rsmd = new RowSetMetaDataImpl();
     int colCount = rsmd.getColumnCount();
-    boolean hasYadaRnum = rsmd.getColumnName(colCount).toLowerCase()
-        .equals(JDBCAdaptor.ROWNUM_ALIAS);
+    boolean hasYadaRnum = rsmd.getColumnName(colCount).toLowerCase().equals(JDBCAdaptor.ROWNUM_ALIAS);
 
     // handle headers
     // TODO How to suppress headers?
     for (int j = 1; j <= colCount; j++) {
       String colName = rsmd.getColumnName(j);
-      if (!hasYadaRnum
-          || !colName.toLowerCase().equals(JDBCAdaptor.ROWNUM_ALIAS)) {
+      if (!hasYadaRnum || !colName.toLowerCase().equals(JDBCAdaptor.ROWNUM_ALIAS)) 
+      {
         String col = colName;
-        if (isHarmonized()) {
+        if (isHarmonized()) 
+        {
           if (h.has(colName))
+          {
             col = h.getString(colName);
+          }
         }
-        getYADAQueryResult().addConvertedHeader(col);
-        //result.append(col);
-        
-//        if ((hasYadaRnum && j < colCount - 1) || (!hasYadaRnum && j < colCount)) {
-//          result.append(this.colsep);
-//        }
+        getYADAQueryResult().addConvertedHeader(this.wrap(col));
       }
     }
-    //result.append(this.recsep);
     List<List<String>> convertedResult = new ArrayList<>();
-    int row = 0;
     while (rs.next()) {
       List<String> resultsRow = new ArrayList<>();
       String colValue;
       for (int j = 1; j <= colCount; j++) {
         String colName = rsmd.getColumnName(j);
-        if (!hasYadaRnum
-            || !colName.toLowerCase().equals(JDBCAdaptor.ROWNUM_ALIAS)) {
-          if (null == rs.getString(colName)
-              || "null".equals(rs.getString(colName))) {
+        if (!hasYadaRnum || !colName.toLowerCase().equals(JDBCAdaptor.ROWNUM_ALIAS)) 
+        {
+          if (null == rs.getString(colName) || "null".equals(rs.getString(colName))) 
+          {
             colValue = NULL_REPLACEMENT;
-          } else {
-            colValue = "\"" + rs.getString(colName) + "\"";
+          } 
+          else 
+          {
+            colValue = this.wrap(rs.getString(colName));
           }
-          //result.append(colValue);
           resultsRow.add(colValue);
-//          if ((hasYadaRnum && j < colCount - 1)
-//              || (!hasYadaRnum && j < colCount)) {
-//            result.append(this.colsep);
-//          }
         }
       }
-//      result.append(this.recsep);
       convertedResult.add(resultsRow);
     }
     getYADAQueryResult().getConvertedResults().add(convertedResult);
-    return result;
   }
 }

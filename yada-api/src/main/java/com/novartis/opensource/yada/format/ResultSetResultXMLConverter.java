@@ -87,8 +87,10 @@ public class ResultSetResultXMLConverter extends AbstractConverter {
   /**
    * Constructor with {@link YADAQueryResult}
    * @param yqr the container for result processing artifacts
+   * @throws YADAConverterException 
    */
-  public ResultSetResultXMLConverter(YADAQueryResult yqr) {
+  public ResultSetResultXMLConverter(YADAQueryResult yqr) throws YADAConverterException {
+    this();
     this.setYADAQueryResult(yqr);
   }
 	
@@ -139,8 +141,9 @@ public class ResultSetResultXMLConverter extends AbstractConverter {
 				String colName = rsmd.getColumnName(i);
 				if(!colName.toLowerCase().equals(JDBCAdaptor.ROWNUM_ALIAS))
 				{
-					String col = isHarmonized() ? ((JSONObject)this.harmonyMap).getString(colName) : colName;
-					if (null == rs.getString(col) || NULL.equals(rs.getString(col)))
+					String col = isHarmonized() && ((JSONObject)this.harmonyMap).has(colName)
+					    ? ((JSONObject)this.harmonyMap).getString(colName) : colName;
+					if (null == rs.getString(colName) || NULL.equals(rs.getString(colName)))
 					{
 						colValue = NULL_REPLACEMENT;
 					}

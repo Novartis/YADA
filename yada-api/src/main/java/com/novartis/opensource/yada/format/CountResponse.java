@@ -39,7 +39,7 @@ public class CountResponse extends AbstractResponse
 	/**
 	 * Ivar containing the result to be returned by this class's {@link #toString()} method
 	 */
-	private Integer result = 0;
+	private Integer result = new Integer(0);
 	
 	/**
 	 * Null constructor. 
@@ -64,7 +64,6 @@ public class CountResponse extends AbstractResponse
 				setYADAQueryResult(lYqr);
 				if(lYqr.getCountResults() != null && lYqr.getCountResults().size() > 0)
 				{
-	//					result += Integer.valueOf((Integer)yqr.getCountResult(0));
 					for(int i=0;i<lYqr.getCountResults().size();i++)
 					{
 						this.result += Integer.valueOf((Integer)lYqr.getCountResult(i));

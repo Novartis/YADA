@@ -213,7 +213,8 @@ public class QueryManager
 	 */
 	private void setGlobalHarmonyMaps() 
 	{
-	  JSONArray reqHm = this.yadaReq.getHarmonyMap();
+	  JSONArray  reqHm            = this.yadaReq.getHarmonyMap();
+	  JSONObject globalHarmonyMap = new JSONObject();
 	  if(null == reqHm)
 	  {
 	    for(YADAQuery yq : getQueries())
@@ -222,33 +223,54 @@ public class QueryManager
 	      if(p != null)
 	      {
 	        JSONObject j = new JSONObject(p.getValue());
-	        for(String key : JSONObject.getNames(j))
-	          yq.addHarmonyMapEntry(key, j.getString(key));
+	        if(j.length() > 0)
+	        {
+	          globalHarmonyMap = populateGlobalHarmonyMap(globalHarmonyMap, j);
+	        }
 	      }
 	    }
+	    for(YADAQuery yq : getQueries())
+	      yq.setGlobalHarmonyMap(globalHarmonyMap);
 	  }
 	  else
 	  {
-	    JSONObject globalHarmonyMap = new JSONObject();
 	    for(int i=0;i<reqHm.length();i++)
 	    {
         JSONObject j = reqHm.getJSONObject(i);
-        for(String key : JSONObject.getNames(j))
+        if(j.length() > 0)
         {
-          try
-          {
-            globalHarmonyMap.putOnce(key, j.getString(key));
-          }
-          catch(JSONException e)
-          {
-            String msg = "Key ["+key+"] already exists in global harmony map.";
-            l.warn(msg);
-          }
-        }
+          globalHarmonyMap = populateGlobalHarmonyMap(globalHarmonyMap, j);
+	      }
       }
 	    for(YADAQuery yq : getQueries())
 	      yq.setGlobalHarmonyMap(globalHarmonyMap);
 	  }  
+	}
+	
+	/**
+	 * Populates a {@link JSONObject} with the unique set of keys, i.e., original column or field names 
+	 * passed into the request in {@link JSONParams} or in the {@link YADARequest#PS_HARMONYMAP} parameter.
+	 * 
+	 * @param global The {@link JSONObject} to populate
+	 * @param local The {@link JSONObject} containing the key/value pairs to transfer to {@code global}
+	 * @return the {@code global} {@link JSONObject} containing the unique set of keys (and values)
+	 * @since 6.1.0
+	 */
+	private JSONObject populateGlobalHarmonyMap(JSONObject global, JSONObject local)
+	{
+	  for(String key : JSONObject.getNames(local))
+    {
+      try
+      {
+        global.putOnce(key, local.get(key));
+      }
+      catch(JSONException e)
+      {
+        String msg = "Key ["+key+"] already exists in global harmony map.";
+        l.warn(msg);
+      }
+    }
+	  return global;
 	}
 	
 	/**
@@ -375,7 +397,6 @@ public class QueryManager
 		{
 			//TODO			int    totalCount = 0;
 			String source     = "";
-			//for (Iterator<String> iterator = this.connectionMap.keySet().iterator(); iterator.hasNext();)
 			for(Iterator<String> iterator = this.requiredCommits.iterator(); iterator.hasNext();)
 			{
 				try
@@ -667,10 +688,10 @@ public class QueryManager
 				}
 				else
 				{
-					boolean    count     = Boolean.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_COUNT)[0]);
-					boolean    countOnly = Boolean.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_COUNTONLY)[0]);
-					int        pageStart = Integer.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_PAGESTART)[0]);
-					int        pageSize  = Integer.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_PAGESIZE)[0]);
+					boolean    count     = Boolean.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_COUNT)[0]).booleanValue();
+					boolean    countOnly = Boolean.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_COUNTONLY)[0]).booleanValue();
+					int        pageStart = Integer.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_PAGESTART)[0]).intValue();
+					int        pageSize  = Integer.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_PAGESIZE)[0]).intValue();
 					if (pageSize == -1)
 						pageSize = YADAUtils.ONE_BILLION;
 					int        firstRow  = 1 + (pageStart * pageSize) - pageSize;

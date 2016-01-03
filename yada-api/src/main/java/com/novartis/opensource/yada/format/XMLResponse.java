@@ -138,7 +138,7 @@ public class XMLResponse extends AbstractResponse {
 			Converter converter = getConverter(this.yqr);
 			if(getHarmonyMap() != null)
 				converter.setHarmonyMap(getHarmonyMap());
-			boolean count = Boolean.valueOf(this.yqr.getYADAQueryParamValue(YADARequest.PS_COUNT));
+			boolean count = Boolean.valueOf(this.yqr.getYADAQueryParamValue(YADARequest.PS_COUNT)).booleanValue();
 			DocumentFragment rows  = (DocumentFragment)	converter.convert(o);
 			Element resultSet = null;
 			if(hasMultipleResults())

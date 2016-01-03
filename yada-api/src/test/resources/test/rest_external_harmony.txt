@@ -1,0 +1,11 @@
+# VSTR = VALIDATION STRING, which is a placeholder to enable validating against query specific results
+# note also that newlines are included in csv VSTRs, incl. at the end of the string.
+
+q=QGO search&p=GO:0005515&h={"termInfo.info.name":"name","termInfo.info.code":"code","prune":true}VSTR{"RESULTSET":{"ROWS":[{"name":"protein binding","code":4303}],"qname":"QGO search","records":1},"version":"6.0.0"}
+q=QGO search&p=GO:0005515&h={"termInfo.info.name":"name","termInfo.info.code":"code","prune":true}&f=csvVSTR"code","name"\n"4303","protein binding"\n
+
+j=[{qname:"QGO search",DATA:[{YADA_1:"GO:0005515"},{YADA_1:"GO:0005516"}]}]&h={"termInfo.info.name":"name","termInfo.info.ontology":"ontology","prune":true}&f=csvVSTR"name","ontology"\n"protein binding","Function"\n"calmodulin binding","Function"\n
+
+j=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"QGO search",DATA:[{YADA_1:"GO:0005515"}],harmonyMap:{"termInfo.info.name":"STRING","termInfo.info.code":"INT","prune":true}}]VSTR{"RESULTSET":{"total":8,"ROWS":[{"FLOAT":"7.5","INT":"10","STRING":"Z"},{"FLOAT":"7.5","INT":"10","STRING":"Z,Z"},{"FLOAT":"7.5","INT":"10","STRING":"ZZ"},{"FLOAT":"7.5","INT":"10","STRING":"A"},{"FLOAT":"8.5","INT":"10","STRING":"Z"},{"FLOAT":"8.5","INT":"10","STRING":"A"},{"FLOAT":"9.5","INT":"10","STRING":"Z"},{"FLOAT":"9.5","INT":"10","STRING":"A"},{"INT":4303,"STRING":"protein binding"}],"qname":"YADA test harmony map 1","page":"1","records":9},"version":"6.0.0"}
+j=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"QGO search",DATA:[{YADA_1:"GO:0005515"}],harmonyMap:{"termInfo.info.name":"STRING","termInfo.info.code":"INT","prune":true}}]&f=csvVSTR"STRING","INT","FLOAT"\n"Z","10","7.5"\n"Z,Z","10","7.5"\n"ZZ","10","7.5"\n"A","10","7.5"\n"Z","10","8.5"\n"A","10","8.5"\n"Z","10","9.5"\n"A","10","9.5"\n"protein binding","4303",\n
+

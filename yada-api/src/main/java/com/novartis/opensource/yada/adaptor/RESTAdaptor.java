@@ -49,8 +49,8 @@ public class RESTAdaptor extends Adaptor {
 	/**
 	 * Constant equal to: {@value}
 	 */
-	protected final static String  PARAM_SYMBOL_RX = "([\\/=:])(\\?[idvn])";
-	//private final static String  PARAM_SYMBOL_RX = "([/=:])(\\?)";
+	protected final static String  PARAM_SYMBOL_RX = "([\\/=:])(\\?[idvnt])";
+	
 	/**
 	 * Constant equal to: {@code ".+"+PARAM_SYMBOL_RX+".*"}
 	 */
@@ -124,7 +124,7 @@ public class RESTAdaptor extends Adaptor {
 				if(this.hasProxy())
 				{
 					String[] proxyStr = this.proxy.split(":");
-					Proxy    proxySvr = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyStr[0], Integer.valueOf(proxyStr[1])));
+					Proxy    proxySvr = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyStr[0], Integer.valueOf(proxyStr[1]).intValue()));
 					conn = url.openConnection(proxySvr);
 				}
 				else

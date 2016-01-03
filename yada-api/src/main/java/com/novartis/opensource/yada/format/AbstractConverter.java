@@ -17,9 +17,11 @@
  */
 package com.novartis.opensource.yada.format;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.novartis.opensource.yada.YADAQueryResult;
+import com.novartis.opensource.yada.YADARequest;
 
 /**
  * Base implemetation of {@link Converter} interface.
@@ -32,14 +34,37 @@ public abstract class AbstractConverter implements Converter {
 	 * Constant equal to: {@value}
 	 */
 	public static final String NULL = "null";
+	
+	/**
+   * Constant equal to: {@value}
+   * Used to call {@code harmonize} javascript function via {@link Harmonizer}
+   * @since 6.1.0
+   */
+  public static final String HARMONIZE = "harmonize";
+  
+  /**
+   * Constant equal to: {@value}
+   * Used to call {@code flatten} javascript function via {@link Harmonizer}
+   * @since 6.1.0
+   */
+  public static final String FLATTEN = "flatten";
+	
 	/**
 	 * Constant equal to: {@value} (empty string)
 	 */
 	public static final String NULL_REPLACEMENT = "";
+	
 	/**
 	 * A json object compliant with the Harmany Map specifcation
 	 */
 	protected Object harmonyMap; 
+	
+	/**
+	 * The result manipulation utility object;
+	 * @since 6.1.0
+	 */
+	protected Harmonizer harmonizer;
+	
 	/**
 	 * The container for result management
 	 */
@@ -48,6 +73,18 @@ public abstract class AbstractConverter implements Converter {
 	 * Base implemetation returns {@code null}.
 	 * @see com.novartis.opensource.yada.format.Converter#convert(java.lang.Object)
 	 */
+	
+	/**
+   * Local handle for column separator, defaults to
+   * {@link YADARequest#DEFAULT_DELIMITER}
+   */
+  protected String colsep;
+  /**
+   * Local handle for record separator, defaults to
+   * {@link YADARequest#DEFAULT_ROW_DELIMITER}
+   */
+  protected String recsep;
+  
 	@Override
 	public Object convert(Object result) throws YADAConverterException {
 		return null;
@@ -78,6 +115,18 @@ public abstract class AbstractConverter implements Converter {
 	  return this.harmonyMap;
 	}
 	
+	@Override
+  public void setHarmonizer(Harmonizer harmonizer)
+  {
+    this.harmonizer = harmonizer;
+  }
+  
+  @Override
+  public Harmonizer getHarmonizer()
+  {
+    return this.harmonizer;
+  }
+	
 
 	@Override
   public void setYADAQueryResult(YADAQueryResult yqr)
@@ -102,4 +151,14 @@ public abstract class AbstractConverter implements Converter {
 			return true;
 		return false;
 	}
+	
+	/**
+   * Adds leading and trailing quotes to {@code value}
+   * @param value the value to enclose in quotes
+   * @return the value surrounded by double quotes
+   * @since 6.1.0
+   */
+  protected String wrap(String value) {
+    return "\"" + value + "\"";
+  }
 }

@@ -166,7 +166,7 @@ public class YADAQueryResult {
 	public void addCountResult(int row, Object countResult) 
 	{ 
 		getCountResults().add(row,countResult);
-		setTotalResultCount((Integer)countResult);
+		setTotalResultCount(((Integer)countResult).intValue());
 	}
 	/**
 	 * Standard accessor for variable
@@ -245,12 +245,14 @@ public class YADAQueryResult {
 	/**
 	 * Convenience method to facilitate result formatting.
 	 * @since 0.4.0.0
-	 * @return true if format is JSON, XML, or HTML; otherwise false
+	 * @return {@code true} if format is JSON, XML; otherwise {@code false}
 	 */
 	public boolean isFormatStructured()
 	{
 		String format = this.getYADAQueryParamValue(YADARequest.PS_FORMAT);
-		if(format.equals(YADARequest.FORMAT_JSON) || format.equals(YADARequest.FORMAT_XML) || format.equals(YADARequest.FORMAT_HTML))
+		// 2015-12-10 removed HTML from "structured" because it actually returns tabular data which must
+		// be processed as delimited.
+		if(format.equals(YADARequest.FORMAT_JSON) || format.equals(YADARequest.FORMAT_XML)) 
 			return true;
 		return false;
 	}

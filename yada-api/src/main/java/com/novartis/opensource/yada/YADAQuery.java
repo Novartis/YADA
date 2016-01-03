@@ -364,9 +364,9 @@ public class YADAQuery {
 	 */
 	public void addParamCount(int row, int paramCountToAdd) { 
 		if(this.paramCount.isEmpty() || row >= this.paramCount.size())
-			this.paramCount.add(row, paramCountToAdd);
+			this.paramCount.add(row, new Integer(paramCountToAdd));
 		else
-			this.paramCount.set(row, paramCountToAdd);
+			this.paramCount.set(row, new Integer(paramCountToAdd));
 	}
 	
 	/**
@@ -963,7 +963,7 @@ public class YADAQuery {
 	 */
 	public int                     getParamCount(int row) 
 	{ 
-		return getParamCount().size() == 0 ? 0 : getParamCount().get(row); 
+		return getParamCount().size() == 0 ? 0 : getParamCount().get(row).intValue(); 
 	}
 	/**
 	 * Standard accessor for variable

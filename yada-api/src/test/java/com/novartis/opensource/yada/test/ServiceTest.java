@@ -51,6 +51,7 @@ import nl.javadude.assumeng.Assumption;
 import nl.javadude.assumeng.AssumptionListener;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -90,7 +91,6 @@ import com.novartis.opensource.yada.util.YADAUtils;
 // TODO tests for multiple plugins
 // TODO tests for e=true (export=true)
 // TODO tests for exportLimit
-// TODO tests for harmonyMap
 // TODO validateIntegerResult method + break out these tests into separate files
 // TODO validateJSONFormatted method + break out these tests into separate files
 
@@ -710,7 +710,7 @@ public class ServiceTest
       connection.setDoOutput(true);
 
       // auth
-      if (Boolean.valueOf(this.auth))
+      if (Boolean.valueOf(this.auth).booleanValue())
       {
         setAuthentication(connection);
       }
@@ -792,7 +792,7 @@ public class ServiceTest
             encQuery += "/";
           encQuery += URLEncoder.encode(params[i], UTF8);
         }
-        if (Boolean.valueOf(this.auth))
+        if (Boolean.valueOf(this.auth).booleanValue())
         {
           target = "http://" + this.host + this.uri.substring(0, this.uri.lastIndexOf('/')) + encQuery;
         }
@@ -823,7 +823,7 @@ public class ServiceTest
       connection.setRequestMethod("GET");
 
       // auth
-      if (Boolean.valueOf(this.auth))
+      if (Boolean.valueOf(this.auth).booleanValue())
       {
         setAuthentication(connection);
       }
@@ -1179,6 +1179,32 @@ public class ServiceTest
     Assert.assertEquals(s,"writingappend","The json result does not contain the expected content.");
   }
   
+  /**
+   * Tests {@code harmonyMap} specs on REST queries using literal results for validation
+   * @param query the parameter string issue by the data provider
+   * @throws YADAQueryConfigurationException when there is a malformed query
+   * @throws YADAResponseException when the test result is invalid 
+   */
+  @Test(enabled = true, dataProvider = "QueryTests", groups = { "options" })
+  @QueryFile(list = {})
+  public void testHarmonyMapWithREST(String query) throws YADAQueryConfigurationException, YADAResponseException
+  {
+    String[] qv = query.split("VSTR");
+    String q = qv[0];
+    // the doubly-escaped backslashes are just wierd
+    // because there's only one in the src string, i.e. \n
+    // I guess the vm is escaping the backlash, rather than
+    // interpreting the newline.
+    String expected = qv[1].replaceAll("\\\\n", "\n");
+    Service svc = prepareTest(q);
+    String actual = svc.execute();
+    if(svc.getYADARequest().getFormat().equals(YADARequest.FORMAT_CSV))
+      logStringResult(actual);
+    else
+      logJSONResult(new JSONObject(actual));
+    Assert.assertEquals(actual, expected);
+  }
+  
   /** 
    * Tests many aspects of {@code harmonyMap} or {@code h} YADA parameter results including
    * for CSV: column counts, header values, row counts, row/column content; and for JSON:
@@ -1202,20 +1228,137 @@ public class ServiceTest
     JSONArray spec     = req.getHarmonyMap();
     String result      = svc.execute();
     
+    int qCount = StringUtils.countMatches(query,"qname") + StringUtils.countMatches(query,"q=");
+    String line = null;
+    int lineCount = 0;
     if (req.getFormat().equals(YADARequest.FORMAT_CSV))
     {
       logStringResult(result); 
-      //TODO count columns
+      Pattern rx = Pattern.compile("^(\"([A-Z,]+)\"),(\"([0-9]+)\")?,(\"([0-9.]+)\")?,?(\"(201[3-5]-0[0-9]-[0-9]{2})\")?,?(\"(201[3-5]-0[0-9]-[0-9]{2} ([0-9]{2}:){2}[0-9]{2})(\\.0)?\")?$");
+      // count columns
+      // check for correct values in mapped columns
+      
+      try(BufferedReader br = new BufferedReader(new StringReader(result)))
+      {
+        while((line = br.readLine()) != null)
+        {
+          if(lineCount > 0)
+          {
+            Matcher m = rx.matcher(line);
+            Assert.assertTrue(m.matches());
+            // first query only returns three columns
+            if(lineCount<9) 
+            {
+              Assert.assertTrue(validateInteger(m.group(4))); // col 2
+              Assert.assertTrue(validateNumber(m.group(6)));  // col 3
+              Assert.assertNull(m.group(8)); // col 4
+              Assert.assertNull(m.group(10)); // col 5
+            }    
+            else if(lineCount > 8 && lineCount < 17)
+            // 2nd query
+            {
+              Assert.assertNull(m.group(4));  // col 2
+              Assert.assertNull(m.group(6));  // col 3
+              Assert.assertTrue(validateDate(m.group(8)));  // col4
+              Assert.assertTrue(validateTime(m.group(10))); // col5
+            }
+            else
+            // 3rd query
+            {
+              Assert.assertNull(m.group(4));  // col 2
+              Assert.assertNull(m.group(6));  // col 3
+              Assert.assertNull(m.group(8));  // col 4
+              Assert.assertTrue(validateTime(m.group(10))); // col5
+            }
+          }
+          lineCount++;
+        }
+      } 
+      catch (IOException e) 
+      {
+        throw new YADAResponseException("Result was unreadable.",e);
+      } 
+      catch (ParseException e) 
+      {
+        throw new YADAResponseException("Result was unparsable.",e);
+      }
+      
       //TODO confirm correct mapped/unmapped column headers
-      //TODO count rows 
+
+      // count rows 
+      Assert.assertEquals(lineCount - 1, qCount*8);
+      
       //TODO check for "empty values" in unmapped columns
-      //TODO check for correct values in mapped columns
+      
+    }
+    else if(req.getFormat().equals(YADARequest.FORMAT_XML))
+    {
+      //TODO harmony map xml validation
+      logMarkupResult(result);
+    }
+    else if(req.getFormat().equals(YADARequest.FORMAT_HTML))
+    {
+      //TODO harmony map html validation
+      logMarkupResult(result);
+      Pattern rx = Pattern.compile("^<tr>(<td>([A-Z,]+)</td>)(<td>([0-9]+)?</td>)(<td>([0-9.]+)?</td>)(<td>(201[3-5]-0[0-9]-[0-9]{2})?</td>)(<td>(201[3-5]-0[0-9]-[0-9]{2} ([0-9]{2}:){2}[0-9]{2})(\\.0)?</td>)</tr>$");
+      try(BufferedReader br = new BufferedReader(new StringReader(result)))
+      {
+        while((line = br.readLine()) != null)
+        {
+          if(lineCount > 0)
+          {
+            Matcher m = rx.matcher(line);
+            Assert.assertTrue(m.matches());
+            // first query only returns three columns
+            if(lineCount<9) 
+            {
+              Assert.assertTrue(validateInteger(m.group(4))); // col 2
+              Assert.assertTrue(validateNumber(m.group(6)));  // col 3
+              Assert.assertNull(m.group(8)); // col 4
+              Assert.assertNull(m.group(10)); // col 5
+            }    
+            else if(lineCount > 8 && lineCount < 17)
+            // 2nd query
+            {
+              Assert.assertNull(m.group(4));  // col 2
+              Assert.assertNull(m.group(6));  // col 3
+              Assert.assertTrue(validateDate(m.group(8)));  // col4
+              Assert.assertTrue(validateTime(m.group(10))); // col5
+            }
+            else
+            // 3rd query
+            {
+              Assert.assertNull(m.group(4));  // col 2
+              Assert.assertNull(m.group(6));  // col 3
+              Assert.assertNull(m.group(8));  // col 4
+              Assert.assertTrue(validateTime(m.group(10))); // col5
+            }
+          }
+          else
+          {
+            //TODO confirm correct mapped/unmapped column headers
+          }
+          lineCount++;
+        }
+      } 
+      catch (IOException e) 
+      {
+        throw new YADAResponseException("Result was unreadable.",e);
+      } 
+      catch (ParseException e) 
+      {
+        throw new YADAResponseException("Result was unparsable.",e);
+      }
+
+      // count rows 
+      Assert.assertEquals(lineCount - 1, qCount*8);
     }
     else // JSON
     {
       JSONParamsEntry q;
       YADAParam p;
-      int qCount = 1, resultCount = 8;
+      qCount = 1;
+      int resultCount = 8;
       if(YADAUtils.useJSONParams(req))
       {
         JSONParams jp = req.getJsonParams(); 
@@ -1250,7 +1393,7 @@ public class ServiceTest
       // NOTE: This does not test for presence of unmapped keys, but does test all values
       for(int i=0;i<rows.length()/8;i++)          // 1-3 sets of 8
       {
-        JSONObject currentSpec = null;                   // the hmap spec
+        JSONObject currentSpec = new JSONObject();  // the hmap spec
         if(spec.length()==1)
           currentSpec = spec.getJSONObject(0);    // it's a global request param
         else
@@ -1279,7 +1422,6 @@ public class ServiceTest
         // check results
         for(j=0;j<resultCount;j++)            // for each set of results
         {
-          //int resultIndex = i*resultCount+j;      // get the index of the result
           JSONObject row = rows.getJSONObject(j); // the "row"
           String[] rowKeys = JSONObject.getNames(row);
           for(String key : rowKeys)               // iterate over the row keys 
@@ -1438,13 +1580,13 @@ public class ServiceTest
     }
     catch (ParseException e)
     {
-      long millis = Long.valueOf(result)*1000;
+      long millis = Long.valueOf(result).longValue()*1000;
       d = new java.util.Date(millis);
       df.format(d);
     }
     // Use `date -jf %Y%m%d%H%M%S YYYYmmdd000000 +%s` in shell to find seconds,
     // then convert to milliseconds for below values, e.g.: date -jf %Y%m%d%H%M%S 20130304000000 +%s
-    return d.getTime() == 1362373200000L || d.getTime() == 1365912000000L;
+    return d.getTime() == 1362373200000L || d.getTime() == 1365912000000L || d.getTime() == 1396584000000L;
   }
 
   /**
@@ -1478,7 +1620,7 @@ public class ServiceTest
       }
       catch(ParseException e1)
       {
-        long millis = Long.valueOf(result);
+        long millis = Long.valueOf(result).longValue();
         d = new java.util.Date(millis);
         df.format(d);
       }

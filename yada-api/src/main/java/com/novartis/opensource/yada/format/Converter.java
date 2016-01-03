@@ -35,6 +35,12 @@ public interface Converter {
 	Object harmonyMap = null;
 	
 	/**
+	 * A utility class enabling remapping of result content
+	 * @sirce 6.1.0
+	 */
+	Harmonizer harmonizer = null;
+	
+	/**
 	 * The container for results.  This is useful in particular when harmonizing results, to store pre-processed headers separately 
 	 * and stitch results together in a subsequent step.
 	 * @since 6.1.0 
@@ -62,25 +68,39 @@ public interface Converter {
 	public Object convert(Object result, String colsep, String recsep) throws YADAConverterException;
 	
 	/**
-	 * Standard mutator for variable
-	 * @param harmonyMap json object describing column header translation
-	 */
-	public void setHarmonyMap(Object harmonyMap);
-	
-	/**
-	 * Standard accessor for variable
-	 * @return the harmony map object, by default a {@link JSONObject}
-	 * @since 6.1.0
-	 */
-	public Object getHarmonyMap();
-	
-	/**
-	 * Standard mutator for variable
-	 * @param yqr The {@link YADAQueryResult} object to pass to the converter from the response
-	 * @since 6.1.0
-	 */
-	public void setYADAQueryResult(YADAQueryResult yqr);
-	
+   * Standard mutator for variable
+   * @param harmonyMap json object describing column header translation
+   */
+  public void setHarmonyMap(Object harmonyMap);
+  
+  /**
+   * Standard accessor for variable
+   * @return the harmony map object, by default a {@link JSONObject}
+   * @since 6.1.0
+   */
+  public Object getHarmonyMap();
+  
+  /**
+   * Standard mutator for variable
+   * @param harmonizer result manipulation utility
+   * @since 6.1.0
+   */
+  public void setHarmonizer(Harmonizer harmonizer);
+  
+  /**
+   * Standard accessor for variable
+   * @return the {@link Harmonizer} utility object
+   * @since 6.1.0
+   */
+  public Harmonizer getHarmonizer();
+  
+  /**
+   * Standard mutator for variable
+   * @param yqr The {@link YADAQueryResult} object to pass to the converter from the response
+   * @since 6.1.0
+   */
+  public void setYADAQueryResult(YADAQueryResult yqr);
+  
 	/**
 	 * Standard accessor for variable
 	 * @return the {@link YADAQueryResult}  passed from the {@link Response}

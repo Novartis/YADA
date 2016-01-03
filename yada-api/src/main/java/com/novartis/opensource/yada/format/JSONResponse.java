@@ -217,7 +217,7 @@ public class JSONResponse extends AbstractResponse {
 			Converter converter = getConverter(this.yqr);
 			if(getHarmonyMap() != null)
 				converter.setHarmonyMap(getHarmonyMap());
-			boolean   count = Boolean.valueOf(this.yqr.getYADAQueryParamValue(YADARequest.PS_COUNT));
+			boolean   count = Boolean.valueOf(this.yqr.getYADAQueryParamValue(YADARequest.PS_COUNT)).booleanValue();
 			JSONArray rows = (JSONArray)converter.convert(o);
 			JSONObject resultSet = null;
 			
@@ -266,7 +266,7 @@ public class JSONResponse extends AbstractResponse {
 				 * All these scenarios get wierder when page > 1 is involved, and sorting, filtering, etc.
 				 * Some default behavior must be identified and implemented, then options can be whatever.
 				 */
-				int pagesize = Integer.valueOf(this.yqr.getYADAQueryParamValue(YADARequest.PS_PAGESIZE));
+				int pagesize = Integer.valueOf(this.yqr.getYADAQueryParamValue(YADARequest.PS_PAGESIZE)).intValue();
 				if(pagesize < existing.length())
 				{
 					rows = new JSONArray();
@@ -280,7 +280,7 @@ public class JSONResponse extends AbstractResponse {
 				resultSet.put(RECORDS, existing.length());
 				if(count)
 				{
-					resultSet.put(TOTAL, resultSet.getInt(TOTAL) + (Integer)this.yqr.getCountResult(0));
+					resultSet.put(TOTAL, resultSet.getInt(TOTAL) + ((Integer)this.yqr.getCountResult(0)).intValue());
 					resultSet.put(PAGE,this.yqr.getYADAQueryParamValue(YADARequest.PS_PAGESTART));
 				}
 			}
@@ -295,8 +295,6 @@ public class JSONResponse extends AbstractResponse {
 					resultSet.put(PAGE,this.yqr.getYADAQueryParamValue(YADARequest.PS_PAGESTART));
 				}
 			}
-			
-			
 		} 
 		catch (JSONException e) 
 		{

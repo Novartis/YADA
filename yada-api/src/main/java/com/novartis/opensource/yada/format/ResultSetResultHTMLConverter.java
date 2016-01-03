@@ -12,9 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
 package com.novartis.opensource.yada.format;
 
 import com.novartis.opensource.yada.YADAQueryResult;
@@ -25,7 +22,7 @@ import com.novartis.opensource.yada.YADAQueryResult;
  * @author David Varon
  *
  */
-public class ResultSetResultHTMLConverter extends ResultSetResultXMLConverter {
+public class ResultSetResultHTMLConverter extends ResultSetResultDelimitedConverter {
 
 	/**
 	 * Default constructor
@@ -39,8 +36,9 @@ public class ResultSetResultHTMLConverter extends ResultSetResultXMLConverter {
   /**
    * Constructor with {@link YADAQueryResult}
    * @param yqr the container for result processing artifacts
+   * @throws YADAConverterException 
    */
-  public ResultSetResultHTMLConverter(YADAQueryResult yqr) {
+  public ResultSetResultHTMLConverter(YADAQueryResult yqr) throws YADAConverterException {
     super(yqr);
   }
 }

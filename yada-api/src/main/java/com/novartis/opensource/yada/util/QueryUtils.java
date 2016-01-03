@@ -766,7 +766,7 @@ public class QueryUtils
 	{
 		return yq.getYADAQueryParamValue(YADARequest.PS_COMMITQUERY) != null 
 				&& yq.getYADAQueryParamValue(YADARequest.PS_COMMITQUERY).length > 0 
-				&& Boolean.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_COMMITQUERY)[0]) 
+				&& Boolean.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_COMMITQUERY)[0]).booleanValue() 
 				&& (this.isInsert(yq) || this.isUpdate(yq) || this.isDelete(yq));
 	}
 

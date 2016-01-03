@@ -32,6 +32,7 @@ import com.novartis.opensource.yada.YADAQueryResult;
  */
 public class RESTResultJSONConverter extends AbstractConverter
 {
+  
 	/**
 	 * Local logger handle
 	 */
@@ -43,6 +44,7 @@ public class RESTResultJSONConverter extends AbstractConverter
 	 */
 	public RESTResultJSONConverter() {
 	  // default constructor
+	  setHarmonizer(new Harmonizer());
 	}
 	
 	/**
@@ -51,28 +53,38 @@ public class RESTResultJSONConverter extends AbstractConverter
 	 */
 	public RESTResultJSONConverter(YADAQueryResult yqr) {
 	  this.setYADAQueryResult(yqr);
+	  setHarmonizer(new Harmonizer());
 	}
 	
 	/**
 	 * Wraps the result of the REST request in a json object
+	 * @throws YADAConverterException 
 	 * @see com.novartis.opensource.yada.format.AbstractConverter#convert(java.lang.Object)
 	 */
 	@Override
-	public Object convert(Object result) 
+	public Object convert(Object result) throws YADAConverterException 
 	{
-		//TODO implement harmony map solution for this
 		JSONArray arrayResult = new JSONArray();
+		String    harm        = "";
+		Object[]  o           = new Object[2];
+		o[0] = result;
 		
+		if(getHarmonyMap() != null)
+		{
+		  o[1] = getHarmonyMap().toString();
+		  harm = getHarmonizer().call(HARMONIZE, o);
+		}
 		try
 		{
-			arrayResult = new JSONArray((String)result);
+		  
+			arrayResult = new JSONArray(harm);
 		} 
 		catch (JSONException e)
 		{
 			try
 			{
 				arrayResult = new JSONArray();
-				arrayResult.put(new JSONObject((String)result));
+				arrayResult.put(new JSONObject(harm));
 			}
 			catch(JSONException e1)
 			{
@@ -81,32 +93,4 @@ public class RESTResultJSONConverter extends AbstractConverter
 		}
 		return arrayResult;
 	}
-	
-//	private Object harmonize(Object o) {
-//	  JSONObject hm = (JSONObject)this.harmonyMap;
-//	  for(String key : JSONObject.getNames(hm))
-//    {
-//      if(hasKey(hm,key))
-//      {
-//        
-//      }
-//    }
-//	}
-	
-//	private boolean hasKey(JSONObject j, String key) {
-//	  boolean hasKey = false;
-//	  if(key.indexOf('.') > -1) 
-//	  {
-//	    String[] keys = key.split(".");
-//	    Object j1 = j.optJSONObject(keys[0]);
-//	    if(null == j1)
-//	      j1 = j.optJSONArray(keys[0]);
-//	    hasKey = hasKey(, keys[1] );
-//	  }
-//	  else
-//	  {
-//	    hasKey = j.has(key);
-//	  }
-//	  return hasKey;
-//	}
 }

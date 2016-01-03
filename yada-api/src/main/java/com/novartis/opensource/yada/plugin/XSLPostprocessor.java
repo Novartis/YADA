@@ -52,7 +52,6 @@ public class XSLPostprocessor extends AbstractPostprocessor {
 	 * passed in the request's {@link YADARequest#postArgs}, transforms {@code result} and returns the output.
 	 * @see com.novartis.opensource.yada.plugin.Postprocess#engage(com.novartis.opensource.yada.YADARequest, java.lang.String)
 	 */
-	@SuppressWarnings("javadoc")
   @Override
 	public String engage(YADARequest yadaReq, String result) throws YADAPluginException {
 		String xmlInput  = result;

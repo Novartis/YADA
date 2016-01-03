@@ -14,7 +14,6 @@
  */
 package com.novartis.opensource.yada.format;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,10 +39,17 @@ public class DelimitedResponse extends AbstractResponse {
 	@SuppressWarnings("unused")
 	private static Logger l = Logger.getLogger(DelimitedResponse.class);
 	/**
-	 * Ivar containing the result to be returned by this class's {@link #toString()} method
+	 * Instance variable containing the result to be returned by this class's {@link #toString()} method
 	 */
 	private StringBuffer buffer = new StringBuffer();
 	
+	/**
+	 * Delimited results always require the global harmony map 
+	 * because columns must be aligned.  If no harmony maps
+	 * exist in the request, then results won't be merged anyway.
+	 * If even one harmony map is included, results have to be
+	 * merged and aligned.
+	 */
 	@Override
 	protected JSONObject getHarmonyMap() 
 	{
@@ -72,7 +78,8 @@ public class DelimitedResponse extends AbstractResponse {
 				this.append(result); 
 			}
 		}
-		// process coverted headers into unique ordered Set
+		
+		// process converted headers into unique ordered Set
     Set<String> globalHeader = new LinkedHashSet<>(); 
     for(YADAQueryResult yqr : getYadaQueryResults())
     {
@@ -82,6 +89,8 @@ public class DelimitedResponse extends AbstractResponse {
         globalHeader.add(hdr);
       }
     }
+    
+    // put header line into buffer
     int colCount = globalHeader.size(), i=0;
     for(String hdr : globalHeader)
     {
@@ -91,10 +100,10 @@ public class DelimitedResponse extends AbstractResponse {
     }
     this.buffer.append(recsep);
     
-    // process converted data
+    // process converted data and add to buffer
     for(YADAQueryResult yqr : getYadaQueryResults())
     {
-      List<String> localHeader = yqr.getConvertedHeader();
+      List<String> localHeader      = yqr.getConvertedHeader();
       List<Object> convertedResults = yqr.getConvertedResults();
       for(i=0;i<convertedResults.size();i++)
       {
@@ -107,10 +116,14 @@ public class DelimitedResponse extends AbstractResponse {
             String val = "";
             int localHdrIdx = localHeader.indexOf(globalHdr);
             if(localHdrIdx > -1)
+            {
               val = row.get(localHdrIdx);
+            }
             this.buffer.append(val);
             if(++j<colCount)
+            {
               this.buffer.append(colsep);
+            }
           }
           this.buffer.append(recsep);
         }
@@ -144,10 +157,6 @@ public class DelimitedResponse extends AbstractResponse {
 			if(getHarmonyMap() != null)
 				converter.setHarmonyMap(getHarmonyMap());
 			converter.convert(o,colsep,recsep);
-			
-			
-//			StringBuffer rows = (StringBuffer)converter.convert(o,colsep,recsep);
-			//this.buffer.append(rows);
 		} 
 		catch (YADARequestException e)
 		{

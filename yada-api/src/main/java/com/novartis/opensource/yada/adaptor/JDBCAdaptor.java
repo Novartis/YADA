@@ -369,8 +369,8 @@ public abstract class JDBCAdaptor extends Adaptor{
 	public void execute(YADAQuery yq) throws YADAAdaptorExecutionException
 	{	
 		l.debug("Executing query ["+yq.getQname()+"]");
-		boolean     count       = Boolean.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_COUNT)[0]);
-		boolean     countOnly   = Boolean.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_COUNTONLY)[0]);
+		boolean     count       = Boolean.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_COUNT)[0]).booleanValue();
+		boolean     countOnly   = Boolean.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_COUNTONLY)[0]).booleanValue();
 		int         countResult = -1;
 		int         dataSize    = yq.getData().size() > 0 ? yq.getData().size() : 1; 
 		for(int row=0;row<dataSize;row++)
@@ -439,7 +439,7 @@ public abstract class JDBCAdaptor extends Adaptor{
 						String msg = "There was a problem iterating through the CallableStatement's ResultSet for row count.";
 						throw new YADAAdaptorExecutionException(msg,e);
 					}
-					yqr.addCountResult(row, countResult);
+					yqr.addCountResult(row, new Integer(countResult));
 				}
 			}
 			else // SELECT, UPDATE, INSERT, DELETE
@@ -516,7 +516,7 @@ public abstract class JDBCAdaptor extends Adaptor{
 							String msg = "There was a problem iterating over ResultSet for row count.";
 							throw new YADAAdaptorExecutionException(msg,e);
 						}
-						yqr.addCountResult(row, countResult);
+						yqr.addCountResult(row, new Integer(countResult));
 					}
 				}
 				else // UPDATE, INSERT, DELETE
@@ -530,7 +530,7 @@ public abstract class JDBCAdaptor extends Adaptor{
 						String msg = "Prepared statement for update failed to execute";
 						throw new YADAAdaptorExecutionException(msg,e);
 					}
-					yqr.addCountResult(row, countResult);
+					yqr.addCountResult(row, new Integer(countResult));
 				}
 			}
 		}

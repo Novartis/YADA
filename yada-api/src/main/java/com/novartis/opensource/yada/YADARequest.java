@@ -1499,7 +1499,7 @@ public class YADARequest {
 	 */
 	@Deprecated
 	public void setColhead(Boolean colhead) {
-		this.colhead = colhead;
+		this.colhead = colhead.booleanValue();
 	}
 	
 	/**
@@ -1676,7 +1676,7 @@ public class YADARequest {
 	 * @param exportLimit maximim number of results to export
 	 */
 	public void setExportLimit(String[] exportLimit) {
-		Integer i = new Integer(exportLimit[0]).intValue();
+		int i = new Integer(exportLimit[0]).intValue();
 		if (i > -1)
 		{
 			this.exportLimit = i;
@@ -2092,7 +2092,7 @@ public class YADARequest {
 	 * @param pageSize the number of result "rows" to return
 	 */
 	public void setPageSize(String[] pageSize) {
-		Integer i = new Integer(pageSize[0]).intValue();
+		int i = new Integer(pageSize[0]).intValue();
 		if (i != YADARequest.DEFAULT_PAGE_SIZE)
 		{
 			if(i == -1)
@@ -2122,7 +2122,7 @@ public class YADARequest {
 	 * @param pageStart the subset of results
 	 */
 	public void setPageStart(String[] pageStart) {
-		Integer i = new Integer(pageStart[0]).intValue();
+		int i = new Integer(pageStart[0]).intValue();
 		if (i != YADARequest.DEFAULT_START_PAGE)
 		{
 			this.pageStart = i;
@@ -2210,7 +2210,7 @@ public class YADARequest {
 				}
 			}
 		}
-		this.params = new String[paramList.size()][];//paramList.toArray(new String[paramList.size()][]);
+		this.params = new String[paramList.size()][];
 		for (int j = 0; j < paramList.size(); j++)
 		{
 			this.params[j] = paramList.get(j);
@@ -2511,7 +2511,7 @@ public class YADARequest {
 	 * @param viewLimit the maximum number of rows to retrieve, independent of {@code pageSize}
 	 */
 	public void setViewLimit(String[] viewLimit) {
-		Integer i = new Integer(viewLimit[0]).intValue();
+		int i = new Integer(viewLimit[0]).intValue();
 		if (i > -1)
 		{
 			this.viewLimit = i;
