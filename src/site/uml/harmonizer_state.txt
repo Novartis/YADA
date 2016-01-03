@@ -1,0 +1,60 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam activity {
+  StartColor #634929
+  EndColor #634929
+  BackgroundColor #FED300
+  BorderColor #923222
+  ArrowColor #923222
+}
+[*]-->h1 : call harmonize()
+h1 : harmonyMap is String
+h1 : src is empty
+h1 : tgt is empty
+h1 : isArrayResult is false
+
+h1-->h2 : iterate over hm keys
+h2 : hm is JSONObject
+h2 : src is list of String[] arrays (of hm object compound keys)
+h2 : tgt is list of String[] arrays (of hm object compound values)
+h2-->h3
+state h3 { 
+  state "a is JSONArray" as a1
+  a1 : multiple objects from o 
+  ||
+  state "a is JSONArray" as a2
+  a2 : single object from o 
+}
+h3-->h4 : iterate over JSONObjects in a
+h4 : old is JSONObject(i)
+
+  state "prune false" as prune2
+  prune2 : neo is original
+  h4 --> prune2 : getNeo 
+
+  state "prune true" as prune1
+  prune1 : neo is new JSONObject
+  h4 --> prune1 : getNeo 
+  
+prune2-->_ha1 : call _harmonize
+  _ha1 : lv is JSONArray
+_ha1-right->_ha2
+  _ha2 : ???
+
+prune2-->_hb1 : call _harmonize
+  _hb1 : lv is JSONOBject
+_hb1-->_hb2
+_hb2 : oldKey = cmpOldKeys[ki]
+
+prune2-->_hc1 : call _harmonize
+  _hc1 : lv is String
+  
+prune1-->_hd1 : call _harmonize
+  _hd1 : lv is JSONArray
+prune1-->_he1 : call _harmonize
+  _he1 : lv is JSONOBject
+prune1-->_hf1 : call _harmonize
+  _hf1 : lv is String
+
+
+@enduml

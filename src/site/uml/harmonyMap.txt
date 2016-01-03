@@ -1,0 +1,49 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam activity {
+  StartColor #634929
+  EndColor #634929
+  BackgroundColor #FED300
+  BorderColor #923222
+  ArrowColor #923222
+}
+start
+if(old object is String) then (yes)
+ :new JSONObject((String)o);
+else(no)
+ :new JSONObject(o);
+endif
+if(prune) then (yes)
+ :neoObj;
+else(no)
+ :neoObj = oldObj;
+endif
+:iterate over keys;
+repeat
+  repeat
+    :interimValue = (JSONObject) oldKey value;
+    note left
+      when complete, interim value
+      will equal the lowest level 
+      in the map
+    end note
+  repeat while(old key fragments) is (yes) not (no)
+  if(New key is Compound key?) then (yes)
+    repeat
+      :value.put(new key, interimValue);
+      :reset interim value to current "value";
+      :reset value to new JSONObject;
+    repeat while(new key fragments) is (yes) not (no)
+    :neoObj.put(key[0], value);
+    if(!prune) then (yes)
+      :remove old key;
+      note left
+        when prune = true,
+        old key is not in new
+        object
+      end note
+    endif
+  endif
+repeat while(map.iterator.hasNext) is (yes) not (no)
+end
+@enduml
