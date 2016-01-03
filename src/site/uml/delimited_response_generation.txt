@@ -12,7 +12,12 @@ skinparam activity {
 start
 :composeResponse;
 :getDefaultResponse;
+|AbstractConverter|
+|ResultSetResultDelimitedConverter|
+|AbstractResponse|
+|DelimitedResponse|
 :response.compose;
+
 |AbstractResponse|
 :setYADAQueryResults;
 |ResultSetResultDelimitedConverter|
@@ -25,22 +30,31 @@ repeat
   :set local recsep;
   repeat
     :append(result);
+    |AbstractResponse|
     :getConverter;
     if(harmonyMap is not null) then (yes)
-      :converter\n.setHarmonyMap;
+    |AbstractConverter|
+      :setHarmonyMap;
       note right
         Global HarmonyMap passed
         from YADAQueryResult
+        
+        Any delimited response requires
+        the Global HarmonyMap because
+        columns must be aligned
       end note
+    |AbstractResponse|
     endif
-    :converter\n.convert;
     |ResultSetResultDelimitedConverter|
+    :converter\n.convert;
     :getDelimitedRows;
+    |AbstractConverter|
     :get harmonyMap;
-    note right
-      Global HarmonyMap passed
-      from Response
-    end note
+      note right
+        Global HarmonyMap passed
+        from Response
+      end note
+    |ResultSetResultDelimitedConverter|
     :get resultsetmetadata;
     :get column count;
     :construct header;
@@ -53,11 +67,13 @@ repeat
     end note
     repeat
       :get column name\nfrom rsmd;
+      |AbstractConverter|
       if(isHarmonized) then (yes)
         if(harmonyMap has col) then (yes)
           :get mapped colname;
         endif
       endif
+      |ResultSetResultDelimitedConverter|
       :addConvertedHeader to yqr;
     repeat while(more columns) is (yes) not (no)
     repeat
@@ -73,6 +89,37 @@ repeat
     repeat while(more rows in rs) is (yes) not (no)
     :add list of convertedResult lists\nto yqr.convertedResults List;
     |DelimitedResponse|
+  repeat while(more results) is (yes) not (no)
+repeat while(more yqrs) is (yes) not (no)
+repeat
+  :build global header;
+  note right
+    global header is Set of
+    unique column names
+  end note
+repeat while(more headers) is (yes) not (no)
+repeat
+  :build header;
+  note right
+    convert header to 
+    "coslep"-delimited string
+  end note
+repeat while(more headers) is (yes) not (no)
+repeat
+  :get converted header from current yqr;
+  repeat
+    :get converted results;
+    repeat
+      :set increment;
+      repeat
+'        if(current global header is in local header) then (yes)
+          :get value at index from row;
+          :add value to buffer;
+          :add colsep to buffer;
+'        end if 
+      repeat while(more global headers) is (yes) not (no)
+      :add recsep to buffer;
+    repeat while(more rows) is (yes) not (no)
   repeat while(more results) is (yes) not (no)
 repeat while(more yqrs) is (yes) not (no)
 :return DelimitedResponse;
