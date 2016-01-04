@@ -277,8 +277,8 @@ Custom delimiters are now supported, which automatically set the format to `deli
 **Alias**: `h`  
 **Required**: No  
 **Default**: null  
-**Accepted Values**: JSON string conforming to [HarmonyMap Specification]  
-**Description**: **_PROVISIONAL_** See [HarmonyMap Specification]  
+**Accepted Values**: JSON string conforming to [Harmonizer Specification]  
+**Description**: A JSON string pairing source-result field names or paths to response field names or paths. See [Harmonizer Specification]  
 
 <a name="JSONParams"></a>  
 
@@ -578,7 +578,7 @@ Custom delimiters are now supported, which automatically set the format to `deli
 **Description**: For use in user interfaces when a "View All" selection (vs paginated) would still return too many rows.
 
 [JSONParams Specification]: jsonparams.md
-[HarmonyMap Specification]: harmony.md
+[Harmonizer Specification]: harmony.md
 [Plugin Guide]: pluginguide.md
 [Filter Specification]: filters.md
 [Mail Specification]: mail.md

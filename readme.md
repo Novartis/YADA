@@ -6,7 +6,9 @@ Skip to the [Quickstart/Deployment Guide]
     <img src="src/site/resources/images/blox250.png"/>
 </div>  
 
-What if you could access 
+**YADA** is like a [_Universal Remote Control_](https://en.wikipedia.org/wiki/Universal_remote) for data.
+
+For example, what if you could access 
 
 * *any* data set
 * at *any* data source
@@ -15,7 +17,18 @@ What if you could access
 * using *just* a URL
 * with just *one-time* configuration?
 
-That'd be pretty cool.
+You can with **YADA**.
+
+Or, what if you could access
+
+* *two* data sources
+* returning *different* formats,
+* then *merge* the results
+* into a *single* set
+* with *uniform* column names
+* using *just one* URL?
+
+You can with **YADA**.
 
 # What is YADA?
 
@@ -70,6 +83,7 @@ This document contains an overview of the framework and features. Check out the 
 * [Javadoc]
 * [YADA Parameter Specification]
 * [JSONParams Specification]
+* [Harmonizer Guide and Specification]
 * [Java® Visual Reference]
 * [Filters Specification]
 * [Mail Specification]
@@ -114,19 +128,19 @@ Maybe you have to provide a RESTful interface to an existing application, and ne
 * Accesses any JDBC, SOAP, or REST, and some Filesystem datasources 
 * Delivers data as JSON (default), XML, or CSV, TSV, Pipe, or custom-delimited, natively, and in any other format via custom Response and Converter classes, or Plugins
 * Executes multiple queries in a single HTTP request
+* Ad hoc Harmonization (i.e., single http request to multiple data sources with harmonized results)
 * Utilizes JDBC transactions (e.g., multiple inserts in a single HTTP request, with a single commit/rollback)
 * Commits a single query or an entire request
 * Processes file uploads
 * Compatible with any client that speaks HTTP (e.g., web browser, python, curl, javascript, spotfire, curl, web service, mobile app, etc)
 * Flexible Java® and Script plugin API to preprocess request parameters, post-process results, or override normal processing altogether
 * EhCache query-index caching
-* Security (via Default Plugins)
+* Security (via Cookie forwarding and/or Default Plugins)
 * Support for Oracle®, MySQL®, Vertica®, PostgreSQL®, SQLite®
 * Tomcat 7 and JDK 1.7-compatible (YADA 6)
-* _Currently in 6.1 beta_: Ad hoc Harmonization (i.e., single http request to multiple data sources with harmonized results)
 * _Coming Soon_: ElasticSearch® support
 * _Coming Soon_: ElasticSearch®-based result and aggregate-result caching
-* _Coming Soon_: In-memory joins across query results (Ad hoc harmonization)
+* _Coming Soon_: In-memory joins between query results 
 * _Coming Soon_: Spark-based result post-processor
 * _Coming Later_: SQL DDL
 * _Coming Later_: Dynamic datasource configuration
@@ -238,7 +252,7 @@ These circumvent conventional YADA query processing.  Effectively, anything is p
 [YADA Parameter Specification]: src/site/markdown/params.md
 [JSONParams Specification]: src/site/markdown/jsonparams.md
 [Java® Visual Reference]: src/site/markdown/uml.md
-[Harmony Map Specification]: src/site/markdown/harmony.md
+[Harmonizer Guide and Specification]: src/site/markdown/harmony.md
 [Filters Specification]: src/site/markdown/filters.md
 [Mail Specification]: src/site/markdown/mail.md
 [Plugin Use and Development Guide]: src/site/markdown/pluginguide.md

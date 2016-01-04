@@ -1187,7 +1187,7 @@ public class ServiceTest
    */
   @Test(enabled = true, dataProvider = "QueryTests", groups = { "options" })
   @QueryFile(list = {})
-  public void testHarmonyMapWithREST(String query) throws YADAQueryConfigurationException, YADAResponseException
+  public void testHarmonizerWithREST(String query) throws YADAQueryConfigurationException, YADAResponseException
   {
     String[] qv = query.split("VSTR");
     String q = qv[0];
@@ -1215,7 +1215,7 @@ public class ServiceTest
    */
   @Test(enabled = true, dataProvider = "QueryTests", groups = { "options" })
   @QueryFile(list = {})
-  public void testHarmonyMap(String query) throws YADAQueryConfigurationException, YADAResponseException
+  public void testHarmonizer(String query) throws YADAQueryConfigurationException, YADAResponseException
   {
     String[] allKeys   = {COL_INTEGER, COL_INTEGER_LC, COL_HM_INT, COL_NUMBER, COL_NUMBER_LC, COL_HM_FLOAT, COL_DATE, COL_DATE_LC, COL_HM_DATE, COL_TIME, COL_TIME_LC, COL_HM_TIME};
     String[] intKeys   = {COL_INTEGER, COL_INTEGER_LC, COL_HM_INT};
@@ -1234,7 +1234,7 @@ public class ServiceTest
     if (req.getFormat().equals(YADARequest.FORMAT_CSV))
     {
       logStringResult(result); 
-      Pattern rx = Pattern.compile("^(\"([A-Z,]+)\"),(\"([0-9]+)\")?,(\"([0-9.]+)\")?,?(\"(201[3-5]-0[0-9]-[0-9]{2})\")?,?(\"(201[3-5]-0[0-9]-[0-9]{2} ([0-9]{2}:){2}[0-9]{2})(\\.0)?\")?$");
+      Pattern rx = Pattern.compile("^(\"([A-Z,]+)\"),(\"([0-9]+)\")?,(\"([0-9.]+)\")?,?(\"(201[3-5]-0[0-9]-[0-9]{2}|1362373200|1396584000)\")?,?(\"(201[3-5]-0[0-9]-[0-9]{2} ([0-9]{2}:){2}[0-9]{2}|1441500273000)(\\.0)?\")?$");
       // count columns
       // check for correct values in mapped columns
       
@@ -1300,30 +1300,32 @@ public class ServiceTest
     {
       //TODO harmony map html validation
       logMarkupResult(result);
-      Pattern rx = Pattern.compile("^<tr>(<td>([A-Z,]+)</td>)(<td>([0-9]+)?</td>)(<td>([0-9.]+)?</td>)(<td>(201[3-5]-0[0-9]-[0-9]{2})?</td>)(<td>(201[3-5]-0[0-9]-[0-9]{2} ([0-9]{2}:){2}[0-9]{2})(\\.0)?</td>)</tr>$");
+      Pattern rx = Pattern.compile("^<tr>(<td>([A-Z,]+)</td>)(<td>([0-9]+)?</td>)(<td>([0-9.]+)?</td>)(<td>(201[3-5]-0[0-9]-[0-9]{2}|1362373200|1396584000)?</td>)?(<td>((201[3-5]-0[0-9]-[0-9]{2} ([0-9]{2}:){2}[0-9]{2}|1441500273000)(\\.0)?)?</td>)?</tr>$");
+      Pattern end = Pattern.compile("^</tbody>|</table>|</body>|</html>$");
       try(BufferedReader br = new BufferedReader(new StringReader(result)))
       {
         while((line = br.readLine()) != null)
         {
-          if(lineCount > 0)
+          Matcher mEnd = end.matcher(line);
+          if(lineCount > 9 && !mEnd.matches())
           {
             Matcher m = rx.matcher(line);
             Assert.assertTrue(m.matches());
             // first query only returns three columns
-            if(lineCount<9) 
+            if(lineCount < 18) 
             {
               Assert.assertTrue(validateInteger(m.group(4))); // col 2
               Assert.assertTrue(validateNumber(m.group(6)));  // col 3
               Assert.assertNull(m.group(8)); // col 4
-              Assert.assertNull(m.group(10)); // col 5
+              Assert.assertNull(m.group(11)); // col 5
             }    
-            else if(lineCount > 8 && lineCount < 17)
+            else if(lineCount > 17 && lineCount < 26)
             // 2nd query
             {
               Assert.assertNull(m.group(4));  // col 2
               Assert.assertNull(m.group(6));  // col 3
               Assert.assertTrue(validateDate(m.group(8)));  // col4
-              Assert.assertTrue(validateTime(m.group(10))); // col5
+              Assert.assertTrue(validateTime(m.group(11))); // col5
             }
             else
             // 3rd query
@@ -1331,7 +1333,7 @@ public class ServiceTest
               Assert.assertNull(m.group(4));  // col 2
               Assert.assertNull(m.group(6));  // col 3
               Assert.assertNull(m.group(8));  // col 4
-              Assert.assertTrue(validateTime(m.group(10))); // col5
+              Assert.assertTrue(validateTime(m.group(11))); // col5
             }
           }
           else
@@ -1351,7 +1353,7 @@ public class ServiceTest
       }
 
       // count rows 
-      Assert.assertEquals(lineCount - 1, qCount*8);
+      Assert.assertEquals(lineCount - 1, (qCount*8)+13); // adding 13 for non-data row html tags
     }
     else // JSON
     {

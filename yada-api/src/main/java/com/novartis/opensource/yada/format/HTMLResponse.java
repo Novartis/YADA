@@ -55,14 +55,14 @@ public class HTMLResponse extends AbstractResponse {
 	    String cTag = "</th>";
 	    String oRow = "<tr>";
 	    String cRow = "</tr>\n";
-	    this.buffer.append("<html><head></head><body>");
+	    this.buffer.append("<html>\n<head>\n\n</head>\n<body>\n");
 	    this.buffer.append("<table border=\"1\" style=\"border-collapse:collapse;\">\n");
 	    while((line = br.readLine()) != null)
 	    {
 	      fields = 0;
 	      if(lineNum == 0)
 	      {
-	        this.buffer.append("<thead>");
+	        this.buffer.append("<thead>\n");
 	      }
 	      else
 	      {
@@ -141,14 +141,14 @@ public class HTMLResponse extends AbstractResponse {
 	      this.buffer.append(cRow);
         if(lineNum == 0)
         {
-          this.buffer.append("</thead>\n<tbody>");
+          this.buffer.append("</thead>\n<tbody>\n");
           hdrFields = fields;
           oTag = "<td>"; 
           cTag = "</td>";
         }
         lineNum++;
 	    }
-	    this.buffer.append("</tbody></table></body></html>");
+	    this.buffer.append("</tbody>\n</table>\n</body>\n</html>");
 	  }
 	  catch(IOException e)
 	  {

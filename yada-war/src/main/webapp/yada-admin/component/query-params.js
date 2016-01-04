@@ -49,7 +49,7 @@ define(
 		  	//{value:'j',data:{longname:"j (JSONParams)",tooltip:''}},
 		  	//{value:'labels',data:{longname:"labels",tooltip:''}},
 		  	//{value:'mail',data:{longname:"mail"}},
-		  	//{value:'h',data:{longname:"h (harmonyMap)",tooltip:''}},
+		  	{value:'h',data:{longname:"h (harmonyMap)",tooltip:'A JSON string pairing source-result field names or paths to response field names or paths.'}},
 		  	//{value:'o',data:{longname:"o (overArgs)",tooltip:''}},
 		  	{value:'pg',data:{longname:"pg/ps (page/pagestart)",tooltip:'When pagination is in use, use this parameter to set the default first page, if > 1 (default)'}},
 		  	{value:'path',data:{longname:"path",tooltip:''}},

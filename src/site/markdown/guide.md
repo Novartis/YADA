@@ -206,7 +206,7 @@ And the result:
 [Getting into the YADA Mindset]: index.md#mindset
 [JSONParams Specification]: jsonparams.md
 [Filter Specification]: filters.md
-[HarmonyMap Specification]: harmonymap.md
+[Harmonizer Specification]: harmony.md
 [Mail Specification]: mail.md
 [Plugin Guide]: pluginguide.md
 
