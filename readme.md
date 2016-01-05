@@ -19,12 +19,13 @@ For example, what if you could access
 
 You can with **YADA**.
 
-Or, what if you could access
+Or, what if you get data
 
-* *two* data sources
-* returning *different* formats,
-* then *merge* the results
+* from *multiple* sources
+* in *different* formats,
+* *merging* the results
 * into a *single* set
+* *on-the-fly*
 * with *uniform* column names
 * using *just one* URL?
 
