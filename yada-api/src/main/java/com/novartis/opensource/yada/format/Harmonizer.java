@@ -18,6 +18,8 @@
 package com.novartis.opensource.yada.format;
 
 
+import com.novartis.opensource.yada.YADAResourceException;
+import com.novartis.opensource.yada.io.YADAIOException;
 import com.novartis.opensource.yada.util.JsRuntimeSupport;
 
 import java.io.IOException;
@@ -51,9 +53,12 @@ public class Harmonizer
   
   /**
    * Default constructor which initializes javascript context and scope
+   * @throws YADAResourceException when the path to {@code r.js} or {@code harmony.js} is corrupt
+   * @throws YADAIOException when the path to {@code r.js} or {@code harmony.js} can't be read
+   * @throws YADAConverterException when the Rhino javascript engine throws an error
    * @see "https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino/Scopes_and_Contexts"
    */
-  public Harmonizer() 
+  public Harmonizer() throws YADAResourceException, YADAIOException, YADAConverterException 
   {
     this.factory       = new ScriptEngineManager();
     this.engine        = this.factory.getEngineByName("JavaScript");
@@ -76,15 +81,18 @@ public class Harmonizer
       } 
       catch (MalformedURLException e) 
       {
-      //TODO Exception handling
+        String msg = "One of the required resources could not be loaded from the provided path.";
+        throw new YADAResourceException(msg, e);
       } 
       catch (IOException e) 
       {
-      //TODO Exception handling
+        String msg = "One of the required resources could not be read.";
+        throw new YADAIOException(msg, e);
       }  
       catch (EvaluatorException e)
       {
-      //TODO Exception handling
+        String msg = "There was a problem with the Rhino Javascript engine.";
+        throw new YADAConverterException(msg, e);
       }
       finally
       {
@@ -107,8 +115,9 @@ public class Harmonizer
    * @param func the name of the javascript function to execute. Must be {@code harmonize} or {@code flatten}. 
    * @param o the array of arguments to hand off to the js function
    * @return the string result of the transformation.
+   * @throws YADAConverterException when the Rhino javascript engine throws an error
    */
-  public String call(String func, Object[] o)
+  public String call(String func, Object[] o) throws YADAConverterException
   {
     Function f      = (Function)this.global.get(func,this.global);
     String   result = "";
@@ -119,7 +128,8 @@ public class Harmonizer
     } 
     catch (EvaluatorException e)
     {
-    //TODO Exception handling
+      String msg = "There was a problem with the Rhino Javascript engine.";
+      throw new YADAConverterException(msg, e);
     }
     finally
     {

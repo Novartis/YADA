@@ -1,15 +1,7 @@
 <project xmlns="http://maven.apache.org/DECORATION/1.6.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/DECORATION/1.6.0 http://maven.apache.org/xsd/decoration-1.6.0.xsd"
   name="YADA Documentation">
-  <!--<bannerRight>
-    <src>/images/blox.png</src>
-    <width>150</width>
-    <height>150</height>
-  </bannerRight>-->
   <body>
-    <!-- http://maven.apache.org/doxia/doxia-sitetools/doxia-decoration-model/decoration.html 
-    <item collapse=.. ref=.. name=.. href="README" img=.. position=.. alt=.. border=.. width=.. height=.. target=.. title=.. >
-    -->
     <menu name="Getting Started">
       <item href="index.html" name="ReadMe" />
       <item href="deployment.html" name="Quickstart/Deployment Guide"/>
@@ -31,7 +23,9 @@
       <item href="harmony.html" name="Harmonizer Specification"/>
       <item href="mail.html" name="Mail Specification"/>
     </menu>
-    <!-- <menu ref="modules"/> -->
+    <menu name="Project License">
+      <item href="LICENSE.txt" name="Apache License v2.0"/>
+    </menu>
     <menu ref="reports"/>
   </body>
   <skin>

@@ -19,7 +19,7 @@ For example, what if you could access
 
 You can with **YADA**.
 
-Or, what if you get data
+Or, what if you could get data
 
 * from *multiple* sources
 * in *different* formats,

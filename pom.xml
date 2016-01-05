@@ -1,30 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-
-    Copyright 2015 Novartis Institutes for BioMedical Research Inc.
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>yada</groupId>
 	<artifactId>YADA</artifactId>
-	<version>6.1.0</version>
+	<version>6.1.1</version>
 	<name>YADA</name>
 	<url>http://opensource.nibr.com/yada</url>
 	<description>YADA (Yet Another Data Abstraction) Thin Server Framework</description>
+	<inceptionYear>2016</inceptionYear>
 	<packaging>pom</packaging>
+	<licenses>
+	  <license>
+	    <name>Apache License, Version 2.0</name>
+	    <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+	  </license>
+	</licenses>
+	<organization>
+	 <name>Novartis Institutes for BioMedical Research</name>
+	 <url>http://opensource.nibr.com</url>
+	</organization>
 	<distributionManagement>
 		<site>
 			<id>yada.site</id>
@@ -52,7 +47,7 @@
 		      <header>${main.basedir}/src/main/resources/license.txt</header>
 		      <useDefaultExcludes>true</useDefaultExcludes>
 		      <properties>
-		      	<year>2015</year>
+		      	<year>${inceptionYear}</year>
 		      </properties>
 		      <includes>
 		      	<include>**/*.java</include>
@@ -65,6 +60,7 @@
 		      	<include>**/*.jsp</include>
 		      </includes>
 		      <excludes>
+		        <exclude>pom.xml</exclude>
 		        <exclude>target/**</exclude>
 		        <exclude>src/site/**</exclude>
 		        <exclude>src/test/resources/conf/**</exclude>
@@ -202,7 +198,7 @@
 								<replaceregexp file="${basedir}/target/site/index.html">
 									<regexp pattern="(&lt;body\s.+&gt;)"/>
 									<substitution expression="\1
---- 
+&lt;!-- --- 
         name: YADA 
         abbreviation: YADA 
         projectName: YADA 
@@ -220,7 +216,7 @@
           **YADA** is an acronym for &quot;Yet Another Data Abstraction.&quot;          
           Its [raisons d'&ecirc;tre](http://bit.ly/1SHuiAd) are to enable efficient, non-redundant development of data-dependent applications and utilities, data source querying, data analysis, processing pipelines, extract, transform, and load (ETL) processes, etc.  
           **YADA** does all this while preserving total decoupling between data access and other aspects of application architecture such as user interface.    
----
+--- --&gt;
 "/>									
 								</replaceregexp>
 								

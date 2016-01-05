@@ -35,7 +35,7 @@ public class TestNGReporter implements IReporter {
    * 
    */
   public TestNGReporter() {
-    // TODO Auto-generated constructor stub
+    // Nothing to do
   }
 
   /* (non-Javadoc)

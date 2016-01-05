@@ -1298,7 +1298,6 @@ public class ServiceTest
     }
     else if(req.getFormat().equals(YADARequest.FORMAT_HTML))
     {
-      //TODO harmony map html validation
       logMarkupResult(result);
       Pattern rx = Pattern.compile("^<tr>(<td>([A-Z,]+)</td>)(<td>([0-9]+)?</td>)(<td>([0-9.]+)?</td>)(<td>(201[3-5]-0[0-9]-[0-9]{2}|1362373200|1396584000)?</td>)?(<td>((201[3-5]-0[0-9]-[0-9]{2} ([0-9]{2}:){2}[0-9]{2}|1441500273000)(\\.0)?)?</td>)?</tr>$");
       Pattern end = Pattern.compile("^</tbody>|</table>|</body>|</html>$");

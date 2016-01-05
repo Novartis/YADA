@@ -29,6 +29,8 @@ import org.json.JSONObject;
 
 import com.novartis.opensource.yada.YADAQueryResult;
 import com.novartis.opensource.yada.YADARequest;
+import com.novartis.opensource.yada.YADAResourceException;
+import com.novartis.opensource.yada.io.YADAIOException;
 
 /**
  * @author David Varon
@@ -38,19 +40,27 @@ public class RESTResultDelimitedConverter extends AbstractConverter {
 
   /**
    * Default constructor
+   * @throws YADAResourceException when the path to {@code r.js} or {@code harmony.js} is corrupt
+   * @throws YADAIOException when the path to {@code r.js} or {@code harmony.js} can't be read
+   * @throws YADAConverterException when the Rhino javascript engine throws an error
    */
-  public RESTResultDelimitedConverter() {
+  public RESTResultDelimitedConverter() throws YADAResourceException, YADAIOException, YADAConverterException {
     // default constructor
-    setHarmonizer(new Harmonizer());
+    if(this.harmonyMap != null)
+      setHarmonizer(new Harmonizer());
   }
   
   /**
    * Constructor with {@link YADAQueryResult}
    * @param yqr the container for result processing artifacts
+   * @throws YADAResourceException when the path to {@code r.js} or {@code harmony.js} is corrupt
+   * @throws YADAIOException when the path to {@code r.js} or {@code harmony.js} can't be read
+   * @throws YADAConverterException when the Rhino javascript engine throws an error
    */
-  public RESTResultDelimitedConverter(YADAQueryResult yqr) {
+  public RESTResultDelimitedConverter(YADAQueryResult yqr) throws YADAResourceException, YADAIOException, YADAConverterException {
     this.setYADAQueryResult(yqr);
-    setHarmonizer(new Harmonizer());
+    if(this.harmonyMap != null)
+      setHarmonizer(new Harmonizer());
   }
   
   /**
