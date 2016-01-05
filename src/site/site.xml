@@ -28,7 +28,7 @@
       <item href="params.html" name="YADA Parameters Reference"/>
       <item href="jsonparams.html" name="JSONParams Specification"/>
       <item href="filters.html" name="Filters Specification"/>
-      <!--<item href="harmony.html" name="Harmony Map Specification"/>-->
+      <item href="harmony.html" name="Harmonizer Specification"/>
       <item href="mail.html" name="Mail Specification"/>
     </menu>
     <!-- <menu ref="modules"/> -->
