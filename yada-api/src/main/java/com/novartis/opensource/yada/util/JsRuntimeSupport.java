@@ -28,7 +28,7 @@ import org.mozilla.javascript.ScriptableObject;
  * Utility class/custom implementation of abstract {@link ScriptableObject} to enable use of 
  * {@code require.js} to load 3rd party libs into js scope.
  * 
- * @author varonda1
+ * @author David Varon
  * @since 6.1.0
  * @see "http://requirejs.org"
  */
