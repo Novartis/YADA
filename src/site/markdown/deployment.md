@@ -38,7 +38,7 @@
 
 First, acquire the [YADA-Quickstart] application in one of the following ways:
 
-* Click any of the [YADA-Quickstart] links throughout this document to download the `YADA-Quickstart-6.1.0.war` file, or
+* Click any of the [YADA-Quickstart] links throughout this document to download the `YADA-Quickstart-6.1.1.war` file, or
 * Clone the YADA-Quickstart github repo (link pending)
 
 Refer to the appropriate section below, either [I downloaded the war file](#tocWarDownload) or [I cloned the github repo](#tocGitClone):
@@ -65,7 +65,7 @@ First, however, you have an opportunity to ensure maven builds the war file with
 
 If the `local` properties file is left unchanged, the default `local` build will create a warfile identical to the downloadable version referenced in the previous section. It is preferable to modify `build.properties` before building, rather than to modify `context.xml` afterward. This is because in the future, you can automate deployment of the warfile using a variety of methods, including maven-cargo-plugin, custom scripts, or continuous integration (CI) services, and you won't want to, or won't be enabled to modify the     `context.xml` between build and deployment. Information about the settings in `build.properties` can be found inline, in the file.
 
-After making your desired changes, simply run `mvn package` in the `YADA-Quickstart` directory.  This will result in a `YADA-Quickstart-6.1.0.war` file in the `target` subdirectory.  This warfile can now be copied to your tomcat container.
+After making your desired changes, simply run `mvn package` in the `YADA-Quickstart` directory.  This will result in a `YADA-Quickstart-6.1.1.war` file in the `target` subdirectory.  This warfile can now be copied to your tomcat container.
 
 
 
@@ -474,7 +474,7 @@ absolute values. You also might need to build and install [mod_jk](http://tomcat
 ```sh
 # copy yada.httpd.conf to deployment directory
 cd /apps/yada/web/conf.d
-cp ~/YADA-Quickstart-6.1.0/src/main/resources/dev/yada.httpd.conf .
+cp ~/YADA-Quickstart-6.1.1/src/main/resources/dev/yada.httpd.conf .
 
 # Edit yada.httpd.conf for your environment.
 # Look for 'SET THIS' comments, in particular.  
@@ -779,8 +779,8 @@ mvn verify -P dev,war-deploy
 
 
 [YADA]: URL
-[YADA-Quickstart]: downloads/YADA-Quickstart-6.1.0.war
-[warfile]: downloads/YADA-Quickstart-6.1.0.zip
+[YADA-Quickstart]: downloads/YADA-Quickstart-6.1.1.war
+[warfile]: downloads/YADA-Quickstart-6.1.1.zip
 [pom.xml]: downloads/pom.xml
 [SQLite®]: https://www.sqlite.org/
 [MySQL®]: http://dev.mysql.com/
