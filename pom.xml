@@ -229,6 +229,15 @@
 									</fileset>
 								</replaceregexp>
 								
+								<!-- mod copyright in html files -->
+                <replaceregexp flags="g" byline="true">
+                  <regexp pattern="All Rights Reserved."/>
+                  <substitution expression=""/>
+                  <fileset dir="${basedir}/target/site/">
+                    <include name="*.html"/>
+                  </fileset>
+                </replaceregexp>
+								
 								<!-- add float to icon -->
 								<replaceregexp>
 									<regexp pattern="(&lt;img src=&quot;images/blox250.png.+)"/>

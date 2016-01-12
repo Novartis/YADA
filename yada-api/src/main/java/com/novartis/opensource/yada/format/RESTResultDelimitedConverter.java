@@ -160,7 +160,8 @@ public class RESTResultDelimitedConverter extends AbstractConverter {
     }
     catch(IOException e)
     {
-      //TODO Exception handling
+      String msg = "Rhino javascript result could not be parsed.";
+      throw new YADAConverterException(msg, e);
     }
     this.yqr.getConvertedResults().add(convertedResults);
   }

@@ -67,6 +67,7 @@ This document contains an overview of the framework and features. Check out the 
 6. [Data Sources]
 7. [Plugins]
 4. [Installation] \(links directly to the [Quickstart/Deployment Guide])
+5. [License]
 5. [Known Issues]
 
 <a name="other"></a>
@@ -229,6 +230,14 @@ These are intended to modify results returned by queries.  For example, an XSL P
 
 These circumvent conventional YADA query processing.  Effectively, anything is possible in a Bypass.  Bypass plugins are popular ETL tools and bulk data loaders.
 
+<a name="license"></a>
+# License
+Copyright &copy; 2016 [Novartis Institutes for Biomedical Research](http://opensource.nibr.com)
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
 <a name="issues"></a>
 ## Known Issues (last updated 25-OCT-2015)
 
@@ -245,6 +254,7 @@ These circumvent conventional YADA query processing.  Effectively, anything is p
 [Data Sources]: #sources
 [Plugins]: #plugins
 [Known Issues]: #issues
+[License]: #license
 
 [Installation]: src/site/markdown/deployment.md
 [User Guide]: src/site/markdown/guide.md
