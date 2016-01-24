@@ -46,8 +46,8 @@ public class RESTResultDelimitedConverter extends AbstractConverter {
    */
   public RESTResultDelimitedConverter() throws YADAResourceException, YADAIOException, YADAConverterException {
     // default constructor
-    if(this.harmonyMap != null)
-      setHarmonizer(new Harmonizer());
+//    if(this.harmonyMap != null)
+    setHarmonizer(new Harmonizer());
   }
   
   /**
@@ -59,8 +59,8 @@ public class RESTResultDelimitedConverter extends AbstractConverter {
    */
   public RESTResultDelimitedConverter(YADAQueryResult yqr) throws YADAResourceException, YADAIOException, YADAConverterException {
     this.setYADAQueryResult(yqr);
-    if(this.harmonyMap != null)
-      setHarmonizer(new Harmonizer());
+//    if(this.harmonyMap != null)
+    setHarmonizer(new Harmonizer());
   }
   
   /**

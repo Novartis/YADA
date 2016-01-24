@@ -14,10 +14,18 @@
  */
 package com.novartis.opensource.yada.format;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import com.novartis.opensource.yada.YADAQueryConfigurationException;
 import com.novartis.opensource.yada.YADAQueryResult;
 import com.novartis.opensource.yada.YADARequest;
@@ -102,6 +110,8 @@ public class JSONResponse extends AbstractResponse {
 	
 	/**
 	 * Iterates over the results, appending each set as a JSONObject in the {@code ROWS} array.
+	 * @throws YADAResourceException 
+	 * @throws  
 	 * @see com.novartis.opensource.yada.format.AbstractResponse#compose(com.novartis.opensource.yada.YADAQueryResult[])
 	 */
 	@Override
@@ -109,24 +119,24 @@ public class JSONResponse extends AbstractResponse {
 	{
 		setYADAQueryResults(yqrs);
 		create();
-		for(YADAQueryResult lYqr : yqrs)
+		for(YADAQueryResult yqr : yqrs)
 		{
-			setYADAQueryResult(lYqr);
+			setYADAQueryResult(yqr);
 			// iterate over results
 			// at this point 
-			if(lYqr != null)
+			if(yqr != null)
 			{
-				if(lYqr.getResults() != null && lYqr.getResults().size() > 0)
+				if(yqr.getResults() != null && yqr.getResults().size() > 0)
 				{
-					for(Object result : lYqr.getResults())
+					for(Object result : yqr.getResults())
 					{
 						if(result != null)
 							this.append(result); // should be a ResultSet
 					}
 				}
-				else if(lYqr.getCountResults() != null && lYqr.getCountResults().size() > 0)
+				else if(yqr.getCountResults() != null && yqr.getCountResults().size() > 0)
 				{
-					for(Object result : lYqr.getCountResults())
+					for(Object result : yqr.getCountResults())
 					{
 						if(result != null)
 							this.append((Integer)result); // should be an Integer
@@ -134,6 +144,46 @@ public class JSONResponse extends AbstractResponse {
 				}
 			}
 		}
+    //TODO there will be memory issues with multiple users and large result sets
+		//TODO implement a caching strategy for the format package
+		//TODO implement a server-level caching/queuing strategy to handle multi-user, large-request scenarios
+		
+		// process converted headers into unique ordered Set
+    
+		boolean    join      = this.yqr.hasJoin();
+    boolean    outer     = this.yqr.hasOuterJoin();
+    if(join)
+    {
+      JSONArray qname = new JSONArray();
+      JSONArray resultSets = this.jsonResponse.getJSONArray(RESULTSETS);
+      int total = 0;
+      for(int i=0;i<resultSets.length();i++)
+      {
+        JSONObject j = resultSets.getJSONObject(i); 
+        qname.put(j.getJSONObject(RESULTSET).getString(QNAME));
+      }
+      
+      this.jsonResponse = new JSONObject();
+      this.jsonResponse.put(RESULTSET, new JSONObject());
+      try 
+      {
+        this.jsonResponse.put(VERSION, YADAUtils.getVersion());
+      } 
+      catch (JSONException e) 
+      {
+        //TODO exception handling
+      } 
+      catch (YADAResourceException e) 
+      {
+        //TODO exception handling
+      }
+      this.jsonResponse.put(QNAME, qname);
+      Joiner    joiner = new Joiner(getYadaQueryResults());
+      JSONArray joins  = (JSONArray) joiner.join();
+      this.jsonResponse.getJSONObject(RESULTSET).put(ROWS,joins);
+      this.jsonResponse.put(TOTAL, joins.length());
+    }
+		
 		return this;
 	}
 	
@@ -214,12 +264,13 @@ public class JSONResponse extends AbstractResponse {
 		Response r = this;
 		try 
 		{
-			Converter converter = getConverter(this.yqr);
-			if(getHarmonyMap() != null)
+		  JSONObject resultSet = null;
+		  Converter  converter = getConverter(this.yqr);
+		  boolean    count     = Boolean.valueOf(this.yqr.getYADAQueryParamValue(YADARequest.PS_COUNT)).booleanValue();
+		  if(getHarmonyMap() != null)
 				converter.setHarmonyMap(getHarmonyMap());
-			boolean   count = Boolean.valueOf(this.yqr.getYADAQueryParamValue(YADARequest.PS_COUNT)).booleanValue();
 			JSONArray rows = (JSONArray)converter.convert(o);
-			JSONObject resultSet = null;
+			
 			
 			// object prep
 			if(hasMultipleResults()) // multiple queries, no harmonyMap

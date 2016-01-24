@@ -150,7 +150,8 @@ public class ResultSetResultDelimitedConverter extends AbstractConverter {
       }
     }
     List<List<String>> convertedResult = new ArrayList<>();
-    while (rs.next()) {
+    while (rs.next()) 
+    {
       List<String> resultsRow = new ArrayList<>();
       String colValue;
       for (int j = 1; j <= colCount; j++) {

@@ -195,14 +195,14 @@ public abstract class AbstractResponse implements Response
 	 * This method returns the appropriate converter {@link Converter} by looking first at the {@link YADARequest#PS_CONVERTER}
 	 * parmater, if no class is set, or the class provided cannot be instantiated, the default converter is set 
 	 * using {@link #getDefaultConverter(YADAQueryResult)}
-	 * @param yqResult the result container
+	 * @param yqr the result container
 	 * @return the appropriate Converter object
 	 * @throws YADARequestException when the default converter cannot be instantiated
 	 * @throws YADAConverterException when result reformatting fails
 	 */
-	protected Converter getConverter(YADAQueryResult yqResult) throws YADARequestException, YADAConverterException
+	protected Converter getConverter(YADAQueryResult yqr) throws YADARequestException, YADAConverterException
 	{
-		String converterClass = yqResult.getYADAQueryParamValue(YADARequest.PS_CONVERTER);
+		String converterClass = yqr.getYADAQueryParamValue(YADARequest.PS_CONVERTER);
 		
 		Converter converter;
 		if( converterClass != null && !"".equals(converterClass))
@@ -211,7 +211,7 @@ public abstract class AbstractResponse implements Response
 			{
 			  Constructor<?> c = Class.forName(converterClass).getConstructor(new Class[] { YADAQueryResult.class });
 			  c.setAccessible(true);
-			  converter = (Converter) c.newInstance(new Object[] {yqResult});
+			  converter = (Converter) c.newInstance(new Object[] {yqr});
 			} 
 			catch (Exception e)
 			{
@@ -220,18 +220,18 @@ public abstract class AbstractResponse implements Response
 				{
 				  Constructor<?> c = Class.forName(FORMAT_PKG+converterClass).getConstructor(new Class[] { YADAQueryResult.class });
 	        c.setAccessible(true);
-	        converter = (Converter) c.newInstance(new Object[] {yqResult});
+	        converter = (Converter) c.newInstance(new Object[] {yqr});
 				}
 				catch(Exception e1)
 				{
 					l.warn("The specified class ["+converterClass+"] could not be instantiated.  Trying default classes.",e);
-					converter = getDefaultConverter(yqResult);
+					converter = getDefaultConverter(yqr);
 				}
 			} 
 		}
 		else
 		{
-			converter = getDefaultConverter(yqResult);
+			converter = getDefaultConverter(yqr);
 		}
 		return converter;
 	}

@@ -331,11 +331,21 @@ public class YADARequest {
 	 */
 	public static final String PS_JSONPARAMS  = "j";
 	/**
-	 * A constant equal to: {@value}
-	 * This is a global parameter.
-	 * The default value associated to this parameter is {@code null}
-	 * @since 0.4.0.0 (Short param aliases were first added in 0.4.0.0)
-	 */
+   * A constant equal to: {@value}
+   * @since 0.6.2.0
+   */
+  public static final String PS_JOIN        = "ij";
+  /**
+   * A constant equal to: {@value}
+   * @since 0.6.2.0
+   */
+  public static final String PS_LEFTJOIN    = "lj";
+  /**
+   * A constant equal to: {@value}
+   * This is a global parameter.
+   * The default value associated to this parameter is {@code null}
+   * @since 0.4.0.0 (Short param aliases were first added in 0.4.0.0)
+   */
 	public static final String PS_HARMONYMAP  = "h";
 	/**
 	 * A constant equal to: {@value}
@@ -550,6 +560,16 @@ public class YADARequest {
 	 */
 	public static final String PL_JSONPARAMS  = "JSONParams";
 	/**
+   * A constant equal to: {@value}
+   * @since 0.6.2.0
+   */
+  public static final String PL_JOIN        = "join";
+  /**
+   * A constant equal to: {@value}
+   * @since 0.6.2.0
+   */
+  public static final String PL_LEFTJOIN    = "leftJoin";
+	/**
 	 * A constant equal to: {@value}
 	 */
 	//TODO There is no alias for PL_LABELS
@@ -725,6 +745,8 @@ public class YADARequest {
 		map.put(PS_FORMAT,PL_FORMAT);
 		map.put(PS_HARMONYMAP,PL_HARMONYMAP);
 		map.put(PS_JSONPARAMS,PL_JSONPARAMS);
+		map.put(PS_JOIN, PL_JOIN);
+		map.put(PS_LEFTJOIN, PL_LEFTJOIN);
 		map.put(PS_METHOD,PL_METHOD);
 		map.put(PS_OVERARGS,PL_OVERARGS);
 		map.put(PS_PAGE,PL_PAGE);
@@ -763,6 +785,8 @@ public class YADARequest {
 		map.put(PL_FORMAT,PL_FORMAT);
 		map.put(PL_HARMONYMAP,PL_HARMONYMAP);
 		map.put(PL_JSONPARAMS,PL_JSONPARAMS);
+		map.put(PL_JOIN, PL_JOIN);
+    map.put(PL_LEFTJOIN, PL_LEFTJOIN);
 		map.put(PL_LABELS,PL_LABELS);
 		map.put(PL_MAIL,PL_MAIL);
 		map.put(PL_METHOD,PL_METHOD);
@@ -951,6 +975,16 @@ public class YADARequest {
 	 */
 	private JSONParams jsonParams;
 	/**
+	 * A boolean or comma-separated list of names to specify on which fields to join multiple result sets
+	 * @since 0.6.2.0
+	 */
+	private String join = "";
+	/**
+   * A boolean or comma-separated list of names to specify on which fields to join multiple result sets
+   * @since 0.6.2.0
+   */
+  private String leftJoin = "";
+	/**
 	 * The list of cookies names passed in the request
 	 * @since 0.5.1.0
 	 */
@@ -1064,6 +1098,8 @@ public class YADARequest {
 			jobj.put(PS_HARMONYMAP, getHarmonyMap());
 			jobj.put(PS_COUNTONLY, getCountOnly());
 			jobj.put(PS_UPDATE_STATS, getUpdateStats());
+			jobj.put(PS_JOIN, getJoin());
+			jobj.put(PS_LEFTJOIN, getLeftJoin());
 	
 			for(String key : JSONObject.getNames(jobj))
 			{
@@ -2896,7 +2932,48 @@ public class YADARequest {
 		return this.viewLimit;
 	}
 
-	/** 
+	//TODO document join, leftjoin in markdown docs
+	/**
+   * @return the join specification
+   * @since 0.6.2.0
+   * @see #setJoin(String[])
+   */
+  public String getJoin() {
+    return this.join;
+  }
+
+  /**
+   * Set to {@code true} to join on any matching keys in across queries.
+   * Set to a comma-separated list of keys to join only on matching values of those keys.
+   * When {@link #harmonyMap} accompanies this param, the target keys are used
+   * @param join the join spec, either {@code true} or a comma-separated list of keys
+   * @since 0.6.2.0
+   */
+  public void setJoin(String[] join) {
+    this.join = join[0];
+  }
+
+  /**
+   * @return the leftjoin specification
+   * @since 0.6.2.0
+   * @see #setLeftjoin(String[])
+   */
+  public String getLeftJoin() {
+    return this.leftJoin;
+  }
+
+  /**
+   * Set to {@code true} to left join on any matching keys across queries.
+   * Set to a comma-separated list of keys to join only on matching values of those keys.
+   * When {@link #harmonyMap} accompanies this param, the target keys are used
+   * @param leftjoin leftjoin spec, either {@code true} or a comma-separated list of keys
+   * @since 0.6.2.0
+   */
+  public void setLeftJoin(String[] leftjoin) {
+    this.leftJoin = leftjoin[0];
+  }
+
+  /** 
 	 * @since 0.4.0.0
 	 */
 	public void resetJsonParams() {

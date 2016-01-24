@@ -6,7 +6,7 @@
   <parent>
     <groupId>yada</groupId>
     <artifactId>YADA</artifactId>
-    <version>6.1.1</version>
+    <version>6.2.0</version>
   </parent>
   <groupId>yada</groupId>
   <artifactId>yada-api</artifactId>
@@ -754,10 +754,21 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-	  <groupId>org.mozilla</groupId>
-	  <artifactId>rhino</artifactId>
-	  <version>1.7R5</version>
-	</dependency>
+		  <groupId>org.mozilla</groupId>
+		  <artifactId>rhino</artifactId>
+		  <version>1.7R5</version>
+		</dependency>
+		<!-- <dependency>
+      <groupId>org.elasticsearch</groupId>
+		  <artifactId>elasticsearch</artifactId>
+		  <version>2.1.1</version>
+		</dependency> -->
+		<dependency>
+		  <groupId>org.hsqldb</groupId>
+		  <artifactId>hsqldb</artifactId>
+		  <version>2.3.3</version>
+		  <scope>test</scope>
+		</dependency>
   </dependencies>
 </project>
-
+	

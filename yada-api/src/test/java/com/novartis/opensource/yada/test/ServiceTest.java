@@ -117,7 +117,7 @@ public class ServiceTest
    * Constant equal to:
    * <code>^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\",){3}(\"[\\-\\s:0-9]+\",*){2}$</code>
    */
-  protected static final Pattern CSV = Pattern.compile("^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\",){3}(\"[\\-\\s:0-9\\.]+\",*){2}$");
+  protected static final Pattern CSV = Pattern.compile("^((\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"|null),){3}((\"[\\-\\s:0-9\\.]+\"|null),*){2}$");
   /**
    * Constant equal to:
    * <code>^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"\\t){3}(\"[\\-\\s:0-9]+\"\\t*){2}$</code>

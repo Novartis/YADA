@@ -20,6 +20,8 @@ package com.novartis.opensource.yada.format;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.sql.rowset.RowSetMetaDataImpl;
 
@@ -86,11 +88,11 @@ public class ResultSetResultJSONConverter extends AbstractConverter {
 	 */
 	protected JSONArray getJSONRows(ResultSet rs) throws SQLException
 	{
-		
 		JSONArray         rows = new JSONArray();
 		ResultSetMetaData rsmd = rs.getMetaData();
 		if (rsmd == null)
 			rsmd = new RowSetMetaDataImpl();
+		List<String> convertedResult = new ArrayList<>();
 		while (rs.next())
 		{
 			JSONObject row = new JSONObject();
@@ -116,9 +118,16 @@ public class ResultSetResultJSONConverter extends AbstractConverter {
 					}
 					row.put(col, colValue);
 				}
+				
 			}
 			rows.put(row);
+			convertedResult.add(row.toString());
 		}
+		for(String key : JSONObject.getNames(rows.getJSONObject(0)))
+		{
+		  getYADAQueryResult().addConvertedHeader(key);
+		}
+		getYADAQueryResult().getConvertedResults().add(convertedResult);
 		return rows;
 	}
 }

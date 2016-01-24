@@ -274,4 +274,46 @@ public class YADAQueryResult {
   public void setGlobalHarmonyMap(JSONObject globalHarmonyMap) {
     this.globalHarmonyMap = globalHarmonyMap;
   }
+  
+  /**
+   * Returns {@code true} if any of the following have length > 0:
+   * <ul>
+   *  <li>{@link YADARequest#PL_JOIN}</li>
+   *  <li>{@link YADARequest#PS_JOIN}</li>
+   *  <li>{@link YADARequest#PL_LEFTJOIN}</li>
+   *  <li>{@link YADARequest#PS_LEFTJOIN}</li>
+   *  </ul>
+   * @return {@code true} if a join parameter is set on the {@link YADARequest}
+   */
+  public boolean hasJoin() 
+  {
+    boolean val = false;
+    String join = this.getYADAQueryParamValue(YADARequest.PS_JOIN);
+    if(join != null && !join.equals("") && join.length() > 0)
+      val = true;
+    else
+    {
+      join = this.getYADAQueryParamValue(YADARequest.PS_LEFTJOIN);
+      if(join != null && !join.equals("") && join.length() > 0)
+        val = true;
+    }
+    return val;
+  }
+  
+  /**
+   * Returns {@code true} if any of the following have length > 0:
+   * <ul>
+   *  <li>{@link YADARequest#PL_LEFTJOIN}</li>
+   *  <li>{@link YADARequest#PS_LEFTJOIN}</li>
+   *  </ul>
+   * @return {@code true} if a leftjoin parameter is set on the {@link YADARequest}
+   */
+  public boolean hasOuterJoin() 
+  {
+    boolean val = false;
+    String join = this.getYADAQueryParamValue(YADARequest.PS_LEFTJOIN);
+    if(join != null && !join.equals("") && join.length() > 0)
+        val = true;
+    return val;
+  }
 }

@@ -6,7 +6,7 @@
   <parent>
     <groupId>yada</groupId>
     <artifactId>YADA</artifactId>
-    <version>6.1.1</version>
+    <version>6.2.0</version>
   </parent>
   <groupId>yada</groupId>
   <artifactId>yada-war</artifactId>
@@ -577,6 +577,12 @@
       <artifactId>tomcat-dbcp</artifactId>
       <version>7.0.47</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <version>2.3.3</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

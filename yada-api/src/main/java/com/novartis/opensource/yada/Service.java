@@ -264,6 +264,24 @@ public class Service {
 		{
 			this.yadaReq.setJsonParams(paraMap.get(YADARequest.PS_JSONPARAMS));
 		}
+		
+		if (paraMap.get(YADARequest.PL_JOIN) != null)
+    {
+      this.yadaReq.setJoin(paraMap.get(YADARequest.PL_JOIN));
+    }
+		if (paraMap.get(YADARequest.PS_JOIN) != null)
+    {
+      this.yadaReq.setJoin(paraMap.get(YADARequest.PS_JOIN));
+    }
+		if (paraMap.get(YADARequest.PL_LEFTJOIN) != null)
+    {
+      this.yadaReq.setLeftJoin(paraMap.get(YADARequest.PL_LEFTJOIN));
+    }
+    if (paraMap.get(YADARequest.PS_LEFTJOIN) != null)
+    {
+      this.yadaReq.setLeftJoin(paraMap.get(YADARequest.PS_LEFTJOIN));
+    }
+    
 		if (paraMap.get(YADARequest.PL_LABELS) != null)
 		{
 			this.yadaReq.setLabels(paraMap.get(YADARequest.PL_LABELS));

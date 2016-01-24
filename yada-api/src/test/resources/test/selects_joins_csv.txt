@@ -1,0 +1,19 @@
+# 2-way joins (parameter works test)
+j=[{"qname":"YADA test SELECT JOIN A","DATA":[{}]},{"qname":"YADA test SELECT JOIN B","DATA":[{}]}]&f=csv&join=col1
+
+# 2-way joins (parameter="true" test)
+j=[{"qname":"YADA test SELECT JOIN A","DATA":[{}]},{"qname":"YADA test SELECT JOIN B","DATA":[{}]}]&f=csv&join=true
+
+# 2-way leftJoins (parameter is read test)
+j=[{"qname":"YADA test SELECT JOIN A","DATA":[{}]},{"qname":"YADA test SELECT JOIN C","DATA":[{"COL1":"Z"}]}]&f=csv&leftJoin=col1
+
+# 2-way joins (parameter="true" test)
+j=[{"qname":"YADA test SELECT JOIN A","DATA":[{}]},{"qname":"YADA test SELECT JOIN C","DATA":[{"COL1":"Z"}]}]&f=csv&leftJoin=true
+
+# 3-way joins (parameter="true")
+j=[{"qname":"YADA test SELECT JOIN D1","DATA":[{}]},{"qname":"YADA test SELECT JOIN D2","DATA":[{}]},{"qname":"YADA test SELECT JOIN D3","DATA":[{}]}]&f=csv&join=col2,col3
+j=[{"qname":"YADA test SELECT JOIN D1","DATA":[{}]},{"qname":"YADA test SELECT JOIN D2","DATA":[{}]},{"qname":"YADA test SELECT JOIN D3","DATA":[{}]}]&f=csv&join=true
+
+# 3-way joins
+j=[{"qname":"YADA test SELECT JOIN E1","DATA":[{"COL1":"Z"}]},{"qname":"YADA test SELECT JOIN E2","DATA":[{"COL2":10}]},{"qname":"YADA test SELECT JOIN E3","DATA":[{"COL3":7.5}]}]&f=csv&join=col2,col3
+j=[{"qname":"YADA test SELECT JOIN E1","DATA":[{"COL1":"Z"}]},{"qname":"YADA test SELECT JOIN E2","DATA":[{"COL2":"10"}]},{"qname":"YADA test SELECT JOIN E3","DATA":[{"COL3":"7.5"}]}]&f=csv&join=true

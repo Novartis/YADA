@@ -52,6 +52,19 @@ You can with **YADA**.
 
 Its [raisons d'être] are to enable efficient, non-redundent development of data-dependent applications and utilities, data source querying, data analysis, processing pipelines, extract, transform, and load (ETL) processes, etc.  **YADA** does all this while preserving total decoupling between data access and other aspects of application architecture such as user interface.
 
+# Still like "Huh?"
+**YADA** is a software framework, which means it is a collection of software tools forming a basic structure underlying a system, for developers and data analysts to use to create new tools and solutions in a new way.
+
+The novelty and utility of YADA lies in its centralization of management of data source access configuration. It simplifies these aspects of software development by eliminating many steps, thereby enabling rapid development, standardization of access methods, and the code in which these methods are implemented. Further it strongly encourages reuse of existing configurations (once configured.) 
+
+As a result of these configuration facilities, YADA enables the aggregation or integration of data from multiple data sources using a standard method, agnostic with regard to any vendor or technology-specific details of disparate data source implementations. 
+
+For example, the conventional method to access, or furthermore, combine data from say, an Oracle® database, and a web service, is to write code which connects to each database or service independently using different methods and libraries, write code to execute embedded queries independently, also using different methods and libraries, and write code to parse and aggregate the separately acquired data sets.  Then the data is typically fed to an analysis tool.
+
+With YADA, the data source connections and application-specific queries are stored securely and centrally, the queries are executed using identical methods (despite the different sources,) and the data can be integrated or aggregated on-the-fly.  
+
+For software developers and data analysts alike, these features offer potentially tremendous time savings, faster time-to-delivery, and a larger percentage of time focused not on the tedium of configuration, but on the specific context of a software solution or data analysis.
+
 # What's in this document?
 
 This document contains an overview of the framework and features. Check out the [Quickstart/Deployment Guide] for details on getting started.
@@ -130,6 +143,7 @@ Maybe you have to provide a RESTful interface to an existing application, and ne
 * Accesses any JDBC, SOAP, or REST, and some Filesystem datasources 
 * Delivers data as JSON (default), XML, or CSV, TSV, Pipe, or custom-delimited, natively, and in any other format via custom Response and Converter classes, or Plugins
 * Executes multiple queries in a single HTTP request
+* On-the-fly inner and outer joins across disparate data sources
 * Ad hoc Harmonization (i.e., single http request to multiple data sources with harmonized results)
 * Utilizes JDBC transactions (e.g., multiple inserts in a single HTTP request, with a single commit/rollback)
 * Commits a single query or an entire request
@@ -142,11 +156,11 @@ Maybe you have to provide a RESTful interface to an existing application, and ne
 * Tomcat 7 and JDK 1.7-compatible (YADA 6)
 * _Coming Soon_: ElasticSearch® support
 * _Coming Soon_: ElasticSearch®-based result and aggregate-result caching
-* _Coming Soon_: In-memory joins between query results 
 * _Coming Soon_: Spark-based result post-processor
+* _Coming Soon_: Dynamic memory management and caching to facilitate large-scale request queuing and high volume result transformation in high frequency environments
 * _Coming Later_: SQL DDL
 * _Coming Later_: Dynamic datasource configuration
-* _Coming Later_: MongoDB® support
+* _Coming Later_: MongoDB® and other NoSQL support
 * _Coming Later_: SQL Server® support
 * _Coming Later_: Node.js® port (maybe?)
 * _Coming Later_: Standalone java application

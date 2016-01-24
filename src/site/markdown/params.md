@@ -29,7 +29,9 @@
 - [filters]  
 - [format]  
 - [harmonyMap]  
+- [join]
 - [JSONParams]  
+- [leftJoin]
 - [labels]  
 - [mail]  
 - [pagesize]  
@@ -85,6 +87,8 @@
 - [exportlimit]
 - [filters]
 - [harmonyMap]
+- [join]
+- [leftJoin]
 - [pagesize]
 - [pagestart]
 - [viewlimit]
@@ -280,6 +284,18 @@ Custom delimiters are now supported, which automatically set the format to `deli
 **Accepted Values**: JSON string conforming to [Harmonizer Specification]  
 **Description**: A JSON string pairing source-result field names or paths to response field names or paths. See [Harmonizer Specification]  
 
+<a name="join"></a>  
+
+----
+
+**Name**: `join`  
+**Alias**: `ij`  
+**Required**: No  
+**Default**: null  
+**Accepted Values**: `true` or comma-separated list of values  
+**Description**: 
+
+
 <a name="JSONParams"></a>  
 
 ----
@@ -302,7 +318,16 @@ Custom delimiters are now supported, which automatically set the format to `deli
 **Accepted Values**: `true`, `false`  
 **Description**:  _**PROVISIONAL**_
 
-<a name="mail"></a>  
+<a name="leftJoin"></a>  
+
+----
+
+**Name**: `leftJoin`  
+**Alias**: `lj`  
+**Required**: No  
+**Default**: null  
+**Accepted Values**: `true` or comma-separated list of values  
+**Description**: 
 
 ----
 
@@ -598,8 +623,10 @@ Custom delimiters are now supported, which automatically set the format to `deli
 [filters]: #filters
 [format]: #format
 [harmonyMap]: #harmonyMap
+[join]: #join
 [JSONParams]: #JSONParams
 [labels]: #labels
+[leftJoin]: #leftJoin
 [mail]: #mail
 [pagesize]: #pagesize
 [pagestart]: #pagestart
