@@ -293,7 +293,9 @@ Custom delimiters are now supported, which automatically set the format to `deli
 **Required**: No  
 **Default**: null  
 **Accepted Values**: `true` or comma-separated list of values  
-**Description**: 
+**Description**: YADA uses an in-memory database to create tables containing the results of a multi-query request on-the-fly, then constructs and executes a `SELECT...JOIN` query and returns the results in the desired format. When set to `true`, the `Joiner` class will evaluate all the converted headers and base the in-memory db configuration and join query on matching column names in the results. When set to a comma-delimited string, YADA will construct the query only using the designated columns.
+
+**Note**: Currently, the original queries must be JDBC `ResultSet` objects, as the `Converter` classes `ResultSetResultJSONConverter` and `ResultSetResultDelimitedConverter` are the only ones storing converted header and data values utiziled by the `Joiner` class.
 
 
 <a name="JSONParams"></a>  
@@ -327,7 +329,10 @@ Custom delimiters are now supported, which automatically set the format to `deli
 **Required**: No  
 **Default**: null  
 **Accepted Values**: `true` or comma-separated list of values  
-**Description**: 
+**Description**: YADA uses an in-memory database to create tables containing the results of a multi-query request on-the-fly, then constructs and executes a `SELECT...LEFT JOIN` query and returns the results in the desired format. When set to `true`, the `Joiner` class will evaluate all the converted headers and base the in-memory db configuration and join query on matching column names in the results. When set to a comma-delimited string, YADA will construct the query only using the designated columns.
+
+**Note**: Currently, the original queries must be JDBC `ResultSet` objects, as the `Converter` classes `ResultSetResultJSONConverter` and `ResultSetResultDelimitedConverter` are the only ones storing converted header and data values utiziled by the `Joiner` class.
+
 
 ----
 
