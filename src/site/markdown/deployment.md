@@ -779,9 +779,9 @@ mvn verify -P dev,war-deploy
 
 
 [YADA]: URL
-[YADA-Quickstart]: downloads/YADA-Quickstart-6.2.0.war
-[warfile]: downloads/YADA-Quickstart-6.2.0.zip
-[pom.xml]: downloads/pom.xml
+[YADA-Quickstart]: resources/downloads/YADA-Quickstart-6.2.0.war
+[warfile]: resources/downloads/YADA-Quickstart-6.2.0.zip
+[pom.xml]: resources/downloads/pom.xml
 [SQLite®]: https://www.sqlite.org/
 [MySQL®]: http://dev.mysql.com/
 [PostgreSQL®]: http://www.postgresql.org/
