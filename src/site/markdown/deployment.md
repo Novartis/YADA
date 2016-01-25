@@ -39,7 +39,7 @@
 First, acquire the [YADA-Quickstart] application in one of the following ways:
 
 * Click any of the [YADA-Quickstart] links throughout this document to download the `YADA-Quickstart-6.2.0.war` file, or
-* Clone the YADA-Quickstart github repo (link pending)
+* Clone the YADA-Quickstart github [repo](https://github.com/Novartis/YADA-Quickstart)
 
 Refer to the appropriate section below, either [I downloaded the war file](#tocWarDownload) or [I cloned the github repo](#tocGitClone):
 
