@@ -39,7 +39,21 @@ else (no)
    repeat while(more YADAQuery objects?) is (yes) not (no)
  :commit\non all connections; 
  :compose Response;
- note left: details forthcoming
+ repeat
+   if(harmonize?) then (yes)
+     :Harmonizer.harmonize;
+     if(flatten?) then (yes)
+       :Harmonizer.flatten;
+     else (no)
+     endif
+   else (no)
+   endif
+ repeat while(more YADAQueryResult objects) is (yes) not (no)
+ if(join?) then (yes)
+   :Joiner.join (all results);
+   note left: INNER or LEFT OUTER
+ else(no)
+ endif
  :engage Postprocess\n(String);
  if(export?) then (yes)
    :export result;

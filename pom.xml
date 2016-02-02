@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>yada</groupId>
 	<artifactId>YADA</artifactId>
-	<version>6.2.0</version>
+	<version>6.2.1-SNAPSHOT</version>
 	<name>YADA</name>
 	<url>http://opensource.nibr.com/yada</url>
 	<description>YADA (Yet Another Data Abstraction) Thin Server Framework</description>

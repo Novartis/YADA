@@ -102,32 +102,49 @@ public class ResultSetResultJSONConverter extends AbstractConverter {
 				String origColName = rsmd.getColumnName(i);
 				if(!origColName.toLowerCase().equals(JDBCAdaptor.ROWNUM_ALIAS))
 				{
-					String col = isHarmonized() && ((JSONObject)this.harmonyMap).has(origColName) 
-							? ((JSONObject)this.harmonyMap).getString(origColName) : origColName;
-	
+				  boolean harmonize = isHarmonized(); 
+				  boolean prune     = harmonize ?  ((JSONObject)this.harmonyMap).has(Harmonizer.PRUNE) && ((JSONObject)this.harmonyMap).getBoolean(Harmonizer.PRUNE) : false;
+					String  col       = origColName;
+					if(harmonize)
+					{
+					  if(((JSONObject)this.harmonyMap).has(origColName))
+					  {
+					    col = ((JSONObject)this.harmonyMap).getString(origColName); 
+					  }
+					  else if(prune)
+					  {
+					    col = "";
+					  }
+					} 
+					
 					//TODO handle empty result set more intelligently
 					// OLD WAY adds headers to empty object when rs is empty
-					
-					if (null == rs.getString(origColName) || NULL.equals(rs.getString(origColName)))
-					{
-						colValue = NULL_REPLACEMENT; 
-					}
-					else
-					{
-						colValue = rs.getString(origColName);
-					}
-					row.put(col, colValue);
+	        if(!"".equals(col))
+	        {
+  					if (null == rs.getString(origColName) || NULL.equals(rs.getString(origColName)))
+  					{
+  						colValue = NULL_REPLACEMENT; 
+  					}
+  					else
+  					{
+  						colValue = rs.getString(origColName);
+  					}
+  					row.put(col, colValue);
+	        }
 				}
 				
 			}
 			rows.put(row);
 			convertedResult.add(row.toString());
 		}
-		for(String key : JSONObject.getNames(rows.getJSONObject(0)))
+		if(rows.length() > 0)
 		{
-		  getYADAQueryResult().addConvertedHeader(key);
+  		for(String key : JSONObject.getNames(rows.getJSONObject(0)))
+  		{
+  		  getYADAQueryResult().addConvertedHeader(key);
+  		}
+  		getYADAQueryResult().getConvertedResults().add(convertedResult);
 		}
-		getYADAQueryResult().getConvertedResults().add(convertedResult);
 		return rows;
 	}
 }

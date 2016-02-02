@@ -300,7 +300,7 @@ public class Finder
 	public YADAQuery getQuery(String q, boolean updateStats) throws YADAConnectionException, YADAFinderException
 	{
 		final String qname = q;
-		YADAQuery yq        = new YADAQuery();
+		YADAQuery yq        = null; 
 		Element   cachedYq  = null;
 		Cache     yadaIndex = ConnectionFactory.getCacheConnection(YADA_CACHE_MGR,YADA_CACHE);
 		

@@ -52,6 +52,11 @@ public class Harmonizer
   private ScriptableObject global;
   
   /**
+   * A constant with value: {@value}
+   */
+  public static final String PRUNE = "prune";
+  
+  /**
    * Default constructor which initializes javascript context and scope
    * @throws YADAResourceException when the path to {@code r.js} or {@code harmony.js} is corrupt
    * @throws YADAIOException when the path to {@code r.js} or {@code harmony.js} can't be read

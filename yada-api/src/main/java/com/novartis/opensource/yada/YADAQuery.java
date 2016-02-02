@@ -225,13 +225,17 @@ public class YADAQuery {
 		this.setQname(new String(yq.getQname()));
 		for (YADAParam cachedParam : yq.getYADAQueryParams())
 		{
-			YADAParam param = new YADAParam(); 
-			param.setName(cachedParam.getName());
-			param.setValue(cachedParam.getValue());
-			param.setTarget(cachedParam.getTarget());
-			param.setRule(cachedParam.getRule());
-			param.setDefault(cachedParam.isDefault());
-			this.addParam(param);
+			YADAParam param = new YADAParam();
+			String paramName = cachedParam.getName();
+			if(!paramName.equals(YADARequest.PS_HARMONYMAP)) // omit request-specific params
+			{
+  			param.setName(cachedParam.getName());
+  			param.setValue(cachedParam.getValue());
+  			param.setTarget(cachedParam.getTarget());
+  			param.setRule(cachedParam.getRule());
+  			param.setDefault(cachedParam.isDefault());
+  			this.addParam(param);
+			}
 		}
 	}
 	

@@ -117,6 +117,8 @@ public class Joiner {
          StringBuilder header = new StringBuilder();
          StringBuilder params = new StringBuilder();
          String delim = "";
+         
+         //TODO build these in first iteration of converted header during CREATE construction
          for (String hdr : yqr.getConvertedHeader()) 
          {
              header.append(delim).append(hdr);
@@ -177,6 +179,7 @@ public class Joiner {
       
       // derive/apply the join spec
       // get columns from converted headers
+      // TODO create this list in previous YQR iteration
       List<List<String>> localHeaders = new ArrayList<>();
       for(int i=0;i<getYadaQueryResults().length;i++)
       {
@@ -252,7 +255,6 @@ public class Joiner {
               S_c2t.put(_hdr, new HashSet<String>());
             }
             S_c2t.get(_hdr).add(table);
-            
             
             // nextTable to columns
             if(!S_t2c.containsKey(nextTable))
