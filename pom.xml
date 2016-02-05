@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>yada</groupId>
+	<groupId>com.novartis.opensource</groupId>
 	<artifactId>YADA</artifactId>
-	<version>6.2.1-SNAPSHOT</version>
+	<version>6.2.1</version>
 	<name>YADA</name>
 	<url>http://opensource.nibr.com/yada</url>
 	<description>YADA (Yet Another Data Abstraction) Thin Server Framework</description>
@@ -27,12 +27,25 @@
 			<url>${distribution.site.url}</url>
 		</site>
 	</distributionManagement>
+	<developers>
+	 <developer>
+	   <name>David Varon</name>
+	   <email>varontron@gmail.com</email>
+	   <organization>Novartis Institutes for BioMedical Research</organization>
+	   <organizationUrl>http://opensource.nibr.com</organizationUrl>
+	 </developer>
+	</developers>
+	<scm>
+	  <connection>scm:git:git@github.com:Novartis/YADA.git</connection>
+	  <developerConnection>scm:git:git@Novartis/YADA.git</developerConnection>
+	  <url>git@github.com:Novartis/YADA.git</url>
+	</scm>
 	<properties>
-		<display.version>${project.version}</display.version>
-		<projectVersion>${project.version}</projectVersion>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<main.basedir>${project.basedir}</main.basedir>
-	</properties>
+    <display.version>${project.version}</display.version>
+    <projectVersion>${project.version}</projectVersion>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <main.basedir>${project.basedir}</main.basedir>
+  </properties>
 	<modules>
 		<module>yada-api</module>
 		<module>yada-war</module>

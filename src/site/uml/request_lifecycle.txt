@@ -17,8 +17,17 @@ if(is multipart content?) then (yes)
 else (no)
  :populate parameter values\nin YADARequest;
  :init QueryManager;
- :do QueryManager stuff;
- note right: lots of stuff to detail in here\nincluding query retrieval, \ncode parsing and conforming, etc.
+ :instantiate YADAQuery objects\nvia Finder;
+ :deconstruct request params to\nquery-level and\nglobal parameters;
+ :determine adaptor class;
+ note right: includes protocol, e.g., JDBC, REST, etc
+ :conform query code\nper adaptor/protocol;
+ :deconstruct query for\nparameter injection;
+ :set positional parameters;
+ :set Global Harmony Map;
+ :set Query-level Harmony Maps;
+ :store conformed query;
+ :inject positional parameter vals;
  :Service._execute;
  :engageBypass\n(YADARequest);
  if(Result is null?) then (yes)
