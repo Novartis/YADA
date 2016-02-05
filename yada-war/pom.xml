@@ -8,7 +8,7 @@
     <artifactId>YADA</artifactId>
     <version>6.2.1</version>
   </parent>
-  <groupId>yada</groupId>
+  <groupId>com.novartis.opensource</groupId>
   <artifactId>yada-war</artifactId>
   <version>${project.parent.version}</version>
   <name>yada-war</name>
