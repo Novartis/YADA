@@ -271,7 +271,7 @@
           **YADA** is a tool to enable efficient development of interfaces and data-processing pipelines.       
           **YADA** is an implementation of [Thin Server Architecture](http://bit.ly/1dhuiRY).       
           **YADA** is an acronym for &quot;Yet Another Data Abstraction.&quot;          
-          Its [raisons d'&ecirc;tre](http://bit.ly/1SHuiAd) are to enable efficient, non-redundant development of data-dependent applications and utilities, data source querying, data analysis, processing pipelines, extract, transform, and load (ETL) processes, etc.  
+          Its [raisons d'&#234;tre](http://bit.ly/1SHuiAd) are to enable efficient, non-redundant development of data-dependent applications and utilities, data source querying, data analysis, processing pipelines, extract, transform, and load (ETL) processes, etc.  
           **YADA** does all this while preserving total decoupling between data access and other aspects of application architecture such as user interface.    
 --- --&gt;
 "/>									
