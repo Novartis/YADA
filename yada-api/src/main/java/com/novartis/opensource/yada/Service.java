@@ -536,7 +536,7 @@ public class Service {
 			  Matcher m = rx_src.matcher(strace[i]);
 			  if(m.matches())
 			  {
-			    links.put(links.length(),"https://github.com/Novartis/YADA/blob/master/yada-api/src/main/java/com/novartis/opensource/yada/"+m.group(1).replace("\\.","/")+".java#L"+m.group(2));
+			    links.put(links.length(),"https://github.com/Novartis/YADA/blob/master/yada-api/src/main/java/com/novartis/opensource/yada/"+m.group(1).replace('.','/')+".java#L"+m.group(2));
 			  }
 		    st.put(i,strace[i]);
 			}
