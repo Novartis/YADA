@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.novartis.opensource</groupId>
@@ -8,7 +10,7 @@
   </parent>
   <groupId>com.novartis.opensource</groupId>
   <artifactId>yada-api</artifactId>
-  <version>6.2.2</version>
+  <version>${project.parent.version}</version>
   <name>yada-api</name>
   <url>http://opensource.nibr.com/yada/yada-api</url>
   <distributionManagement>
