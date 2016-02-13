@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -523,8 +525,21 @@ public class Service {
 //				j.put("Query", URLDecoder.decode(query,"UTF-8"));
 			}
 			
-			
-			j.put("StackTrace",sw.toString().replace("\t","").split("\n"));
+			String[] strace = sw.toString().replace("\t","").split("\n");
+			j.put("StackTrace",new JSONArray());
+			j.put("Links", new JSONArray());
+			JSONArray st = j.getJSONArray("StackTrace");
+			JSONArray links = j.getJSONArray("Links");
+			Pattern rx_src = Pattern.compile("at com\\.novartis\\.opensource\\.yada\\.(.+)\\..+\\(.+\\.java:(\\d+)\\)");
+			for(int i=0;i<strace.length;i++)
+			{
+			  Matcher m = rx_src.matcher(strace[i]);
+			  if(m.matches())
+			  {
+			    links.put(links.length(),"https://github.com/Novartis/YADA/blob/master/yada-api/src/main/java/com/novartis/opensource/yada/"+m.group(1).replace("\\.","/")+".java#L"+m.group(2));
+			  }
+		    st.put(i,strace[i]);
+			}
 			result = j.toString(2);
 		} 
 		catch (JSONException e1)
