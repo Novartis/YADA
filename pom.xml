@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.novartis.opensource</groupId>
 	<artifactId>YADA</artifactId>
-	<version>6.2.2</version>
+	<version>6.2.2-SNAPSHOT</version>
 	<name>YADA</name>
 	<url>http://opensource.nibr.com/yada</url>
 	<description>YADA (Yet Another Data Abstraction) Thin Server Framework</description>
@@ -46,8 +47,7 @@
 	  <connection>scm:git:git@github.com:Novartis/YADA.git</connection>
 	  <developerConnection>scm:git:git@Novartis/YADA.git</developerConnection>
 	  <url>git@github.com:Novartis/YADA.git</url>
-	  <tag>6.2.2</tag>
-  </scm>
+	</scm>
 	<properties>
     <display.version>${project.version}</display.version>
     <projectVersion>${project.version}</projectVersion>
@@ -199,35 +199,37 @@
 									<fileset dir="src/site/resources/downloads" includes="**/*.war,**/*.zip,**/*.xml)" />
 								</delete>
 								<copy file="${basedir}/../YADA-Quickstart/pom.xml" todir="src/site/resources/downloads" />
-								<copy file="${basedir}/../YADA-Quickstart/target/YADA-Quickstart-${project.version}.war" todir="src/site/resources/downloads" />
+								<copy
+									file="${basedir}/../YADA-Quickstart/target/YADA-Quickstart-${project.version}.war"
+									todir="src/site/resources/downloads" />
 									
 								<copy overwrite="true" file="readme.md" tofile="src/site/markdown/index.md" />
 								
 								<!-- update version in documentation 
 									e.g., YADA-Quickstart-6.0.0-SNAPSHOT to YADA-Quickstart-6.0.0 -->
 								<replaceregexp byline="true">
-									<regexp pattern="YADA-Quickstart-((\d+\.){2})\d+(-SNAPSHOT)?" />
-									<substitution expression="YADA-Quickstart-${display.version}" />
+									<regexp pattern="YADA-Quickstart-((\d+\.){2})\d+(-SNAPSHOT)?"/>
+									<substitution expression="YADA-Quickstart-${display.version}"/>
 									<fileset dir="${basedir}/src/site/markdown/">
-										<include name="deployment.md" />
+										<include name="deployment.md"/>
 									</fileset>
 								</replaceregexp>
 								
 								<!-- update image refs in index -->
 								<replaceregexp byline="true">
-									<regexp pattern="(\!\[.+\]\()src/site/resources/(images/.+\))" />
-									<substitution expression="\1\2" />
+									<regexp pattern="(\!\[.+\]\()src/site/resources/(images/.+\))"/>
+									<substitution expression="\1\2"/>
 									<fileset dir="${basedir}/src/site/markdown/">
-										<include name="index.md" />
+										<include name="index.md"/>
 									</fileset>
 								</replaceregexp>
 								
 								<!-- update pure html image refs in index -->
 								<replaceregexp byline="true">
-									<regexp pattern="(&lt;img src=&quot;)src/site/resources/(images/.+)" />
-									<substitution expression="\1\2" />
+									<regexp pattern="(&lt;img src=&quot;)src/site/resources/(images/.+)"/>
+									<substitution expression="\1\2"/>
 									<fileset dir="${basedir}/src/site/markdown/">
-										<include name="index.md" />
+										<include name="index.md"/>
 									</fileset>
 								</replaceregexp>
 							</target>
@@ -243,42 +245,62 @@
 							<target>
 								<!-- convert .md hrefs into .html -->
 								<replaceregexp flags="g" byline="true">
-									<regexp pattern="((href=&quot;(src/site/markdown/)?(\w+)\.md(#\w+)?&quot;)+)" />
-									<substitution expression="href=&quot;\4.html\5&quot;" />
+									<regexp pattern="((href=&quot;(src/site/markdown/)?(\w+)\.md(#\w+)?&quot;)+)"/>
+									<substitution expression="href=&quot;\4.html\5&quot;"/>
 									<fileset dir="${basedir}/target/site/">
-										<include name="*.html" />
+										<include name="*.html"/>
 									</fileset>
 								</replaceregexp>
 								
 								<replaceregexp file="${basedir}/target/site/index.html">
-									<regexp pattern="(&lt;body\s.+&gt;)" />
-									<substitution expression="\1 &lt;!-- --- name: YADA          abbreviation: YADA          projectName: YADA          launched: 2015-11-01          icon: images/blox250.png          summary: A universal remote control for data.         description: |           Access any data, at any source, in any format, from any environment, using just a URL, with just one-time configuration.           Get data from multiple sources, in different formats, merge the results into one with uniform column names, on-the-fly, using one URL.           **YADA** exists to simplify data access and eliminate work.                  **YADA** is a lightweight framework for data retrieval, searching, storage, and manipulation.                  **YADA** is an instant web service for your data.                  **YADA** is a tool to enable efficient development of interfaces and data-processing pipelines.                  **YADA** is an implementation of [Thin Server Architecture](http://bit.ly/1dhuiRY).                  **YADA** is an acronym for &quot;Yet Another Data Abstraction.&quot;                     Its [raisons d'être](http://bit.ly/1SHuiAd) are to enable efficient, non-redundant development of data-dependent applications and utilities, data source querying, data analysis, processing pipelines, extract, transform, and load (ETL) processes, etc.             **YADA** does all this while preserving total decoupling between data access and other aspects of application architecture such as user interface.     --- --&gt; " />									
+									<regexp pattern="(&lt;body\s.+&gt;)"/>
+									<substitution expression="\1
+&lt;!-- --- 
+        name: YADA 
+        abbreviation: YADA 
+        projectName: YADA 
+        launched: 2015-11-01 
+        icon: images/blox250.png 
+        summary: A universal remote control for data.
+        description: |
+          Access any data, at any source, in any format, from any environment, using just a URL, with just one-time configuration.
+          Get data from multiple sources, in different formats, merge the results into one with uniform column names, on-the-fly, using one URL.
+          **YADA** exists to simplify data access and eliminate work.       
+          **YADA** is a lightweight framework for data retrieval, searching, storage, and manipulation.       
+          **YADA** is an instant web service for your data.       
+          **YADA** is a tool to enable efficient development of interfaces and data-processing pipelines.       
+          **YADA** is an implementation of [Thin Server Architecture](http://bit.ly/1dhuiRY).       
+          **YADA** is an acronym for &quot;Yet Another Data Abstraction.&quot;          
+          Its [raisons d'&#234;tre](http://bit.ly/1SHuiAd) are to enable efficient, non-redundant development of data-dependent applications and utilities, data source querying, data analysis, processing pipelines, extract, transform, and load (ETL) processes, etc.  
+          **YADA** does all this while preserving total decoupling between data access and other aspects of application architecture such as user interface.    
+--- --&gt;
+"/>									
 								</replaceregexp>
 								
 								<!-- update image refs in html files -->
 								<replaceregexp flags="g" byline="true">
-									<regexp pattern="(src=&quot;)\.\./resources/(images/.+)" />
-									<substitution expression="\1\2" />
+									<regexp pattern="(src=&quot;)\.\./resources/(images/.+)"/>
+									<substitution expression="\1\2"/>
 									<fileset dir="${basedir}/target/site/">
-										<include name="*.html" />
+										<include name="*.html"/>
 									</fileset>
 								</replaceregexp>
 								
 								<!-- mod copyright in html files -->
                 <replaceregexp flags="g" byline="true">
-                  <regexp pattern="All Rights Reserved." />
-                  <substitution expression="" />
+                  <regexp pattern="All Rights Reserved."/>
+                  <substitution expression=""/>
                   <fileset dir="${basedir}/target/site/">
-                    <include name="*.html" />
+                    <include name="*.html"/>
                   </fileset>
                 </replaceregexp>
 								
 								<!-- add float to icon -->
 								<replaceregexp>
-									<regexp pattern="(&lt;img src=&quot;images/blox250.png.+)" />
-									<substitution expression="&lt;div style=&quot;float:right;margin-top:-43px;&quot;&gt;\1&lt;/div&gt;" />
+									<regexp pattern="(&lt;img src=&quot;images/blox250.png.+)"/>
+									<substitution expression="&lt;div style=&quot;float:right;margin-top:-43px;&quot;&gt;\1&lt;/div&gt;"/>
 									<fileset dir="${basedir}/target/site">
-										<include name="*.html" />
+										<include name="*.html"/>
 									</fileset>
 								</replaceregexp>						
 
@@ -293,7 +315,7 @@
 						</goals>
 						<configuration>
 							<target>
-								<copy file="readme.md" todir="${basedir}/../YADA-Quickstart/" />
+								<copy file="readme.md" todir="${basedir}/../YADA-Quickstart/"/>
 								<copy todir="${basedir}/../YADA-Quickstart/src/site">
 									<fileset dir="src/site" />
 								</copy>
