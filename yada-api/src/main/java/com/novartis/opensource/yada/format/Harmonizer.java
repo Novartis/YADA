@@ -73,40 +73,34 @@ public class Harmonizer
     this.global.defineFunctionProperties(names, this.global.getClass(), ScriptableObject.DONTENUM);
     Scriptable argsObj = ctx.newArray(this.global, new Object[] { });
     this.global.defineProperty("arguments", argsObj, ScriptableObject.DONTENUM);
-    URL requireURL = null;
-    try 
+    try(Reader inLo   = new InputStreamReader(getClass().getResourceAsStream("/utils/lodash.min.js"));
+        Reader inJSON = new InputStreamReader(getClass().getResourceAsStream("/utils/json2.js"));
+        Reader inHmap = new InputStreamReader(getClass().getResourceAsStream("/utils/harmony.js")))
+        //Reader inR    = new InputStreamReader(getClass().getResourceAsStream("/utils/r.js")))
     {
-      requireURL = new URL("http://requirejs.org/docs/release/2.1.9/r.js");
-    
-      try(Reader inHmap  = new InputStreamReader(getClass().getResourceAsStream("/utils/harmony.js"));
-          Reader inR   = new InputStreamReader(requireURL.openStream()))
-      {
-        ctx.evaluateReader(this.global, inR , "require", 0, null);
-        ctx.evaluateReader(this.global, inHmap, "harmony", 0, null);
-      } 
-      catch (MalformedURLException e) 
-      {
-        String msg = "One of the required resources could not be loaded from the provided path.";
-        throw new YADAResourceException(msg, e);
-      } 
-      catch (IOException e) 
-      {
-        String msg = "One of the required resources could not be read.";
-        throw new YADAIOException(msg, e);
-      }  
-      catch (EvaluatorException e)
-      {
-        String msg = "There was a problem with the Rhino Javascript engine.";
-        throw new YADAConverterException(msg, e);
-      }
-      finally
-      {
-        Context.exit();
-      }
+      //ctx.evaluateReader(this.global, inR , "require", 0, null);
+      ctx.evaluateReader(this.global, inLo, "_", 0, null);
+      ctx.evaluateReader(this.global, inJSON, "JSON", 0, null);
+      ctx.evaluateReader(this.global, inHmap, "harmony", 0, null);
     } 
-    catch (MalformedURLException e1) 
+    catch (MalformedURLException e) 
     {
-      e1.printStackTrace();
+      String msg = "One of the required resources could not be loaded from the provided path.";
+      throw new YADAResourceException(msg, e);
+    } 
+    catch (IOException e) 
+    {
+      String msg = "One of the required resources could not be read.";
+      throw new YADAIOException(msg, e);
+    }  
+    catch (EvaluatorException e)
+    {
+      String msg = "There was a problem with the Rhino Javascript engine.";
+      throw new YADAConverterException(msg, e);
+    }
+    finally
+    {
+      Context.exit();
     }
   }
     

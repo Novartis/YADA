@@ -1185,7 +1185,7 @@ public class ServiceTest
    * @throws YADAQueryConfigurationException when there is a malformed query
    * @throws YADAResponseException when the test result is invalid 
    */
-  @Test(enabled = true, dataProvider = "QueryTests", groups = { "options" })
+  @Test(enabled = true, dataProvider = "QueryTests", groups = { "proxy" })
   @QueryFile(list = {})
   public void testHarmonizerWithREST(String query) throws YADAQueryConfigurationException, YADAResponseException
   {

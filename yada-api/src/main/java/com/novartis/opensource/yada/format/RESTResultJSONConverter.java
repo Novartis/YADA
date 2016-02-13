@@ -48,7 +48,7 @@ public class RESTResultJSONConverter extends AbstractConverter
 	 */
 	public RESTResultJSONConverter() throws YADAResourceException, YADAIOException, YADAConverterException {
 	  // default constructor
-	  setHarmonizer(new Harmonizer());
+//	  setHarmonizer(new Harmonizer());
 	}
 	
 	/**
@@ -60,7 +60,7 @@ public class RESTResultJSONConverter extends AbstractConverter
 	 */
 	public RESTResultJSONConverter(YADAQueryResult yqr) throws YADAResourceException, YADAIOException, YADAConverterException {
 	  this.setYADAQueryResult(yqr);
-	  setHarmonizer(new Harmonizer());
+//	  setHarmonizer(new Harmonizer());
 	}
 	
 	/**
@@ -78,8 +78,23 @@ public class RESTResultJSONConverter extends AbstractConverter
 		
 		if(getHarmonyMap() != null)
 		{
-		  o[1] = getHarmonyMap().toString();
-		  harm = getHarmonizer().call(HARMONIZE, o);
+		  if(getHarmonizer() == null)
+      {
+		    try 
+		    {
+          setHarmonizer(new Harmonizer());
+          o[1] = getHarmonyMap().toString();
+          harm = getHarmonizer().call(HARMONIZE, o);
+        } 
+		    catch (YADAResourceException e) 
+        {
+		      throw new YADAConverterException(e.getMessage(),e);
+        } 
+		    catch (YADAIOException e) 
+		    {
+		      throw new YADAConverterException(e.getMessage(),e);
+        }
+      }
 		}
 		try
 		{

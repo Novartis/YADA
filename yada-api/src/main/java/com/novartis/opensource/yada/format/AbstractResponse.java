@@ -205,26 +205,32 @@ public abstract class AbstractResponse implements Response
 		String converterClass = yqr.getYADAQueryParamValue(YADARequest.PS_CONVERTER);
 		
 		Converter converter;
+		
 		if( converterClass != null && !"".equals(converterClass))
 		{
+		  Constructor<?> c;
+		  Class<?> clazz;
 			try
 			{
-			  Constructor<?> c = Class.forName(converterClass).getConstructor(new Class[] { YADAQueryResult.class });
+			  clazz = Class.forName(converterClass);
+			  c = clazz.getConstructor(YADAQueryResult.class);
 			  c.setAccessible(true);
-			  converter = (Converter) c.newInstance(new Object[] {yqr});
+			  converter = (Converter) c.newInstance(yqr);
 			} 
 			catch (Exception e)
 			{
 				l.warn("The specified class ["+converterClass+"] could not be instantiated.  Trying FQCN."); 
 				try
 				{
-				  Constructor<?> c = Class.forName(FORMAT_PKG+converterClass).getConstructor(new Class[] { YADAQueryResult.class });
+				  converterClass = FORMAT_PKG+converterClass;
+				  clazz = Class.forName(converterClass);
+				  c = clazz.getConstructor(YADAQueryResult.class);
 	        c.setAccessible(true);
-	        converter = (Converter) c.newInstance(new Object[] {yqr});
+	        converter = (Converter) c.newInstance(yqr);
 				}
 				catch(Exception e1)
 				{
-					l.warn("The specified class ["+converterClass+"] could not be instantiated.  Trying default classes.",e);
+					l.warn("The specified class ["+converterClass+"] could not be instantiated.  Trying default classes.",e1);
 					converter = getDefaultConverter(yqr);
 				}
 			} 

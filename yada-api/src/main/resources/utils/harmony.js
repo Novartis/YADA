@@ -12,16 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-require.config({
-  baseUrl: "",
-  paths: {
-    lodash:     "http://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash",
-    JSON:       "https://raw.githubusercontent.com/douglascrockford/JSON-js/master/json2"
-  }
-});
-
-require(["lodash","JSON"], function(_,JSON) {
-    
+//require.config({
+//  baseUrl: "",
+//  paths: {
+//    lodash:     "file:///utils/lodash.min",
+//    JSON:       "file:///utils/json2"
+//  }
+//});
+//
+//require(["lodash","JSON"], function(_,JSON) {
+(function() {    
   this.expandArrayKeys = function(element, src) {
   	var indices = [];
   	if (/\-/.test(element)) // range
@@ -103,6 +103,7 @@ require(["lodash","JSON"], function(_,JSON) {
   		mergeArrayKeys(++elem, elements, matchHash, keyContainer);
   	}
   };
+  
   
   this.harmonize = function(s,h) {
     var src   = this.JSON.parse(s);
@@ -337,4 +338,4 @@ require(["lodash","JSON"], function(_,JSON) {
       });
     }
   };
-});
+})();

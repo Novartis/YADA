@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.novartis.opensource</groupId>
     <artifactId>YADA</artifactId>
-    <version>6.2.1</version>
+    <version>6.2.2-SNAPSHOT</version>
   </parent>
   <groupId>com.novartis.opensource</groupId>
   <artifactId>yada-api</artifactId>
@@ -418,7 +418,7 @@
       </testResource>
       <testResource>
         <directory>${basedir}/src/test/resources/test</directory>
-        <filtering>false</filtering>
+        <filtering>true</filtering>
         <targetPath>test</targetPath>
       </testResource>
       <testResource>
@@ -449,6 +449,34 @@
           <execution>
             <goals>
               <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.mycila</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>2.11</version>
+        <configuration>
+          <header>${project.parent.basedir}/src/main/resources/license.txt</header>
+          <useDefaultExcludes>true</useDefaultExcludes>
+          <properties>
+            <year>${project.parent.inceptionYear}</year>
+          </properties>
+          <excludes>
+            <exclude>pom.xml</exclude>
+            <exclude>target/**</exclude>
+            <exclude>src/main/resources/conf/**</exclude>
+            <exclude>src/main/resources/utils/r.js</exclude>
+            <exclude>src/main/resources/utils/json2.js</exclude>
+            <exclude>src/main/resources/utils/lodash.min.js</exclude>
+            <exclude>src/test/resources/conf/**</exclude>
+          </excludes>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
             </goals>
           </execution>
         </executions>

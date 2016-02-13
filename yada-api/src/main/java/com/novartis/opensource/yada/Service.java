@@ -489,23 +489,29 @@ public class Service {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
+			YADAQuery yq = getCurrentQuery();
+			j.put("Help", "http://opensource.nibr.com/projects/YADA/#other");
+			j.put("Source", "https://github.com/Novartis/YADA#other");
 			j.put("Exception", e.getClass().getName());
-			j.put("Message",msg);
-			j.put("Qname",getCurrentQuery().getQname());
-			j.put("Query",getCurrentQuery().getYADACode());
-			j.put("Params",new JSONArray());
-			JSONArray ja = j.getJSONArray("Params");
-			for(int i=0;i<getCurrentQuery().getData().size();i++) // list of LinkedHashMaps
-			{
-			  Iterator<?> iter = getCurrentQuery().getDataRow(i).keySet().iterator();
-			  JSONObject jo = new JSONObject();
-			  while(iter.hasNext())
-			  {			    
-			    String key = (String) iter.next();
-			    jo.put(key, Arrays.toString(getCurrentQuery().getDataRow(i).get(key)));
-			  }
-			  ja.put(jo);
-			}
+      j.put("Message",msg);
+      j.put("Qname",yq != null ? yq.getQname() : "UNKNOWN");
+      j.put("Query",yq != null ? yq.getYADACode() : "");
+      j.put("Params",new JSONArray());
+      JSONArray ja = j.getJSONArray("Params");
+      if(yq != null)
+      {
+  			for(int i=0;i<yq.getData().size();i++) // list of LinkedHashMaps
+  			{
+  			  Iterator<?> iter = yq.getDataRow(i).keySet().iterator();
+  			  JSONObject jo = new JSONObject();
+  			  while(iter.hasNext())
+  			  {			    
+  			    String key = (String) iter.next();
+  			    jo.put(key, Arrays.toString(yq.getDataRow(i).get(key)));
+  			  }
+  			  ja.put(jo);
+  			}
+      }
 			if(this.yadaReq.getRequest() != null && this.yadaReq.getRequest().getMethod() != null)
 			{
 				String type = this.yadaReq.getRequest().getMethod(); 
