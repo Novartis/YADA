@@ -45,8 +45,8 @@
 	</developers>
 	<scm>
 	  <connection>scm:git:ssh:varontron@github.com:Novartis/YADA.git</connection>
-	  <developerConnection>scm:git:ssh:varontron@github.com:Novartis/YADA.git</developerConnection>
-	  <url>https://github.com:Novartis/YADA</url>
+	  <developerConnection>scm:git:ssh://varontron@github.com/Novartis/YADA.git</developerConnection>
+	  <url>scm:git:ssh://github.com/Novartis/YADA</url>
 	</scm>
 	<properties>
     <display.version>${project.version}</display.version>
