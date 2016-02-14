@@ -155,26 +155,6 @@
 					</dependency>
 				</dependencies>
 			</plugin>
-			<!-- <plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.3.2</version>
-				<executions>
-					<execution>
-						<id>uml</id>
-						<phase>pre-site</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>/usr/bin/java</executable>
-							<commandlineArgs>-Xmx4096M -jar ${plantuml_jar} -o ../resources/images src/site/uml</commandlineArgs>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin> -->
-
-			<!-- This plugin requires JDK 1.7. Will uncomment when upgraded. -->
 			<plugin>
 				<groupId>com.github.jeluard</groupId>
 				<artifactId>plantuml-maven-plugin</artifactId>
@@ -290,8 +270,8 @@
 								
 								<!-- update download paths in html files -->
                 <replaceregexp flags="g" byline="true">
-                  <regexp pattern="resources/(downloads/.+)" />
-                  <substitution expression="\1" />
+                  <regexp pattern="resources(/downloads/.+)" />
+                  <substitution expression="..\1" />
                   <fileset dir="${basedir}/target/site/">
                     <include name="*.html" />
                   </fileset>
