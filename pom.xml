@@ -67,6 +67,8 @@
         <configuration>
           <useReleaseProfile>false</useReleaseProfile>
           <!-- <releaseProfiles>release</releaseProfiles> -->
+          <tagNameFormat>@{project.version}</tagNameFormat>
+          <preparationGoals>pre-site site:site post-site site:stage</preparationGoals>
           <goals>deploy</goals>
         </configuration>
       </plugin>
