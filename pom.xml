@@ -250,6 +250,7 @@
 									</fileset>
 								</replaceregexp>
 								
+								<!-- insert YAML into index.html -->
 								<replaceregexp file="${basedir}/target/site/index.html">
 									<regexp pattern="(&lt;body\s.+&gt;)" />
 									<substitution expression="\1 &lt;!-- --- name: YADA abbreviation: YADA          projectName: YADA          launched: 2015-11-01          icon: images/blox250.png          summary: A universal remote control for data.         description: |           Access any data, at any source, in any format, from any environment, using just a URL, with just one-time configuration.           Get data from multiple sources, in different formats, merge the results into one with uniform column names, on-the-fly, using one URL.           **YADA** exists to simplify data access and eliminate work.                  **YADA** is a lightweight framework for data retrieval, searching, storage, and manipulation.                  **YADA** is an instant web service for your data.                  **YADA** is a tool to enable efficient development of interfaces and data-processing pipelines.                  **YADA** is an implementation of [Thin Server Architecture](http://bit.ly/1dhuiRY).                  **YADA** is an acronym for &quot;Yet Another Data Abstraction.&quot;                     Its [raisons d'être](http://bit.ly/1SHuiAd) are to enable efficient, non-redundant development of data-dependent applications and utilities, data source querying, data analysis, processing pipelines, extract, transform, and load (ETL) processes, etc.             **YADA** does all this while preserving total decoupling between data access and other aspects of application architecture such as user interface.     --- --&gt; " />									
@@ -282,21 +283,6 @@
 									</fileset>
 								</replaceregexp>						
 
-							</target>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copy-to-quickstart</id>
-						<phase>post-site</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<target>
-								<copy file="readme.md" todir="${basedir}/../YADA-Quickstart/" />
-								<copy todir="${basedir}/../YADA-Quickstart/src/site">
-									<fileset dir="src/site" />
-								</copy>
 							</target>
 						</configuration>
 					</execution>
