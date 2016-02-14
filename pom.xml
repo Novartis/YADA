@@ -201,8 +201,8 @@
 								<delete>
 									<fileset dir="src/site/resources/downloads" includes="**/*.war,**/*.zip,**/*.xml)" />
 								</delete>
-								<copy file="${basedir}/../YADA-Quickstart/pom.xml" todir="src/site/resources/downloads" />
-								<copy file="${basedir}/../YADA-Quickstart/target/YADA-Quickstart-${project.version}.war" todir="src/site/resources/downloads" />
+								<!-- <copy file="${basedir}/../YADA-Quickstart/pom.xml" todir="src/site/resources/downloads" />
+								<copy file="${basedir}/../YADA-Quickstart/target/YADA-Quickstart-${project.version}.war" todir="src/site/resources/downloads" /> -->
 									
 								<copy overwrite="true" file="readme.md" tofile="src/site/markdown/index.md" />
 								
@@ -210,7 +210,7 @@
 									e.g., YADA-Quickstart-6.0.0-SNAPSHOT to YADA-Quickstart-6.0.0 -->
 								<replaceregexp byline="true">
 									<regexp pattern="YADA-Quickstart-((\d+\.){2})\d+(-SNAPSHOT)?" />
-									<substitution expression="YADA-Quickstart-${display.version}" />
+									<substitution expression="YADA-Quickstart-${releaseVersion}" />
 									<fileset dir="${basedir}/src/site/markdown/">
 										<include name="deployment.md" />
 									</fileset>
@@ -277,8 +277,8 @@
 								<!-- update download paths in html files -->
                 <replaceregexp flags="g" byline="true">
                   <regexp pattern="resources(/downloads/.+)" />
-                  <substitution expression="..\1" />
-                  <fileset dir="${basedir}/target/s">
+                  <substitution expression="\1" />
+                  <fileset dir="${basedir}/target/">
                     <include name="site/*.html" />
                     <include name="staging/*.html" />
                   </fileset>
