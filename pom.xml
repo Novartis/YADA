@@ -248,8 +248,9 @@
 								<replaceregexp flags="g" byline="true">
 									<regexp pattern="((href=&quot;(src/site/markdown/)?(\w+)\.md(#\w+)?&quot;)+)" />
 									<substitution expression="href=&quot;\4.html\5&quot;" />
-									<fileset dir="${basedir}/target/site/">
-										<include name="*.html" />
+									<fileset dir="${basedir}/target/">
+										<include name="site/*.html" />
+										<include name="staging/*.html" />
 									</fileset>
 								</replaceregexp>
 								
@@ -263,8 +264,9 @@
 								<replaceregexp flags="g" byline="true">
 									<regexp pattern="(src=&quot;)\.\./resources/(images/.+)" />
 									<substitution expression="\1\2" />
-									<fileset dir="${basedir}/target/site/">
-										<include name="*.html" />
+									<fileset dir="${basedir}/target/">
+										<include name="site/*.html" />
+                    <include name="staging/*.html" />
 									</fileset>
 								</replaceregexp>
 								
@@ -272,8 +274,9 @@
                 <replaceregexp flags="g" byline="true">
                   <regexp pattern="resources(/downloads/.+)" />
                   <substitution expression="..\1" />
-                  <fileset dir="${basedir}/target/site/">
-                    <include name="*.html" />
+                  <fileset dir="${basedir}/target/s">
+                    <include name="site/*.html" />
+                    <include name="staging/*.html" />
                   </fileset>
                 </replaceregexp>
 								
@@ -281,8 +284,9 @@
                 <replaceregexp flags="g" byline="true">
                   <regexp pattern="All Rights Reserved." />
                   <substitution expression="" />
-                  <fileset dir="${basedir}/target/site/">
-                    <include name="*.html" />
+                  <fileset dir="${basedir}/target/">
+                    <include name="site/*.html" />
+                    <include name="staging/*.html" />
                   </fileset>
                 </replaceregexp>
 								
@@ -290,8 +294,9 @@
 								<replaceregexp>
 									<regexp pattern="(&lt;img src=&quot;images/blox250.png.+)" />
 									<substitution expression="&lt;div style=&quot;float:right;margin-top:-43px;&quot;&gt;\1&lt;/div&gt;" />
-									<fileset dir="${basedir}/target/site">
-										<include name="*.html" />
+									<fileset dir="${basedir}/target/">
+										<include name="site/*.html" />
+                    <include name="staging/*.html" />
 									</fileset>
 								</replaceregexp>						
 
