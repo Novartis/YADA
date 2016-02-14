@@ -276,7 +276,7 @@
 								
 								<!-- update download paths in html files -->
                 <replaceregexp flags="g" byline="true">
-                  <regexp pattern=".+(downloads/.+)" />
+                  <regexp pattern="\.\./(downloads/.+)" />
                   <substitution expression="\1" />
                   <fileset dir="${basedir}/target/">
                     <include name="site/*.html" />
