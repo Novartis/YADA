@@ -201,8 +201,13 @@
 								<delete>
 									<fileset dir="src/site/resources/downloads" includes="**/*.war,**/*.zip,**/*.xml)" />
 								</delete>
+								<!-- for site -->
 								<copy file="${basedir}/../YADA-Quickstart/pom.xml" todir="src/site/resources/downloads" />
 								<copy file="${basedir}/../YADA-Quickstart/target/YADA-Quickstart-${project.version}.war" todir="src/site/resources/downloads" />
+								<!-- for github -->
+								<copy file="${basedir}/../YADA-Quickstart/pom.xml" todir="${basedir}/../YADA/src/site/resources/downloads" />
+								<copy file="${basedir}/../YADA-Quickstart/target/YADA-Quickstart-${project.version}.war" todir="${basedir}/../YADA/src/site/resources/downloads" />
+								
 									
 								<copy overwrite="true" file="readme.md" tofile="src/site/markdown/index.md" />
 								
