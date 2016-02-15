@@ -68,7 +68,6 @@
           <useReleaseProfile>false</useReleaseProfile>
           <autoVersionSubmodules>true</autoVersionSubmodules>
           <tagNameFormat>@{project.version}</tagNameFormat>
-          <completionGoals>pre-site site:site post-site site:stage</completionGoals>
           <goals>deploy</goals>
         </configuration>
       </plugin>
