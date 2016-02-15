@@ -4,11 +4,11 @@
   <parent>
     <groupId>com.novartis.opensource</groupId>
     <artifactId>YADA</artifactId>
-    <version>6.2.3-SNAPSHOT</version>
+    <version>6.2.3</version>
   </parent>
   <groupId>com.novartis.opensource</groupId>
   <artifactId>yada-api</artifactId>
-  <version>6.2.3-SNAPSHOT</version>
+  <version>6.2.3</version>
   <name>yada-api</name>
   <url>http://opensource.nibr.com/yada/yada-api</url>
   <distributionManagement>
