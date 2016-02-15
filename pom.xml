@@ -275,14 +275,14 @@
 								</replaceregexp>
 								
 								<!-- update download paths in html files -->
-                <replaceregexp flags="g" byline="true">
+               <!--  <replaceregexp flags="g" byline="true">
                   <regexp pattern="(.+)\.\./(downloads/.+)" />
                   <substitution expression="\1\2" />
                   <fileset dir="${basedir}/target/">
                     <include name="site/*.html" />
                     <include name="staging/*.html" />
                   </fileset>
-                </replaceregexp>
+                </replaceregexp> -->
 								
 								<!-- mod copyright in html files -->
                 <replaceregexp flags="g" byline="true">
