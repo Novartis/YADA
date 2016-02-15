@@ -210,7 +210,7 @@
 									e.g., YADA-Quickstart-6.0.0-SNAPSHOT to YADA-Quickstart-6.0.0 -->
 								<replaceregexp byline="true">
 									<regexp pattern="YADA-Quickstart-((\d+\.){2})\d+(-SNAPSHOT)?" />
-									<substitution expression="YADA-Quickstart-${releaseVersion}" />
+									<substitution expression="YADA-Quickstart-${project.version}" />
 									<fileset dir="${basedir}/src/site/markdown/">
 										<include name="deployment.md" />
 									</fileset>
@@ -276,8 +276,8 @@
 								
 								<!-- update download paths in html files -->
                 <replaceregexp flags="g" byline="true">
-                  <regexp pattern="\.\./(downloads/.+)" />
-                  <substitution expression="\1" />
+                  <regexp pattern="(.+)\.\./(downloads/.+)" />
+                  <substitution expression="\1\2" />
                   <fileset dir="${basedir}/target/">
                     <include name="site/*.html" />
                     <include name="staging/*.html" />
