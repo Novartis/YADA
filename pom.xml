@@ -262,11 +262,22 @@
 									</fileset>
 								</replaceregexp>
 								
-								<!-- insert YAML into index.html -->
+								<!-- insert YAML into index.html STAGING ONLY. 
+								     staging goes to svn for opensource.nibr.com
+								     site gets deployed internally -->
 								<replaceregexp>
 									<regexp pattern="(&lt;body\s.+&gt;)" />
-									<substitution expression="\1 &lt;!-- --- name: YADA abbreviation: YADA          projectName: YADA          launched: 2015-11-01          icon: images/blox250.png          summary: A universal remote control for data.         description: |           Access any data, at any source, in any format, from any environment, using just a URL, with just one-time configuration.           Get data from multiple sources, in different formats, merge the results into one with uniform column names, on-the-fly, using one URL.           **YADA** exists to simplify data access and eliminate work.                  **YADA** is a lightweight framework for data retrieval, searching, storage, and manipulation.                  **YADA** is an instant web service for your data.                  **YADA** is a tool to enable efficient development of interfaces and data-processing pipelines.                  **YADA** is an implementation of [Thin Server Architecture](http://bit.ly/1dhuiRY).                  **YADA** is an acronym for &quot;Yet Another Data Abstraction.&quot;                     Its [raisons d'être](http://bit.ly/1SHuiAd) are to enable efficient, non-redundant development of data-dependent applications and utilities, data source querying, data analysis, processing pipelines, extract, transform, and load (ETL) processes, etc.             **YADA** does all this while preserving total decoupling between data access and other aspects of application architecture such as user interface.     --- --&gt; " />									
+									<substitution expression="\1--- name: YADA abbreviation: YADA          projectName: YADA          launched: 2015-11-01          icon: images/blox250.png          summary: A universal remote control for data.         description: |           Access any data, at any source, in any format, from any environment, using just a URL, with just one-time configuration.           Get data from multiple sources, in different formats, merge the results into one with uniform column names, on-the-fly, using one URL.           **YADA** exists to simplify data access and eliminate work.                  **YADA** is a lightweight framework for data retrieval, searching, storage, and manipulation.                  **YADA** is an instant web service for your data.                  **YADA** is a tool to enable efficient development of interfaces and data-processing pipelines.                  **YADA** is an implementation of [Thin Server Architecture](http://bit.ly/1dhuiRY).                  **YADA** is an acronym for &quot;Yet Another Data Abstraction.&quot;                     Its [raisons d'être](http://bit.ly/1SHuiAd) are to enable efficient, non-redundant development of data-dependent applications and utilities, data source querying, data analysis, processing pipelines, extract, transform, and load (ETL) processes, etc.             **YADA** does all this while preserving total decoupling between data access and other aspects of application architecture such as user interface.     ---" />									
 								  <fileset dir="${basedir}/target/">
+                    <include name="staging/index.html" />
+                  </fileset>
+								</replaceregexp>
+								
+								<!-- add link to github docs -->
+                <replaceregexp flags="g" byline="true">
+								  <regexp pattern="(&lt;div id=&quot;bodyColumn&quot;\s+class=&quot;span9&quot;\s*&gt;)" />
+                  <substitution expression="\1&lt;p&gt;For the most recent updates to documentation, see &lt;a href=&quot;http://github.com/Novartis/YADA&quot;&gt;https://github.com/Novartis/YADA&lt;/a&gt;.&lt;/p&gt;" />                 
+                  <fileset dir="${basedir}/target/">
                     <include name="site/index.html" />
                     <include name="staging/index.html" />
                   </fileset>
