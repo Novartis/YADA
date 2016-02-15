@@ -206,8 +206,7 @@
 									
 								<copy overwrite="true" file="readme.md" tofile="src/site/markdown/index.md" />
 								
-								<!-- update version in documentation 
-									e.g., YADA-Quickstart-6.0.0-SNAPSHOT to YADA-Quickstart-6.0.0 -->
+								<!-- update to project.version in documentation -->
 								<replaceregexp byline="true">
 									<regexp pattern="YADA-Quickstart-((\d+\.){2})\d+(-SNAPSHOT)?" />
 									<substitution expression="YADA-Quickstart-${project.version}" />
@@ -215,6 +214,15 @@
 										<include name="deployment.md" />
 									</fileset>
 								</replaceregexp>
+								
+								<!-- update to releaseVersion in documentation -->
+                <replaceregexp byline="true">
+                  <regexp pattern="YADA-Quickstart-(((\d+\.){2})\d+)(-SNAPSHOT)?" />
+                  <substitution expression="YADA-Quickstart-\1" />
+                  <fileset dir="${basedir}/src/site/markdown/">
+                    <include name="deployment.md" />
+                  </fileset>
+                </replaceregexp>
 								
 								<!-- update image refs in index -->
 								<replaceregexp byline="true">
