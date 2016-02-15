@@ -13,7 +13,7 @@
     dependencies' versions are configured to equal ${project.version}, so if 
     the actual ${project.version} value is changed below, the dependency configs 
     will need to be adjusted accordingly. -->
-  <version>6.2.2</version>
+  <version>6.2.3</version>
 
   <packaging>war</packaging>
   
