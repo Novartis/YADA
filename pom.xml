@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.novartis.opensource</groupId>
 	<artifactId>YADA</artifactId>
-	<version>6.2.4-SNAPSHOT</version>
+	<version>6.2.3</version>
 	<name>YADA</name>
 	<url>http://opensource.nibr.com/yada</url>
 	<description>YADA (Yet Another Data Abstraction) Thin Server Framework</description>
@@ -197,36 +197,8 @@
 						</goals>
 						<configuration>
 							<target>
-								<delete>
-									<fileset dir="src/site/resources/downloads" includes="**/*.war,**/*.zip,**/*.xml)" />
-								</delete>
-								<!-- for site -->
-								<copy file="${basedir}/../YADA-Quickstart/pom.xml" todir="src/site/resources/downloads" />
-								<copy file="${basedir}/../YADA-Quickstart/target/YADA-Quickstart-${project.version}.war" todir="src/site/resources/downloads" />
-								<!-- for github -->
-								<copy file="${basedir}/../YADA-Quickstart/pom.xml" todir="${basedir}/../YADA/src/site/resources/downloads" />
-								<copy file="${basedir}/../YADA-Quickstart/target/YADA-Quickstart-${project.version}.war" todir="${basedir}/../YADA/src/site/resources/downloads" />
-								
-									
+						    <!-- there are no longer any github source tree changes in this step  -->
 								<copy overwrite="true" file="readme.md" tofile="src/site/markdown/index.md" />
-								
-								<!-- update to project.version in documentation -->
-								<replaceregexp byline="true">
-									<regexp pattern="YADA-Quickstart-((\d+\.){2})\d+(-SNAPSHOT)?" />
-									<substitution expression="YADA-Quickstart-${project.version}" />
-									<fileset dir="${basedir}/src/site/markdown/">
-										<include name="deployment.md" />
-									</fileset>
-								</replaceregexp>
-								
-								<!-- update to releaseVersion in documentation -->
-                <replaceregexp byline="true">
-                  <regexp pattern="YADA-Quickstart-(((\d+\.){2})\d+)(-SNAPSHOT)?" />
-                  <substitution expression="YADA-Quickstart-\1" />
-                  <fileset dir="${basedir}/src/site/markdown/">
-                    <include name="deployment.md" />
-                  </fileset>
-                </replaceregexp>
 								
 								<!-- update image refs in index -->
 								<replaceregexp byline="true">
@@ -256,15 +228,60 @@
 						</goals>
 						<configuration>
 							<target>
+							  <!-- SITE -->
+							  
+							  <!-- convert .md hrefs into .html -->
+                <replaceregexp flags="g" byline="true">
+                  <regexp pattern="((href=&quot;(src/site/markdown/)?(\w+)\.md(#\w+)?&quot;)+)" />
+                  <substitution expression="href=&quot;\4.html\5&quot;" />
+                  <fileset dir="${basedir}/target/">
+                    <include name="site/*.html" />
+                  </fileset>
+                </replaceregexp>
+                
+                <!-- add link for github docs to site -->
+                <replaceregexp file="${basedir}/target/site/index.html">
+                  <regexp pattern="(&lt;div id=&quot;bodyColumn&quot;\s+class=&quot;span9&quot;\s*&gt;)" />
+                  <substitution expression="\1&lt;p&gt;For the most recent updates to documentation, see &lt;a href=&quot;http://github.com/Novartis/YADA&quot;&gt;https://github.com/Novartis/YADA&lt;/a&gt;.&lt;/p&gt;" />                 
+                </replaceregexp>
+                
+							  <!-- update image refs in html files -->
+                <replaceregexp flags="g" byline="true">
+                  <regexp pattern="(src=&quot;)\.\./resources/(images/.+)" />
+                  <substitution expression="\1\2" />
+                  <fileset dir="${basedir}/target/">
+                    <include name="site/*.html" />
+                  </fileset>
+                </replaceregexp>
+                
+                <!-- mod copyright in html files -->
+                <replaceregexp flags="g" byline="true">
+                  <regexp pattern="All Rights Reserved." />
+                  <substitution expression="" />
+                  <fileset dir="${basedir}/target/">
+                    <include name="site/*.html" />
+                  </fileset>
+                </replaceregexp>
+                
+                <!-- add float to icon -->
+                <replaceregexp>
+                  <regexp pattern="(&lt;img src=&quot;images/blox250.png.+)" />
+                  <substitution expression="&lt;div style=&quot;float:right;margin-top:-43px;&quot;&gt;\1&lt;/div&gt;" />
+                  <fileset dir="${basedir}/target/">
+                    <include name="site/*.html" />
+                  </fileset>
+                </replaceregexp>      
+                
+							  <!-- STAGE -->
+								
 								<!-- convert .md hrefs into .html -->
-								<replaceregexp flags="g" byline="true">
-									<regexp pattern="((href=&quot;(src/site/markdown/)?(\w+)\.md(#\w+)?&quot;)+)" />
-									<substitution expression="href=&quot;\4.html\5&quot;" />
-									<fileset dir="${basedir}/target/">
-										<include name="site/*.html" />
-										<include name="staging/*.html" />
-									</fileset>
-								</replaceregexp>
+                <replaceregexp flags="g" byline="true">
+                  <regexp pattern="((href=&quot;(src/site/markdown/)?(\w+)\.md(#\w+)?&quot;)+)" />
+                  <substitution expression="href=&quot;\4.html\5&quot;" />
+                  <fileset dir="${basedir}/target/">
+                    <include name="${stagingDirectory}/*.html" />
+                  </fileset>
+                </replaceregexp>
 								
 								<!-- insert YAML into index.html STAGING ONLY. 
 								     staging goes to svn for opensource.nibr.com
@@ -274,12 +291,6 @@
 									<substitution expression="\1--- name: YADA abbreviation: YADA projectName: YADA launched: 2015-11-01          icon: images/blox250.png          summary: A universal remote control for data.         description: |           Access any data, at any source, in any format, from any environment, using just a URL, with just one-time configuration.           Get data from multiple sources, in different formats, merge the results into one with uniform column names, on-the-fly, using one URL.           **YADA** exists to simplify data access and eliminate work.                  **YADA** is a lightweight framework for data retrieval, searching, storage, and manipulation.                  **YADA** is an instant web service for your data.                  **YADA** is a tool to enable efficient development of interfaces and data-processing pipelines.                  **YADA** is an implementation of [Thin Server Architecture](http://bit.ly/1dhuiRY).                  **YADA** is an acronym for &quot;Yet Another Data Abstraction.&quot;                     Its [raisons d'être](http://bit.ly/1SHuiAd) are to enable efficient, non-redundant development of data-dependent applications and utilities, data source querying, data analysis, processing pipelines, extract, transform, and load (ETL) processes, etc.             **YADA** does all this while preserving total decoupling between data access and other aspects of application architecture such as user interface.     ---" />									
 								</replaceregexp>
 								
-								<!-- add link for github docs to site -->
-                <replaceregexp file="${basedir}/target/site/index.html">
-								  <regexp pattern="(&lt;div id=&quot;bodyColumn&quot;\s+class=&quot;span9&quot;\s*&gt;)" />
-                  <substitution expression="\1&lt;p&gt;For the most recent updates to documentation, see &lt;a href=&quot;http://github.com/Novartis/YADA&quot;&gt;https://github.com/Novartis/YADA&lt;/a&gt;.&lt;/p&gt;" />                 
-								</replaceregexp>
-								
 								<!-- add link for github docs stage -->
                 <replaceregexp file="${stagingDirectory}/index.html">
                   <regexp pattern="(&lt;div id=&quot;bodyColumn&quot;\s+class=&quot;span9&quot;\s*&gt;)" />
@@ -287,22 +298,11 @@
                 </replaceregexp>
 								
 								<!-- update image refs in html files -->
-								<replaceregexp flags="g" byline="true">
-									<regexp pattern="(src=&quot;)\.\./resources/(images/.+)" />
-									<substitution expression="\1\2" />
-									<fileset dir="${basedir}/target/">
-										<include name="site/*.html" />
-                    <include name="staging/*.html" />
-									</fileset>
-								</replaceregexp>
-								
-								<!-- update download paths in html files -->
-               <replaceregexp flags="g" byline="true">
-                  <regexp pattern="(href=&quot;)\.\./resources/(downloads/.+)" />
+                <replaceregexp flags="g" byline="true">
+                  <regexp pattern="(src=&quot;)\.\./resources/(images/.+)" />
                   <substitution expression="\1\2" />
                   <fileset dir="${basedir}/target/">
-                    <include name="site/*.html" />
-                    <include name="staging/*.html" />
+                    <include name="${stagingDirectory}/*.html" />
                   </fileset>
                 </replaceregexp>
 								
@@ -311,8 +311,7 @@
                   <regexp pattern="All Rights Reserved." />
                   <substitution expression="" />
                   <fileset dir="${basedir}/target/">
-                    <include name="site/*.html" />
-                    <include name="staging/*.html" />
+                    <include name="${stagingDirectory}/*.html" />
                   </fileset>
                 </replaceregexp>
 								
@@ -321,8 +320,7 @@
 									<regexp pattern="(&lt;img src=&quot;images/blox250.png.+)" />
 									<substitution expression="&lt;div style=&quot;float:right;margin-top:-43px;&quot;&gt;\1&lt;/div&gt;" />
 									<fileset dir="${basedir}/target/">
-										<include name="site/*.html" />
-                    <include name="staging/*.html" />
+                    <include name="${stagingDirectory}/*.html" />
 									</fileset>
 								</replaceregexp>						
 
