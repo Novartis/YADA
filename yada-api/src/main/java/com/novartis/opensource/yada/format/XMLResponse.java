@@ -30,6 +30,7 @@ import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSSerializer;
 
+import com.novartis.opensource.yada.YADAQueryConfigurationException;
 import com.novartis.opensource.yada.YADAQueryResult;
 import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADARequestException;
@@ -81,7 +82,7 @@ public class XMLResponse extends AbstractResponse {
 	}
 	
 	@Override
-	public Response compose(YADAQueryResult[] yqrs) throws YADAResponseException, YADAConverterException {
+	public Response compose(YADAQueryResult[] yqrs) throws YADAResponseException, YADAConverterException, YADAQueryConfigurationException {
 		setYADAQueryResults(yqrs);
 		create();
 		for(YADAQueryResult lYqr : yqrs)
@@ -128,10 +129,11 @@ public class XMLResponse extends AbstractResponse {
 	/**
 	 * Objects {@link DocumentFragment} from {@link Converter} and appends it to 
 	 * the response.
+	 * @throws YADAQueryConfigurationException 
 	 * @see com.novartis.opensource.yada.format.AbstractResponse#append(java.lang.Object)
 	 */
 	@Override
-	public Response append(Object o) throws YADAResponseException, YADAConverterException {
+	public Response append(Object o) throws YADAResponseException, YADAConverterException, YADAQueryConfigurationException {
 		//TODO handle harmonyMap.  
 		try
 		{

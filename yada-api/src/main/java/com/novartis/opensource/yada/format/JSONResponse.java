@@ -110,12 +110,13 @@ public class JSONResponse extends AbstractResponse {
 	
 	/**
 	 * Iterates over the results, appending each set as a JSONObject in the {@code ROWS} array.
+	 * @throws YADAQueryConfigurationException 
 	 * @throws YADAResourceException 
 	 * @throws  
 	 * @see com.novartis.opensource.yada.format.AbstractResponse#compose(com.novartis.opensource.yada.YADAQueryResult[])
 	 */
 	@Override
-	public Response compose(YADAQueryResult[] yqrs) throws YADAResponseException, YADAConverterException
+	public Response compose(YADAQueryResult[] yqrs) throws YADAResponseException, YADAConverterException, YADAQueryConfigurationException
 	{
 		setYADAQueryResults(yqrs);
 		create();
@@ -256,10 +257,11 @@ public class JSONResponse extends AbstractResponse {
 
 	/**
 	 * Passes {@code o} to the {@link Converter} and appends it to the internal JSON response object.
+	 * @throws YADAQueryConfigurationException 
 	 * @see com.novartis.opensource.yada.format.AbstractResponse#append(java.lang.Object)
 	 */
 	@Override
-	public Response append(Object o) throws YADAResponseException, YADAConverterException {
+	public Response append(Object o) throws YADAResponseException, YADAConverterException, YADAQueryConfigurationException {
 		
 		Response r = this;
 		try 

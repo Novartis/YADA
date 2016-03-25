@@ -7,6 +7,7 @@ skinparam activity {
   BorderColor #923222
   ArrowColor #923222
 }
+
 start
 :HTTP request\nfor yada.jsp;
 :init Service;
@@ -21,49 +22,51 @@ else (no)
  :deconstruct request params to\nquery-level and\nglobal parameters;
  :determine adaptor class;
  note right: includes protocol, e.g., JDBC, REST, etc
- :conform query code\nper adaptor/protocol;
- :deconstruct query for\nparameter injection;
+ #lightblue:conform query code\nper adaptor/protocol;
+ #lightblue:deconstruct query for\nparameter injection;
  :set positional parameters;
  :set Global Harmony Map;
  :set Query-level Harmony Maps;
  :store conformed query;
- :inject positional parameter vals;
+ #lightblue:inject positional parameter vals;
  :Service._execute;
- :engageBypass\n(YADARequest);
+ #lightgrey:engageBypass\n(YADARequest);
  if(Result is null?) then (yes)
-   :engagePreprocess\n(YADARequest);
+   #lightgrey:engagePreprocess\n(YADARequest);
    repeat
-     :engageBypass
+     #lightgrey:engageBypass
       (YADAQuery);
      if(Result is null?) then (yes)
-       :engagePreprocess\n(YADAQuery);
-       :execute\nquery with adaptor;
+       #lightgrey:engagePreprocess\n(YADAQuery);
+       #lightblue:execute\nquery with adaptor;
        if(commitQuery?) then (yes)
-       :commit;
+       #lightblue:commit;
        else (no)
        endif
-       :engagePostprocess\n(YADAQuery);
+       #lightgrey:engagePostprocess\n(YADAQuery);
      else (no)
      endif
    repeat while(more YADAQuery objects?) is (yes) not (no)
- :commit\non all connections; 
- :compose Response;
+ #lightblue:commit\non all connections; 
+ #lightgreen:Response.compose;
  repeat
+   #lightgreen:Response.append;
+   #lightgreen:Converter.convert;
    if(harmonize?) then (yes)
-     :Harmonizer.harmonize;
+     #lightgreen:Harmonizer.harmonize;
      if(flatten?) then (yes)
-       :Harmonizer.flatten;
+       #lightgreen:Harmonizer.flatten;
      else (no)
      endif
    else (no)
    endif
  repeat while(more YADAQueryResult objects) is (yes) not (no)
  if(join?) then (yes)
-   :Joiner.join (all results);
+   #lightgreen:Joiner.join (all results);
    note left: INNER or LEFT OUTER
  else(no)
  endif
- :engage Postprocess\n(String);
+ #lightgrey:engage Postprocess\n(String);
  if(export?) then (yes)
    :export result;
    note left: details forthcoming
@@ -73,4 +76,14 @@ else (no)
  endif
 endif
 end
+skinparam legend{
+BackgroundColor #FFFFFF
+}
+legend top right
+|= |= com.novartis.opensource package |
+|<back:#FED300>   </back>|<back> yada </back>|
+|<back:lightblue>   </back>|<back> yada.adaptor </back>|
+|<back:lightgrey>   </back>|<back> yada.plugin </back>|
+|<back:lightgreen>   </back>|<back> yada.format </back>|
+endlegend
 @enduml

@@ -20,6 +20,7 @@ import java.io.StringReader;
 
 import org.apache.log4j.Logger;
 
+import com.novartis.opensource.yada.YADAQueryConfigurationException;
 import com.novartis.opensource.yada.YADAQueryResult;
 
 /**
@@ -40,7 +41,7 @@ public class HTMLResponse extends AbstractResponse {
 	
 	
 	@Override
-  public Response compose(YADAQueryResult[] yqrs) throws YADAConverterException, YADAResponseException 
+  public Response compose(YADAQueryResult[] yqrs) throws YADAConverterException, YADAResponseException, YADAQueryConfigurationException 
 	{
 	  Response delimitedResponse = new DelimitedResponse();
 	  String csv = delimitedResponse.compose(yqrs).toString();

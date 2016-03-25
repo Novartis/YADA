@@ -66,5 +66,10 @@
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
+  
+  <error-page>
+    <location>/error.jsp</location>
+  </error-page>
+  
 
 </web-app>

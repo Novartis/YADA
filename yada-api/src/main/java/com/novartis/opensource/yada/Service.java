@@ -105,7 +105,7 @@ public class Service {
 	 * @param parameterString the resource path from the url
 	 * @throws YADARequestException when there is an issue setting parameters in the configuration
 	 */
-	public void handleRequest(HttpServletRequest request, String parameterString) throws YADARequestException
+	public void handleRequest(HttpServletRequest request, String parameterString)
 	{
 		Map<String, String[]> map = new LinkedHashMap<>();
 		String[] pathElements = parameterString.split("/");
@@ -131,7 +131,7 @@ public class Service {
 	 * @throws YADARequestException when a request parameter is malformed
 	 */
 	@SuppressWarnings("unchecked")
-  public void handleRequest(HttpServletRequest request) throws YADARequestException
+  public void handleRequest(HttpServletRequest request)
 	{
 		l.debug("Request query string is ["+request.getQueryString()+"]");
 		this.yadaReq.setRequest(request);
@@ -148,330 +148,337 @@ public class Service {
 	 * @throws YADARequestException when a request parameter is malformed
 	 */
 	@SuppressWarnings("deprecation")
-	public void handleRequest(String referer, Map<String,String[]> paraMap) throws  YADARequestException
+	public void handleRequest(String referer, Map<String,String[]> paraMap) 
 	{	
-		if(paraMap.get(YADARequest.PL_ARGS) != null)
-		{
-			this.yadaReq.setArgs(paraMap.get(YADARequest.PL_ARGS));
-		}
-		if(paraMap.get(YADARequest.PS_ARGS) != null)
-		{
-			this.yadaReq.setArgs(paraMap.get(YADARequest.PS_ARGS));
-		}
-		if (paraMap.get(YADARequest.PL_COLHEAD) != null)
-		{
-			this.yadaReq.setColhead(paraMap.get(YADARequest.PL_COLHEAD));
-		}
-		if (paraMap.get(YADARequest.PL_COMMITQUERY) != null)
-    {
-      this.yadaReq.setCommitQuery(paraMap.get(YADARequest.PL_COMMITQUERY));
-    }
-    if (paraMap.get(YADARequest.PS_COMMITQUERY) != null)
-    {
-      this.yadaReq.setCommitQuery(paraMap.get(YADARequest.PS_COMMITQUERY));
-    }
-    if (paraMap.get(YADARequest.PS_COMPACT) != null)
-    {
-      this.yadaReq.setCompact(paraMap.get(YADARequest.PS_COMPACT));
-    }
-		if (paraMap.get(YADARequest.PL_COMPACT) != null)
-		{
-			this.yadaReq.setCompact(paraMap.get(YADARequest.PL_COMPACT));
-		}
-		if (paraMap.get(YADARequest.PL_CONVERTER) != null)
-    {
-      this.yadaReq.setConverter(paraMap.get(YADARequest.PL_CONVERTER));
-    }
-    if (paraMap.get(YADARequest.PS_CONVERTER)!= null)
-    {
-      this.yadaReq.setConverter(paraMap.get(YADARequest.PS_CONVERTER));
-    }
-		if (paraMap.get(YADARequest.PL_COUNT) != null)
-		{
-			this.yadaReq.setCount(paraMap.get(YADARequest.PL_COUNT));
-		}
-		if (paraMap.get(YADARequest.PS_COUNT) != null)
-		{
-			this.yadaReq.setCount(paraMap.get(YADARequest.PS_COUNT));
-		}
-		if (paraMap.get(YADARequest.PL_COOKIES) != null)
-    {
-      this.yadaReq.setCookies(paraMap.get(YADARequest.PL_COOKIES));
-    }
-    if (paraMap.get(YADARequest.PS_COOKIES) != null)
-    {
-      this.yadaReq.setCookies(paraMap.get(YADARequest.PS_COOKIES));
-    }
-		if (paraMap.get(YADARequest.PL_COUNTONLY) != null)
-		{
-			this.yadaReq.setCountOnly(paraMap.get(YADARequest.PL_COUNTONLY));
-		}
-		if (paraMap.get(YADARequest.PS_COUNTONLY) != null)
-		{
-			this.yadaReq.setCountOnly(paraMap.get(YADARequest.PS_COUNTONLY));
-		}
-		if (paraMap.get(YADARequest.PL_DELIMITER) != null)
-		{
-			this.yadaReq.setDelimiter(paraMap.get(YADARequest.PL_DELIMITER));
-		}
-		if (paraMap.get(YADARequest.PS_DELIMITER) != null)
-		{
-			this.yadaReq.setDelimiter(paraMap.get(YADARequest.PS_DELIMITER));
-		}
-		if (paraMap.get(YADARequest.PL_EXPORT) != null)
-		{
-			this.yadaReq.setExport(paraMap.get(YADARequest.PL_EXPORT));
-		}
-		if (paraMap.get(YADARequest.PS_EXPORT) != null)
-		{
-			this.yadaReq.setExport(paraMap.get(YADARequest.PS_EXPORT));
-		}
-		if (paraMap.get(YADARequest.PL_EXPORTLIMIT) != null)
-		{
-			this.yadaReq.setExportLimit(paraMap.get(YADARequest.PL_EXPORTLIMIT));
-		}
-		if (paraMap.get(YADARequest.PS_EXPORTLIMIT) != null)
-		{
-			this.yadaReq.setExportLimit(paraMap.get(YADARequest.PS_EXPORTLIMIT));
-		}
-		if (paraMap.get(YADARequest.PL_FILTERS) != null)
-		{
-			this.yadaReq.setFilters(paraMap.get(YADARequest.PL_FILTERS));
-		}
-		if (paraMap.get(YADARequest.PS_FILTERS) != null)
-		{
-			this.yadaReq.setFilters(paraMap.get(YADARequest.PS_FILTERS));
-		}
-		if (paraMap.get(YADARequest.PL_FORMAT) != null && !paraMap.get(YADARequest.PL_FORMAT).equals(YADARequest.FORMAT_JSON))
-		{
-			this.yadaReq.setFormat(paraMap.get(YADARequest.PL_FORMAT));
-		}
-		if (paraMap.get(YADARequest.PS_FORMAT) != null && !paraMap.get(YADARequest.PS_FORMAT).equals(YADARequest.FORMAT_JSON))
-		{
-			this.yadaReq.setFormat(paraMap.get(YADARequest.PS_FORMAT));
-		}
-		if (paraMap.get(YADARequest.PL_HARMONYMAP) != null)
-		{
-			this.yadaReq.setHarmonyMap(paraMap.get(YADARequest.PL_HARMONYMAP));
-		}
-		if (paraMap.get(YADARequest.PS_HARMONYMAP) != null)
-		{
-			this.yadaReq.setHarmonyMap(paraMap.get(YADARequest.PS_HARMONYMAP));
-		}
-		if (paraMap.get(YADARequest.PL_JSONPARAMS) != null)
-		{
-			this.yadaReq.setJsonParams(paraMap.get(YADARequest.PL_JSONPARAMS));
-		}
-		if (paraMap.get(YADARequest.PS_JSONPARAMS) != null)
-		{
-			this.yadaReq.setJsonParams(paraMap.get(YADARequest.PS_JSONPARAMS));
-		}
-		
-		if (paraMap.get(YADARequest.PL_JOIN) != null)
-    {
-      this.yadaReq.setJoin(paraMap.get(YADARequest.PL_JOIN));
-    }
-		if (paraMap.get(YADARequest.PS_JOIN) != null)
-    {
-      this.yadaReq.setJoin(paraMap.get(YADARequest.PS_JOIN));
-    }
-		if (paraMap.get(YADARequest.PL_LEFTJOIN) != null)
-    {
-      this.yadaReq.setLeftJoin(paraMap.get(YADARequest.PL_LEFTJOIN));
-    }
-    if (paraMap.get(YADARequest.PS_LEFTJOIN) != null)
-    {
-      this.yadaReq.setLeftJoin(paraMap.get(YADARequest.PS_LEFTJOIN));
-    }
-    
-		if (paraMap.get(YADARequest.PL_LABELS) != null)
-		{
-			this.yadaReq.setLabels(paraMap.get(YADARequest.PL_LABELS));
-		}
-		if (paraMap.get(YADARequest.PL_MAIL) != null)
-		{
-			this.yadaReq.setMail(paraMap.get(YADARequest.PL_MAIL));
-		}
-		if (paraMap.get(YADARequest.PL_METHOD) != null && !paraMap.get(YADARequest.PL_METHOD).equals(YADARequest.METHOD_GET))
-		{
-			this.yadaReq.setMethod(paraMap.get(YADARequest.PL_METHOD));
-		}
-		if (paraMap.get(YADARequest.PS_METHOD) != null && !paraMap.get(YADARequest.PS_METHOD).equals(YADARequest.METHOD_GET))
-		{
-			this.yadaReq.setMethod(paraMap.get(YADARequest.PS_METHOD));
-		}
-		if (paraMap.get(YADARequest.PL_OVERARGS) != null)
-		{
-			this.yadaReq.setBypassargs(paraMap.get(YADARequest.PL_OVERARGS));
-		}
-		if (paraMap.get(YADARequest.PS_OVERARGS) != null)
-		{
-			this.yadaReq.setBypassargs(paraMap.get(YADARequest.PS_OVERARGS));
-		}
-		if (paraMap.get(YADARequest.PL_BYPASSARGS) != null)
-		{
-			this.yadaReq.setBypassargs(paraMap.get(YADARequest.PL_BYPASSARGS));
-		}
-		if (paraMap.get(YADARequest.PS_BYPASSARGS) != null)
-		{
-			this.yadaReq.setBypassargs(paraMap.get(YADARequest.PS_BYPASSARGS));
-		}
-		if (paraMap.get(YADARequest.PL_PAGE) != null)
-		{
-			this.yadaReq.setPage(paraMap.get(YADARequest.PL_PAGE));
-		}
-		if (paraMap.get(YADARequest.PS_PAGE) != null)
-		{
-			this.yadaReq.setPage(paraMap.get(YADARequest.PS_PAGE));
-		}
-		if (paraMap.get(YADARequest.PL_PAGESIZE) != null)
-		{
-			this.yadaReq.setPageSize(paraMap.get(YADARequest.PL_PAGESIZE));
-		}
-		if (paraMap.get(YADARequest.PS_PAGESIZE) != null)
-		{
-			this.yadaReq.setPageSize(paraMap.get(YADARequest.PS_PAGESIZE));
-		}
-		if (paraMap.get(YADARequest.PL_PAGESTART) != null)
-		{
-			this.yadaReq.setPageStart(paraMap.get(YADARequest.PL_PAGESTART));
-		}
-		if (paraMap.get(YADARequest.PS_PAGESTART) != null)
-		{
-			this.yadaReq.setPageStart(paraMap.get(YADARequest.PS_PAGESTART));
-		}
-		if (paraMap.get(YADARequest.PL_PARAMS) != null)
-		{
-			this.yadaReq.setParams(paraMap.get(YADARequest.PL_PARAMS));
-		}
-		if (paraMap.get(YADARequest.PS_PARAMS) != null)
-		{
-			this.yadaReq.setParams(paraMap.get(YADARequest.PS_PARAMS));
-		}
-		if (paraMap.get(YADARequest.PL_PATH) != null)
-		{
-			this.yadaReq.setSortKey(paraMap.get(YADARequest.PL_PATH));
-		}
-		if (paraMap.get(YADARequest.PL_PARALLEL) != null)
-		{
-			this.yadaReq.setParallel(paraMap.get(YADARequest.PL_PARALLEL));
-		}
-		if (paraMap.get(YADARequest.PL_PLUGIN) != null)
-		{
-			this.yadaReq.setPlugin(paraMap.get(YADARequest.PL_PLUGIN));
-		}
-		if (paraMap.get(YADARequest.PS_PLUGIN) != null)
-		{
-			l.debug("really:"+paraMap.get(YADARequest.PS_PLUGIN));
-			this.yadaReq.setPlugin(paraMap.get(YADARequest.PS_PLUGIN));
-		}
-		if (paraMap.get(YADARequest.PL_PLUGINTYPE) != null && !paraMap.get(YADARequest.PL_PLUGINTYPE).equals(YADARequest.PREPROCESS))
-		{
-			this.yadaReq.setPluginType(paraMap.get(YADARequest.PL_PLUGINTYPE));
-		}
-		if (paraMap.get(YADARequest.PS_PLUGINTYPE) != null && !paraMap.get(YADARequest.PL_PLUGINTYPE).equals(YADARequest.PREPROCESS))
-		{
-			this.yadaReq.setPluginType(paraMap.get(YADARequest.PS_PLUGINTYPE));
-		}
-		if (paraMap.get(YADARequest.PL_POSTARGS) != null)
-		{
-			this.yadaReq.setPostArgs(paraMap.get(YADARequest.PL_POSTARGS));
-		}
-		if (paraMap.get(YADARequest.PS_POSTARGS) != null)
-		{
-			this.yadaReq.setPostArgs(paraMap.get(YADARequest.PS_POSTARGS));
-		}
-		if (paraMap.get(YADARequest.PL_PREARGS) != null)
-		{
-			this.yadaReq.setPreArgs(paraMap.get(YADARequest.PL_PREARGS));
-		}
-		if (paraMap.get(YADARequest.PS_PREARGS) != null)
-		{
-			this.yadaReq.setPreArgs(paraMap.get(YADARequest.PS_PREARGS));
-		}
-		if (paraMap.get(YADARequest.PL_PRETTY) != null)
-		{
-			this.yadaReq.setPretty(paraMap.get(YADARequest.PL_PRETTY));
-		}
-		if (paraMap.get(YADARequest.PS_PRETTY) != null)
-		{
-			this.yadaReq.setPretty(paraMap.get(YADARequest.PS_PRETTY));
-		}
-		if (paraMap.get(YADARequest.PL_PROXY) != null)
-		{
-			this.yadaReq.setProxy(paraMap.get(YADARequest.PL_PROXY));
-		}
-		if (paraMap.get(YADARequest.PS_PROXY) != null)
-		{
-			this.yadaReq.setProxy(paraMap.get(YADARequest.PS_PROXY));
-		}
-		if (paraMap.get(YADARequest.PL_QNAME) != null && !paraMap.get(YADARequest.PL_QNAME).equals(YADARequest.DEFAULT_QNAME))
-		{
-			this.yadaReq.setQname(paraMap.get(YADARequest.PL_QNAME));
-		}
-		if (paraMap.get(YADARequest.PS_QNAME) != null && !paraMap.get(YADARequest.PS_QNAME).equals(YADARequest.DEFAULT_QNAME))
-		{
-			this.yadaReq.setQname(paraMap.get(YADARequest.PS_QNAME));
-		}
-		if (paraMap.get(YADARequest.PL_ROW_DELIMITER) != null)
-		{
-			this.yadaReq.setRowDelimiter(paraMap.get(YADARequest.PL_ROW_DELIMITER));
-		}
-		if (paraMap.get(YADARequest.PS_ROW_DELIMITER) != null)
-		{
-			this.yadaReq.setRowDelimiter(paraMap.get(YADARequest.PS_ROW_DELIMITER));
-		}
-		if (paraMap.get(YADARequest.PL_RESPONSE) != null)
-		{
-			this.yadaReq.setResponse(paraMap.get(YADARequest.PL_RESPONSE));
-		}
-		if (paraMap.get(YADARequest.PS_RESPONSE) != null)
-		{
-			this.yadaReq.setResponse(paraMap.get(YADARequest.PS_RESPONSE));
-		}
-		if (paraMap.get(YADARequest.PL_SORTKEY) != null)
-		{
-			this.yadaReq.setSortKey(paraMap.get(YADARequest.PL_SORTKEY));
-		}
-		if (paraMap.get(YADARequest.PS_SORTKEY) != null)
-		{
-			this.yadaReq.setSortKey(paraMap.get(YADARequest.PS_SORTKEY));
-		}
-		if (paraMap.get(YADARequest.PL_SORTORDER) != null && !paraMap.get(YADARequest.PL_SORTORDER).equals(YADARequest.SORT_ASC))
-		{
-			this.yadaReq.setSortOrder(paraMap.get(YADARequest.PL_SORTORDER));
-		}
-		if (paraMap.get(YADARequest.PS_SORTORDER) != null && !paraMap.get(YADARequest.PS_SORTORDER).equals(YADARequest.SORT_ASC))
-		{
-			this.yadaReq.setSortOrder(paraMap.get(YADARequest.PS_SORTORDER));
-		}
-		if (paraMap.get(YADARequest.PL_USER) != null && !paraMap.get(YADARequest.PL_USER).equals(YADARequest.DEFAULT_USER))
-		{
-			this.yadaReq.setUser(paraMap.get(YADARequest.PL_USER));
-		}
-		if (paraMap.get(YADARequest.PS_USER) != null && !paraMap.get(YADARequest.PS_USER).equals(YADARequest.DEFAULT_USER))
-		{
-			this.yadaReq.setUser(paraMap.get(YADARequest.PS_USER));
-		}
-		if (paraMap.get(YADARequest.PL_VIEWLIMIT) != null)
-		{
-			this.yadaReq.setViewLimit(paraMap.get(YADARequest.PL_VIEWLIMIT));
-		}
-		if (paraMap.get(YADARequest.PS_VIEWLIMIT) != null)
-		{
-			this.yadaReq.setViewLimit(paraMap.get(YADARequest.PS_VIEWLIMIT));
-		}
-		if (paraMap.get(YADARequest.PL_UPDATE_STATS) != null)
-    {
-      this.yadaReq.setUpdateStats(paraMap.get(YADARequest.PL_UPDATE_STATS));
-    }
-    if (paraMap.get(YADARequest.PS_UPDATE_STATS) != null)
-    {
-      this.yadaReq.setUpdateStats(paraMap.get(YADARequest.PS_UPDATE_STATS));
-    }
-		this.yadaReq.setParameterMap(paraMap);
-		
-		l.debug("current settings:\n"+this.yadaReq.toString());
+	  try
+	  {
+  		if(paraMap.get(YADARequest.PL_ARGS) != null)
+  		{
+  			this.yadaReq.setArgs(paraMap.get(YADARequest.PL_ARGS));
+  		}
+  		if(paraMap.get(YADARequest.PS_ARGS) != null)
+  		{
+  			this.yadaReq.setArgs(paraMap.get(YADARequest.PS_ARGS));
+  		}
+  		if (paraMap.get(YADARequest.PL_COLHEAD) != null)
+  		{
+  			this.yadaReq.setColhead(paraMap.get(YADARequest.PL_COLHEAD));
+  		}
+  		if (paraMap.get(YADARequest.PL_COMMITQUERY) != null)
+      {
+        this.yadaReq.setCommitQuery(paraMap.get(YADARequest.PL_COMMITQUERY));
+      }
+      if (paraMap.get(YADARequest.PS_COMMITQUERY) != null)
+      {
+        this.yadaReq.setCommitQuery(paraMap.get(YADARequest.PS_COMMITQUERY));
+      }
+      if (paraMap.get(YADARequest.PS_COMPACT) != null)
+      {
+        this.yadaReq.setCompact(paraMap.get(YADARequest.PS_COMPACT));
+      }
+  		if (paraMap.get(YADARequest.PL_COMPACT) != null)
+  		{
+  			this.yadaReq.setCompact(paraMap.get(YADARequest.PL_COMPACT));
+  		}
+  		if (paraMap.get(YADARequest.PL_CONVERTER) != null)
+      {
+        this.yadaReq.setConverter(paraMap.get(YADARequest.PL_CONVERTER));
+      }
+      if (paraMap.get(YADARequest.PS_CONVERTER)!= null)
+      {
+        this.yadaReq.setConverter(paraMap.get(YADARequest.PS_CONVERTER));
+      }
+  		if (paraMap.get(YADARequest.PL_COUNT) != null)
+  		{
+  			this.yadaReq.setCount(paraMap.get(YADARequest.PL_COUNT));
+  		}
+  		if (paraMap.get(YADARequest.PS_COUNT) != null)
+  		{
+  			this.yadaReq.setCount(paraMap.get(YADARequest.PS_COUNT));
+  		}
+  		if (paraMap.get(YADARequest.PL_COOKIES) != null)
+      {
+        this.yadaReq.setCookies(paraMap.get(YADARequest.PL_COOKIES));
+      }
+      if (paraMap.get(YADARequest.PS_COOKIES) != null)
+      {
+        this.yadaReq.setCookies(paraMap.get(YADARequest.PS_COOKIES));
+      }
+  		if (paraMap.get(YADARequest.PL_COUNTONLY) != null)
+  		{
+  			this.yadaReq.setCountOnly(paraMap.get(YADARequest.PL_COUNTONLY));
+  		}
+  		if (paraMap.get(YADARequest.PS_COUNTONLY) != null)
+  		{
+  			this.yadaReq.setCountOnly(paraMap.get(YADARequest.PS_COUNTONLY));
+  		}
+  		if (paraMap.get(YADARequest.PL_DELIMITER) != null)
+  		{
+  			this.yadaReq.setDelimiter(paraMap.get(YADARequest.PL_DELIMITER));
+  		}
+  		if (paraMap.get(YADARequest.PS_DELIMITER) != null)
+  		{
+  			this.yadaReq.setDelimiter(paraMap.get(YADARequest.PS_DELIMITER));
+  		}
+  		if (paraMap.get(YADARequest.PL_EXPORT) != null)
+  		{
+  			this.yadaReq.setExport(paraMap.get(YADARequest.PL_EXPORT));
+  		}
+  		if (paraMap.get(YADARequest.PS_EXPORT) != null)
+  		{
+  			this.yadaReq.setExport(paraMap.get(YADARequest.PS_EXPORT));
+  		}
+  		if (paraMap.get(YADARequest.PL_EXPORTLIMIT) != null)
+  		{
+  			this.yadaReq.setExportLimit(paraMap.get(YADARequest.PL_EXPORTLIMIT));
+  		}
+  		if (paraMap.get(YADARequest.PS_EXPORTLIMIT) != null)
+  		{
+  			this.yadaReq.setExportLimit(paraMap.get(YADARequest.PS_EXPORTLIMIT));
+  		}
+  		if (paraMap.get(YADARequest.PL_FILTERS) != null)
+  		{
+  			this.yadaReq.setFilters(paraMap.get(YADARequest.PL_FILTERS));
+  		}
+  		if (paraMap.get(YADARequest.PS_FILTERS) != null)
+  		{
+  			this.yadaReq.setFilters(paraMap.get(YADARequest.PS_FILTERS));
+  		}
+  		if (paraMap.get(YADARequest.PL_FORMAT) != null && !paraMap.get(YADARequest.PL_FORMAT).equals(YADARequest.FORMAT_JSON))
+  		{
+  			this.yadaReq.setFormat(paraMap.get(YADARequest.PL_FORMAT));
+  		}
+  		if (paraMap.get(YADARequest.PS_FORMAT) != null && !paraMap.get(YADARequest.PS_FORMAT).equals(YADARequest.FORMAT_JSON))
+  		{
+  			this.yadaReq.setFormat(paraMap.get(YADARequest.PS_FORMAT));
+  		}
+  		if (paraMap.get(YADARequest.PL_HARMONYMAP) != null)
+  		{
+  			this.yadaReq.setHarmonyMap(paraMap.get(YADARequest.PL_HARMONYMAP));
+  		}
+  		if (paraMap.get(YADARequest.PS_HARMONYMAP) != null)
+  		{
+  			this.yadaReq.setHarmonyMap(paraMap.get(YADARequest.PS_HARMONYMAP));
+  		}
+  		if (paraMap.get(YADARequest.PL_JSONPARAMS) != null)
+  		{
+  			this.yadaReq.setJsonParams(paraMap.get(YADARequest.PL_JSONPARAMS));
+  		}
+  		if (paraMap.get(YADARequest.PS_JSONPARAMS) != null)
+  		{
+  			this.yadaReq.setJsonParams(paraMap.get(YADARequest.PS_JSONPARAMS));
+  		}
+  		
+  		if (paraMap.get(YADARequest.PL_JOIN) != null)
+      {
+        this.yadaReq.setJoin(paraMap.get(YADARequest.PL_JOIN));
+      }
+  		if (paraMap.get(YADARequest.PS_JOIN) != null)
+      {
+        this.yadaReq.setJoin(paraMap.get(YADARequest.PS_JOIN));
+      }
+  		if (paraMap.get(YADARequest.PL_LEFTJOIN) != null)
+      {
+        this.yadaReq.setLeftJoin(paraMap.get(YADARequest.PL_LEFTJOIN));
+      }
+      if (paraMap.get(YADARequest.PS_LEFTJOIN) != null)
+      {
+        this.yadaReq.setLeftJoin(paraMap.get(YADARequest.PS_LEFTJOIN));
+      }
+      
+  		if (paraMap.get(YADARequest.PL_LABELS) != null)
+  		{
+  			this.yadaReq.setLabels(paraMap.get(YADARequest.PL_LABELS));
+  		}
+  		if (paraMap.get(YADARequest.PL_MAIL) != null)
+  		{
+  			this.yadaReq.setMail(paraMap.get(YADARequest.PL_MAIL));
+  		}
+  		if (paraMap.get(YADARequest.PL_METHOD) != null && !paraMap.get(YADARequest.PL_METHOD).equals(YADARequest.METHOD_GET))
+  		{
+  			this.yadaReq.setMethod(paraMap.get(YADARequest.PL_METHOD));
+  		}
+  		if (paraMap.get(YADARequest.PS_METHOD) != null && !paraMap.get(YADARequest.PS_METHOD).equals(YADARequest.METHOD_GET))
+  		{
+  			this.yadaReq.setMethod(paraMap.get(YADARequest.PS_METHOD));
+  		}
+  		if (paraMap.get(YADARequest.PL_OVERARGS) != null)
+  		{
+  			this.yadaReq.setBypassargs(paraMap.get(YADARequest.PL_OVERARGS));
+  		}
+  		if (paraMap.get(YADARequest.PS_OVERARGS) != null)
+  		{
+  			this.yadaReq.setBypassargs(paraMap.get(YADARequest.PS_OVERARGS));
+  		}
+  		if (paraMap.get(YADARequest.PL_BYPASSARGS) != null)
+  		{
+  			this.yadaReq.setBypassargs(paraMap.get(YADARequest.PL_BYPASSARGS));
+  		}
+  		if (paraMap.get(YADARequest.PS_BYPASSARGS) != null)
+  		{
+  			this.yadaReq.setBypassargs(paraMap.get(YADARequest.PS_BYPASSARGS));
+  		}
+  		if (paraMap.get(YADARequest.PL_PAGE) != null)
+  		{
+  			this.yadaReq.setPage(paraMap.get(YADARequest.PL_PAGE));
+  		}
+  		if (paraMap.get(YADARequest.PS_PAGE) != null)
+  		{
+  			this.yadaReq.setPage(paraMap.get(YADARequest.PS_PAGE));
+  		}
+  		if (paraMap.get(YADARequest.PL_PAGESIZE) != null)
+  		{
+  			this.yadaReq.setPageSize(paraMap.get(YADARequest.PL_PAGESIZE));
+  		}
+  		if (paraMap.get(YADARequest.PS_PAGESIZE) != null)
+  		{
+  			this.yadaReq.setPageSize(paraMap.get(YADARequest.PS_PAGESIZE));
+  		}
+  		if (paraMap.get(YADARequest.PL_PAGESTART) != null)
+  		{
+  			this.yadaReq.setPageStart(paraMap.get(YADARequest.PL_PAGESTART));
+  		}
+  		if (paraMap.get(YADARequest.PS_PAGESTART) != null)
+  		{
+  			this.yadaReq.setPageStart(paraMap.get(YADARequest.PS_PAGESTART));
+  		}
+  		if (paraMap.get(YADARequest.PL_PARAMS) != null)
+  		{
+  			this.yadaReq.setParams(paraMap.get(YADARequest.PL_PARAMS));
+  		}
+  		if (paraMap.get(YADARequest.PS_PARAMS) != null)
+  		{
+  			this.yadaReq.setParams(paraMap.get(YADARequest.PS_PARAMS));
+  		}
+  		if (paraMap.get(YADARequest.PL_PATH) != null)
+  		{
+  			this.yadaReq.setSortKey(paraMap.get(YADARequest.PL_PATH));
+  		}
+  		if (paraMap.get(YADARequest.PL_PARALLEL) != null)
+  		{
+  			this.yadaReq.setParallel(paraMap.get(YADARequest.PL_PARALLEL));
+  		}
+  		if (paraMap.get(YADARequest.PL_PLUGIN) != null)
+  		{
+  			this.yadaReq.setPlugin(paraMap.get(YADARequest.PL_PLUGIN));
+  		}
+  		if (paraMap.get(YADARequest.PS_PLUGIN) != null)
+  		{
+  			l.debug("really:"+paraMap.get(YADARequest.PS_PLUGIN));
+  			this.yadaReq.setPlugin(paraMap.get(YADARequest.PS_PLUGIN));
+  		}
+  		if (paraMap.get(YADARequest.PL_PLUGINTYPE) != null && !paraMap.get(YADARequest.PL_PLUGINTYPE).equals(YADARequest.PREPROCESS))
+  		{
+  			this.yadaReq.setPluginType(paraMap.get(YADARequest.PL_PLUGINTYPE));
+  		}
+  		if (paraMap.get(YADARequest.PS_PLUGINTYPE) != null && !paraMap.get(YADARequest.PL_PLUGINTYPE).equals(YADARequest.PREPROCESS))
+  		{
+  			this.yadaReq.setPluginType(paraMap.get(YADARequest.PS_PLUGINTYPE));
+  		}
+  		if (paraMap.get(YADARequest.PL_POSTARGS) != null)
+  		{
+  			this.yadaReq.setPostArgs(paraMap.get(YADARequest.PL_POSTARGS));
+  		}
+  		if (paraMap.get(YADARequest.PS_POSTARGS) != null)
+  		{
+  			this.yadaReq.setPostArgs(paraMap.get(YADARequest.PS_POSTARGS));
+  		}
+  		if (paraMap.get(YADARequest.PL_PREARGS) != null)
+  		{
+  			this.yadaReq.setPreArgs(paraMap.get(YADARequest.PL_PREARGS));
+  		}
+  		if (paraMap.get(YADARequest.PS_PREARGS) != null)
+  		{
+  			this.yadaReq.setPreArgs(paraMap.get(YADARequest.PS_PREARGS));
+  		}
+  		if (paraMap.get(YADARequest.PL_PRETTY) != null)
+  		{
+  			this.yadaReq.setPretty(paraMap.get(YADARequest.PL_PRETTY));
+  		}
+  		if (paraMap.get(YADARequest.PS_PRETTY) != null)
+  		{
+  			this.yadaReq.setPretty(paraMap.get(YADARequest.PS_PRETTY));
+  		}
+  		if (paraMap.get(YADARequest.PL_PROXY) != null)
+  		{
+  			this.yadaReq.setProxy(paraMap.get(YADARequest.PL_PROXY));
+  		}
+  		if (paraMap.get(YADARequest.PS_PROXY) != null)
+  		{
+  			this.yadaReq.setProxy(paraMap.get(YADARequest.PS_PROXY));
+  		}
+  		if (paraMap.get(YADARequest.PL_QNAME) != null && !paraMap.get(YADARequest.PL_QNAME).equals(YADARequest.DEFAULT_QNAME))
+  		{
+  			this.yadaReq.setQname(paraMap.get(YADARequest.PL_QNAME));
+  		}
+  		if (paraMap.get(YADARequest.PS_QNAME) != null && !paraMap.get(YADARequest.PS_QNAME).equals(YADARequest.DEFAULT_QNAME))
+  		{
+  			this.yadaReq.setQname(paraMap.get(YADARequest.PS_QNAME));
+  		}
+  		if (paraMap.get(YADARequest.PL_ROW_DELIMITER) != null)
+  		{
+  			this.yadaReq.setRowDelimiter(paraMap.get(YADARequest.PL_ROW_DELIMITER));
+  		}
+  		if (paraMap.get(YADARequest.PS_ROW_DELIMITER) != null)
+  		{
+  			this.yadaReq.setRowDelimiter(paraMap.get(YADARequest.PS_ROW_DELIMITER));
+  		}
+  		if (paraMap.get(YADARequest.PL_RESPONSE) != null)
+  		{
+  			this.yadaReq.setResponse(paraMap.get(YADARequest.PL_RESPONSE));
+  		}
+  		if (paraMap.get(YADARequest.PS_RESPONSE) != null)
+  		{
+  			this.yadaReq.setResponse(paraMap.get(YADARequest.PS_RESPONSE));
+  		}
+  		if (paraMap.get(YADARequest.PL_SORTKEY) != null)
+  		{
+  			this.yadaReq.setSortKey(paraMap.get(YADARequest.PL_SORTKEY));
+  		}
+  		if (paraMap.get(YADARequest.PS_SORTKEY) != null)
+  		{
+  			this.yadaReq.setSortKey(paraMap.get(YADARequest.PS_SORTKEY));
+  		}
+  		if (paraMap.get(YADARequest.PL_SORTORDER) != null && !paraMap.get(YADARequest.PL_SORTORDER).equals(YADARequest.SORT_ASC))
+  		{
+  			this.yadaReq.setSortOrder(paraMap.get(YADARequest.PL_SORTORDER));
+  		}
+  		if (paraMap.get(YADARequest.PS_SORTORDER) != null && !paraMap.get(YADARequest.PS_SORTORDER).equals(YADARequest.SORT_ASC))
+  		{
+  			this.yadaReq.setSortOrder(paraMap.get(YADARequest.PS_SORTORDER));
+  		}
+  		if (paraMap.get(YADARequest.PL_USER) != null && !paraMap.get(YADARequest.PL_USER).equals(YADARequest.DEFAULT_USER))
+  		{
+  			this.yadaReq.setUser(paraMap.get(YADARequest.PL_USER));
+  		}
+  		if (paraMap.get(YADARequest.PS_USER) != null && !paraMap.get(YADARequest.PS_USER).equals(YADARequest.DEFAULT_USER))
+  		{
+  			this.yadaReq.setUser(paraMap.get(YADARequest.PS_USER));
+  		}
+  		if (paraMap.get(YADARequest.PL_VIEWLIMIT) != null)
+  		{
+  			this.yadaReq.setViewLimit(paraMap.get(YADARequest.PL_VIEWLIMIT));
+  		}
+  		if (paraMap.get(YADARequest.PS_VIEWLIMIT) != null)
+  		{
+  			this.yadaReq.setViewLimit(paraMap.get(YADARequest.PS_VIEWLIMIT));
+  		}
+  		if (paraMap.get(YADARequest.PL_UPDATE_STATS) != null)
+      {
+        this.yadaReq.setUpdateStats(paraMap.get(YADARequest.PL_UPDATE_STATS));
+      }
+      if (paraMap.get(YADARequest.PS_UPDATE_STATS) != null)
+      {
+        this.yadaReq.setUpdateStats(paraMap.get(YADARequest.PS_UPDATE_STATS));
+      }
+  		this.yadaReq.setParameterMap(paraMap);
+  		
+  		l.debug("current settings:\n"+this.yadaReq.toString());
+	  }
+	  catch(YADARequestException e)
+	  {
+	    error(e.getMessage(),e);
+	  }
 	}
 	
 	/**
@@ -492,8 +499,8 @@ public class Service {
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
 			YADAQuery yq = getCurrentQuery();
-			j.put("Help", "http://opensource.nibr.com/projects/YADA/#other");
-			j.put("Source", "https://github.com/Novartis/YADA#other");
+			j.put("Help", "https://github.com/Novartis/YADA#other");
+			j.put("Source", "https://github.com/Novartis/YADA");
 			j.put("Exception", e.getClass().getName());
       j.put("Message",msg);
       j.put("Qname",yq != null ? yq.getQname() : "UNKNOWN");
@@ -677,6 +684,7 @@ public class Service {
 	 * @throws YADARequestException when the class refrenced by the {@code response} parameter can't be instantiated or found, and the default instantiation fails.
 	 * @throws YADAIOException when exporting results fails
 	 * @throws YADAResourceException when exported results can't be written to the file system
+	 * @throws YADAQueryConfigurationException  if the {@link Converter} can't be instantiated
 	 */
 	private String _execute() throws YADAPluginException,  
 																	YADAAdaptorException,  
@@ -686,7 +694,7 @@ public class Service {
 																	YADAResponseException, 
 																	YADARequestException, 
 																	YADAResourceException, 
-																	YADAIOException
+																	YADAIOException, YADAQueryConfigurationException
 	{
 		//TODO How can global plugins be applied to each query?  A new parameter, e.g., APPLY_TO_EACH?
 		//TODO How can other global parameters be applied to each query?
@@ -892,8 +900,9 @@ public class Service {
 	 * @throws YADAConverterException when the {@link com.novartis.opensource.yada.format.Converter} implementation encounters an error or can't be instantiated by the {@link Response}
 	 * @throws YADAResponseException when the {@link Response} implementation fails to execute successfully
 	 * @throws YADARequestException when the class refrenced by the {@code response} parameter can't be instantiated or found, and the default instantiation fails.
+	 * @throws YADAQueryConfigurationException if the {@link Converter} can't be instantiated
 	 */
-	private String composeResponse() throws YADARequestException, YADAResponseException, YADAConverterException 
+	private String composeResponse() throws YADARequestException, YADAResponseException, YADAConverterException, YADAQueryConfigurationException 
 	{
 		String   result         = "";
 		String   format         = getYADARequest().getFormat(); 

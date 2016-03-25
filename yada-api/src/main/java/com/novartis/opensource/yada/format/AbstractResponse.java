@@ -25,6 +25,7 @@ import org.json.JSONObject;
 
 import com.novartis.opensource.yada.Parser;
 import com.novartis.opensource.yada.YADAQuery;
+import com.novartis.opensource.yada.YADAQueryConfigurationException;
 import com.novartis.opensource.yada.YADAQueryResult;
 import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADARequestException;
@@ -117,7 +118,6 @@ public abstract class AbstractResponse implements Response
 	 */
 	protected YADAQueryResult   yqr;
 	
-
 	/**
 	 * Default constructor 
 	 */
@@ -127,11 +127,12 @@ public abstract class AbstractResponse implements Response
 
 	/**
 	 * Default implementation just returns itself.
+	 * @throws YADAQueryConfigurationException 
 	 * @see com.novartis.opensource.yada.format.Response#compose(com.novartis.opensource.yada.YADAQueryResult[])
 	 */
 	@Override
 	public Response compose(YADAQueryResult[] yqrs)
-			throws YADAResponseException, YADAConverterException
+			throws YADAResponseException, YADAConverterException, YADAQueryConfigurationException
 	{
 		return this;
 	}
@@ -172,11 +173,12 @@ public abstract class AbstractResponse implements Response
 
 	/**
 	 * Default implementation just returns itself.
+	 * @throws YADAQueryConfigurationException 
 	 * @see com.novartis.opensource.yada.format.Response#append(java.lang.Object)
 	 */
 	@Override
 	public Response append(Object o) throws YADAResponseException,
-			YADAConverterException
+			YADAConverterException, YADAQueryConfigurationException
 	{
 		return this;
 	}
@@ -199,8 +201,9 @@ public abstract class AbstractResponse implements Response
 	 * @return the appropriate Converter object
 	 * @throws YADARequestException when the default converter cannot be instantiated
 	 * @throws YADAConverterException when result reformatting fails
+	 * @throws YADAQueryConfigurationException 
 	 */
-	protected Converter getConverter(YADAQueryResult yqr) throws YADARequestException, YADAConverterException
+	protected Converter getConverter(YADAQueryResult yqr) throws YADARequestException, YADAConverterException, YADAQueryConfigurationException
 	{
 		String converterClass = yqr.getYADAQueryParamValue(YADARequest.PS_CONVERTER);
 		
@@ -248,8 +251,9 @@ public abstract class AbstractResponse implements Response
 	 * @return the default Converter
 	 * @throws YADARequestException when the default converter cannot be instantiated
 	 * @throws YADAConverterException when result reformatting fails
+	 * @throws YADAQueryConfigurationException 
 	 */
-	protected Converter getDefaultConverter(YADAQueryResult yqr) throws YADARequestException, YADAConverterException
+	protected Converter getDefaultConverter(YADAQueryResult yqr) throws YADARequestException, YADAConverterException, YADAQueryConfigurationException
 	{
 		Converter converter = null;
 		String format    = yqr.getYADAQueryParamValue(YADARequest.PS_FORMAT);
@@ -285,7 +289,7 @@ public abstract class AbstractResponse implements Response
 			else
 			{
 				String msg = "The converter you are attempting to instantiate requires a protocol or class that is not supported.  This could be a configuration issue.";
-				throw new YADAConverterException(msg);
+				throw new YADAQueryConfigurationException(msg);
 			}
 			className = FORMAT_PKG+type+format+CONVERTER; 
 	    Constructor<?> c = Class.forName(className).getConstructor(new Class[] { YADAQueryResult.class });

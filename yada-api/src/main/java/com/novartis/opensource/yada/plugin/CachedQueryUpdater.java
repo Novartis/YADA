@@ -27,6 +27,7 @@ import com.novartis.opensource.yada.Finder;
 import com.novartis.opensource.yada.YADAConnectionException;
 import com.novartis.opensource.yada.YADAFinderException;
 import com.novartis.opensource.yada.YADAQuery;
+import com.novartis.opensource.yada.YADAQueryConfigurationException;
 
 /**
  * A post-processer to update the cache with a new version of the query just
@@ -76,6 +77,10 @@ public class CachedQueryUpdater extends AbstractPostprocessor
 		catch (YADAFinderException e)
 		{
 			throw new YADAPluginException(e.getMessage(), e);
-		}
+		} 
+		catch (YADAQueryConfigurationException e) 
+		{
+		  throw new YADAPluginException(e.getMessage(), e);
+    }
 	}
 }

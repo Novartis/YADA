@@ -1946,7 +1946,7 @@ public class YADARequest {
 		{
 			this.jsonParams = new JSONParams(jp);
 		}
-		catch(YADAQueryConfigurationException e)
+		catch(JSONException|YADAQueryConfigurationException e)
 		{
 			String msg = "The JSONParams string appears to be malformed.";
 			throw new YADARequestException(msg, e);

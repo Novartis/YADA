@@ -14,6 +14,7 @@
  */
 package com.novartis.opensource.yada.format;
 
+import com.novartis.opensource.yada.YADAQueryConfigurationException;
 import com.novartis.opensource.yada.YADAQueryResult;
 
 /**
@@ -37,9 +38,10 @@ public interface Response {
 	 * @return this Response object
 	 * @throws YADAResponseException when response composition fails
 	 * @throws YADAConverterException when result reformatting fails
+	 * @throws YADAQueryConfigurationException 
 	 * @see com.novartis.opensource.yada.format.JSONResponse
 	 */
-	public Response compose(YADAQueryResult[] yadaQueryResults) throws YADAResponseException, YADAConverterException;
+	public Response compose(YADAQueryResult[] yadaQueryResults) throws YADAResponseException, YADAConverterException, YADAQueryConfigurationException;
 	/**
 	 * A method meant to be called by {@link #compose(YADAQueryResult[])} for filling the new Response object with 
 	 * it's foundational attributes, i.e., root nodes, root keys, headers, etc.
@@ -70,8 +72,9 @@ public interface Response {
 	 * @return the Response object
 	 * @throws YADAResponseException when response composition fails
 	 * @throws YADAConverterException when result reformatting fails
+	 * @throws YADAQueryConfigurationException 
 	 */
-	public Response append(Object o) throws YADAResponseException, YADAConverterException;
+	public Response append(Object o) throws YADAResponseException, YADAConverterException, YADAQueryConfigurationException;
 	/**
 	 * Get a string version of the Response object.  This should be callable by {@link com.novartis.opensource.yada.Service} to return
 	 * the Response content to the client

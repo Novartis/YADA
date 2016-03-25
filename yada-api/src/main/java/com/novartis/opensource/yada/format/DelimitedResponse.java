@@ -36,6 +36,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
+import com.novartis.opensource.yada.YADAQueryConfigurationException;
 import com.novartis.opensource.yada.YADAQueryResult;
 import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADARequestException;
@@ -74,11 +75,12 @@ public class DelimitedResponse extends AbstractResponse {
 	
 	/**
 	 * Skeletal override of method, calls {@link #append(Object)}
+	 * @throws YADAQueryConfigurationException 
 	 * @see com.novartis.opensource.yada.format.AbstractResponse#compose(com.novartis.opensource.yada.YADAQueryResult[])
 	 */
 	@SuppressWarnings("unchecked")
   @Override
-	public Response compose(YADAQueryResult[] yqrs)	throws YADAResponseException, YADAConverterException
+	public Response compose(YADAQueryResult[] yqrs)	throws YADAResponseException, YADAConverterException, YADAQueryConfigurationException
 	{
 		setYADAQueryResults(yqrs);
 		String colsep = YADARequest.DEFAULT_DELIMITER; 
@@ -430,10 +432,11 @@ public class DelimitedResponse extends AbstractResponse {
 
 	/**
 	 * Appends a converted string containing the contents of {@code o} to the {@link YADAQueryResult#getConvertedResults()} {@link List}
+	 * @throws YADAQueryConfigurationException 
 	 * @see com.novartis.opensource.yada.format.AbstractResponse#append(java.lang.Object)
 	 */
 	@Override
-	public Response append(Object o) throws YADAResponseException, YADAConverterException {
+	public Response append(Object o) throws YADAResponseException, YADAConverterException, YADAQueryConfigurationException {
 		try
 		{
 			String colsep  = this.yqr.getYADAQueryParamValue(YADARequest.PS_DELIMITER);

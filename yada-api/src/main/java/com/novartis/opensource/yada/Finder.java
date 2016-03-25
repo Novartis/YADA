@@ -207,9 +207,10 @@ public class Finder
 	 * @return the {@link YADAQuery} retrieved from the distributed index
 	 * @throws YADAFinderException if the query {@code q} can't be found in the YADA index.  Check your spelling and case.
 	 * @throws YADAConnectionException if an error occurs when attempting to query the YADA Index.  This could be the result of a configuration issue.
+	 * @throws YADAQueryConfigurationException 
 	 * @see #getQuery(String)
 	 */
-	public YADAQuery getQueryFromIndex(String q) throws YADAConnectionException, YADAFinderException
+	public YADAQuery getQueryFromIndex(String q) throws YADAConnectionException, YADAFinderException, YADAQueryConfigurationException
 	{
 		ResultSet rs = null;
 		YADAQuery yq = new YADAQuery();
@@ -273,8 +274,9 @@ public class Finder
 	 * @return {@link YADAQuery} object encapsulating the query code and parameters
 	 * @throws YADAFinderException if the query {@code q} can't be found in the YADA index.  Check your spelling and case.
 	 * @throws YADAConnectionException if an error occurs when attempting to query the YADA Index.  This could be the result of a configuration issue.
+	 * @throws YADAQueryConfigurationException if default parameters cannot be set
 	 */
-	public YADAQuery getQuery(String q) throws YADAConnectionException, YADAFinderException {
+	public YADAQuery getQuery(String q) throws YADAConnectionException, YADAFinderException, YADAQueryConfigurationException {
 		return this.getQuery(q, true);
 	}
 	
@@ -294,10 +296,11 @@ public class Finder
 	 * @return {@link YADAQuery} object encapsulating the query code and parameters
 	 * @throws YADAFinderException if the query {@code q} can't be found in the YADA index.  Check your spelling and case.
 	 * @throws YADAConnectionException if an error occurs when attempting to query the YADA Index.  This could be the result of a configuration issue. 
+	 * @throws YADAQueryConfigurationException if default parameters cannot be set
 	 * @see YADAQuery 
 	 *  
 	 */
-	public YADAQuery getQuery(String q, boolean updateStats) throws YADAConnectionException, YADAFinderException
+	public YADAQuery getQuery(String q, boolean updateStats) throws YADAConnectionException, YADAFinderException, YADAQueryConfigurationException
 	{
 		final String qname = q;
 		YADAQuery yq        = null; 
@@ -360,7 +363,7 @@ public class Finder
 	 * @throws YADAFinderException when {@code rs} can't be processed
 	 */
 	@SuppressWarnings("static-method")
-	private void setDefaultParam(YADAQuery yq, ResultSet rs) throws YADAFinderException
+	private void setDefaultParam(YADAQuery yq, ResultSet rs) throws YADAFinderException, YADAQueryConfigurationException
 	{
 		//TODO should this return null, rather than default 'na' values?
 		try
@@ -382,7 +385,7 @@ public class Finder
 		catch(SQLException e)
 		{
 			String msg = "Unable to set default params.";
-			throw new YADAFinderException(msg,e);
+			throw new YADAQueryConfigurationException(msg,e);
 		}
 	}
 	

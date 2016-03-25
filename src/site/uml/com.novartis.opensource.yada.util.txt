@@ -12,6 +12,7 @@ class MailUtils
 class XmlUtils
 class Log4jInit 
 class YADAInit
+class JsRuntimeSupport
 }
 
 package "com.novartis.opensource.yada.util PROVISIONAL" {

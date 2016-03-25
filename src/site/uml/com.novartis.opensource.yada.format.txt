@@ -10,20 +10,35 @@ interface Converter
 abstract class AbstractConverter
 class FileSystemResultJSONConverter
 class RESTResultJSONConverter
+class RESTResultDelimitedConverter
 class ResultSetResultDelimitedConverter
 class ResultSetResultHTMLConverter
 class ResultSetResultJSONConverter
 class ResultSetResultXMLConverter
 class SOAPResultXMLConverter
+class Harmonizer
+class Joiner
 
 Converter <|.. AbstractConverter
 AbstractConverter <|-l- FileSystemResultJSONConverter
 AbstractConverter <|-d- RESTResultJSONConverter
+AbstractConverter <|-r- RESTResultDelimitedConverter
 AbstractConverter <|-u- ResultSetResultDelimitedConverter
-AbstractConverter <|-r- ResultSetResultHTMLConverter
+AbstractConverter <|-u- ResultSetResultHTMLConverter
 AbstractConverter <|-d- ResultSetResultJSONConverter
 AbstractConverter <|-d- ResultSetResultXMLConverter
 AbstractConverter <|-u- SOAPResultXMLConverter
+RESTResultJSONConverter  o-- Harmonizer 
+RESTResultDelimitedConverter o--  Harmonizer 
+
+Harmonizer o-r-javax.script.ScriptEngineManager
+Harmonizer o-r-javax.script.ScriptEngine
+
+Harmonizer o-- org.mozilla.javascript.Context
+Harmonizer o-- org.mozilla.javascript.Function
+Harmonizer o-- org.mozilla.javascript.Scriptable
+Harmonizer o-- org.mozilla.javascript.ScriptableObject
+Harmonizer o-- org.mozilla.javascript.EvaluatorException
 
 interface Response
 abstract class AbstractResponse
@@ -39,10 +54,15 @@ Response <|.. AbstractResponse
 AbstractResponse <|-d- CountResponse
 AbstractResponse <|-r- DelimitedResponse
 AbstractResponse <|-l- HTMLResponse
-AbstractResponse <|-u- JSONResponse
+AbstractResponse <|-d- JSONResponse
 AbstractResponse <|-d- RESTPassThruResponse
 AbstractResponse <|-u- SOAPPassThruResponse
 AbstractResponse <|-d- XMLResponse
+
+DelimitedResponse o-r- Joiner
+JSONResponse o-d- Joiner
+
+Joiner o-- org.hsqldb.jdbcDriver
 
 ResultSetResultJSONConverter -[hidden]d- JSONResponse
 }

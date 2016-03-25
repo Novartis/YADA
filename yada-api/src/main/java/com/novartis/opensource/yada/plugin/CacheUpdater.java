@@ -27,6 +27,7 @@ import com.novartis.opensource.yada.Finder;
 import com.novartis.opensource.yada.YADAConnectionException;
 import com.novartis.opensource.yada.YADAFinderException;
 import com.novartis.opensource.yada.YADAQuery;
+import com.novartis.opensource.yada.YADAQueryConfigurationException;
 import com.novartis.opensource.yada.YADARequest;
 
 /**
@@ -64,7 +65,7 @@ public class CacheUpdater extends AbstractBypass
 				{
 				  l.warn("Attempted to update cached version non-existent query. This usually means someone changed the qname directly in the index. The old query was removed from the cache.");
 				  yadaIndex.remove(q);
-				}
+				} 
 				if(yq != null)
 				{
 				  Element element = new Element(q, yq);
@@ -75,6 +76,10 @@ public class CacheUpdater extends AbstractBypass
 			{
 				throw new YADAPluginException(e.getMessage(), e);
 			} 
+			catch (YADAQueryConfigurationException e) 
+      {
+			  throw new YADAPluginException(e.getMessage(), e);
+			}
 		}
 		return "Cache successfully updated on " + new java.util.Date().toString();
 	}
