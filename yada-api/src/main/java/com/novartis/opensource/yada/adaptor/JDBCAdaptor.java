@@ -1034,13 +1034,7 @@ public abstract class JDBCAdaptor extends Adaptor{
       float fval = Float.parseFloat(val);
       pstmt.setFloat(index, fval);
     }
-    catch(NumberFormatException e)
-    {
-      l.warn("Error: " + e.getMessage() + " caused by " + e.getClass());
-      l.debug("Setting param [" + String.valueOf(index) + "] of type [" + String.valueOf(type) + "] to: null");
-      pstmt.setNull(index, java.sql.Types.INTEGER);
-    }
-    catch(NullPointerException e)
+    catch(NumberFormatException | NullPointerException e)
     {
       l.warn("Error: " + e.getMessage() + " caused by " + e.getClass());
       l.debug("Setting param [" + String.valueOf(index) + "] of type [" + String.valueOf(type) + "] to: null");

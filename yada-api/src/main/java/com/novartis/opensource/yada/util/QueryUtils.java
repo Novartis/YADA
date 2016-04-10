@@ -894,7 +894,7 @@ public class QueryUtils
 	 */
 	public String getConformedCode(String code)
 	{
-		String c = code.replaceAll("\\?.", "?");
+		String c = code.replaceAll("\\?[nvdti]", "?");
 		return c;
 	}
 

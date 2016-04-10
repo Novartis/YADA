@@ -46,7 +46,7 @@ public class ScriptPostprocessor extends AbstractPostprocessor {
 	
 	/**
 	 * Enables the execution of a script stored in the {@code YADA_BIN} directory.
-	 * To execute a script postprocessor plugin, pass {@code preArgs}, or just {@code args}
+	 * To execute a script postprocessor plugin, pass {@code postArgs}, or just {@code args}
 	 * the first argument being the name of the script executable, and the rest of the arguments
 	 * those, in order, to pass to it. If {@link YADARequest#getPostArgs()} is not null
 	 * and {@link YADARequest#getPlugin()} is null, then the plugin will be set to 
@@ -83,6 +83,7 @@ public class ScriptPostprocessor extends AbstractPostprocessor {
 		// add plugin
 		try 
 		{
+		  // first arg to cmds is the executable script name passed in the postargs parameter
 			cmds.add(Finder.getEnv("yada_bin")+args.remove(0));
 		} 
 		catch (YADAResourceException e)
@@ -96,7 +97,7 @@ public class ScriptPostprocessor extends AbstractPostprocessor {
 		{
 			cmds.add(arg);
 		}
-		// add results path
+		// add results path as last argument to executable
 		cmds.add(tmpResult.getAbsolutePath());
 		// add yadaReq json
 		cmds.add(yadaReq.toString());
@@ -107,7 +108,7 @@ public class ScriptPostprocessor extends AbstractPostprocessor {
 		{
 			ProcessBuilder builder = new ProcessBuilder(cmds);
 			builder.redirectErrorStream(true);
-			Process process = builder.start();
+			Process process = builder.start(); // send a security exception when the permission denied
 			try(BufferedReader si = new BufferedReader(new InputStreamReader(process.getInputStream())))
 			{
   			while ((s = si.readLine()) != null)

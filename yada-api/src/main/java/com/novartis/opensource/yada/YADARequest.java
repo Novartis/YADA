@@ -2932,7 +2932,6 @@ public class YADARequest {
 		return this.viewLimit;
 	}
 
-	//TODO document join, leftjoin in markdown docs
 	/**
    * @return the join specification
    * @since 0.6.2.0

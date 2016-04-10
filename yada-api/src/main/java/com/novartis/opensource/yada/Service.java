@@ -490,7 +490,6 @@ public class Service {
 	 */
 	private String error(String msg, Exception e)
 	{
-		//TODO think about HTTP response codes for error conditions
 		JSONObject j = new JSONObject();
 		String     result = "";
 		try
@@ -828,18 +827,28 @@ public class Service {
 			JSONArray files = new JSONArray();
 			for ( FileItem fItem : getYADARequest().getUploadItems())
 			{
-					DiskFileItem item = (DiskFileItem)fItem;
-					JSONObject f = new JSONObject(); 
-					l.debug(item.toString());
-					f.put("name",item.getName());
-					f.put("size",item.getSize());
-					f.put("url","");
-					f.put("thumbnailUrl","");
-					f.put("deleteUrl","");
-					f.put("deleteType","");
-					files.put(f);
+			  JSONObject f = new JSONObject(); 
+		    if(fItem.isFormField())
+		    {
+		      f.put("formField",true);
+		      f.put("name", fItem.getFieldName());
+		      f.put("value", fItem.getString());
+		    }
+		    else
+		    {
+		      DiskFileItem item = (DiskFileItem)fItem;
+  				l.debug(item.toString());
+  				f.put("name",item.getName());
+  				f.put("size",item.getSize());
+  				f.put("path",item.getStoreLocation().getAbsolutePath());
+  				f.put("url","");
+  				f.put("thumbnailUrl","");
+  				f.put("deleteUrl","");
+  				f.put("deleteType","");
+		    }
+  			files.put(f);
 			}
-			result = new JSONObject().put("files",files).toString(2);
+			result = new JSONObject().put("files",files).toString();
 		}
 		catch (JSONException e)
 		{
@@ -1088,37 +1097,17 @@ public class Service {
 									{
 										this.qMgr.endowQuery(yq);
 									} 
-									catch (YADAQueryConfigurationException e)
+									catch (YADAQueryConfigurationException|YADAResourceException|YADAUnsupportedAdaptorException e)
 									{
 										String msg = "Unable to re-endow YADAQuery with new parameters.";
 										throw new YADAPluginException(msg, e);
 									} 
-									catch (YADAResourceException e)
-									{
-										String msg = "Unable to re-endow YADAQuery with new parameters.";
-										throw new YADAPluginException(msg, e);
-									} 
-									catch (YADAUnsupportedAdaptorException e)
-									{
-										String msg = "Unable to re-endow YADAQuery with new parameters.";
-										throw new YADAPluginException(msg, e);
-									}
 								}
-								catch(InstantiationException e)
+								catch(InstantiationException|IllegalAccessException|ClassCastException e)
 								{
 									String msg = "Unable to instantiate plugin for class "+pluginClass.getName();
 									throw new YADAPluginException(msg,e);
 								}
-								catch(IllegalAccessException e)
-								{
-									String msg = "Unable to instantiate plugin for class "+pluginClass.getName();
-									throw new YADAPluginException(msg,e);
-								}
-								catch(ClassCastException e)
-								{
-									String msg = "Unable to instantiate plugin for class "+pluginClass.getName();
-									throw new YADAPluginException(msg,e);
-								} 
 							}
 							else
 							{

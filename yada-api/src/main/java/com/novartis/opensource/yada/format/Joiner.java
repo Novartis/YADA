@@ -70,8 +70,9 @@ public class Joiner {
    * Then uses the join spec to build data structures, mapping columns to tables, tables to columns, and table pairs to columns.
    * Then builds a select join query from the structures, executes it, wraps and returns the results.
    * @return a {@link JSONArray} containing structured results, or a {@link StringBuffer} containing delimited results
+   * @throws YADAResponseException if there is a problem with the in-memory database
    */
-  public Object join()
+  public Object join() throws YADAResponseException
   {
     Object result = null;
     try 
@@ -111,7 +112,8 @@ public class Joiner {
          }
          catch(SQLException e)
          {
-           //TODO exception handling
+           String msg = "Unable to create in-memory tables";
+           throw new YADAResponseException(msg, e);
          }
          
          StringBuilder header = new StringBuilder();
@@ -144,7 +146,8 @@ public class Joiner {
              //TODO xml
              if(isFormatStructured) // json (and someday xml)
              {
-               List<String> results = (List<String>)yqr.getConvertedResult(i);
+               @SuppressWarnings("unchecked")
+              List<String> results = (List<String>)yqr.getConvertedResult(i);
                for(String res : results)
                {
                  JSONObject row = new JSONObject(res);
@@ -158,7 +161,8 @@ public class Joiner {
              }
              else // delimited
              {
-               List<List<String>> results = (List<List<String>>) yqr.getConvertedResult(i);
+               @SuppressWarnings("unchecked")
+              List<List<String>> results = (List<List<String>>) yqr.getConvertedResult(i);
                for(int j=0;j<results.size();j++)
                {
                  for(int k=1;k<=yqr.getConvertedHeader().size();k++)
@@ -173,7 +177,8 @@ public class Joiner {
          }
          catch(SQLException e)
          {
-           //TODO exception handling
+           String msg = "Unable to populate in-memory tables";
+           throw new YADAResponseException(msg, e);
          }
       }
       
@@ -276,7 +281,7 @@ public class Joiner {
         if(tables.size() == 2)
         {
           if(S_tt2c.get(tables) == null)
-            S_tt2c.put(tables, new ArrayList<String>(Arrays.asList(col)));
+            S_tt2c.put(tables, new ArrayList<>(Arrays.asList(col)));
           else
             S_tt2c.get(tables).add(col);
         }
@@ -288,7 +293,7 @@ public class Joiner {
             biTabs.add(tables.get(i));
             biTabs.add(tables.get(++i));
             if(S_tt2c.get(biTabs) == null)
-              S_tt2c.put(biTabs, new ArrayList<String>(Arrays.asList(col)));
+              S_tt2c.put(biTabs, new ArrayList<>(Arrays.asList(col)));
             else
               S_tt2c.get(biTabs).add(col);
           }
@@ -384,7 +389,8 @@ public class Joiner {
       }
       catch(SQLException e)
       {
-        //TODO exception handling
+        String msg = "Unable to format result sets.";
+        throw new YADAResponseException(msg, e);
       }
       finally
       {
@@ -395,13 +401,15 @@ public class Joiner {
         }
         catch(SQLException e)
         {
-          //TODO exception handling
+          String msg = "There was a problem releasing resources.";
+          throw new YADAResponseException(msg, e);
         }
       }
     } 
     catch (SQLException e) 
     {
-      //TODO driver/connection exception handling
+      String msg = "Unable to connect to in-memory database.";
+      throw new YADAResponseException(msg, e);
     }
     return result;
   }

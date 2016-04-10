@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;

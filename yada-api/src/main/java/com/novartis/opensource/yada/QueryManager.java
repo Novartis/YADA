@@ -856,31 +856,6 @@ public class QueryManager
 		yq.addAllData(entry.getData());
 		yq.addYADAQueryParams(entry.getParams());
 		yq.setParameterizedColumns(yq.getColumnNameArray());
-		
-//		yq.addRequestParams(this.yadaReq.getRequestParamsForQueries());
-//		yq.setAdaptorClass(this.qutils.getAdaptorClass(yq.getSource()));
-//		if(RESTAdaptor.class.equals(yq.getAdaptorClass()) && this.yadaReq.hasCookies())
-//	  {
-//		  for(String cookieName : this.yadaReq.getCookies())
-//		  {
-//		    for(Cookie cookie : this.yadaReq.getRequest().getCookies())
-//		    {
-//		      if(cookie.getName().equals(cookieName))
-//		      {
-//		        yq.addCookie(cookieName, Base64.encodeBase64String(Base64.decodeBase64(cookie.getValue().getBytes())));
-//		      }
-//		    }
-//		  }
-//    }
-//		yq.setConformedCode(this.qutils.getConformedCode(yq.getYADACode()));
-//		this.qutils.setProtocol(yq);
-//		yq.setAdaptor(this.qutils.getAdaptor(yq.getAdaptorClass(), this.yadaReq));
-//		for (int row = 0; row < yq.getData().size(); row++)
-//		{
-//			yq.addDataTypes(row, this.qutils.getDataTypes(yq.getYADACode()));
-//			yq.addParamCount(row, yq.getDataTypes().get(0).length);
-//		}
-//		return yq;
 		return endowQuery(yq);
 	}
 
@@ -954,9 +929,13 @@ public class QueryManager
         }
       }
     }
-		yq.setConformedCode(this.qutils.getConformedCode(yq.getYADACode()));
+		
+		//TODO handle missing params exceptions here, throw YADARequestException
+		//TODO review instances where YADAQueryConfigurationException is thrown
 		this.qutils.setProtocol(yq);
 		yq.setAdaptor(this.qutils.getAdaptor(yq.getAdaptorClass(), this.yadaReq));
+		
+		yq.setConformedCode(this.qutils.getConformedCode(yq.getYADACode()));
 		for (int row = 0; row < yq.getData().size(); row++)
 		{
 		  yq.addDataTypes(row, this.qutils.getDataTypes(yq.getYADACode()));
