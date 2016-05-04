@@ -218,6 +218,21 @@ define(
 		  	    	mode = 'application/xml';
 		  	    }
 		  	    this.editor.setOption('mode',mode);
+		  	    this.clip = new Clipboard(this.attr['clipboard'],
+              { text: function(trigger) {
+                  if(trigger.id == self.attr['clipboard-editor'].replace('#',''))
+                    return self.editor.getValue();
+                }
+              }
+		  	    );
+		  	    this.clip.on('success',function(e) {
+		  	      var trig = $(e.trigger);
+		  	      trig.tooltip('show');
+		  	      setTimeout(function(){
+  		  	       trig.tooltip('hide');
+  		  	    }, 1000);
+		  	    });
+		  	    this.select('tooltip').tooltip({trigger:'manual',title:'Copied!'});
 	  			}
 	  		};
 	  		
@@ -517,7 +532,7 @@ define(
 	  			table.column(2).visible(!table.column(2).visible());
 	  			table.column(3).visible(!table.column(3).visible());
 	  		};
-	  		
+	  			  		
 	  		this.defaultAttrs({
 	  		  'nest'             :'.nest',
 	  		  'new-query'        :'#new-query',
@@ -547,11 +562,14 @@ define(
 	  		  'qname-copy-title' :'#qname-copy .modal-title',
 	  		  'qname-copy-body'  :'#qname-copy .modal-body',
 	  		  'view-error-details' : '#view-error-details',
-	  		  'error-details'    :'#error-details'
+	  		  'error-details'    :'#error-details',
+	  		  'clipboard-editor' :'#query-code-copy',
+	  		  'code'             :'#query-editor textarea',
+	  		  'tooltip'          :'#query-editor-container [data-toggle="tooltip"]'
  	  		});
 	  		
 	      this.after('initialize', function () {
-	        new Clipboard(this.attr['clipboard']);
+	        var self = this;
 	      	this.enrich();
 	      	// event handlers
 	      	this.on('app-requested',this.reloadTable);
@@ -573,8 +591,7 @@ define(
 	      	});
 	      	this.on('focusout',{
 	      	  'qname':this.setQname
-	      	});
-	      	
+	      	});	      	
 	      });
 	  }
 });
