@@ -93,11 +93,12 @@ define(
 		  		  {
 		  				targets:[6,8], // date columns
 		  				type:"date",
-		  				className: 'dt-body-nowrap dt-body-center',
+		  				className: 'dt-body-center',
 		  				render:function(data,type,row,meta) {
 		  					if(data == "")
 		  						return data;
-		  					return self.getOracleDateStr(data);
+		  					var txt = self.getOracleDateStr(data);
+		  					return '<span title="'+txt+'">'+txt.substr(0,10)+'</span>';
 		  				}
 		  			}],
 		  			columns:[
