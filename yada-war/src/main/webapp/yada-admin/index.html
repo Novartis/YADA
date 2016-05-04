@@ -84,6 +84,29 @@
 		    </div>
 		  </div>
 		</div><!-- /.modal -->
+		<div id="qname-copy" class="modal fade" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Copy query</h4>
+          </div>          
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="uniq-name">Enter unique name:</label><input id="uniq-name" class="form-control"  placeholder="Unique name..."/>
+              </div>
+              <div class="form-group">
+                <label for="incl-param">Include Parameters?</label><input id="incl-param" type="checkbox" value="yes"/>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-call-to-action" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary">Save</button>
+          </div>
+        </div>
+      </div>
+    </div><!-- /.modal -->
 		<div id="migration-target-selector" class="modal fade" tabindex="-1">
 		  <div class="modal-dialog modal-sm">
 		    <div class="modal-content">
@@ -99,26 +122,42 @@
 		    </div>
 		  </div>
 		</div><!-- /.modal -->
-		<div id="query-editor-container" class="modal fade" tabindex="-1">
+		<div id="query-editor-container" class="modal fade" tabindex="-1" data-backdrop="static">
 		  <div class="modal-dialog modal-lg">
 		    <div class="modal-content">
 		      <div class="modal-header">
 		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 		        <h4 class="modal-title">Edit query</h4>
 		      </div>		      
-		      <div id="query-name">
-		      	<label>Qname: <input type="text" size="80"/></label>
-		      </div>
 		      <div class="modal-body">
-<!-- conf # 2234089384 -->
-						<div id="query-editor"></div>
-						<table id="default-params"></table>
+		        <form>
+		          <div class="form-group">
+		            <label for="query-name">Qname:</label>
+					      <div id="query-name-box" class="input-group" >
+			            <input id="query-name" class="form-control" type="text"/>
+			            <span class="input-group-addon glyphicon glyphicon-copy" id="query-name-copy" data-clipboard-target="#query-name"></span>
+			          </div>
+		          </div>
+		          <div id="query-editor-box" class="form-group">
+		           <div>
+			           <label for="query-editor">Query:</label>
+			           <span class="glyphicon glyphicon-copy" id="query-code-copy" data-clipboard-target="#query-editor textarea"></span>
+		           </div>
+							 <div id="query-editor"></div>
+						  </div>
+							<div id="query-comments-box" class="form-group" >
+							  <label for="query-comments">Comments:</label><textarea class="form-control" id="query-comments"></textarea>
+							</div>
+							<table id="default-params"></table>
+						</form>
 		      </div>
 		      <div class="modal-footer">
 		      	<!-- <span id="query-editor-msg" style="float:left">If no code, or the wrong code, appears, just click inside the editor.</span> -->
-		        <button type="button" class="btn btn-danger">Delete</button>
-		        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-		        <button type="button" class="btn btn-primary">Save</button>
+		        <button type="button" id="button-delete" class="btn btn-danger">Delete</button>
+		        <button type="button" id="button-copy" class="btn btn-default">Copy</button>
+		        <button type="button" id="button-rename" class="btn btn-default">Rename</button>
+		        <button type="button" id="button-cancel" class="btn btn-call-to-action" data-dismiss="modal">Cancel</button>
+		        <button type="button" id="button-save" class="btn btn-primary">Save</button>
 		      </div>
 		    </div><!-- /.modal-content -->
 		  </div><!-- /.modal-dialog -->

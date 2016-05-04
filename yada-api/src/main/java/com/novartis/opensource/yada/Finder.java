@@ -18,6 +18,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 
 import javax.naming.InitialContext;
 import javax.naming.NameClassPair;
@@ -119,7 +120,7 @@ public class Finder
 	/**
 	 * Constant equal to: {@value}
 	 */
-	private final static String SQL_STATS      = "update yada_query set access_count = access_count+1, last_access=? where qname = ?";
+	private final static String SQL_STATS      = "update yada_query a set a.access_count=(select b.access_count+1 from yada_query b where b.qname = ?), a.last_access=? where a.qname = ?";
 	/**
 	 * Constant equal to: {@code select a.sql "+YADA_QUERY+", b.source "+YADA_SOURCE+", nvl(b.version,'na') "+YADA_VERSION+", nvl(c.target,'na') "+YADA_PARAMTARGET+", nvl(c.name,'na') "+YADA_PARAMNAME+", nvl(c.value,'na') "+YADA_PARAMVAL+", c.rule "+YADA_PARAMRULE+" from yada_query a join yada_query_conf b on a.app = b.app left join yada_params c on (a.app = c.target or a.name = c.target) where a.name = ? order by c.target}
 	 */
@@ -410,8 +411,11 @@ public class Finder
 			try
 			{
 				pstmt = conn.prepareStatement(querySql);
-				pstmt.setDate(1, new java.sql.Date(System.currentTimeMillis()));
-				pstmt.setString(2,qname);
+				pstmt.setString(1,qname);
+				long t = new Date().getTime();
+        java.sql.Timestamp sqlDateVal = new java.sql.Timestamp(t);
+				pstmt.setTimestamp(2, sqlDateVal);
+				pstmt.setString(3,qname);
 				
 			} 
 			catch (SQLException e)
@@ -423,6 +427,7 @@ public class Finder
 			try
 			{
 				pstmt.executeUpdate();
+				conn.commit();
 			}
 			catch (SQLException e)
 			{

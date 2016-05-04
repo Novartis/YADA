@@ -23,6 +23,7 @@ require.config({
     	jquery:       "http://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min",
     	lodash:		    "http://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.9.0/lodash.min",
     	autocomplete: "https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.2.21/jquery.autocomplete",
+    	Clipboard:    "https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard",
     	mergely:      "lib/mergely/mergely.min",
     	text:         "https://cdnjs.cloudflare.com/ajax/libs/require-text/2.0.12/text.min"
     },

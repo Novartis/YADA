@@ -23,9 +23,23 @@ define(function(require) {
 				data = data.toString();
 			else if(typeof data != 'string')
 				return '';
+			
+			
+			var rxMillis10 = /[\d]{10}/; //1234567890
+			var rxMillis13 = /[\d]{13}/; //1234567890123
 			var rxYadaDate = /[\d]{2}([\d]{2})-([\d]{2})-([\d]{2})\s([\d:]{6}[\d]{2})/; //2015-05-27 00:00:00
 			var rxJsDate   = /[A-Z][a-z]{2}\s([A-Z][a-z]{2})\s([\d]{2})\s[\d]{2}([\d]{2})\s([\d:]{6}[\d]{2})\sGMT-[\d]{4}\s\([A-Z]+\)/;  //Tue Jun 02 2015 18:34:27 GMT-0400 (EDT)
 		  var result, y, m, d, hms;
+		  
+		  if((result = data.match(rxMillis13)) != undefined)
+      {
+        var data = new Date(parseInt(result)).toString();
+      }
+      else if((result = data.match(rxMillis10)) != undefined)
+      {
+        var data = new Date(parseInt(result)*1000).toString();
+      }
+		  
 			if((result = data.match(rxYadaDate)) != undefined)
 			{
 				y = result[1];//data.substr(2,2);
@@ -40,6 +54,7 @@ define(function(require) {
 				d = result[2];
 				hms = result[4];
 			}
+			
 			return d+'-'+m+'-'+y+' '+hms;
 		};
   }

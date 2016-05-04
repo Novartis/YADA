@@ -219,7 +219,7 @@ define(
 	  	this.showParams = function(e,d) {
 	  		var self = this;
 	  		var $table = $('#default-params');
-	  		var params = [{TARGET:$('#query-name input').val(),NAME:'',VALUE:'',RULE:1}];
+	  		var params = [{TARGET:$('#query-name').val(),NAME:'',VALUE:'',RULE:1}];
   			if(d.params != undefined && d.params.length > 0)
   			{
   				params = d.params;
@@ -235,13 +235,14 @@ define(
 	  		{
 			  	$table.dataTable({
 		  			data:params,
+		  			type:"POST",
 		  			"lengthMenu": [[ 5, 10, -1 ],[5, 10, 'All']],
 		  			dom:'t<"bottom-l"i><"bottom-c"p><"bottom-r"l>',
 		  			columnDefs:[
 							{
 								targets:1,
 								render:function(data,type,row,meta) {
-									var qname = row.TARGET == '' ? $('#query-name input').val() : row.TARGET;
+									var qname = row.TARGET == '' ? $('#query-name').val() : row.TARGET;
 									var id = 'name-'+qname.replace(/\s/g,'-')+'-'+meta.row;
 									var elem = '<input type="text" id="'+id+'" value="'+data+'"/>';
 									return elem;
@@ -250,7 +251,7 @@ define(
 		  			  {
 		  			  	targets:2,
 		  			  	render:function(data,type,row,meta) {
-		  			  		var qname = row.TARGET == '' ? $('#query-name input').val() : row.TARGET;
+		  			  		var qname = row.TARGET == '' ? $('#query-name').val() : row.TARGET;
 									var id = 'value-'+qname.replace(/\s/g,'-')+'-'+meta.row;
 									var elem;
 									if(data == 'true' || data == 'false')
@@ -271,7 +272,7 @@ define(
 		  			  {
 		  			  	targets:3,
 		  			  	render:function(data,type,row,meta) {
-		  			  		var qname = row.TARGET == '' ? $('#query-name input').val() : row.TARGET;
+		  			  		var qname = row.TARGET == '' ? $('#query-name').val() : row.TARGET;
 		  			  	  var index = qname.replace(/\s/g,'-')+'-'+meta.row;
 		  			  	  var elem  = '<input type="radio" name="rule-'+index+'" value="1" '+(data==1?'checked="true"':'')+'>Non-overridable';
 		  			  	      elem += '<input type="radio" name="rule-'+index+'" value="0" '+(data==0?'checked="true"':'')+'>Overridable';
@@ -292,7 +293,7 @@ define(
 	  	
 	  	this.enrich = function(e,d) {
 	  		var self = this;
-	  		var $input = $('#query-name input');
+	  		var $input = $('#query-name');
 	  		var val    = $input.val().replace(/\s/g,"-");
 	  		$('input[id^=name-'+val+'-]').each(function() {
 	      	var $nameAc = $(this);
@@ -325,6 +326,7 @@ define(
 	  	};
 	  	
 	  	this.saveParam = function(e,d) {
+	  	  e.preventDefault();
 	  		var self = this,
 	  		$table   = $('#default-params'),
 	  		table    = $table.DataTable(),
@@ -356,6 +358,7 @@ define(
 	  	};
 	  	
 	  	this.removeParam = function(e,d) {
+	  	  e.preventDefault();
 	  		var self = this,
 	  		$table   = $('#default-params'),
 	  		table    = $table.DataTable(),
@@ -378,7 +381,7 @@ define(
 	  	this.addParam = function(e,d) {
 	  		var self = this;
 	  		var $table = $('#default-params');
-	  		var params = {TARGET:$('#query-name input').val(),NAME:'',VALUE:'',RULE:1};
+	  		var params = {TARGET:$('#query-name').val(),NAME:'',VALUE:'',RULE:1};
 	  		var table  = $table.DataTable(); 
 	  		table.row.add(params).draw();
 	  		var lastIndex = table.data().length - 1;
