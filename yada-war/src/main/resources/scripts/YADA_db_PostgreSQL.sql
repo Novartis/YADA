@@ -1,8 +1,8 @@
 ﻿CREATE USER yada PASSWORD 'yada';
 
 CREATE DATABASE YADA OWNER=yada;
-	
-\connect yada yada;
+
+connect yada yada;
 GRANT ALL PRIVILEGES ON DATABASE yada TO yada WITH GRANT OPTION;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO yada;
 
