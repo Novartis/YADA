@@ -553,7 +553,7 @@ define(
 	  		  var params  = this.select('nest').data('defaultParams');
 	  		  var jp      = [{"qname":"YADA new query","DATA":queries}];
 	  		  if(params.length > 0)
-	  		    jp.push({"qname":"YADA insert default params","DATA":params});
+	  		    jp.push({"qname":"YADA insert default param","DATA":params});
 	  		  var json = JSON.stringify(jp);
 	  		  var blob = new Blob([json], {type: "application/json"});
 	  		  var url  = URL.createObjectURL(blob);
