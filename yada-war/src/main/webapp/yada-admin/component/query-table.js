@@ -570,8 +570,6 @@ define(
 	          cancelable: true
 	  		  });
 	  		  a.dispatchEvent(evt);
-//	  		  $('<a id="backup-link" download="backup.json" href="'+url+'">Download</a>').appendTo('.nest');
-//	  		  $('#backup-link').click();
 	  		};
 	  			  		
 	  		this.defaultAttrs({
