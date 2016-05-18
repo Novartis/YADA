@@ -76,7 +76,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
    * The query executed to evaluate authorization.
    */
   protected static final String YADA_A11N_QUERY = 
-      "SELECT DISTINCT target, type, qname "
+      "SELECT DISTINCT target, policy, qname "
       + "FROM YADA_A11N a join YADA_QUERY b on  (a.target = b.qname OR a.target = b.app) "
       + "WHERE a.qname = ?";
     
@@ -594,7 +594,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
     {
       while (rs.next()) {
         String tgt       = rs.getString(1); // YADA_A11N.TARGET
-        String type    = rs.getString(2); // YADA_A11N.POLICY
+        String type      = rs.getString(2); // YADA_A11N.POLICY
         String a11nQname = rs.getString(3); // YADA_A11N.QNAME (a query name)
         
         if (qname.equals(tgt)) 

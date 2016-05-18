@@ -6,20 +6,29 @@ skinparam class {
 }
 
 package "com.novartis.opensource.yada.plugin" {
+interface TokenValidator
+interface Validation
+interface SecurityPolicy <|-- interface ExecutionPolicy
+interface SecurityPolicy <|-- interface ContentPolicy
 abstract class AbstractPostprocessor
-abstract class AbstractPreprocessor
 abstract class AbstractBypass
 interface Bypass <|.. AbstractBypass
 AbstractPostprocessor <|-- class CachedQueryUpdater
 AbstractBypass <|-- class CacheUpdater
 AbstractBypass <|-- class EmailBypassPlugin
+interface Preprocess <|.. abstract class AbstractPreprocessor
+interface ExecutionPolicy <|.. AbstractPreprocessor
+interface ContentPolicy <|.. AbstractPreprocessor
+interface TokenValidator <|.. AbstractPreprocessor
+interface Validation <|.. AbstractPreprocessor
 interface Postprocess <|.. AbstractPostprocessor
-interface Preprocess <|.. AbstractPreprocessor
+
 AbstractBypass <|-- class ScriptBypass
 AbstractPostprocessor <|-- class ScriptPostprocessor
 AbstractPreprocessor <|-- class ScriptPreprocessor
 AbstractPostprocessor <|-- class XSLPostprocessor
 class YADAPluginException --|> class com.novartis.opensource.yada.YADAException
+class YADASecurityException --|> class com.novartis.opensource.yada.YADAException
 
 Preprocess : YADARequest engage(YADARequest)
 Preprocess : YADARequest engage(YADARequest, YADAQuery)
@@ -30,6 +39,8 @@ Bypass : YADAQueryResult engage(YADARequest, YADAQuery)
 
 ScriptPostprocessor -[hidden]d- Bypass
 Preprocess -[hidden]r- Bypass
+ExecutionPolicy -[hidden]r Preprocess
+ContentPolicy -[hidden]r Preprocess
 }
 
 hide members

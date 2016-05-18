@@ -238,11 +238,18 @@ define(
 	  		};
 	  		
 	  		this.addQuery = function(e,d) { // triggered by 'new query' button and row-click
+	  		  this.select('params-wrapper').hide()
 	  		  this.restoreFooter();
 	  		  this.renderEditor(e,d);
 	  		  var self = this;
 	  		  if(this.edit !== 'update') // new
 	  		  {
+	  		    if($.fn.DataTable.isDataTable( this.attr.params ))
+	          {
+	  		      this.select('params').DataTable().destroy();
+	  		      this.select('params').empty();
+	          }
+	  		    this.select('container-title').text('Create query');
 	  		    this.select('qname').removeAttr('readonly').val(this.app + ' ');
 	          this.select('clipboard').hide();
 	          this.select('button-copy').hide();
@@ -255,6 +262,11 @@ define(
 	          setTimeout(function(){
 	            self.select('qname').focus();
 	          }, 100); 
+	  		  }
+	  		  else
+	  		  {
+	  		    this.select('params-wrapper').show();
+	  		    this.select('container-title').text('Edit query');
 	  		  }
 	  		};
 	  		
@@ -520,9 +532,9 @@ define(
 	  		this.saveSuccess = function(e,d) {
 	  			var action = this.edit == 'copy' ? 'copied' : this.edit == 'new' ? 'saved' : this.edit+'d';
 	  			this.edit = '';
-	  			var msg   = 'Query ' +d.qname+' was '+action+' successfully.' 
+	  			var msg   = 'Query <span style="font-family:Monaco, monospace"><mark>'+d.qname+'</mark></span> was '+action+' successfully.' 
 	  			var html  = '<div class="alert alert-success" role="alert">';
-	  		      html += '<strong>Hooray!</strong>'+' '+msg+'</div>';
+	  		      html += '<strong>Hooray!</strong> '+msg+'</div>';
 	  			$(html).prependTo(d.selector);
 	  			this.alertFooter();
 	  			this.select('query-table').DataTable().ajax.reload();
@@ -533,11 +545,42 @@ define(
 	  			table.column(2).visible(!table.column(2).visible());
 	  			table.column(3).visible(!table.column(3).visible());
 	  		};
+	  		
+	  		this.backup = function(e,d) {
+	  		  var data    = $('#query-table').DataTable().data();
+	  		  var len     = data.length;
+	  		  var queries = _.values(data).slice(0,len); //TODO might have to transform date 
+	  		  var params  = this.select('nest').data('defaultParams');
+	  		  var jp      = [{"qname":"YADA new query","DATA":queries}];
+	  		  if(params.length > 0)
+	  		    jp.push({"qname":"YADA insert default params","DATA":params});
+	  		  var json = JSON.stringify(jp);
+	  		  var blob = new Blob([json], {type: "application/json"});
+	  		  var url  = URL.createObjectURL(blob);
+
+	  		  var a = document.createElement('a');
+	  		  a.id          = "backup-link";
+	  		  a.download    = "YADA_"+this.app+"_backup.json";
+	  		  a.href        = url;
+	  		  a.textContent = " ";
+	  		  document.getElementsByClassName('nest')[0].appendChild(a);
+	  		  var evt = new MouseEvent('click', {
+	          view: window,
+	          bubbles: true,
+	          cancelable: true
+	  		  });
+	  		  a.dispatchEvent(evt);
+//	  		  $('<a id="backup-link" download="backup.json" href="'+url+'">Download</a>').appendTo('.nest');
+//	  		  $('#backup-link').click();
+	  		};
 	  			  		
 	  		this.defaultAttrs({
+	  		  'params'           :'#default-params',
+	  		  'params-wrapper'   :'#default-params_wrapper',
 	  		  'nest'             :'.nest',
 	  		  'new-query'        :'#new-query',
 	  		  'toggle-view'      :'#toggle-view',
+	  		  'backup'           :'#backup',
 	  		  'button'           :'.btn',
 	  		  'has-alert'        :'.has-alert',
 	  		  'alert'            :'.alert',
@@ -548,6 +591,7 @@ define(
 	  		  'button-copy'      :'#query-editor-container #button-copy',
 	  		  'button-rename'    :'#query-editor-container #button-rename',
 	  		  'container'        :'#query-editor-container',
+	  		  'container-title'  :'#query-editor-container .modal-title',
 	  		  'container-body'   :'#query-editor-container .modal-body',
 	  		  'query-table'      :'#query-table',
 	  		  'query-table-body' :'#query-table tbody',
@@ -562,7 +606,7 @@ define(
 	  		  'qname-copy-cancel':'#qname-copy .btn-call-to-action',
 	  		  'qname-copy-title' :'#qname-copy .modal-title',
 	  		  'qname-copy-body'  :'#qname-copy .modal-body',
-	  		  'view-error-details' : '#view-error-details',
+	  		  'view-error-details' :'#view-error-details',
 	  		  'error-details'    :'#error-details',
 	  		  'clipboard-editor' :'#query-code-copy',
 	  		  'code'             :'#query-editor textarea',
@@ -579,8 +623,8 @@ define(
 	      	this.on('save-success',this.saveSuccess);
 	      	this.on('shown.bs.modal',this.addQuery);
 	      	this.on('xhr.dt',this.getDefaultParams);
-          this.on('reload-params',this.getDefaultParams);
 	      	this.on('click', {
+	      	  'backup':this.backup,
 	      	  'toggle-view':this.toggleView,
 	      	  'query-table-body':this.editQuery,
 	      	  'button-save':this.saveQuery,

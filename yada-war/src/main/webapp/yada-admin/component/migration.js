@@ -60,7 +60,7 @@ define(
 	  		this.data = $('#query-table').DataTable().data();
 	  		$('#query-table_wrapper').hide();
 	  		$('#migration-table_wrapper').show();
-	  		$('#toggle-view,#new-query').addClass('disabled');
+	  		$('#toggle-view,#new-query,#backup').addClass('disabled');
 		  	this.sourceQnames  = _.pluck(this.data,'QNAME');
 		  	this.sourceObjects = _.map(this.data,function(row){ return { QNAME:row.QNAME, QUERY:row.QUERY, MODIFIED:row.MODIFIED};});
 		  	this.whitelist     = _.difference(this.sourceQnames,this.blacklist);//['YADA default'];//

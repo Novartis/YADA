@@ -29,9 +29,9 @@ define(
 	  	
 	  	this.refresh = function(app) {
 	  		this.setTitle(app);
-	  		$('#toggle-view,#new-query').removeClass('disabled');
+	  		$('#toggle-view,#new-query,#backup').removeClass('disabled');
 	  		this.trigger(this.$node,'app-requested',{app:app.data});
-	  		
+	  		this.trigger('close-selector');
 	  	};
 	  	
 	  	this.setTitle = function(app) {
