@@ -23,7 +23,7 @@ proto    = argv.c ? 'https://' : 'http://',
 src      = proto+argv.s,
 tgt      = proto+argv.t,
 app      = argv.a,
-bak      = argv.b
+bak      = argv.b,
 del      = argv.p ? false : true,
 dryrun   = argv.d || false,
 help     = argv.h || argv["?"],
@@ -37,8 +37,12 @@ defaultExcl   = ['YADA apps',
                  'YADA queries',
                  'YADA new query',
                  'YADA delete query',
+                 'YADA update query',
                  'YADA insert usage log',
-                 'YADA update query'],
+                 'YADA select default params for app',
+                 'YADA update default param',
+                 'YADA insert default param',
+                 'YADA delete default param'],
 blacklist     = argv.x ? _.union(argv.x.split(','), defaultExcl) : defaultExcl,
 whitelist     = argv.i ? _.difference(argv.i.split(','),blacklist) : [], 
 inserts       = [],
@@ -110,6 +114,7 @@ function promise() {
 };
 
 function getQueries(host) {
+  debugger;
   this.data[host] = {"queries":[],"params":[]}; 
   return rp(host+'/j/'+JSON.stringify(this.jp)+this.opts)
   .then(function(resp) {
@@ -164,21 +169,26 @@ function mergeDefaultParams() {
 	
 function compareAndPrepare() {
   var self = this;
-  
   // list of qnames returned by src query
-  this.sourceQnames  = _.pluck(this.data[src]["queries"],'QNAME');
+  this.sourceQnames  = _.map(this.data[src]["queries"],'QNAME');
+  
   // src query map
   this.sourceQueries = {};
   _.each(this.data[src]["queries"],function(row){
-    self.sourceQueries[row.QNAME] = {"QUERY":row.QUERY,"MODIFIED":row.MODIFIED,"MODIFIED_BY":row.MODIFIED_BY};
+    self.sourceQueries[row.QNAME] = {"QUERY":row.QUERY,"MODIFIED":row.MODIFIED,"MODIFIED_BY":row.MODIFIED_BY,"COMMENTS":row.COMMENTS};
   });
 
   //list of qnames returned by tgt query
-  this.targetQnames  = _.pluck(this.data[tgt].queries,'QNAME');
+  this.targetQnames  = _.map(this.data[tgt].queries,'QNAME');
   // tgt query map
   this.targetQueries = {};
   _.each(this.data[tgt]["queries"],function(row){
-    self.targetQueries[row.QNAME] = {"QUERY":row.QUERY,"MODIFIED":row.MODIFIED,"MODIFIED_BY":row.MODIFIED_BY};
+    var targetComments = row.COMMENTS;
+    if(targetComments !== undefined && targetComments.length > 0)
+      row.COMMENTS = "\n\n" + targetComments;
+    else
+      row.COMMENTS = '';
+    self.targetQueries[row.QNAME] = {"QUERY":row.QUERY,"MODIFIED":row.MODIFIED,"MODIFIED_BY":row.MODIFIED_BY,"COMMENTS":row.COMMENTS};
   });
   
   // pruned list of qnames per exclusions (blacklist)
@@ -215,7 +225,8 @@ function migrate() {
   			var o = {QNAME:query,
   							 QUERY:this.sourceQueries[query].QUERY,
   							 MODIFIED_BY:this.sourceQueries[query].MODIFIED_BY,
-  							 MODIFIED:this.sourceQueries[query].MODIFIED,
+  							 MODIFIED:getFormattedDate(this.sourceQueries[query].MODIFIED),
+  							 COMMENTS:this.sourceQueries[query].COMMENTS + this.targetQueries[query].COMMENTS === undefined ? '' : this.targetQueries[query].COMMENTS,
   							 APP:this.app};
   			j[j.length-1].DATA.push(o);
   		});	  			
@@ -229,7 +240,11 @@ function migrate() {
   							 QUERY:this.sourceQueries[query].QUERY,
   							 MODIFIED_BY:this.sourceQueries[query].MODIFIED_BY,
   							 CREATED_BY:this.sourceQueries[query].MODIFIED_BY,
-  							 APP:this.app};
+  							 CREATED:getFormattedDate(new Date()),
+  							 MODIFIED:getFormattedDate(new Date()),
+  							 ACCESS_COUNT: 0,
+  							 APP:this.app,
+  							 COMMENTS:this.sourceQueries[query].COMMENTS};
   			j[j.length-1].DATA.push(o);
   		});	  			
 		}
@@ -245,30 +260,57 @@ function migrate() {
 		
 		if(this.updParams.length > 0)
 		{
-  		j.push({qname:'YADA update default param',DATA:[]});
+		  var data = [];
   		_.each(this.updParams,function(param) {
-  			var o = {TARGET:param[0],NAME:param[1],VALUE:param[3],RULE:param[2]};
-  			j[j.length-1].DATA.push(o);
+  		  _.each(this.whitelist,function(query) {
+  		    if(_.includes(query,param[0]))
+  		    {
+  		      var o = {TARGET:param[0],NAME:param[1],VALUE:param[3],RULE:param[2]};
+  		      data.push(o);
+  		    }
+  		  });
   		});
-		}	  		
+  		if(data.length > 0)
+  		{
+  		  j.push({qname:'YADA update default param',DATA:data});
+  		}
+		}
 		
 		if(this.addParams.length > 0)
-		{
-  		j.push({qname:'YADA insert default param',DATA:[]});
-  		_.each(this.addParams,function(param) {
-  			var o = {TARGET:param[0],NAME:param[1],VALUE:param[3],RULE:param[2]};
-  			j[j.length-1].DATA.push(o);
-  		});	  			
-		}
+    {
+      var data = [];
+      _.each(this.addParams,function(param) {
+        _.each(this.whitelist,function(query) {
+          if(_.includes(query,param[0]))
+          {
+            var o = {TARGET:param[0],NAME:param[1],VALUE:param[3],RULE:param[2]};
+            data.push(o);
+          }
+        });
+      });
+      if(data.length > 0)
+      {
+        j.push({qname:'YADA insert default param',DATA:data});
+      }
+    }
 		
 		if(this.delParams.length > 0)
-		{
-  		j.push({qname:'YADA delete default param',DATA:[]});
-  		_.each(this.delParams,function(param) {
-  			var o = {TARGET:param[0],NAME:param[1],VALUE:param[3],RULE:param[2]};
-  			j[j.length-1].DATA.push(o);
-  		});	  			
-		}
+    {
+      var data = [];
+      _.each(this.delParams,function(param) {
+        _.each(this.whitelist,function(query) {
+          if(_.includes(query,param[0]))
+          {
+            var o = {TARGET:param[0],NAME:param[1],VALUE:param[3],RULE:param[2]};
+            data.push(o);
+          }
+        });
+      });
+      if(data.length > 0)
+      {
+        j.push({qname:'YADA delete default param',DATA:data});
+      }
+    }
 		
 		if(bak) {
 		  var fs = require('fs');
@@ -288,5 +330,50 @@ function migrate() {
 		else
 		// update yada_query set qname=?v, query=?v, modified_by=?v, modified=?d where qname=?v and app=?v
 		  return rp(this.tgt+'/j/'+JSON.stringify(j));		
+};
+
+
+function getFormattedDate(data) {
+  
+  if(typeof data == 'object')
+    data = data.toString();
+  else if(typeof data != 'string')
+    return '';
+  
+  var months     = ['','JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  var rxMillis10 = /[\d]{10}/; //1234567890
+  var rxMillis13 = /[\d]{13}/; //1234567890123
+  var rxOrclDate = /([\d]{2})-([JjFbMmAaSsOoNnDd][AaEePpUuCcOo][NnBbRrYyLlGgPpTtVvCc])-(([\d]{2})?[\d]{2})\s([\d:]{6}[\d]{2})/; 
+  var rxYadaDate = /[\d]{2}([\d]{2})-([\d]{2})-([\d]{2})\s([\d:]{6}[\d]{2})/; //2015-05-27 00:00:00
+  var rxJsDate   = /[A-Z][a-z]{2}\s([A-Z][a-z]{2})\s([\d]{2})\s[\d]{2}([\d]{2})\s([\d:]{6}[\d]{2})\sGMT-[\d]{4}\s\([A-Z]+\)/;  //Tue Jun 02 2015 18:34:27 GMT-0400 (EDT)
+  var result, y, m, d, hms;
+  
+  if((result = data.match(rxMillis13)) != undefined)
+  {
+    var data = new Date(parseInt(result)).toString();
+  }
+  else if((result = data.match(rxMillis10)) != undefined)
+  {
+    var data = new Date(parseInt(result)*1000).toString();
+  }
+  
+
+  if((result = data.match(rxOrclDate)) != undefined)
+  {
+    m = _.indexOf(months,result[2].toUpperCase());
+    d = result[1];                   
+  }
+  else if((result = data.match(rxJsDate)) != undefined)
+  {
+    m = _.indexOf(months,result[1].toUpperCase());
+    d = result[2];
+  }
+  y = result[3];  
+  hms = result[4];
+  
+  m = m < 10 ? "0"+m : m;
+  y = y.length == 2 ? "20"+y : y;
+  
+  return y+'-'+m+'-'+d+' '+hms;
 };
 

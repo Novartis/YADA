@@ -97,7 +97,7 @@ define(
 		  				render:function(data,type,row,meta) {
 		  					if(data == "")
 		  						return data;
-		  					var txt = self.getOracleDateStr(data);
+		  					var txt = self.getFormattedDate(data,"oracle");
 		  					return '<span title="'+txt+'">'+txt.substr(0,10)+'</span>';
 		  				}
 		  			}],

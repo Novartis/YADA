@@ -33,7 +33,16 @@ define(
 	  	this.data          = {}; 
 	  	this.sourceQnames  = [];
 	  	this.sourceObjects = [];
-	  	this.blacklist     = ['YADA apps','YADA queries','YADA new query','YADA delete query','YADA insert usage log','YADA update query'];
+	  	this.blacklist     = ['YADA apps',
+	  	                      'YADA queries',
+	  	                      'YADA new query',
+	  	                      'YADA delete query',
+	  	                      'YADA update query',
+	  	                      'YADA insert usage log',
+	  	                      'YADA select default params for app',
+	  	                      'YADA update default param',
+	  	                      'YADA insert default param',
+	  	                      'YADA delete default param'];
 	  	this.whitelist     = [];
 	  	this.deletes       = [];
 	  	this.merged        = [];
@@ -62,7 +71,7 @@ define(
 	  		$('#migration-table_wrapper').show();
 	  		$('#toggle-view,#new-query,#backup').addClass('disabled');
 		  	this.sourceQnames  = _.pluck(this.data,'QNAME');
-		  	this.sourceObjects = _.map(this.data,function(row){ return { QNAME:row.QNAME, QUERY:row.QUERY, MODIFIED:row.MODIFIED};});
+		  	this.sourceObjects = _.map(this.data,function(row){ return { QNAME:row.QNAME, QUERY:row.QUERY, MODIFIED:row.MODIFIED, COMMENTS:row.COMMENTS};});
 		  	this.whitelist     = _.difference(this.sourceQnames,this.blacklist);//['YADA default'];//
 		  	this.trigger('close-selector',{target:target.data});
 	  	};
@@ -117,7 +126,9 @@ define(
 	  		var self = this;
 	  		
 	  	  function flatten(array) {
-	  	  	return _.map(array,function(o){ return [o.TARGET,o.NAME,o.RULE,o.VALUE].join('||'); });
+	  	  	return _.map(array,function(o){ 
+	  	  	  return [o.TARGET,o.NAME,o.RULE,o.VALUE].join('||'); 
+	  	  	});
 	  	  }
 	  	  
 	  	  function splitSpliceJoin(flat) {
@@ -129,7 +140,9 @@ define(
 	  				a_flat_only = _.filter(a_flat,function(a){ return _.indexOf(b_flat,a) == -1; }), // adds and updates
 						b_flat_only = _.filter(b_flat,function(b){ return _.indexOf(a_flat,b) == -1; }), // dels and updates
 	  				flatUpdParams = [];
-				_.each([self.addParams,self.delParams,self.updParams],function(array) { array.splice(0,array.length); }); // clear arrays
+				_.each([self.addParams,self.delParams,self.updParams],function(array) { 
+				  array.splice(0,array.length); 
+				  }); // clear arrays
 				// get updates
 				
 				for(var i=0;i<a_flat_only.length;i++)
@@ -155,9 +168,9 @@ define(
 	  	this.getStatus = function(row) {
 	  		if(row.TGT_QUERY !== row.SRC_QUERY)
 	  		{
-	  			if(row.TGT_MOD === '' || (new Date(row.SRC_MOD) > new Date(row.TGT_MOD)))
+	  		  if(row.TGT_MOD === '' || (new Date(this.getFormattedDate(row.SRC_MOD)) > new Date(this.getFormattedDate(row.TGT_MOD))))
 		  			return 1;
-		  		else if(row.SRC_MOD === '' || new Date(row.SRC_MOD) < new Date(row.TGT_MOD))
+		  		else if(row.SRC_MOD === '' || new Date(this.getFormattedDate(row.SRC_MOD)) < new Date(this.getFormattedDate(row.TGT_MOD)))
 		  			return 2;
 	  		}
 	  		else
@@ -233,17 +246,22 @@ define(
 	  			var tgtObj = _.filter(targetData,'QNAME',qname);
 	  			
 	  			// set the attributes
-	  			row.SRC_QNAME = qname;
-	  			row.SRC_QUERY = _.pluck(srcObj,'QUERY')[0];
-	  			row.SRC_MOD   = _.pluck(srcObj,'MODIFIED')[0];
-	  			row.TGT_QUERY = _.pluck(tgtObj,'QUERY')[0];
-	  			if(tgtObj != null)
+	  			row.SRC_QNAME    = qname;
+	  			row.SRC_QUERY    = _.pluck(srcObj,'QUERY')[0];
+	  			row.SRC_COMMENTS = _.pluck(srcObj,'COMMENTS')[0];
+	  			row.SRC_MOD      = _.pluck(srcObj,'MODIFIED')[0];
+	  			row.TGT_QUERY    = _.pluck(tgtObj,'QUERY')[0];
+	  			if(tgtObj !== null && tgtObj !== undefined && tgtObj.length > 0)
 	  			{
 		  			row.TGT_MOD   = _.pluck(tgtObj,'MODIFIED')[0];
+		  			var targetComments = _.pluck(tgtObj,'COMMENTS')[0];
+		  			if(targetComments !== undefined && targetComments.length > 0)
+		  			  row.TGT_COMMENTS = "\n\n" + targetComments; 
 	  			}
 	  			else
 	  			{
 	  				row.TGT_MOD   = '';
+	  				row.TGT_COMMENTS = '';
 	  			}
 	  			row.STATUS    = _.contains(flatParams,qname) ? 3 : self.getStatus(row);
 	  			if(row.STATUS > 0)
@@ -308,7 +326,7 @@ define(
 		  				render:function(data,type,row,meta) {
 		  					if(data == "" || data == undefined)
 		  						return '';
-		  					return self.getOracleDateStr(data);
+		  					return self.getFormattedDate(data,'oracle');
 		  				}
 		  			},
 		  			],
@@ -355,7 +373,8 @@ define(
 	  			return query.TGT_QUERY !== undefined 
 	  					&& query.TGT_QUERY !== '' 
 	  					&& query.SRC_QUERY !== undefined 
-	  					&& query.SRC_QUERY !== ''; });
+	  					&& query.SRC_QUERY !== ''
+	  					&& query.SRC_QUERY !== query.TGT_QUERY; });
 	  		if(updates.length > 0)
 	  		{
 	  			j.push({qname:'YADA update query',DATA:[]});
@@ -363,13 +382,16 @@ define(
 		  			var o = {QNAME:query.SRC_QNAME,
 		  							 QUERY:query.SRC_QUERY,
 		  							 MODIFIED_BY:self.loggedUser(),
-		  							 MODIFIED:self.getOracleDateStr(new Date()),
-		  							 APP:app};
+		  							 MODIFIED:self.getFormattedDate(new Date()),
+		  							 APP:app,
+		  							 COMMENTS: query.SRC_COMMENTS + query.TGT_COMMENTS};
 		  			j[j.length-1].DATA.push(o);
 		  		});	  			
 	  		}
 	  		// inserts
-	  		var inserts = _.filter(queries,function(query) { return query.TGT_QUERY === undefined || query.TGT_QUERY === ''; });
+	  		var inserts = _.filter(queries,function(query) { 
+	  		  return query.TGT_QUERY === undefined || query.TGT_QUERY === ''; 
+	  		});
 	  		if(inserts.length > 0)
 	  		{
 		  		j.push({qname:'YADA new query',DATA:[]});
@@ -378,46 +400,82 @@ define(
 		  							 QUERY:query.SRC_QUERY,
 		  							 MODIFIED_BY:self.loggedUser(),
 		  							 CREATED_BY:self.loggedUser(),
-		  							 APP:app};
+		  							 APP:app,
+		  							 COMMENTS: query.SRC_COMMENTS,
+		  							 CREATED:self.getFormattedDate(new Date()),
+		  							 MODIFIED:self.getFormattedDate(new Date()),
+		  							 ACCESS_COUNT:0};
 		  			j[j.length-1].DATA.push(o);
 		  		});	  			
 	  		}
 	  		
-	  		if(self.deletes.length > 0)
+	  		// deletes derived from selected 'queries' list
+	  		var deletes = _.filter(queries,function(query) {
+          return (query.SRC_QUERY === undefined || query.SRC_QUERY === '') && query.TGT_QUERY !== undefined && query.TGT_QUERY !== '';
+        });
+	  		if(deletes.length > 0) 
 	  		{
 		  		j.push({qname:'YADA delete query',DATA:[]});
-		  		_.each(self.deletes,function(query){
-		  			var o = {QNAME: query, APP: app};
+		  		_.each(deletes,function(query){
+		  			var o = {QNAME: query.SRC_QNAME, APP: app};
 		  			j[j.length-1].DATA.push(o);
 		  		});	  			
 	  		}
 	  		
 	  		if(self.updParams.length > 0)
 	  		{
-		  		j.push({qname:'YADA update default param',DATA:[]});
+	  		  var data = [];
 		  		_.each(self.updParams,function(param) {
-		  			var o = {TARGET:param[0],NAME:param[1],VALUE:param[3],RULE:param[2]};
-		  			j[j.length-1].DATA.push(o);
+		  		  _.each(queries,function(query) {
+		  		    if(_.includes(query,param[0]))
+		  		    {
+		  		      var o = {TARGET:param[0],NAME:param[1],VALUE:param[3],RULE:param[2]};
+		  		      data.push(o);
+		  		    }
+		  		  });
 		  		});
-	  		}	  		
+		  		if(data.length > 0)
+		  		{
+		  		  j.push({qname:'YADA update default param',DATA:data});
+		  		}
+	  		}
 	  		
 	  		if(self.addParams.length > 0)
-	  		{
-		  		j.push({qname:'YADA insert default param',DATA:[]});
-		  		_.each(self.addParams,function(param) {
-		  			var o = {TARGET:param[0],NAME:param[1],VALUE:param[3],RULE:param[2]};
-		  			j[j.length-1].DATA.push(o);
-		  		});	  			
-	  		}
+        {
+          var data = [];
+          _.each(self.addParams,function(param) {
+            _.each(queries,function(query) {
+              if(_.includes(query,param[0]))
+              {
+                var o = {TARGET:param[0],NAME:param[1],VALUE:param[3],RULE:param[2]};
+                data.push(o);
+              }
+            });
+          });
+          if(data.length > 0)
+          {
+            j.push({qname:'YADA insert default param',DATA:data});
+          }
+        }
 	  		
 	  		if(self.delParams.length > 0)
-	  		{
-		  		j.push({qname:'YADA delete default param',DATA:[]});
-		  		_.each(self.delParams,function(param) {
-		  			var o = {TARGET:param[0],NAME:param[1],VALUE:param[3],RULE:param[2]};
-		  			j[j.length-1].DATA.push(o);
-		  		});	  			
-	  		}
+        {
+          var data = [];
+          _.each(self.delParams,function(param) {
+            _.each(queries,function(query) {
+              if(_.includes(query,param[0]))
+              {
+                var o = {TARGET:param[0],NAME:param[1],VALUE:param[3],RULE:param[2]};
+                data.push(o);
+              }
+            });
+          });
+          if(data.length > 0)
+          {
+            j.push({qname:'YADA delete default param',DATA:data});
+          }
+        }
+	  		
 	  		
 	  		// update yada_query set qname=?v, query=?v, modified_by=?v, modified=?d where qname=?v and app=?v
 	  		
