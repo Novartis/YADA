@@ -102,7 +102,20 @@ if(ServletFileUpload.isMultipartContent(request))
 	YADARequest svcParams = service.getYADARequest();
 	svcParams.setPath(request.getSession().getServletContext().getRealPath("/"));
 	svcParams.setUploadItems(items);
-	result = service.execute();%><%=result%><%}
+	result = service.execute();
+	boolean exception = result.matches(EXCEPTION);
+	if(exception)
+  {
+	  response.setContentType("application/json;charset=UTF-8");
+	  JSONObject e = new JSONObject(result);
+    Integer errorCode = statusCodes.get(e.getString("Exception"));
+    int ec = errorCode.intValue();
+    e.put("Status",ec);
+    e.put("StatusText",statusText.get(errorCode));
+    request.getSession().setAttribute("YADAException",e.toString());
+    response.sendError(errorCode); 
+  }%><%=result%><%
+}
 else
 {
 /*	String help = request.getParameter("help");

@@ -76,9 +76,9 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
    * The query executed to evaluate authorization.
    */
   protected static final String YADA_A11N_QUERY = 
-      "SELECT DISTINCT target, policy, qname "
+      "SELECT DISTINCT target, policy, type, qname "
       + "FROM YADA_A11N a join YADA_QUERY b on  (a.target = b.qname OR a.target = b.app) "
-      + "WHERE a.qname = ?";
+      + "WHERE a.target = ?";
     
   /**
    * Constant equal to {@value}
@@ -584,7 +584,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
    * @throws YADASecurityException when the security query can't be retrieved
    */  
   @Override
-  public HashMap<String, String> getSecurityPolicyMap() throws YADASecurityException 
+  public HashMap<String, String> getSecurityPolicyMap(String securityPolicyCode) throws YADASecurityException 
   {
     HashMap<String, String> policyMap = new HashMap<>();
 
@@ -593,11 +593,12 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
     try (ResultSet rs = YADAUtils.executePreparedStatement(YADA_A11N_QUERY, new Object[] { qname });) 
     {
       while (rs.next()) {
-        String tgt       = rs.getString(1); // YADA_A11N.TARGET
-        String type      = rs.getString(2); // YADA_A11N.POLICY
-        String a11nQname = rs.getString(3); // YADA_A11N.QNAME (a query name)
+        String tgt        = rs.getString(1); // YADA_A11N.TARGET
+        String policyCode = rs.getString(2); // YADA_A11N.POLICY
+        String type       = rs.getString(3); // YADA_A11N.TYPE
+        String a11nQname  = rs.getString(4); // YADA_A11N.QNAME (a query name)
         
-        if (qname.equals(tgt)) 
+        if (qname.equals(tgt) && policyCode.equals(securityPolicyCode)) 
         {
           policyMap.put(type, a11nQname);
         }

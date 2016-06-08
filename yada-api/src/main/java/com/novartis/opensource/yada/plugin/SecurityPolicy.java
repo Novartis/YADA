@@ -39,16 +39,30 @@ public interface SecurityPolicy {
   public static final String WHITELIST = "whitelist";
   
   /**
+   * Constant equal to {@value}.
+   * Refers to the value stored in the {@code YADA_A11N.POLICY} column pertaining to the protected qname.
+   * @since 0.7.0.0
+   */
+  public static final String CONTENT_POLICY_CODE = "C";
+  
+  /**
+   * Constant equal to {@value}
+   * Refers to the value stored in the {@code YADA_A11N.POLICY} column pertaining to the protected qname.
+   * @since 0.7.0.0
+   */
+  public static final String EXECUTION_POLICY_CODE = "E";
+  /**
    * 
    * @throws YADASecurityException
    */
   public void applyPolicy() throws YADASecurityException;
   
   /**
+   * @param securityPolicyCode 
    * @return a {@link HashMap} containing a policy key and query value.  
-   * @throws YADASecurityException
+   * @throws YADASecurityException 
    */
-  public HashMap<String,String> getSecurityPolicyMap() throws YADASecurityException;
+  public HashMap<String,String> getSecurityPolicyMap(String securityPolicyCode) throws YADASecurityException;
   
   /**
    * Should returns {@code true} if the security target is 
