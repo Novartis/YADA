@@ -285,7 +285,7 @@ define(
 		  				{data:"NAME",title:"Parameter",sortable:false},
 		  				{data:"VALUE",title:"Value",sortable:false},
 		  				{data:"RULE",title:"Mutability",sortable:false},
-		  				{data:"ACTION",title:"Action",sortable:false,defaultContent:'<button class="fa fa-save fa-save-md" title="Save"><button class="fa fa-remove fa-remove-md" title="Remove" style="color:red"/><button class="fa fa-plus fa-plus-md" title="Add Another" style="color:green"/>'}
+		  				{data:"ACTION",title:"Action",sortable:false,defaultContent:'<button type="button" class="fa fa-save fa-save-md" title="Save"><button type="button" class="fa fa-remove fa-remove-md" title="Remove" style="color:red"/><button type="button" class="fa fa-plus fa-plus-md" title="Add Another" style="color:green"/>'}
 		  			]
 		  		});
 	  		}
