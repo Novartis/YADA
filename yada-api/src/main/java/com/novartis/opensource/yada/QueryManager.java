@@ -84,14 +84,6 @@ public class QueryManager
 	 */
 	private HashMap<String,Object> connectionMap = new HashMap<>();
 	/**
-	 * Map of SQL statement qnames to JDBC prepared statements
-	 */
-	private HashMap<String,PreparedStatement> pStmtMap = new HashMap<>();
-	/**
-	 * Map of SQL function qnames to JDBC callable statements
-	 */
-	private HashMap<String,CallableStatement> cStmtMap = new HashMap<>();
-	/**
 	 * Map of SOAP query names to url strings
 	 */
 	private HashMap<String,String> soapMap = new HashMap<>();
@@ -493,7 +485,6 @@ public class QueryManager
 				for (PreparedStatement p : yq.getPstmt())
 				{
 					ConnectionFactory.releaseResources(p);
-					this.pStmtMap.remove(p);
 					l.debug("PreparedStatement removed from map.");
 				}
 			}
@@ -503,8 +494,6 @@ public class QueryManager
 				for (PreparedStatement p : yq.getPstmtForCount().values())
 				{
 					ConnectionFactory.releaseResources(p);
-					this.pStmtMap.remove(p);
-					l.debug("PreparedStatement for Count removed from map.");
 				}
 			}
 			if (yq.getCstmt() != null && yq.getCstmt().size() > 0)
@@ -512,8 +501,6 @@ public class QueryManager
 				for (CallableStatement c : yq.getCstmt())
 				{
 					ConnectionFactory.releaseResources(c);
-					this.cStmtMap.remove(c);
-					l.debug("CallableStatement removed from map.");
 				}
 			}
 		}
@@ -531,14 +518,8 @@ public class QueryManager
 	 */
 	private void storeCallableStatement(YADAQuery yq, String code)
 	{
-		if (this.cStmtMap.containsKey(code))
-		{
-			yq.addCstmt(this.cStmtMap.get(code));
-		} else
-		{
 			yq.addCstmt(this.qutils.getCallableStatement(	code,
 																										(Connection)yq.getConnection()));
-		}
 	}
 
 	/**
@@ -555,16 +536,9 @@ public class QueryManager
 	 */
 	private void storePreparedStatement(YADAQuery yq, String code) throws YADAConnectionException
 	{
-		if (this.pStmtMap.containsKey(code))
-		{
-			yq.addPstmt(this.pStmtMap.get(code));
-		} else
-		{
 			PreparedStatement p = this.qutils.getPreparedStatement(	code,
 																															(Connection)yq.getConnection());
 			yq.addPstmt(p);
-			this.pStmtMap.put(code, p);
-		}
 	}
 
 	/**
@@ -586,16 +560,9 @@ public class QueryManager
 																							PreparedStatement p, String code) throws YADAConnectionException
 	{
 		// TODO this won't work with CountOnly
-		if (this.pStmtMap.containsKey(code))
-		{
-			yq.addPstmtForCount(p, this.pStmtMap.get(code));
-		} else
-		{
 			PreparedStatement pc = this.qutils.getPreparedStatement(code,
 																															(Connection)yq.getConnection());
 			yq.addPstmtForCount(p, pc);
-			this.pStmtMap.put(code, pc);
-		}
 	}
 
 	/**

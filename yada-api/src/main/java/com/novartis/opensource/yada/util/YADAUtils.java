@@ -346,7 +346,8 @@ public class YADAUtils {
 		YADARequest yadaReq = new YADARequest();
 		yadaReq.setCount(NOCOUNT);
 		yadaReq.setQname(qname);
-		yadaReq.setParams(params);
+		if(params.length > 0)
+		  yadaReq.setParams(params);
 		Service service = new Service(yadaReq);
 		return service.execute();
 	}

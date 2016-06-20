@@ -45,6 +45,12 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
    * Constant equal to {@value}
    * @since 0.7.0.0
    */
+  protected static final String AUTH_TOKEN = "auth.token";
+  
+  /**
+   * Constant equal to {@value}
+   * @since 0.7.0.0
+   */
   protected static final String TOKEN_VALIDATOR = "token.validator";
   
   /**
@@ -72,12 +78,18 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   protected static final String CONTENT_POLICY_INTERFACE   = "ContentPolicy";
   
   /**
+   * Constant equal to {@value}
+   * @since 0.7.0.0
+   */
+  protected static final String VOID   = "void";
+  
+  /**
    * Constant equal to {@value}.
    * The query executed to evaluate authorization.
    */
   protected static final String YADA_A11N_QUERY = 
-      "SELECT DISTINCT target, policy, type, qname "
-      + "FROM YADA_A11N a join YADA_QUERY b on  (a.target = b.qname OR a.target = b.app) "
+      "SELECT DISTINCT a.target, a.policy, a.type, a.qname "
+      + "FROM YADA_A11N a " // join YADA_QUERY b on  (a.target = b.qname OR a.target = b.app) "
       + "WHERE a.target = ?";
     
   /**
@@ -136,8 +148,15 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
 	public YADARequest engage(YADARequest yadaReq) throws YADAPluginException
 	{
 	  setYADARequest(yadaReq);
-	  setArgs(getYADARequest().getArgs());
-	  setPreargs(getYADARequest().getPreArgs());
+	  String[] args = getYADAQuery().getYADAQueryParamValue(YADARequest.PS_PREARGS);
+    if(args != null && args.length > 0)
+      setPreargs(Arrays.asList(args));
+    else
+    {
+      args = getYADAQuery().getYADAQueryParamValue(YADARequest.PS_ARGS);
+      if(args != null && args.length > 0)
+        setArgs(Arrays.asList(args));
+    }
 		return getYADARequest();
 	}
 
@@ -152,8 +171,15 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
 	{
 	  setYADARequest(yadaReq);
 	  setYADAQuery(yq);
-	  setArgs(Arrays.asList(getYADAQuery().getYADAQueryParamValue(YADARequest.PS_ARGS)));
-	  setPreargs(Arrays.asList(getYADAQuery().getYADAQueryParamValue(YADARequest.PS_PREARGS)));
+	  String[] args = getYADAQuery().getYADAQueryParamValue(YADARequest.PS_PREARGS);
+	  if(args != null && args.length > 0)
+	    setPreargs(Arrays.asList(args[0].split(",")));
+	  else
+	  {
+	    args = getYADAQuery().getYADAQueryParamValue(YADARequest.PS_ARGS);
+	    if(args != null && args.length > 0)
+	      setArgs(Arrays.asList(args[0].split(",")));
+	  }
 	}
 
 	/**
@@ -196,10 +222,10 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
 	public void validateURL() throws YADASecurityException 
 	{
 	  String pathRx = getArgumentValue(AUTH_PATH_RX);
-	  if(pathRx.length() > 0)
+	  if(pathRx != null && pathRx.length() > 0)
 	  {
 	    String reqUrl = getYADARequest().getRequest().getRequestURL().toString();
-	    if(!reqUrl.matches(pathRx)) {
+	    if(!reqUrl.matches("^(http://)*"+pathRx+"$")) {
 	      String msg = "Unauthorized.  This query requires use of an authenticated address.";
 	      throw new YADASecurityException(msg);
 	    }
@@ -226,9 +252,10 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   protected String getArgumentValue(String key) 
   {
     String val = "";
-    if(this.args.size() == 0)
+    
+    if(this.args == null || this.args.size() == 0)
     {
-      if(this.preargs.size() == 0)
+      if(this.preargs == null || this.preargs.size() == 0)
       {
         val = System.getProperty(key);
       }
@@ -257,7 +284,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   {
     for(int i=0;i<list.size();i++)
     {
-      if(list.get(i).matches(key))
+      if(list.get(i).matches("^"+key+"=.+$"))
       {
         String[] split = list.get(i).split("=");
         return split[1];
@@ -502,8 +529,15 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
       String name = "";
       try 
       {
+        // this is where the default query param implementation meets execution.
+        // the value of the 'execution.policy' or 'content.policy' argument is the 
+        // implementing class name
         name = getArgumentValue(policyType);
-        if(name.length() == 0)
+        if(name != null && name.equals(VOID)) 
+        {
+          return; 
+        }
+        else if(name == null || name.length() == 0)
         {
           try
           {
@@ -617,5 +651,13 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
     }
     
     return policyMap;
+  }
+  
+  /**
+   * Sets the current security policy to {@code null}.
+   * @since 0.7.0.0
+   */
+  public void clearSecurityPolicy() {
+    this.securityPolicy = null;
   }
 }

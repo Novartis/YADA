@@ -1234,7 +1234,7 @@ public class ServiceTest
     if (req.getFormat().equals(YADARequest.FORMAT_CSV))
     {
       logStringResult(result); 
-      Pattern rx = Pattern.compile("^(\"([A-Z,]+)\"),(\"([0-9]+)\")?,(\"([0-9.]+)\")?,?(\"(201[3-5]-0[0-9]-[0-9]{2}|1362373200|1396584000)\")?,?(\"(201[3-5]-0[0-9]-[0-9]{2} ([0-9]{2}:){2}[0-9]{2}|1441500273000)(\\.0)?\")?$");
+      Pattern rx = Pattern.compile("^(\"([A-Z,]+)\"),(\"([0-9]+)\")?,(\"([0-9.]+)\")?,?(\"(201[3-5]-0[0-9]-[0-9]{2}(\\s00:00:00)?|1362373200|1396584000)\")?,?(\"(201[3-5]-0[0-9]-[0-9]{2} ([0-9]{2}:){2}[0-9]{2}|1441500273000)(\\.0)?\")?$");
       // count columns
       // check for correct values in mapped columns
       
@@ -1252,7 +1252,7 @@ public class ServiceTest
               Assert.assertTrue(validateInteger(m.group(4))); // col 2
               Assert.assertTrue(validateNumber(m.group(6)));  // col 3
               Assert.assertNull(m.group(8)); // col 4
-              Assert.assertNull(m.group(10)); // col 5
+              Assert.assertNull(m.group(11)); // col 5
             }    
             else if(lineCount > 8 && lineCount < 17)
             // 2nd query
@@ -1260,7 +1260,7 @@ public class ServiceTest
               Assert.assertNull(m.group(4));  // col 2
               Assert.assertNull(m.group(6));  // col 3
               Assert.assertTrue(validateDate(m.group(8)));  // col4
-              Assert.assertTrue(validateTime(m.group(10))); // col5
+              Assert.assertTrue(validateTime(m.group(11))); // col5
             }
             else
             // 3rd query
@@ -1268,7 +1268,7 @@ public class ServiceTest
               Assert.assertNull(m.group(4));  // col 2
               Assert.assertNull(m.group(6));  // col 3
               Assert.assertNull(m.group(8));  // col 4
-              Assert.assertTrue(validateTime(m.group(10))); // col5
+              Assert.assertTrue(validateTime(m.group(11))); // col5
             }
           }
           lineCount++;
@@ -1299,7 +1299,7 @@ public class ServiceTest
     else if(req.getFormat().equals(YADARequest.FORMAT_HTML))
     {
       logMarkupResult(result);
-      Pattern rx = Pattern.compile("^<tr>(<td>([A-Z,]+)</td>)(<td>([0-9]+)?</td>)(<td>([0-9.]+)?</td>)(<td>(201[3-5]-0[0-9]-[0-9]{2}|1362373200|1396584000)?</td>)?(<td>((201[3-5]-0[0-9]-[0-9]{2} ([0-9]{2}:){2}[0-9]{2}|1441500273000)(\\.0)?)?</td>)?</tr>$");
+      Pattern rx = Pattern.compile("^<tr>(<td>([A-Z,]+)</td>)(<td>([0-9]+)?</td>)(<td>([0-9.]+)?</td>)(<td>(201[3-5]-0[0-9]-[0-9]{2}(\\s00:00:00)?|1362373200|1396584000)?</td>)?(<td>((201[3-5]-0[0-9]-[0-9]{2} ([0-9]{2}:){2}[0-9]{2}|1441500273000)(\\.0)?)?</td>)?</tr>$");
       Pattern end = Pattern.compile("^</tbody>|</table>|</body>|</html>$");
       try(BufferedReader br = new BufferedReader(new StringReader(result)))
       {
