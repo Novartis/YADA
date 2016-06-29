@@ -1,0 +1,106 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam activity {
+  StartColor #634929
+  EndColor #634929
+  BackgroundColor #FED300
+  BorderColor #923222
+  ArrowColor #923222
+}
+
+participant Service
+participant QueryManager
+Box "AbstractPreprocessor" #LightBlue
+participant Preprocess
+participant Validation
+participant TokenValidator
+participant ExecutionPolicy
+participant ContentPolicy
+end Box
+
+Activate Service
+Service -> Service: execute
+Service -> QueryManager: init
+Activate QueryManager
+QueryManager -> QueryManager: prepareQueries
+QueryManager --> Service
+Service -> Service: _execute
+Service -> Preprocess: engage(YADARequest,YADAQuery)
+Activate Preprocess
+Preprocess -> Validation: validateYADARequest
+Activate Validation
+==URL Validation==
+Validation -> Validation: validateURL
+note right
+  'auth.path.rx' argument must be passed to 
+  preprocessor plugin to match URL
+  for validation.  If 'auth.path.rx' is not 
+  present, the method returns without
+  impact. If the URL doesn't match 
+  'auth.path.rx', YADASecurityException is 
+  thrown.
+end note
+Activate Validation
+Deactivate Validation
+==Token (i.e., userid) Validation==
+Validation -> Validation: validateToken
+Activate Validation
+Validation -> Validation: setTokenValidator
+Activate TokenValidator
+note right
+  'token.validator' arg should be classname of 
+  TokenValidator impl. Overrides of 
+  ""setTokenValidator"" can also pass an 
+  instance of any impl. 
+end note
+Activate Validation
+Deactivate Validation
+Validation -> Validation: getTokenValidator
+Activate Validation
+Deactivate Validation
+TokenValidator -> TokenValidator: validate
+note right
+  token would be a user id, cookie value, 
+  authentication token retrieved from service, et al
+end note
+TokenValidator --> Validation
+Deactivate Validation
+Deactivate TokenValidator
+==Execution Policy (query authorization)==
+Validation -> Validation: applyExecutionPolicy
+Activate Validation
+note right
+  EXECUTION_POLICY = execution.policy
+  CONTENT_POLICY = content.policy
+  These properties should be set in ""preargs"" to the values of 
+  class names implementing the interfaces.
+end note
+Validation -> Validation: setSecurityPolicy(EXECUTION_POLICY)
+note right
+  setSecurityPolicy can also take a SecurityPolicy instance argument
+  in a override of ""AbstractPreprocessor.applyExecutionPolicy"" or
+  ""AbstractPreprocessor.applyContentPolicy""
+end note
+Validation -> ExecutionPolicy: applyExecutionPolicy
+Activate ExecutionPolicy
+ExecutionPolicy --> Validation
+Deactivate ExecutionPolicy
+Deactivate Validation
+
+==Content Policy (content access)==
+
+Validation -> Validation: applyContentPolicy
+Activate Validation
+Validation -> Validation: setSecurityPolicy(CONTENT_POLICY)
+Validation -> ContentPolicy: applyContentPolicy
+Activate ContentPolicy
+ContentPolicy --> Validation
+Deactivate ContentPolicy
+Deactivate Validation
+Validation --> Preprocess
+Preprocess --> Service
+Deactivate Validation
+Deactivate Preprocess
+Deactivate QueryManager
+Deactivate Service
+@enduml

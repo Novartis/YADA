@@ -14,7 +14,7 @@
  */
 package com.novartis.opensource.yada.plugin;
 
-import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author Dave Varon
@@ -62,7 +62,7 @@ public interface SecurityPolicy {
    * @return a {@link HashMap} containing a policy key and query value.  
    * @throws YADASecurityException 
    */
-  public HashMap<String,String> getSecurityPolicyMap(String securityPolicyCode) throws YADASecurityException;
+  public List<SecurityPolicyRecord> getSecurityPolicyRecords(String securityPolicyCode) throws YADASecurityException;
   
   /**
    * Should returns {@code true} if the security target is 

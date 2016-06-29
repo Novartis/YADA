@@ -19,10 +19,12 @@ package com.novartis.opensource.yada.plugin;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import com.novartis.opensource.yada.ConnectionFactory;
 import com.novartis.opensource.yada.YADAConnectionException;
 import com.novartis.opensource.yada.YADAQuery;
 import com.novartis.opensource.yada.YADARequest;
@@ -618,25 +620,26 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
    * @throws YADASecurityException when the security query can't be retrieved
    */  
   @Override
-  public HashMap<String, String> getSecurityPolicyMap(String securityPolicyCode) throws YADASecurityException 
+  public List<SecurityPolicyRecord> getSecurityPolicyRecords(String securityPolicyCode) throws YADASecurityException 
   {
-    HashMap<String, String> policyMap = new HashMap<>();
+    List<SecurityPolicyRecord> policy = new ArrayList<>();
 
     // get the security params associated to the query
     String qname = getYADAQuery().getQname();
     try (ResultSet rs = YADAUtils.executePreparedStatement(YADA_A11N_QUERY, new Object[] { qname });) 
     {
       while (rs.next()) {
-        String tgt        = rs.getString(1); // YADA_A11N.TARGET
-        String policyCode = rs.getString(2); // YADA_A11N.POLICY
+        String tgt        = rs.getString(1); // YADA_A11N.TARGET  (this is in the query paramaters, no need to pass)
+        String policyCode = rs.getString(2); // YADA_A11N.POLICY  (this is in the method parameters, no need to pass`)
         String type       = rs.getString(3); // YADA_A11N.TYPE
         String a11nQname  = rs.getString(4); // YADA_A11N.QNAME (a query name)
         
         if (qname.equals(tgt) && policyCode.equals(securityPolicyCode)) 
         {
-          policyMap.put(type, a11nQname);
+          policy.add(new SecurityPolicyRecord(tgt,policyCode,type,a11nQname));
         }
       }
+      ConnectionFactory.releaseResources(rs);
     } 
     catch (SQLException | YADAConnectionException | YADASQLException e) 
     {
@@ -644,13 +647,13 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
       throw new YADASecurityException(msg, e);
     } 
     
-    if (policyMap.size() == 0)
+    if (policy.size() == 0)
     {
       String msg = "Unauthorized. A security check was configured by has no policy associated to it.";
       throw new YADASecurityException(msg);
     }
     
-    return policyMap;
+    return policy;
   }
   
   /**
