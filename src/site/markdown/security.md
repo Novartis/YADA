@@ -16,7 +16,7 @@ The mechanism for a YADA Security implementation is a *preprocessor plugin*, con
 
 When using a custom class other than `Gatekeeper` to implement security, it is still advantageous to extend `Gatekeeper`, or at least `com.novartis.opensource.yada.plugin.AbstractPreprocessor` if possible, as it contains many constants and default method implementations, and conveniences.
 
-<img src="../resources/images/security_flow.png">
+<img src="../resources/images/security_flow.png"/>
 
 ## Default YADA Parameter
 A *default YADA parameter* is effectively a segment of a URL parameter string, a single name-value pair, that, instead of being passed in a URL or HTTP POST content, is stored in the YADA index and linked to a query. It is a way, if you will, to amend a YADA HTTP request with a server-side configuration at request-time.

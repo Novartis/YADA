@@ -10,7 +10,7 @@
       <item href="admin.html" name="Admin Guide for Query Authors"/>
       <item href="guide.html" name="User/Developer Guide"/>
       <item href="pluginguide.html" name="Plugin Guide"/>
-      <!--<item href="security.html" name="Security Guide"/>-->
+      <item href="security.html" name="Security Guide"/>
       <item href="testing.html" name="Testing Notes"/>
     </menu>
     <menu name="Feature Specifications">
