@@ -1,8 +1,9 @@
-﻿-- List of test queries
+
+-- List of test queries
 -- select 'INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('''||qname||''','''||replace(query,'''','''''')||''',''YADABOT'');' from yada_query where app = 'YADA' and qname like 'YADA test%' and qname not in ('YADA test query','YADA test two','YADA testy testy testy') order by qname;
 
 DELETE from YADA_QUERY where app = 'YADA' and qname like 'YADA test%' and qname not in ('YADA test query','YADA test two','YADA testy testy testy');
-DELETE from YADA_PARAM where target like 'YADA test sec%';
+DELETE from YADA_PARAMS where target like 'YADA test sec%';
 DELETE from YADA_A11N where target like 'YADA test sec%';
 DELETE from YADA_QUERY where app = 'YADAFSIN' and qname like 'YADAFSIN test%';
 DELETE from YADA_QUERY where qname = 'QGO search';
@@ -17,7 +18,7 @@ INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test DELETE wi
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test DELETE with DATE','delete from YADA_TEST where COL4=?d','YADABOT','YADA');
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test DELETE with TIME','delete from YADA_TEST where COL5=?t','YADABOT','YADA');
 
-INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test INSERT','insert into yada_test (col1,col2,col3,col4,col5) VALUES (?v,?i,?n,?d,?t)','YADABOT','YADA');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test INSERT','insert into yada_test (col1,col2,col3,col4,col5,token) VALUES (?v,?i,?n,?d,?t,?v)','YADABOT','YADA');
 
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test INSERT SELECT with STRING','insert into yada_test (col1,col2,col3,col4,col5) select col1,col2,col3,col4,col5 from yada_test where col1=?v','YADABOT','YADA');
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test INSERT SELECT with STRING LITERAL','insert into yada_test (col1,col2,col3,col4,col5) select col1,col2,col3,col4,col5 from yada_test where col1=''Z'' or col1=''A''','YADABOT','YADA');
@@ -325,3 +326,36 @@ INSERT into YADA_PARAMS (target,name,rule,value) VALUES ('YADA test sec multi pa
 INSERT into YADA_PARAMS (target,name,rule,value) VALUES ('YADA test sec multi params multi polcol use token uni','a',1,'content.policy=void,execution.policy.columns=COL1 TOKEN,execution.policy.indices=0 2');
 INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA test sec multi params multi polcol use token uni','YADA test sec multi params multi polcol use token uni protector','E','whitelist');
 
+-- security content policy
+
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token','select * from yada_test','YADABOT','YADA');   
+INSERT into YADA_PARAMS (target,name,rule,value) VALUES ('YADA test sec get token','pl',1,'Gatekeeper');
+INSERT into YADA_PARAMS (target,name,rule,value) VALUES ('YADA test sec get token','a',1,'execution.policy=void,content.policy.predicate=token=getQToken()');
+
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token twice','select * from yada_test','YADABOT','YADA');   
+INSERT into YADA_PARAMS (target,name,rule,value) VALUES ('YADA test sec get token twice','pl',1,'Gatekeeper');
+INSERT into YADA_PARAMS (target,name,rule,value) VALUES ('YADA test sec get token twice','a',1,'execution.policy=void,content.policy.predicate=token=getQToken() and token=getQToken()');
+
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token twice with spaces','select * from yada_test','YADABOT','YADA');   
+INSERT into YADA_PARAMS (target,name,rule,value) VALUES ('YADA test sec get token twice with spaces','pl',1,'Gatekeeper');
+INSERT into YADA_PARAMS (target,name,rule,value) VALUES ('YADA test sec get token twice with spaces','a',1,'execution.policy=void,content.policy.predicate=token = getQToken() and token = getQToken()');
+
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token plus params','select * from yada_test where col1=?v','YADABOT','YADA');   
+INSERT into YADA_PARAMS (target,name,rule,value) VALUES ('YADA test sec get token plus params','pl',1,'Gatekeeper');
+INSERT into YADA_PARAMS (target,name,rule,value) VALUES ('YADA test sec get token plus params','a',1,'execution.policy=void,content.policy.predicate=token=getQToken()');
+
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token twice plus params','select * from yada_test where col1=?v','YADABOT','YADA');   
+INSERT into YADA_PARAMS (target,name,rule,value) VALUES ('YADA test sec get token twice plus params','pl',1,'Gatekeeper');
+INSERT into YADA_PARAMS (target,name,rule,value) VALUES ('YADA test sec get token twice plus params','a',1,'execution.policy=void,content.policy.predicate=token=getQToken() and token=getQToken()');
+
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token twice with spaces plus params','select * from yada_test where col1=?v','YADABOT','YADA');   
+INSERT into YADA_PARAMS (target,name,rule,value) VALUES ('YADA test sec get token twice with spaces plus params','pl',1,'Gatekeeper');
+INSERT into YADA_PARAMS (target,name,rule,value) VALUES ('YADA test sec get token twice with spaces plus params','a',1,'execution.policy=void,content.policy.predicate=token = getQToken() and token = getQToken()');
+
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token plus params with group by','select * from yada_test where col1=?v group by col1, col2, col3, col4, col5, token','YADABOT','YADA');   
+INSERT into YADA_PARAMS (target,name,rule,value) VALUES ('YADA test sec get token plus params with group by','pl',1,'Gatekeeper');
+INSERT into YADA_PARAMS (target,name,rule,value) VALUES ('YADA test sec get token plus params with group by','a',1,'execution.policy=void,content.policy.predicate=token=getQToken()');
+
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token plus params with group by order by','select * from yada_test where col1=?v group by col1, col2, col3, col4, col5, token order by col1, col2','YADABOT','YADA');   
+INSERT into YADA_PARAMS (target,name,rule,value) VALUES ('YADA test sec get token plus params with group by order by','pl',1,'Gatekeeper');
+INSERT into YADA_PARAMS (target,name,rule,value) VALUES ('YADA test sec get token plus params with group by order by','a',1,'execution.policy=void,content.policy.predicate=token=getQToken()');

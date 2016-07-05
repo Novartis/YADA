@@ -35,6 +35,8 @@ You can with **YADA**.
 
 **YADA** exists to simplify data access and eliminate work.
 
+**YADA** is secure.
+
 **YADA** is a lightweight framework for data retrieval, searching, storage, and manipulation.
 
 **YADA** is an instant web service for your data.
@@ -91,6 +93,7 @@ This document contains an overview of the framework and features. Check out the 
 ## Advanced Documentation
 * [YADA Admin Guide]
 * [User Guide]
+* [Security Guide]
 * [Plugin Use and Development Guide]
 * [Testing Notes]
 
@@ -142,6 +145,7 @@ Maybe you have to provide a RESTful interface to an existing application, and ne
 * Data vendor- and technology-agnostic
 * Accesses any JDBC, SOAP, or REST, and some Filesystem datasources 
 * Delivers data as JSON (default), XML, or CSV, TSV, Pipe, or custom-delimited, natively, and in any other format via custom Response and Converter classes, or Plugins
+* 4-layer security model including url and token validation, query-execution authorization, and dynamic-predicate-based, pre-execution, row-level filtering
 * Executes multiple queries in a single HTTP request
 * On-the-fly inner and outer joins across disparate data sources
 * Ad hoc Harmonization (i.e., single http request to multiple data sources with harmonized results)

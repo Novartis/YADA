@@ -37,6 +37,7 @@ final String RESPONSE_EXCEPTION            = PACKAGE + "format.YADAResponseExcep
 final String IO_EXCEPTION                  = PACKAGE + "io.YADAIOException";
 final String PLUGIN_EXCEPTION              = PACKAGE + "plugin.YADAPluginException";
 final String SECURITY_EXCEPTION            = PACKAGE + "plugin.YADASecurityException";
+final String UNHANDLED_EXCEPTION           = "java.lang\\.*";
 
 final String HTTP_SC_NOT_FOUND       = "Not Found";
 final String HTTP_SC_BAD_REQUEST     = "Bad Request";
@@ -72,6 +73,7 @@ statusCodes.put(CONVERTER_EXCEPTION, HttpServletResponse.SC_INTERNAL_SERVER_ERRO
 statusCodes.put(RESPONSE_EXCEPTION, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 statusCodes.put(IO_EXCEPTION, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 statusCodes.put(PLUGIN_EXCEPTION, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+statusCodes.put(UNHANDLED_EXCEPTION, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
 
 
@@ -108,7 +110,12 @@ if(ServletFileUpload.isMultipartContent(request))
   {
 	  response.setContentType("application/json;charset=UTF-8");
 	  JSONObject e = new JSONObject(result);
-    Integer errorCode = statusCodes.get(e.getString("Exception"));
+	  String exceptionClass = e.getString("Exception");
+	  Integer errorCode = statusCodes.get(UNHANDLED_EXCEPTION);
+	  if(statusCodes.containsKey(exceptionClass)) 
+	  {
+	    errorCode = statusCodes.get(exceptionClass);
+	  }
     int ec = errorCode.intValue();
     e.put("Status",ec);
     e.put("StatusText",statusText.get(errorCode));
@@ -139,7 +146,12 @@ else
 			if(exception)
 			{
 			  JSONObject e = new JSONObject(result);
-			  Integer errorCode = statusCodes.get(e.getString("Exception"));
+			  String exceptionClass = e.getString("Exception");
+		    Integer errorCode = statusCodes.get(UNHANDLED_EXCEPTION);
+		    if(statusCodes.containsKey(exceptionClass)) 
+		    {
+		      errorCode = statusCodes.get(exceptionClass);
+		    }
 			  int ec = errorCode.intValue();
 			  e.put("Status",ec);
 			  e.put("StatusText",statusText.get(errorCode));

@@ -1,0 +1,38 @@
+# Content Policy
+
+q=YADA test sec get token
+q=YADA test sec get token twice
+q=YADA test sec get token twice with spaces
+q=YADA test sec get token plus params&p=Z
+q=YADA test sec get token twice plus params&p=Z
+q=YADA test sec get token twice with spaces plus params&p=Z
+q=YADA test sec get token plus params with group by&p=Z
+q=YADA test sec get token plus params with group by order by&p=Z
+
+# Execution Policy standard params
+q=YADA test sec zero params zero polcols
+q=YADA test sec one param zero polcols&p=Z
+q=YADA test sec one param one derived polcol&p=Z
+q=YADA test sec one param one derived polcol indexes&p=Z
+q=YADA test sec one param one polcol use token&p=Z
+q=YADA test sec one param one polcol use token indexes&p=Z
+q=YADA test sec zero params one polcol use token
+q=YADA test sec zero params one polcol use token indexes
+q=YADA test sec multi params no polcols&p=Z,10
+q=YADA test sec multi params one polcol&p=Z,10
+q=YADA test sec multi params one polcol indexes&p=Z,10
+q=YADA test sec multi params one polcol use token&p=Z,10
+q=YADA test sec multi params one polcol use token indexes&p=Z,10
+q=YADA test sec multi params multi polcol&p=Z,10
+q=YADA test sec multi params multi polcol indexes&p=Z,10
+q=YADA test sec multi params multi polcol use token&p=Z,10
+q=YADA test sec multi params multi polcol use token indexes&p=Z,10
+
+# Execution Policy multi-syntax standard params
+q=YADA test sec one param one derived polcol uni&p=Z
+q=YADA test sec one param one polcol use token uni&p=Z
+q=YADA test sec zero params one polcol use token
+q=YADA test sec multi params one polcol uni&p=Z,10
+q=YADA test sec multi params one polcol use token uni&p=Z,10
+q=YADA test sec multi params multi polcol uni&p=Z,10
+q=YADA test sec multi params multi polcol use token uni&p=Z,10

@@ -30,6 +30,8 @@ import java.util.Set;
 
 import javax.xml.soap.SOAPConnection;
 
+import net.sf.jsqlparser.statement.Statement;
+
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -88,6 +90,11 @@ public class YADAQuery {
 	 * The code, stripped of YADA markup
 	 */
 	private String     conformedCode;
+	/**
+	 * The parsed object representation of the SQL query
+	 * @since 0.7.0.0
+	 */
+	private Statement  statement;
 	/**
 	 * The version of the framework set in the index for the app
 	 */
@@ -305,7 +312,25 @@ public class YADAQuery {
 	 * @param pstmtToAdd the statement to add to the internal list
 	 */
 	public void addPstmt(PreparedStatement pstmtToAdd) { this.pstmt.add(pstmtToAdd); }
-	
+	/**
+	 * Replaces an existing {@link PreparedStatement} with {@code pstmtToAdd} or appends
+	 * if {@code row} is out of range; also removes 
+	 * the {@link PreparedStatement} entry from {@link #pstmtForCount} if it exists.
+	 * @param pstmtToAdd the {@link PreparedStatement} to add to the list
+	 * @param row the position in {@link #pstmt} to store {@code pstmtToAdd}
+	 * @since 0.7.0.0
+	 */
+	public void addPstmt(PreparedStatement pstmtToAdd, int row) {
+	  // remove count query
+	  if(this.getPstmt().size() > row && this.getPstmtForCount().containsKey(this.getPstmt().get(row)))
+	    this.getPstmtForCount().remove(getPstmt().get(row));
+	  
+	  // append or replace
+	  if(this.getPstmt().size() > row)
+	    this.getPstmt().set(row,pstmtToAdd);
+	  else
+	    this.getPstmt().add(pstmtToAdd);
+	}
 	/**
 	 * Standard mutator for variable
 	 * @param cstmt the list of jdbc api objects for sql query execution
@@ -1178,4 +1203,22 @@ public class YADAQuery {
 	{
 		this.isCached = isCached;
 	}
+
+  /**
+   * The object representation of the SQL query.
+   * @return the statement
+   * @since 0.7.0.0
+   */
+  public Statement getStatement() {
+    return this.statement;
+  }
+
+  /**
+   * The object representation of the SQL query.
+   * @param statement the statement to set
+   * @since 0.7.0.0
+   */
+  public void setStatement(Statement statement) {
+    this.statement = statement;
+  }
 }

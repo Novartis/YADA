@@ -536,10 +536,25 @@ public class QueryManager
 	 */
 	private void storePreparedStatement(YADAQuery yq, String code) throws YADAConnectionException
 	{
-			PreparedStatement p = this.qutils.getPreparedStatement(	code,
-																															(Connection)yq.getConnection());
+			PreparedStatement p = this.qutils.getPreparedStatement(code,(Connection)yq.getConnection());
 			yq.addPstmt(p);
 	}
+	
+	/**
+   * Adds the JDBC statement to the internal index at the specified position
+   * @param row the index of {@link YADAQuery#pstmt} at which to store the {@link PreparedStatement}
+   * @param yq the query containing the {@code code} and the index to which to
+   *          add the statement
+   * @param code the SQL to map to the statement
+   * @throws YADAConnectionException when the statement is not yet in the map, and the connection
+   *           deliver it
+   * @since 0.7.0.0
+   */
+  private void storePreparedStatement(YADAQuery yq, String code, int row) throws YADAConnectionException
+  {
+      PreparedStatement p = this.qutils.getPreparedStatement(code,(Connection)yq.getConnection());
+      yq.addPstmt(p,row);
+  }
 
 	/**
 	 * Adds the JDBC statement to the internal index
@@ -602,6 +617,174 @@ public class QueryManager
 			yq.addUrl(code);
 		}
 	}
+	
+	/**
+   * @since 0.7.0.0
+   * @throws YADAResourceException
+   *           when a query's source attribute can't be found in the application
+   *           context, or there is another problem with the context
+   * @throws YADAUnsupportedAdaptorException
+   *           when there is no adaptor available for the source or protocol or
+   *           the intended adaptor can't be instantiated
+   * @throws YADAConnectionException
+   *           when a connection to the source can't be opened
+   * @throws YADARequestException
+   *           when filters are included in the request config, but can't be
+   *           converted into a JSONObject
+   * @throws YADAAdaptorException
+   *           when the query cannot be built by the adaptor
+   * @throws YADAParserException
+   *           when the query code cannot be parsed successfully
+   */
+	void prepQueryForExecution(YADAQuery yq) throws YADAResourceException, YADAUnsupportedAdaptorException, YADAConnectionException, YADARequestException, YADAAdaptorException, YADAParserException
+	{
+
+    String source        = yq.getSource();
+    String conformedCode = yq.getConformedCode();
+    String wrappedCode   = "";
+    int    dataSize      = yq.getData().size() > 0 ? yq.getData().size() : 1;
+    if(this.qutils.requiresConnection(yq))
+    { 
+      storeConnection(yq);
+    }
+    
+    this.qutils.processStatement(yq);
+    
+    if(yq.getProtocol().equals(Parser.JDBC))
+    {
+      if(yq.getType().equals(Parser.CALL))
+      {
+        for (int row = 0; row < dataSize; row++)
+        {
+          wrappedCode = ((JDBCAdaptor)yq.getAdaptor()).buildCall(conformedCode).toString();
+          String msg  = "\n------------------------------------------------------------";
+                 msg += "\n   Callable statement to execute:";
+                 msg += "\n------------------------------------------------------------\n";
+                 msg += wrappedCode.toString() + "\n";
+          l.debug(msg);
+          storeCallableStatement(yq, wrappedCode);
+        }
+        this.requiredCommits.add(yq.getSource());
+      }
+      else
+      {
+        boolean    count     = Boolean.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_COUNT)[0]).booleanValue();
+        boolean    countOnly = Boolean.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_COUNTONLY)[0]).booleanValue();
+        int        pageStart = Integer.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_PAGESTART)[0]).intValue();
+        int        pageSize  = Integer.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_PAGESIZE)[0]).intValue();
+        if (pageSize == -1)
+          pageSize = YADAUtils.ONE_BILLION;
+        int        firstRow  = 1 + (pageStart * pageSize) - pageSize;
+        String     sortOrder = yq.getYADAQueryParamValue(YADARequest.PS_SORTORDER)[0];
+        String     sortKey   = "";
+        JSONObject filters   = null;
+        
+        if (yq.hasParamValue(YADARequest.PS_SORTKEY))
+        {
+          sortKey = yq.getYADAQueryParamValue(YADARequest.PS_SORTKEY)[0];
+        }
+        
+        try
+        {
+          if (yq.hasParamValue(YADARequest.PS_FILTERS))
+          {
+            filters = new JSONObject(yq.getYADAQueryParamValue(YADARequest.PS_FILTERS)[0]);
+          }
+        } 
+        catch (JSONException e)
+        {
+          String msg = "Error while getting filters from parameters.";
+          throw new YADARequestException(msg, e);
+        }
+        
+        for (int row = 0; row < dataSize; row++)
+        {
+          if(yq.getIns() != null && yq.getIns().length > 0)
+          {
+            conformedCode = this.qutils.getConformedCode(this.qutils.processInColumns(  yq, row));
+          }
+          
+          if(yq.getType().equals(Parser.SELECT))
+          {
+            wrappedCode = ((JDBCAdaptor)yq.getAdaptor()).buildSelect( conformedCode,
+                                                                      sortKey,
+                                                                      sortOrder,
+                                                                      firstRow,
+                                                                      pageSize,
+                                                                      filters).toString();
+            String msg  = "\n------------------------------------------------------------";
+                   msg += "\n   SELECT statement to execute:";
+                   msg += "\n------------------------------------------------------------\n";
+                   msg += wrappedCode.toString() + "\n";
+            l.debug(msg);
+          }
+          else // INSERT, UPDATE, DELETE
+          {
+            wrappedCode = conformedCode;
+            this.requiredCommits.add(yq.getSource());
+            String msg  = "\n------------------------------------------------------------";
+                   msg += "\n   INSERT/UPDATE/DELETE statement to execute:";
+                   msg += "\n------------------------------------------------------------\n";
+                   msg += wrappedCode.toString() + "\n";
+            l.debug(msg);
+          }
+          
+          storePreparedStatement(yq, wrappedCode, row);
+          if (yq.getType().equals(Parser.SELECT) && (count || countOnly))
+          {
+            wrappedCode = ((JDBCAdaptor)yq.getAdaptor()).buildSelectCount(conformedCode,filters).toString();
+            String msg  = "\n------------------------------------------------------------";
+                   msg += "\n   SELECT COUNT statement to execute:";
+                   msg += "\n------------------------------------------------------------\n";
+                   msg += wrappedCode.toString() + "\n";
+            l.debug(msg);
+            storePreparedStatementForCount(yq, yq.getPstmt(row), wrappedCode);
+          }
+          this.qutils.setValsInPosition(yq, row);
+        } // end data loop
+      } // end if callable
+    } // end if JDBC
+    else if(yq.getProtocol().equals(Parser.SOAP)
+        || yq.getProtocol().equals(Parser.REST)
+        || yq.getProtocol().equals(Parser.FILE))
+    {
+      if(yq.getType().equals(Parser.SOAP))
+      {
+        yq.setSource(source.replace(SOAPAdaptor.PROTOCOL_SOAP,SOAPAdaptor.PROTOCOL_HTTP));
+        for (int row = 0; row < dataSize; row++)
+        {
+          wrappedCode = ((SOAPAdaptor)yq.getAdaptor()).build(yq);
+          storeSoapMessage(yq, wrappedCode);
+          this.qutils.setValsInPosition(yq, row);
+        }
+      }
+      else if(yq.getType().equals(Parser.REST))
+      {
+        for (int row = 0; row < dataSize; row++)
+        {
+          wrappedCode = ((RESTAdaptor)yq.getAdaptor()).build(yq);
+          storeRestQuery(yq, wrappedCode);
+          this.qutils.setValsInPosition(yq, row);
+        }
+      }
+      else // filesystem
+      {
+        for (int row = 0; row < dataSize; row++)
+        {
+          wrappedCode = ((FileSystemAdaptor)yq.getAdaptor()).build(yq);
+          storeRestQuery(yq, wrappedCode);
+          this.qutils.setValsInPosition(yq, row);
+        }
+      }
+    }
+    else
+    {
+      String msg = "The query you are attempting to execute requires ";
+      msg += "a protocol or class that is not supported.  This ";
+      msg += "could be the result of a configuration issue.";
+      throw new YADAUnsupportedAdaptorException(msg);
+    } // end protocols
+	}
 
 	/**
 	 * @since 0.4.0.0
@@ -626,151 +809,7 @@ public class QueryManager
 
 		for (YADAQuery yq : this.getQueries())
 		{
-			String source        = yq.getSource();
-			String conformedCode = yq.getConformedCode();
-			String wrappedCode   = "";
-			int    dataSize      = yq.getData().size() > 0 ? yq.getData().size() : 1;
-			if(this.qutils.requiresConnection(yq))
-			{	
-				storeConnection(yq);
-			}
-			
-			this.qutils.processStatement(yq);
-			
-			if(yq.getProtocol().equals(Parser.JDBC))
-			{
-				if(yq.getType().equals(Parser.CALL))
-				{
-					for (int row = 0; row < dataSize; row++)
-					{
-						wrappedCode = ((JDBCAdaptor)yq.getAdaptor()).buildCall(conformedCode).toString();
-						String msg  = "\n------------------------------------------------------------";
-						       msg += "\n   Callable statement to execute:";
-						       msg += "\n------------------------------------------------------------\n";
-						       msg += wrappedCode.toString() + "\n";
-						l.debug(msg);
-						storeCallableStatement(yq, wrappedCode);
-					}
-					this.requiredCommits.add(yq.getSource());
-				}
-				else
-				{
-					boolean    count     = Boolean.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_COUNT)[0]).booleanValue();
-					boolean    countOnly = Boolean.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_COUNTONLY)[0]).booleanValue();
-					int        pageStart = Integer.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_PAGESTART)[0]).intValue();
-					int        pageSize  = Integer.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_PAGESIZE)[0]).intValue();
-					if (pageSize == -1)
-						pageSize = YADAUtils.ONE_BILLION;
-					int        firstRow  = 1 + (pageStart * pageSize) - pageSize;
-					String     sortOrder = yq.getYADAQueryParamValue(YADARequest.PS_SORTORDER)[0];
-					String     sortKey   = "";
-					JSONObject filters   = null;
-					
-					if (yq.hasParamValue(YADARequest.PS_SORTKEY))
-					{
-						sortKey = yq.getYADAQueryParamValue(YADARequest.PS_SORTKEY)[0];
-					}
-					
-					try
-					{
-						if (yq.hasParamValue(YADARequest.PS_FILTERS))
-						{
-							filters = new JSONObject(yq.getYADAQueryParamValue(YADARequest.PS_FILTERS)[0]);
-						}
-					} 
-					catch (JSONException e)
-					{
-						String msg = "Error while getting filters from parameters.";
-						throw new YADARequestException(msg, e);
-					}
-					
-					for (int row = 0; row < dataSize; row++)
-					{
-						if(yq.getIns() != null && yq.getIns().length > 0)
-						{
-							conformedCode = this.qutils.getConformedCode(this.qutils.processInColumns(	yq, row));
-						}
-						
-						if(yq.getType().equals(Parser.SELECT))
-						{
-							wrappedCode = ((JDBCAdaptor)yq.getAdaptor()).buildSelect(	conformedCode,
-																																				sortKey,
-																																				sortOrder,
-																																				firstRow,
-																																				pageSize,
-																																				filters).toString();
-							String msg  = "\n------------------------------------------------------------";
-										 msg += "\n   SELECT statement to execute:";
-										 msg += "\n------------------------------------------------------------\n";
-										 msg += wrappedCode.toString() + "\n";
-							l.debug(msg);
-						}
-						else // INSERT, UPDATE, DELETE
-						{
-							wrappedCode = conformedCode;
-							this.requiredCommits.add(yq.getSource());
-							String msg  = "\n------------------------------------------------------------";
-							       msg += "\n   INSERT/UPDATE/DELETE statement to execute:";
-							       msg += "\n------------------------------------------------------------\n";
-							       msg += wrappedCode.toString() + "\n";
-							l.debug(msg);
-						}
-						
-						storePreparedStatement(yq, wrappedCode);
-						if (yq.getType().equals(Parser.SELECT) && (count || countOnly))
-						{
-							wrappedCode = ((JDBCAdaptor)yq.getAdaptor()).buildSelectCount(conformedCode,filters).toString();
-						  String msg  = "\n------------------------------------------------------------";
-							       msg += "\n   SELECT COUNT statement to execute:";
-							       msg += "\n------------------------------------------------------------\n";
-							       msg += wrappedCode.toString() + "\n";
-							l.debug(msg);
-							storePreparedStatementForCount(yq, yq.getPstmt(row), wrappedCode);
-						}
-						this.qutils.setValsInPosition(yq, row);
-					} // end data loop
-				} // end if callable
-			} // end if JDBC
-			else if(yq.getProtocol().equals(Parser.SOAP)
-					|| yq.getProtocol().equals(Parser.REST)
-					|| yq.getProtocol().equals(Parser.FILE))
-			{
-				if(yq.getType().equals(Parser.SOAP))
-				{
-					yq.setSource(source.replace(SOAPAdaptor.PROTOCOL_SOAP,SOAPAdaptor.PROTOCOL_HTTP));
-					for (int row = 0; row < dataSize; row++)
-					{
-						wrappedCode = ((SOAPAdaptor)yq.getAdaptor()).build(yq);
-						storeSoapMessage(yq, wrappedCode);
-						this.qutils.setValsInPosition(yq, row);
-					}
-				}
-				else if(yq.getType().equals(Parser.REST))
-				{
-					for (int row = 0; row < dataSize; row++)
-					{
-						wrappedCode = ((RESTAdaptor)yq.getAdaptor()).build(yq);
-						storeRestQuery(yq, wrappedCode);
-						this.qutils.setValsInPosition(yq, row);
-					}
-				}
-				else // filesystem
-				{
-					for (int row = 0; row < dataSize; row++)
-					{
-						wrappedCode = ((FileSystemAdaptor)yq.getAdaptor()).build(yq);
-						storeRestQuery(yq, wrappedCode);
-						this.qutils.setValsInPosition(yq, row);
-					}
-				}
-			}
-			else
-			{
-				String msg = "The query you are attempting to execute requires ";
-				msg += "a protocol or class that is not supported.  This ";
-				msg += "could be the result of a configuration issue.";
-				throw new YADAUnsupportedAdaptorException(msg);
-			} // end protocols
+		  prepQueryForExecution(yq);
 		} // query loop
 	} // end prepareQueryPackages
 

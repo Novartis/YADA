@@ -1095,13 +1095,18 @@ public class Service {
 									// reset the query internals
 									try
 									{
-										this.qMgr.endowQuery(yq);
+										this.qMgr.prepQueryForExecution(this.qMgr.endowQuery(yq));
 									} 
 									catch (YADAQueryConfigurationException|YADAResourceException|YADAUnsupportedAdaptorException e)
 									{
 										String msg = "Unable to re-endow YADAQuery with new parameters.";
 										throw new YADAPluginException(msg, e);
 									} 
+									catch (YADAConnectionException | YADARequestException | YADAAdaptorException | YADAParserException e) 
+									{
+                    String msg = "Unable to re-prep YADAQuery for execution.";
+                    throw new YADAPluginException(msg, e);
+                  } 
 								}
 								catch(InstantiationException|IllegalAccessException|ClassCastException e)
 								{

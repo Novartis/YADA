@@ -464,7 +464,8 @@ public class QueryUtils
 		Parser parser = new Parser();
 		Hashtable<String,String[]> ht = null;
 
-		ht = parser.parse(yq.getConformedCode());
+		ht = parser.parse(yq.getYADACode());
+		yq.setStatement(parser.getStatement());
 		if (ht.size() > 0)
 		{
 			yq.setType(ht.get(Parser.TYPE)[0]);
@@ -472,8 +473,6 @@ public class QueryUtils
 			yq.setIns(ht.get(Parser.IN_COLUMNS));
 			yq.setParameterizedColumns(ht.get(Parser.JDBC_COLUMNS));
 		}
-
-		// return ht;
 	}
 
 	/**

@@ -25,11 +25,14 @@ http://localhost:8080/YADA-Quickstart-6.0.0/yada-admin
 
 1. Create new JDBC, SOAP, REST, or FILE queries for configured YADA apps using the syntax-coloring-enabled editor from [CodeMirror](https://codemirror.net/)
 3. Modify existing queries
+4. Rename existing queries
+5. Copy (duplicate) existing queries with a new name
 4. Delete existing queries
 5. Assign new default YADA parameters with values for existing queries
 6. Modify default YADA parameters and values
 7. Delete default YADA parameters
 8. Update in-memory cache with new query versions and configuration automatically
+9. Backup all queries for the currently selected app to a JSON text file
 8. Switch between YADA apps 
 9. Toggle query format from monospace and pre-formatted to proportional and fluid (useful for large queries which consume your whole screen.)
 10. Filter query list on `qname` and `query` content to more easily find the queries for which you're looking
@@ -54,9 +57,9 @@ It looks like this (hopefully, most of the time:)
 
 ![ui](../resources/images/ui-ui.png)
 ### Toolbar
-The application menubar enables you to switch apps, create a query, toggle the query code format, or migrate queries from one YADA index to another.
+The application menubar enables you to switch apps, create a query, toggle the query code format, backup the queries to a JSON text file, or migrate queries from one YADA index to another.
 
-<img src="../resources/images/ui-toolbar.png" width="410" height="60"/>
+<img src="../resources/images/ui-toolbar.png" width="515" height="60"/>
 
 ## Apps
 
@@ -68,6 +71,32 @@ To switch between apps, click the `Choose App` button:
 The dialog will appear with an auto-complete dropdown.  Click or Down-arrow/Enter on your app of interest.
 
 <img src="../resources/images/ui-choose-app-menu.png" width="400" height="250"/>
+
+### Backup
+To backup the queries for the currently selected application to a JSON text file, simply click the "Backup App" button.
+
+<img src="../resources/images/ui-backup-btn.png" width="100" height="50"/>
+
+This will create a local file entitled `<APP>_YADA_backup.json`.  
+
+The format of the file is is a fully formed YADA JSONParams string containing the query `YADA new query`, intended to enable simple reaccession of all the queries contained therein (for example by passing the content to a curl command.) 
+
+This is intended as a either a disaster recovery or version control mechanism. One can, for example, periodically use the backup feature and commit the current version to svn, github, etc.
+
+> NOTE: It is important that before this file is sent in a YADA request, that all the queries contained in therein are deleted from the target system first, lest they be duplicated.
+
+Sample backup file:  
+
+```json
+[{"qname":"YADA new query",
+  "DATA":[
+  {"ACCESS_COUNT":"91","CREATED_BY":"UNKNOWN1","APP":"YADA","QUERY":"select qname from yada_query where app = ?v","DEFAULT_PARAMS":"0","MODIFIED":"2016-07-02 03:10:52","QNAME":"YADA foo","COMMENTS":"","LAST_ACCESS":"2016-07-03 09:44:11.533","MODIFIED_BY":"VARONDA1","CREATED":"2016-05-21 13:28:39"},
+  {"ACCESS_COUNT":"3780","CREATED_BY":"","APP":"YADA","QUERY":"select app label from yada_query_conf where lower(app) like lower('%'||?v||'%')","DEFAULT_PARAMS":"0","MODIFIED":"","QNAME":"YADA apps","COMMENTS":"","LAST_ACCESS":"2016-06-28 16:14:09.652","MODIFIED_BY":"","CREATED":""},
+  {"ACCESS_COUNT":"","CREATED_BY":"YADABOT","APP":"YADA","QUERY":"select qname,app from yada_query","DEFAULT_PARAMS":"0","MODIFIED":"","QNAME":"YADA test","COMMENTS":"","LAST_ACCESS":"","MODIFIED_BY":"","CREATED":""},
+  ...
+  ]
+}]
+```
 
 ## Queries
 
@@ -86,11 +115,13 @@ To create a query, make sure the app to which the query pertains is active, the 
 
 The `Edit Query` dialog will pop up:
 
-<img src="../resources/images/ui-new-query.png" width="600" height="330"/>
+<img src="../resources/images/ui-new-query.png" width="600" height="400"/>
 
-Enter the query name in the `Qname` field.  It is not required, but it is **HIGHLY RECOMMENDED** to preface the query name with the app code, e.g., `MYAPP insert gumbo` or `MYAPP select fnords`
+Enter the query name in the `Qname` field.  It is not required, but it is **HIGHLY RECOMMENDED** to preface the query name with the app code, e.g., `MYAPP insert gumbo` or `MYAPP select fnords`.  The name of the app is automatically added to the Qname field to facilitate this.
 
 Then just type your code with appropriate YADA markup in code box, and click Save.
+
+Note that comments (i.e., documentation) can also be included.
 
 YADA will inform you with a confirmation that the query was saved.
 
@@ -98,7 +129,13 @@ YADA will inform you with a confirmation that the query was saved.
 
 To modify a query, click on the row containing the query you wish to edit.  The `Edit Query` dialog will appear again, pre-populated, as well as with the Default Parameter options (see below.)
 
-<img src="../resources/images/ui-mod-query.png" width="600" height="340"/>
+<img src="../resources/images/ui-mod-query.png" width="600" height="400"/>
+
+Note that comments (i.e., documentation) can also be included.
+
+Also, note the `Qname` and `Query` can easily be copied to your clipboard with the copy buttons.
+
+<img src="../resources/images/ui-copy-btn.png" width="70" height="120"/>
 
 Remember to click `Save` after making your changes.
 
@@ -109,6 +146,20 @@ YADA will inform you with a confirmation that your changes were saved.
 To delete a query, click on the row containing the query you wish to edit.  The `Edit query` dialog will again appear.  Click the `Delete` button, and then confirm your intention to delete.
 
 YADA will inform you with a confirmation that the query was deleted.  This is currently an irreversible process.  Once you've deleted a query, it's gone.
+
+### Renaming
+
+Click the `Rename` button and a dialog box will appear with the value `<APP> RENAME <qname>`:
+
+<img src="../resources/images/ui-rename.png" width="600" height="150"/> 
+
+### Copying
+
+Click the `Copy` button and a dialog box will appear with the value `<APP> Copy of <qname>`:
+
+<img src="../resources/images/ui-copy.png" width="600" height="150"/> 
+
+You have the option of including or excluding any YADA default parameters that might be set on the original query.
 
 ### Filtering
 

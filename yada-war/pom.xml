@@ -616,5 +616,10 @@
       <artifactId>hsqldb</artifactId>
       <version>2.3.3</version>
     </dependency>
+    <dependency>
+      <groupId>com.novartis.opensource</groupId>
+      <artifactId>jsqlparser</artifactId>
+      <version>0.9.6-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 </project>

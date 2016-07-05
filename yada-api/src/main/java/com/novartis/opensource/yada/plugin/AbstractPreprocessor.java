@@ -23,6 +23,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.http.Cookie;
 
 import com.novartis.opensource.yada.ConnectionFactory;
 import com.novartis.opensource.yada.YADAConnectionException;
@@ -286,10 +290,11 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   {
     for(int i=0;i<list.size();i++)
     {
-      if(list.get(i).matches("^"+key+"=.+$"))
+      Pattern rxKeyVal = Pattern.compile("^"+key+"=(.+)$");
+      Matcher m = rxKeyVal.matcher(list.get(i));
+      if(m.matches())
       {
-        String[] split = list.get(i).split("=");
-        return split[1];
+        return m.group(1);
       }
     }
     return null;
@@ -360,7 +365,28 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
     return this.token;
   }
   
+  @Override
+  public String getHeader(String header)
+  {
+    return getYADARequest().getRequest().getHeader(header);
+  }
   
+  @Override
+  public String getCookie(String cookie)
+  {
+    Cookie[] cookies = getYADARequest().getRequest().getCookies();
+    if (cookies != null) 
+    {
+      for (Cookie c : cookies) 
+      {
+        if (c.getName().equals(cookie)) 
+        {
+          return c.getValue();
+        }
+      }
+    }
+    return null;
+  }
   /**
    * No arg mutator for variable, gets FQCN from args or properties 
    * @throws YADASecurityException 

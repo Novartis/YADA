@@ -43,11 +43,11 @@ public class YADASelectDeParser extends SelectDeParser {
 	/**
 	 * Creates a new instance, as well as sets vars for arguments.
 	 * @param yadaExpressionDeParser the object for processing SQL expressions
-	 * @param buffer the container for expression processing metadata
+	 * @param builder the container for expression processing metadata
 	 */
 	public YADASelectDeParser(YADAExpressionDeParser yadaExpressionDeParser,
-			StringBuffer buffer) {
-		super(yadaExpressionDeParser,buffer);
+			StringBuilder builder) {
+		super(yadaExpressionDeParser,builder);
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class YADASelectDeParser extends SelectDeParser {
 		if(this.expressionHasAlias && this.hasJdbcParameter)
 		{
 			Column columnFromAlias = new Column();
-			columnFromAlias.setColumnName(selectExpressionItem.getAlias());
+			columnFromAlias.setColumnName(selectExpressionItem.getAlias().getName());
 			((YADAExpressionDeParser)this.getExpressionVisitor()).getJdbcColumns().add(columnFromAlias);
 			resetInExpression();
 			resetHasJdbcParameter();

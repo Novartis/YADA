@@ -596,7 +596,7 @@ Custom delimiters are now supported, which automatically set the format to `deli
 **Accepted Values**: any String  
 **Description**:   
 
-<a name="viewlimit"></a>  
+  
 
 ----
 

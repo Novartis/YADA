@@ -70,7 +70,9 @@ public class ConnectionFactoryTest {
 		{
 			// load properties
 			setProps(properties);
+			
 			BasicDataSource ds = new BasicDataSource();
+			
 			try
 			{
 				Class<?> dsClass = Class.forName(ds.getClass().getName());
@@ -104,11 +106,11 @@ public class ConnectionFactoryTest {
 		    				{
 		    					method.invoke(ds, new Object[]{val});
 		    				}
-		    				else if(type.endsWith("Boolean"))
+		    				else if(type.endsWith("Boolean") || type.endsWith("boolean"))
 		    				{
 		    					method.invoke(ds, new Object[]{Boolean.valueOf(val)});
 		    				}
-		    				else if(type.endsWith("Integer"))
+		    				else if(type.endsWith("Integer") || type.endsWith("int"))
 		    				{
 		    					method.invoke(ds, new Object[]{Integer.valueOf(val)});
 		    				}

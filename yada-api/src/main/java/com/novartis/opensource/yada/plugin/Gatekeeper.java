@@ -14,27 +14,25 @@
  */
 package com.novartis.opensource.yada.plugin;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
+import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
+import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
+import net.sf.jsqlparser.parser.CCJSqlParserManager;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.statement.select.Select;
+import net.sf.jsqlparser.statement.select.SelectBody;
+import net.sf.jsqlparser.util.deparser.ExpressionDeParser;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -54,6 +52,7 @@ import com.novartis.opensource.yada.util.YADAUtils;
  * A Preprocess plugin to evaluate user authorization for query execution.
  * 
  * @author David Varon
+ * @since 0.7.0.0
  * 
  */
 public class Gatekeeper extends AbstractPreprocessor {
@@ -78,8 +77,10 @@ public class Gatekeeper extends AbstractPreprocessor {
    * Constant equal to {@value}
    */
   protected static final String EXECUTION_POLICY_INDEXES = "execution.policy.indexes";
-
-  
+  /**
+   * Constant equal to {@value}
+   */
+  protected static final String CONTENT_POLICY_PREDICATE = "content.policy.predicate";
  
   /**
    * Validates the request host, user, security params, and security query
@@ -141,7 +142,7 @@ public class Gatekeeper extends AbstractPreprocessor {
    *          the security specification for the requested query
    * @throws YADASecurityException
    *           when there is an issue retrieving or processing the security
-   *           query
+   *           query           
    */
   @Override
   public void applyExecutionPolicy() throws YADASecurityException 
@@ -152,6 +153,13 @@ public class Gatekeeper extends AbstractPreprocessor {
     // clearance has already been granted.  This can't be in YADAQuery because of caching.
     
     //TODO needs to support app targets as well as qname targets
+    
+    //TODO tests for auth failure, i.e., unauthorized
+    //TODO tests for ignoring attempted plugin overrides
+    //TODO make it impossible to execute a protector query as a primary query without a server-side flag set, or 
+    //  perhaps some authorization (i.e., for testing, maybe with a content policy)  
+    //  This will close an attack vector.
+    //TODO support dependency injection for other methods in addition to token for execution policy
     
     List<SecurityPolicyRecord> spec = getSecurityPolicyRecords(EXECUTION_POLICY_CODE);
     List<SecurityPolicyRecord> prunedSpec = new ArrayList<>(); 
@@ -239,6 +247,7 @@ public class Gatekeeper extends AbstractPreprocessor {
       // policy has params and req has compatible params 
       if(policyHasParams && !reqHasJSONParams)
       {
+        @SuppressWarnings("null")
         String[] polCols    = policyIndices.split("\\s");
         //String[] polVals    = new String[polCols.length];
         StringBuilder polVals = new StringBuilder();
@@ -279,7 +288,7 @@ public class Gatekeeper extends AbstractPreprocessor {
         // 1. get JSONParams from query (params)
         LinkedHashMap<String, String[]> dataRow = getYADAQuery().getDataRow(0);
         // 2. add user column if necessary
-        //dataRow.put(policyColumns, new String[] { (String) getToken() });
+        @SuppressWarnings("null")
         String[] polCols = policyColumns.split("\\s");
         for(String colname : polCols) 
         {
@@ -312,8 +321,7 @@ public class Gatekeeper extends AbstractPreprocessor {
   }
   
   /**
-   * Modified the original query by appending 
-   * the authenticated token value in a dynamic predicate.
+   * Modifies the original query by appending a dynamic predicate
    * <p>Recall the {@link Service#engagePreprocess} method
    * will recall {@link QueryManager#endowQuery} to 
    * reconform the code after this {@link Preprocess} 
@@ -321,37 +329,136 @@ public class Gatekeeper extends AbstractPreprocessor {
    * 
    * 
    * @throws YADASecurityException when token retrieval fails
-   * @since 0.7.0.0
    */
   @Override
   public void applyContentPolicy() throws YADASecurityException 
   {
-    String SPACE      = " ";
-    String AND        = "AND";
-    String WHERE      = "WHERE";
-    String RX_SQL     = "^\\s*(SELECT.+FROM.+)(WHERE.+)?(GROUP BY.+)?(ORDER BY.+)?$";
-    StringBuilder q   = new StringBuilder();
-    String query      = getYADAQuery().getYADACode();
-    int     modifiers = Pattern.DOTALL|Pattern.CASE_INSENSITIVE;
-    Pattern rxWhere   = Pattern.compile(RX_SQL,modifiers);
-    Matcher m         = rxWhere.matcher(query.toUpperCase());
-    if(m.matches() && m.group(2) != null)
+
+    // TODO make it impossible to reset args and preargs dynamically if pl class implements SecurityPolicy
+    //   this will close an attack vector
+    
+    String SPACE            = " ";
+    StringBuilder contentPolicy = new StringBuilder(); 
+    String        RX_INJECTION  = "get[A-Z][a-zA-Z0-9_]+\\([A-Za-z0-9_]*\\)";
+    Pattern       rxInjection   = Pattern.compile(RX_INJECTION);
+    String        rawPolicy     = getArgumentValue(CONTENT_POLICY_PREDICATE);
+    Matcher       m1            = rxInjection.matcher(rawPolicy);
+    int           start         = 0;
+    
+    // field = getToken
+    // field = getCookie(string)
+    // field = getHeader(string)
+    // field = getRandom(string)
+    
+    if(!m1.find())
     {
-      q.append(m.group(1)); // SELECT.+FROM.+
-      q.append(m.group(2)); // WHERE.+
-      q.append(SPACE+AND);
+      String msg = "Unathorized. Injected method invocation failed.";
+      throw new YADASecurityException(msg);
+    }
+    
+    m1.reset();
+    
+    while(m1.find())
+    {
+      int rxStart   = m1.start();
+      int rxEnd     = m1.end();
+      
+      contentPolicy.append(rawPolicy.substring(start,rxStart));
+      
+      String frag   = rawPolicy.substring(rxStart,rxEnd);
+      String method = frag.substring(0,frag.indexOf('('));
+      String arg    = frag.substring(frag.indexOf('(')+1,frag.indexOf(')'));
+      Object val    = null;
+      try 
+      {
+        if(arg.equals(""))
+          val = getClass().getMethod(method).invoke(this, new Object[] {});
+        else
+          val = getClass().getMethod(method, new Class[] { java.lang.String.class }).invoke(this, new Object[] {arg});
+      } 
+      catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) 
+      {
+        String msg = "Unathorized. Injected method invocation failed.";
+        throw new YADASecurityException(msg, e);
+      }
+      contentPolicy.append((String)val +SPACE);
+      
+      start = rxEnd;
+    }
+    
+    Expression parsedContentPolicy;
+    try 
+    {
+      parsedContentPolicy = CCJSqlParserUtil.parseCondExpression(contentPolicy.toString());
+    } 
+    catch (JSQLParserException e) 
+    {
+      String msg = "Unauthorized. Content policy is not valid.";
+      throw new YADASecurityException(msg, e);
+    }
+    
+    PlainSelect sql = (PlainSelect)((Select)getYADAQuery().getStatement()).getSelectBody();
+    Expression  where  = sql.getWhere();
+    
+    if(where != null)
+    {
+      AndExpression and = new AndExpression(where,parsedContentPolicy);
+      sql.setWhere(and);
     }
     else
     {
-      q.append(m.group(1)); // SELECT.+FROM.+
-      q.append(SPACE+WHERE);
+      sql.setWhere(parsedContentPolicy);
+    }    
+    try 
+    {
+      CCJSqlParserManager parserManager = new CCJSqlParserManager();
+      sql = (PlainSelect)((Select) parserManager.parse(new StringReader(sql.toString()))).getSelectBody();
+    } 
+    catch (JSQLParserException e) 
+    {
+      String msg = "Unauthorized. Content policy is not valid.";
+      throw new YADASecurityException(msg, e);
     }
-    q.append(SPACE+getToken().toString()); // TOKEN
-    if(m.group(3) != null)
-      q.append(m.group(3)); // GROUP BY.+
-    if(m.group(4) != null)
-      q.append(m.group(4)); // ORDER BY.+
+    
+    getYADAQuery().setCoreCode(sql.toString());
     this.clearSecurityPolicy();
+  }
+  
+  /**
+   * Utility function for content policy
+   * @return the auth token wrapped in single quotes
+   * @throws YADASecurityException
+   */
+  public String getQToken() throws YADASecurityException
+  {
+    String quote = "'";
+    return quote + getToken() + quote;
+  }
+  
+  /**
+   * Utility function for content policy
+   * @param cookie the desired HTTP request cookie
+   * @return the value of {@code cookie} wrapped in single quotes
+   * @throws YADASecurityException
+   */
+  public String getQCookie(String cookie)
+  {
+    String quote = "'";
+    String val = super.getCookie(cookie);
+    return quote + val + quote;
+  }
+  
+  /**
+   * Utility function for content policy
+   * @param header the desired HTTP request header
+   * @return the value of {@code header} wrapped in single quotes
+   * @throws YADASecurityException
+   */
+  public String getQHeader(String header)
+  {
+    String quote = "'";
+    String val = super.getHeader(header);
+    return quote + val + quote;
   }
 
   /**

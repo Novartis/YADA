@@ -45,7 +45,8 @@ CREATE TABLE IF NOT EXISTS YADA.YADA_TEST
 	COL2 INT,
 	COL3 DOUBLE(2,1), 
 	COL4 DATE,
-	COL5 TIMESTAMP
+	COL5 TIMESTAMP,
+	TOKEN VARCHAR(8) DEFAULT 'YADA'
 );
 
 
@@ -57,6 +58,6 @@ DELETE from YADA_QUERY_CONF where app = 'YADA' and source = 'java:comp/env/jdbc/
 INSERT into YADA_QUERY_CONF (APP,SOURCE,VERSION) values ('YADA','java:comp/env/jdbc/yada',null);
 INSERT into YADA_QUERY_CONF (APP,SOURCE,VERSION) values ('QGO','http://www.ebi.ac.uk/QuickGO/GTerm?',null);
 INSERT into YADA_QUERY_CONF (APP,SOURCE,VERSION) values ('YADAFSIN','file:///io/in',null);
-INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA default','select systimestamp from dual','YADABOT','YADA');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA default','select ''YADA is alive'' from dual','YADABOT','YADA');
 @YADA_query_essentials.sql;
 @YADA_query_tests.sql;

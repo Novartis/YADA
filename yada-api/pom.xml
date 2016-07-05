@@ -636,9 +636,9 @@
   </reporting>
   <dependencies>
     <dependency>
-      <groupId>net.sf.jsqlparser</groupId>
+      <groupId>com.novartis.opensource</groupId>
       <artifactId>jsqlparser</artifactId>
-      <version>0.8.0</version>
+      <version>0.9.6-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.json</groupId>

@@ -23,15 +23,24 @@ import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.expression.JdbcParameter;
+import net.sf.jsqlparser.expression.YADAMarkupParameter;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.statement.SetStatement;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.StatementVisitor;
+import net.sf.jsqlparser.statement.Statements;
+import net.sf.jsqlparser.statement.alter.Alter;
+import net.sf.jsqlparser.statement.create.index.CreateIndex;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
+import net.sf.jsqlparser.statement.create.view.AlterView;
+import net.sf.jsqlparser.statement.create.view.CreateView;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.drop.Drop;
+import net.sf.jsqlparser.statement.execute.Execute;
 import net.sf.jsqlparser.statement.insert.Insert;
+import net.sf.jsqlparser.statement.merge.Merge;
 import net.sf.jsqlparser.statement.replace.Replace;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.truncate.Truncate;
@@ -71,6 +80,10 @@ public class Parser implements StatementVisitor
 	 * Constant equal to: {@value}
 	 */
 	public static final String IN_COLUMNS = "inColumns";
+	/**
+	 * Constant equal to: {@value}
+	 */
+	public static final String STATEMENT = "statement";
 	/**
 	 * Constant equal to: {@value}
 	 */
@@ -154,7 +167,7 @@ public class Parser implements StatementVisitor
 	/**
 	 * Buffer used by jsqlparser to store SQL fragments
 	 */
-	private StringBuffer buf = new StringBuffer();
+	private StringBuilder buf = new StringBuilder();//new StringBuffer();
 	/**
 	 * Local expression deparser
 	 */
@@ -213,14 +226,13 @@ public class Parser implements StatementVisitor
 	@Override
 	public void visit(Update update)
 	{
-		@SuppressWarnings("unchecked")
-    List<Column> columns = update.getColumns();
+		List<Column> columns = update.getColumns();
 		getColumnList().addAll(columns);
 		for (int i = 0; i < columns.size(); i++)
 		{
 			Column     column     = columns.get(i);
-			Expression expression = (Expression)update.getExpressions().get(i);
-			if (expression instanceof JdbcParameter)
+			Expression expression = update.getExpressions().get(i);
+			if (expression instanceof YADAMarkupParameter)
 			{
 				getJdbcColumnList().add(column);
 			}
@@ -230,7 +242,7 @@ public class Parser implements StatementVisitor
 				ExpressionList paramList = function.getParameters();
 				for(int j=0;j<paramList.getExpressions().size(); j++)
 				{
-					if(paramList.getExpressions().get(j) instanceof JdbcParameter)
+					if(paramList.getExpressions().get(j) instanceof YADAMarkupParameter)
 					{
 						getJdbcColumnList().add(column);
 					}
@@ -255,43 +267,46 @@ public class Parser implements StatementVisitor
 	@Override
 	public void visit(Insert insert)
 	{
-		insert.getItemsList().accept(getExpressionDeParser());
-		if (getExpressionDeParser().hasExpressionList)
-		{
-			l.debug("insert has expression list");
-			getExpressionDeParser().hasExpressionList = false;
-			// this insert has a 'VALUES' statement and an expressionList (?,?,?)
-			// so add all the columns from the INSERT column list
-			List<Expression> expressions = getExpressionDeParser().getExpressions();
-			@SuppressWarnings("unchecked")
-      List<Column>     columns     = insert.getColumns();
-			getColumnList().addAll(columns);
-			for (int i = 0; i < columns.size(); i++)
-			{
-				// if(expressions.get(i).toString().equals(JDBC_PARAMETER))
-				if (expressions.get(i) instanceof JdbcParameter)
-				{
-					l.debug("Adding JDBC column [" + columns.get(i) + "] to list");
-					getJdbcColumnList().add(columns.get(i));
-				} 
-				else if (expressions.get(i) instanceof Function)
-				{
-					Function function = (Function)expressions.get(i);
-					ExpressionList paramList = function.getParameters();
-					for(int j=0;j<paramList.getExpressions().size(); j++)
-					{
-						if(paramList.getExpressions().get(j) instanceof JdbcParameter)
-						{
-							getJdbcColumnList().add(columns.get(i));
-						}
-					}
-				}
-			}
-		} else
+	  if(insert.getItemsList() != null)
+	  {
+  	  insert.getItemsList().accept(getExpressionDeParser());
+  		if (getExpressionDeParser().hasExpressionList)
+  		{
+  			l.debug("insert has expression list");
+  			getExpressionDeParser().hasExpressionList = false;
+  			// this insert has a 'VALUES' statement and an expressionList (?,?,?)
+  			// so add all the columns from the INSERT column list
+  			List<Expression> expressions = getExpressionDeParser().getExpressions();
+  			List<Column>     columns     = insert.getColumns();
+  			getColumnList().addAll(columns);
+  			for (int i = 0; i < columns.size(); i++)
+  			{
+  			  if(expressions.get(i) instanceof YADAMarkupParameter)
+  				{
+  					l.debug("Adding JDBC column [" + columns.get(i) + "] to list");
+  					getJdbcColumnList().add(columns.get(i));
+  				} 
+  				else if (expressions.get(i) instanceof Function)
+  				{
+  					Function function = (Function)expressions.get(i);
+  					ExpressionList paramList = function.getParameters();
+  					for(int j=0;j<paramList.getExpressions().size(); j++)
+  					{
+  						if(paramList.getExpressions().get(j) instanceof YADAMarkupParameter)
+  						{
+  							getJdbcColumnList().add(columns.get(i));
+  						}
+  					}
+  				}
+  			}
+  		} 
+	  }
+		else
 		{
 			l.debug("insert has subselect");
 			// this insert has subselect, i.e., INSERT into table [(..)] SELECT...
 			// so all jdbc action will be handled by the ExpressionDeParser
+			insert.getSelect().getSelectBody().accept(getExpressionDeParser().getSelectVisitor());
 			addColumnNamesToLists();
 		}
 		setType(INSERT);
@@ -369,7 +384,9 @@ public class Parser implements StatementVisitor
 		Hashtable<String,String[]> colLists = new Hashtable<>();
 		try
 		{
-			processStatement(this.parserManager.parse(new StringReader(sql)));
+		  this.setStatement(this.parserManager.parse(new StringReader(sql))); 
+		  
+			processStatement(this.getStatement());
 
 			String[] jdbcColumns = new String[getJdbcColumnList().size()];
 			String[] columns     = new String[getColumnList().size()];
@@ -421,11 +438,11 @@ public class Parser implements StatementVisitor
 	private void processStatement(Statement statementToProcess)
 	{
 		// set the ivar
-		this.statement = statementToProcess;
+		this.setStatement(statementToProcess);
 		// set the deparser and the buffer
 		getExpressionDeParser().setBuffer(getStringBuffer());
 		// proceed to process the statement
-		this.statement.accept(this);
+		this.getStatement().accept(this);
 	}
 
 	/**
@@ -451,7 +468,7 @@ public class Parser implements StatementVisitor
 	 * Standard accessor for variable
 	 * @return the internal string buffer
 	 */
-	private StringBuffer getStringBuffer()
+	private StringBuilder getStringBuffer()
 	{
 		return this.buf;
 	}
@@ -482,4 +499,60 @@ public class Parser implements StatementVisitor
 	{
 		return this.inCols;
 	}
+
+  /**
+   * @return the statement
+   * @since 0.7.0.0
+   */
+  public Statement getStatement() {
+    return this.statement;
+  }
+
+  /**
+   * @param statement the statement to set
+   * @since 0.7.0.0
+   */
+  public void setStatement(Statement statement) {
+    this.statement = statement;
+  }
+
+  @Override
+  public void visit(CreateIndex createIndex) {
+    // nothing to do
+  }
+
+  @Override
+  public void visit(CreateView createView) {
+    // nothing to do
+  }
+
+  @Override
+  public void visit(AlterView alterView) {
+    // nothing to do
+  }
+
+  @Override
+  public void visit(Alter alter) {
+    // nothing to do
+  }
+
+  @Override
+  public void visit(Statements stmts) {
+    // nothing to do
+  }
+
+  @Override
+  public void visit(Execute execute) {
+    // nothing to do
+  }
+
+  @Override
+  public void visit(SetStatement set) {
+    // nothing to do
+  }
+
+  @Override
+  public void visit(Merge merge) {
+    // nothing to do
+  }
 }

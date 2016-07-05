@@ -24,6 +24,7 @@ import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.expression.JdbcParameter;
+import net.sf.jsqlparser.expression.YADAMarkupParameter;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.GreaterThan;
@@ -125,7 +126,8 @@ public class YADAExpressionDeParser extends
 	 */
 	public YADAExpressionDeParser() 
 	{
-		this.setBuffer(new StringBuffer());
+//		this.setBuffer(new StringBuffer());
+	  this.setBuffer(new StringBuilder());
 		YADASelectDeParser selectVistitor = new YADASelectDeParser(this,this.getBuffer());
 		this.setSelectVisitor(selectVistitor);
 	}
@@ -135,7 +137,8 @@ public class YADAExpressionDeParser extends
 	 * @param selectVisitor the object for processing {@code SELECT} statements
 	 * @param buffer the object in which to store deparsing metadata
 	 */
-	public YADAExpressionDeParser(SelectVisitor selectVisitor, StringBuffer buffer) 
+//	public YADAExpressionDeParser(SelectVisitor selectVisitor, StringBuffer buffer)
+	public YADAExpressionDeParser(SelectVisitor selectVisitor, StringBuilder buffer)
 	{
 		super(selectVisitor, buffer);
 	}
@@ -155,14 +158,14 @@ public class YADAExpressionDeParser extends
 		this.columns.add(column);
 	}
 	
-	/**
-	 * Sets {@link #hasJdbcParameter} flag to {@code true}
-	 */
-	@Override
-	public void visit(JdbcParameter jdbcParameter) {
-		super.visit(jdbcParameter);
-		this.hasJdbcParameter = true;
-  }
+//	/**
+//	 * Sets {@link #hasJdbcParameter} flag to {@code true}
+//	 */
+//	@Override
+//	public void visit(JdbcParameter jdbcParameter) {
+//		super.visit(jdbcParameter);
+//		this.hasJdbcParameter = true;
+//  }
 	
 	/**
 	 * @return List&lt;Expression&gt; of expressions deparsed from the statement
@@ -330,6 +333,16 @@ public class YADAExpressionDeParser extends
 	}
 	
 	/**
+	 * @since 0.7.0.0
+	 */
+	@Override
+	public void visit(YADAMarkupParameter expr)
+	{
+	  super.visit(expr);
+	  this.hasJdbcParameter = true;
+	}
+	
+	/**
 	 * Handler to extract column names where appropriate (inside an expression which contains a jdbc parameter) and to set deparser flags.
 	 * @param be the binary expression currently under evaluation
 	 */
@@ -369,5 +382,7 @@ public class YADAExpressionDeParser extends
 	{
 		return this.jdbcColumns;
 	}
+	
+	
 
 }
