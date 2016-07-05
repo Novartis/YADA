@@ -1,0 +1,31 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam activity {
+  StartColor #634929
+  EndColor #634929
+  BackgroundColor #FED300
+  BorderColor #923222
+  ArrowColor #923222
+}
+title 4-Tier Security API 
+start
+if(has 'auth.path.rx' property or argument) then (yes)
+  :validateURL;
+else (no)
+endif
+if(has 'validateToken' method implementation) then (yes)
+  :validateToken;
+else (no)
+endif
+if(has 'execution.policy.indices' or 'execution.policy.columns') then (yes)
+  :applyExecutionPolicy;
+else (no)
+  :'execution.policy=void' (optional);
+endif
+if(has 'content.policy.predicate') then (yes)
+  :applyContentPolicy;
+else (no)
+  :'content.policy=void' (optional);
+endif
+end
+@enduml

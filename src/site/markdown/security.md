@@ -16,7 +16,7 @@ The mechanism for a YADA Security implementation is a *preprocessor plugin*, con
 
 When using a custom class other than `Gatekeeper` to implement security, it is still advantageous to extend `Gatekeeper`, or at least `com.novartis.opensource.yada.plugin.AbstractPreprocessor` if possible, as it contains many constants and default method implementations, and conveniences.
 
-> insert diagram 
+<img src="../resources/images/security_flow.png">
 
 ## Default YADA Parameter
 A *default YADA parameter* is effectively a segment of a URL parameter string, a single name-value pair, that, instead of being passed in a URL or HTTP POST content, is stored in the YADA index and linked to a query. It is a way, if you will, to amend a YADA HTTP request with a server-side configuration at request-time.
@@ -270,23 +270,30 @@ INSERT INTO YADA_A11N (target, policy, qname, type) VALUES (<protected>,'E',<pro
   * `execution.policy.indices` or `execution.policy.indexes` are for queries requested with standard parameters, i.e., `qname` and `params`
   * `execution.policy.columns` are for queries requested with JSONParams.
   * To support both request syntaxes, add both configurations to the argument list
-  * The value of `execution.policy.indices` or `execution.policy.indexes` is a space-delimited list of positional parameters, e.g., `execution.policy.indexes=0 4 5`. To include the security token in the list (presumably set previously in the `validateToken` step,) use an integer greater than or equal to the size of the parameter list passed in the request.  For example:  
+  * The value of `execution.policy.indices` or `execution.policy.indexes` is a space-delimited list of positional parameters, e.g., `execution.policy.indexes=0 4 5`. To include the security token in the list (presumably set previously in the `validateToken` step,) use an integer greater than or equal to the size of the parameter list passed in the request.  
+*  The value of `execution.policy.columns` is a space-delimited list of column names. 
+
   
-      ```c 
-/* Request with 3 parameters */  
+  
+```c 
+# execution.policy.indices 
+
+# Request with 3 parameters
 http://yada.mydomain.com/q/MY query/p/x,10,2.2  
-/* Execution policy argument includes  
-the first and second parameters (values 'x' and '10',)  
-and the security token. */  
+
+# Execution policy argument includes  
+# the first and second parameters (values 'x' and '10',)  
+# and the security token.
 execution.policy.indices=0,1,3  
-```
+``` 
 
-  *  The value of `execution.policy.columns` is a space-delimited list of column names. For example
+```c 
+# execution.policy.columns
 
-      ```c 
-/* Request with 3 parameters */  
+# Request with 3 parameters
 http://yada.mydomain.com/yada.jsp?j=[{qname:MY query,DATA:[{COL1:x,COL2:10,COL3:2.2}]}]
-/* Execution policy argument includes  the names of columns. */  
+
+# Execution policy argument includes  the names of columns.
 execution.policy.columns=COL1 COL2 TOKEN
 ```
 
