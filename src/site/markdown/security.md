@@ -274,8 +274,7 @@ INSERT INTO YADA_A11N (target, policy, qname, type) VALUES (<protected>,'E',<pro
   
       ```c 
 /* Request with 3 parameters */  
-http://yada.mydomain.com/q/MY query/p/x,10,2.2
-/**/
+http://yada.mydomain.com/q/MY query/p/x,10,2.2  
 /* Execution policy argument includes  
 the first and second parameters (values 'x' and '10',)  
 and the security token. */  
@@ -287,7 +286,6 @@ execution.policy.indices=0,1,3
       ```c 
 /* Request with 3 parameters */  
 http://yada.mydomain.com/yada.jsp?j=[{qname:MY query,DATA:[{COL1:x,COL2:10,COL3:2.2}]}]
-/**/
 /* Execution policy argument includes  the names of columns. */  
 execution.policy.columns=COL1 COL2 TOKEN
 ```
