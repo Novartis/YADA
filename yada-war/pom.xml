@@ -619,7 +619,7 @@
     <dependency>
       <groupId>com.novartis.opensource</groupId>
       <artifactId>jsqlparser</artifactId>
-      <version>0.9.6-SNAPSHOT</version>
+      <version>0.9.6</version>
     </dependency>
   </dependencies>
 </project>
