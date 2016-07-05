@@ -23,7 +23,6 @@ import java.util.List;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
-import net.sf.jsqlparser.expression.JdbcParameter;
 import net.sf.jsqlparser.expression.YADAMarkupParameter;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
@@ -126,7 +125,6 @@ public class YADAExpressionDeParser extends
 	 */
 	public YADAExpressionDeParser() 
 	{
-//		this.setBuffer(new StringBuffer());
 	  this.setBuffer(new StringBuilder());
 		YADASelectDeParser selectVistitor = new YADASelectDeParser(this,this.getBuffer());
 		this.setSelectVisitor(selectVistitor);
@@ -137,7 +135,6 @@ public class YADAExpressionDeParser extends
 	 * @param selectVisitor the object for processing {@code SELECT} statements
 	 * @param buffer the object in which to store deparsing metadata
 	 */
-//	public YADAExpressionDeParser(SelectVisitor selectVisitor, StringBuffer buffer)
 	public YADAExpressionDeParser(SelectVisitor selectVisitor, StringBuilder buffer)
 	{
 		super(selectVisitor, buffer);
@@ -158,15 +155,6 @@ public class YADAExpressionDeParser extends
 		this.columns.add(column);
 	}
 	
-//	/**
-//	 * Sets {@link #hasJdbcParameter} flag to {@code true}
-//	 */
-//	@Override
-//	public void visit(JdbcParameter jdbcParameter) {
-//		super.visit(jdbcParameter);
-//		this.hasJdbcParameter = true;
-//  }
-	
 	/**
 	 * @return List&lt;Expression&gt; of expressions deparsed from the statement
 	 */
@@ -179,7 +167,6 @@ public class YADAExpressionDeParser extends
 	 * Sets {@link #hasExpressionList} parameter to {@code true}, and indexes 
 	 * expressions.
 	 */
-	@SuppressWarnings("unchecked")
   @Override
 	public void visit(ExpressionList expressionList)
 	{

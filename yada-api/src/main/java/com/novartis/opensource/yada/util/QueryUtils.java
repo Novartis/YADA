@@ -907,14 +907,17 @@ public class QueryUtils
 	 */
 	public char[] getDataTypes(String sql)
 	{
-		int count = sql.split("\\?").length - 1;
+		int count = sql.split("\\?(?=[vindt])").length - 1;
 		char[] dataTypes = new char[count];
 		int idx = 0;
 		for (int i = 0; i < count; i++)
 		{
 			idx = sql.indexOf("?", idx) + 1;
-			dataTypes[i] = sql.charAt(idx);
-			l.debug("data type of param [" + String.valueOf(i + 1) + "] = " + dataTypes[i]);
+			if(String.valueOf(sql.charAt(idx)).matches("[vindt]"))
+			{
+  			dataTypes[i] = sql.charAt(idx);
+  			l.debug("data type of param [" + String.valueOf(i + 1) + "] = " + dataTypes[i]);
+			}
 		}
 		return dataTypes;
 	}
