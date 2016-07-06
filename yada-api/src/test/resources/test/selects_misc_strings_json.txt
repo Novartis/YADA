@@ -1,0 +1,2 @@
+j=[{"qname":"YADA test SELECT string literal question mark","DATA":[{"COL1":"Z"}]}]
+JSONParams=[{"qname":"YADA test SELECT string literal question mark","DATA":[{"COL1":"Z"}]}]

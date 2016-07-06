@@ -1,0 +1,2 @@
+q=YADA test SELECT string literal question mark&p=Z
+qname=YADA test SELECT&params=Z

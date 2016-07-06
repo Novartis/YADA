@@ -1205,6 +1205,32 @@ public class ServiceTest
     Assert.assertEquals(actual, expected);
   }
   
+  /**
+   * Tests a miscellaneous string literal, e.g., question mark (?)
+   * @param query the parameter string issue by the data provider
+   * @throws YADAQueryConfigurationException when there is a malformed query
+   * @throws YADAResponseException when the test result is invalid 
+   */
+  @Test(enabled = true, dataProvider = "QueryTests", groups = { "standard", "api" })
+  @QueryFile(list = {})
+  public void testMiscellaneousStringLiteralStandard(String query) throws YADAQueryConfigurationException, YADAResponseException
+  {
+    String[] qv = query.split("VSTR");
+    String q = qv[0];
+    // the doubly-escaped backslashes are just wierd
+    // because there's only one in the src string, i.e. \n
+    // I guess the vm is escaping the backlash, rather than
+    // interpreting the newline.
+    String expected = qv[1].replaceAll("\\\\n", "\n");
+    Service svc = prepareTest(q);
+    String actual = svc.execute();
+    if(svc.getYADARequest().getFormat().equals(YADARequest.FORMAT_CSV))
+      logStringResult(actual);
+    else
+      logJSONResult(new JSONObject(actual));
+    Assert.assertEquals(actual, expected);
+  }
+  
   /** 
    * Tests many aspects of {@code harmonyMap} or {@code h} YADA parameter results including
    * for CSV: column counts, header values, row counts, row/column content; and for JSON:
