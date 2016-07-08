@@ -30,7 +30,7 @@ import com.novartis.opensource.yada.YADARequestException;
  * An implementation of {@link Response} for returning query results as delimited files.
  * 
  * @author David Varon
- * @since 0.4.0.0
+ * @since 4.0.0
  */
 public class DelimitedResponse extends AbstractResponse {
 

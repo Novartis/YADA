@@ -37,7 +37,7 @@ import com.novartis.opensource.yada.YADARequest;
  * adaptations of these functions.
  * 
  * @author David Varon
- * @since 0.4.0.0
+ * @since 4.0.0
  */
 public abstract class Adaptor
 {

@@ -60,7 +60,7 @@ public abstract class JDBCAdaptor extends Adaptor{
 	protected static final char   DATE              = 'd';
 	/**
 	 * Constant equal to: {@code t}
-	 * @since 0.5.1.0
+	 * @since 5.1.0
 	 */
 	protected static final char   TIMESTAMP         = 't';
 	/**
@@ -330,7 +330,7 @@ public abstract class JDBCAdaptor extends Adaptor{
 	protected static final String LIMIT                = "LIMIT ";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 0.4.1.0
+	 * @since 4.1.0
 	 */
 	protected static final String OFFSET               = "OFFSET";
 	
@@ -349,7 +349,7 @@ public abstract class JDBCAdaptor extends Adaptor{
 	}
 	
 	/**
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @param yadaReq YADA request configuration
 	 */
 	public JDBCAdaptor(YADARequest yadaReq)
@@ -361,7 +361,7 @@ public abstract class JDBCAdaptor extends Adaptor{
 	 * Executes the statemetns stored in the query object.  Results are
 	 * stored in a data structure inside a {@link YADAQueryResult} object
 	 * contained by the query object.
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @param yq {@link YADAQuery} object containing code to be executed
 	 * @throws YADAAdaptorExecutionException when the adaptor can't execute the statement or statements stored in the query 
 	 */
@@ -658,7 +658,7 @@ public abstract class JDBCAdaptor extends Adaptor{
 	/**
 	 * Converts the filters stored in the local {@link #yadaReq} config as json into an SQL fragment for appendage 
 	 * to a {@code WHERE} clause
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @param append currently ignored
 	 * @param sql the current SQL query to which to append the WHERE clause
 	 * @param filters a JSON object containing the WHERE criteria
@@ -937,7 +937,7 @@ public abstract class JDBCAdaptor extends Adaptor{
    * @param type the data type of the parameter (retained here for logging)
    * @param val the value to set
    * @throws SQLException when a parameter cannot be set, for instance if the data type is wrong or unsupported
-   * @since 0.5.1.0
+   * @since 5.1.0
    */
 	protected void setTimestampParameter(PreparedStatement pstmt, int index, char type, String val) throws SQLException 
 	{
@@ -966,7 +966,7 @@ public abstract class JDBCAdaptor extends Adaptor{
    * @param type the data type of the parameter (retained here for logging)
    * @param val the value to set
    * @throws SQLException when a parameter cannot be set, for instance if the data type is wrong or unsupported
-   * @since 0.5.1.0
+   * @since 5.1.0
    */
 	protected void setDateParameter(PreparedStatement pstmt, int index, char type, String val) throws SQLException 
 	{
@@ -995,7 +995,7 @@ public abstract class JDBCAdaptor extends Adaptor{
    * @param type the data type of the parameter (retained here for logging)
    * @param val the value to set
    * @throws SQLException when a parameter cannot be set, for instance if the data type is wrong or unsupported
-   * @since 0.5.1.0
+   * @since 5.1.0
    */
 	protected void setIntegerParameter(PreparedStatement pstmt, int index, char type, String val) throws SQLException 
 	{
@@ -1025,7 +1025,7 @@ public abstract class JDBCAdaptor extends Adaptor{
    * @param type the data type of the parameter (retained here for logging)
    * @param val the value to set
    * @throws SQLException when a parameter cannot be set, for instance if the data type is wrong or unsupported
-   * @since 0.5.1.0
+   * @since 5.1.0
    */
 	protected void setNumberParameter(PreparedStatement pstmt, int index, char type, String val) throws SQLException
 	{

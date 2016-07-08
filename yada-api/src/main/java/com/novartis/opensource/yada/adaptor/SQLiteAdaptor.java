@@ -28,7 +28,7 @@ import com.novartis.opensource.yada.YADARequest;
  * For connecting to MySQL databases via JDBC.
  * 
  * @author David Varon
- * @since 0.3.0.0
+ * @since 3.0.0
  */
 public class SQLiteAdaptor extends JDBCAdaptor {
 	

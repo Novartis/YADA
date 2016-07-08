@@ -52,7 +52,7 @@ import com.novartis.opensource.yada.util.YADAUtils;
  * A Preprocess plugin to evaluate user authorization for query execution.
  * 
  * @author David Varon
- * @since 0.7.0.0
+ * @since 7.0.0
  * 
  */
 public class Gatekeeper extends AbstractPreprocessor {

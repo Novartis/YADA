@@ -22,7 +22,7 @@ import com.novartis.opensource.yada.YADARequest;
  * For connecting to Vertica databases via JDBC. See {@link "https://my.vertica.com/docs/CE/6.0.1/HTML/index.htm#1395.htm"} for configuration info.
  * 
  * @author David Varon
- * @since 0.4.1.0
+ * @since 4.1.0
  */
 public class VerticaAdaptor extends JDBCAdaptor {
 	

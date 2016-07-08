@@ -30,6 +30,8 @@ import java.util.Set;
 
 import javax.xml.soap.SOAPConnection;
 
+import net.sf.jsqlparser.expression.operators.relational.InExpression;
+import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.Statement;
 
 import org.apache.log4j.Logger;
@@ -40,6 +42,7 @@ import org.json.JSONObject;
 import com.novartis.opensource.yada.adaptor.Adaptor;
 import com.novartis.opensource.yada.adaptor.FileSystemAdaptor;
 import com.novartis.opensource.yada.adaptor.JDBCAdaptor;
+import com.novartis.opensource.yada.plugin.ContentPolicy;
 import com.novartis.opensource.yada.util.QueryUtils;
 
 /**
@@ -62,7 +65,7 @@ import com.novartis.opensource.yada.util.QueryUtils;
  *  <li>{@link JDBCAdaptor} class and object</li>
  * </ul>
  * @author David Varon
- * @since 0.4.0.0
+ * @since 4.0.0
  */
 public class YADAQuery {
 
@@ -92,7 +95,7 @@ public class YADAQuery {
 	private String     conformedCode;
 	/**
 	 * The parsed object representation of the SQL query
-	 * @since 0.7.0.0
+	 * @since 7.0.0
 	 */
 	private Statement  statement;
 	/**
@@ -105,7 +108,7 @@ public class YADAQuery {
 	private List<YADAParam>              					yqParams = new ArrayList<>();
 	/**
 	 * The cookies
-	 * @since 0.5.1.0
+	 * @since 5.1.0
 	 */
 	private List<HttpCookie>                      cookies  = new ArrayList<>();
 	/**
@@ -116,14 +119,23 @@ public class YADAQuery {
 	 * A list of columns referenced by the query that correspond to values in the {@link #data} maps
 	 */
 	private String[]   parameterizedColumns;
+	private List<Column> parameterizedColumnList;
 	/**
 	 * A list of columns referenced by the query occur in SQL {@code IN} clauses
 	 */
 	private String[]   ins;
+	private List<Column> inList;
 	/**
-	 * A list of all columns referenced by the query 
+	 * A list of all columns referenced by the query
+	 * @deprecated since 7.1.0 
 	 */
+	@Deprecated
 	private String[]   columns;
+	/**
+   * A list of all columns referenced by the query
+   * @since 7.1.0 
+   */
+	private List<Column> columnList;
 	/**
 	 * The db connection to be used to execute the query if applicable
 	 */
@@ -213,6 +225,11 @@ public class YADAQuery {
    * @since 6.1.0
    */
   private JSONObject globalHarmonyMap;
+  /**
+   * A map of {@link Column} objects to {@link InExpression} objects
+   * @since 7.1.0
+   */
+  private Map<Column, InExpression> inExpressionMap;
 	
 	
 	/**
@@ -223,7 +240,7 @@ public class YADAQuery {
 	/**
 	 * Cloning constructor
 	 * @param yq the cached {@link YADAQuery} to clone
-	 * @since 0.4.1.0
+	 * @since 4.1.0
 	 */
 	public YADAQuery(YADAQuery yq) {
 		this.setVersion(new String(yq.getVersion()));
@@ -318,7 +335,7 @@ public class YADAQuery {
 	 * the {@link PreparedStatement} entry from {@link #pstmtForCount} if it exists.
 	 * @param pstmtToAdd the {@link PreparedStatement} to add to the list
 	 * @param row the position in {@link #pstmt} to store {@code pstmtToAdd}
-	 * @since 0.7.0.0
+	 * @since 7.0.0
 	 */
 	public void addPstmt(PreparedStatement pstmtToAdd, int row) {
 	  // remove count query
@@ -538,7 +555,7 @@ public class YADAQuery {
 	
 	/**
 	 * Removes values from {@link #immutableKeys} and {@link #keys}. 
-	 * @since 0.4.1.0
+	 * @since 4.1.0
 	 */
 	public void clearKeys() 
 	{
@@ -583,7 +600,7 @@ public class YADAQuery {
 	 * Adds the cookie with {@code name} to the {@link #cookies} List
 	 * @param name the name of the cookie.
 	 * @param val the value of the cookie with {@code name}
-	 * @since 0.5.1.0
+	 * @since 5.1.0
 	 */
 	public void addCookie(String name,String val) {
     HttpCookie cookie = new HttpCookie(name,val);
@@ -593,7 +610,7 @@ public class YADAQuery {
 	/**
    * Adds the cookie with {@code name} to the {@link #cookies} List
    * @param cookie the cookie to store
-   * @since 0.5.1.0
+   * @since 5.1.0
    */
   public void addCookie(HttpCookie cookie) {
     this.cookies.add(cookie);
@@ -605,7 +622,7 @@ public class YADAQuery {
 	 * already associated to the query even if it's overrideable
 	 * @param params list of parameter objects
 	 * @param index the position of the query in the request when using {@link JSONParams}, otherwise {@code 0}
-	 * @since 0.6.1.0
+	 * @since 6.1.0
 	 */
 	public void addRequestParams(List<YADAParam> params, int index) {
 		for(YADAParam param : params)
@@ -712,7 +729,7 @@ public class YADAQuery {
 	/**
    * Returns {@code true} if {@link #cookies} contains a cookie name, otherwise {@code false}
    * @return {@code true} if {@link #cookies} contains a cookie name, otherwise {@code false}
-   * @since 0.5.1.0
+   * @since 5.1.0
    */
   public boolean hasCookies() {
     if(null == this.getCookies() || this.getCookies().size() == 0)
@@ -723,7 +740,7 @@ public class YADAQuery {
   }
 	
 	/**
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @param key parameter name to check
 	 * @return boolean true if stored parameter is overridable by url params (rule=1), otherwise false
 	 */
@@ -732,7 +749,7 @@ public class YADAQuery {
 	}
 	
 	/**
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @param key paremeter name to check
 	 * @return boolean true if stored parameter is not overridable by url params (rule=0), otherwise false
 	 */
@@ -769,21 +786,6 @@ public class YADAQuery {
 	
 	/**
 	 * Standard mutator for variable
-	 * @param parameterizedColumns list of columns with JDBC parameters
-	 */
-	public void setParameterizedColumns(String[] parameterizedColumns) { this.parameterizedColumns = parameterizedColumns; }
-	/**
-	 * Standard mutator for variable
-	 * @param ins list of columns in {@code IN} clauses
-	 */
-	public void setIns(String[] ins) { this.ins = ins; }
-	/**
-	 * Standard mutator for variable
-	 * @param columns list of columns in the SQL query
-	 */
-	public void setColumns(String[] columns) { this.columns = columns; }
-	/**
-	 * Standard mutator for variable
 	 * @param conn the JDBC connection to use to execute the query
 	 */
 	public void setConnection(Connection conn) { this.connection = conn; }
@@ -815,7 +817,7 @@ public class YADAQuery {
 	
 	/**
 	 * @throws YADAConnectionException when the connection can't be opened
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 */
 	public void setConnection() throws YADAConnectionException 
 	{
@@ -825,7 +827,7 @@ public class YADAQuery {
 	/**
 	 * Set a transactional connection for the source
 	 * 
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @param source the source stored in the query
 	 * @throws YADAConnectionException when the connection can't be opened
 	 */
@@ -836,7 +838,7 @@ public class YADAQuery {
 	
 	/**
 	 * Set a transactional or non-transactional connection for the source
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @param source the source stored in the query
 	 * @param transactions set to {@code true} to execute multiple queries as a single transaction.
 	 * @throws YADAConnectionException when the connection can't be opened
@@ -879,7 +881,7 @@ public class YADAQuery {
 	/**
 	 * Checks for the type of connection used by the queries and renders it null.  This is 
 	 * to facilitate long term storage of the query in the cache
-	 * @since 0.4.1.0
+	 * @since 4.1.0
 	 */
 	public void clearConnection() 
 	{
@@ -893,7 +895,7 @@ public class YADAQuery {
 	
 	/**
 	 * Sets {@code this.savepoint} to {@code null}.
-	 * @since 0.4.1.0
+	 * @since 4.1.0
 	 */
 	public void clearSavepoint()
 	{
@@ -952,22 +954,22 @@ public class YADAQuery {
 	 * Standard accessor for variable
 	 * @return the list of columns linked to JDBC parameters
 	 */
-	public String[] getParameterizedColumns() { return this.parameterizedColumns; }
+//	public String[] getParameterizedColumns() { return this.parameterizedColumns; }
 	/**
 	 * Standard accessor for variable
 	 * @return the list of columns referenced by {@code in} clauses
 	 */
-	public String[] getIns() { return this.ins; }
+//	public String[] getIns() { return this.ins; }
 	/**
 	 * Standard accessor for variable
 	 * @return the list of columns referenced by the SQL query
 	 */
-	public String[] getColumns() { return this.columns; }
+//	public String[] getColumns() { return this.columns; }
 	
 	/**
 	 * Standard accessor for variable
 	 * @return the list of {@link HttpCookie} objects stored in the query
-	 * @since 0.5.1.0
+	 * @since 5.1.0
 	 */
 	public List<HttpCookie> getCookies() { return this.cookies; }
 	  
@@ -1129,6 +1131,15 @@ public class YADAQuery {
 	public Adaptor getAdaptor() {
 		return this.adaptor;
 	}
+	
+	/**
+	 * Standard accessor for variable
+	 * @return the inExpressionMap
+	 * @since 7.1.0
+	 */
+	public Map<Column,InExpression> getInExpressionMap() {
+	  return this.inExpressionMap;
+	}
 
 	/**
    * @return the globalHarmonyMap
@@ -1187,7 +1198,7 @@ public class YADAQuery {
 	/**
 	 * Returns the cached status
 	 * @return the isCached
-	 * @since 0.4.1.0
+	 * @since 4.1.0
 	 */
 	public boolean isCached()
 	{
@@ -1197,7 +1208,7 @@ public class YADAQuery {
 	/**
 	 * Sets the cached status
 	 * @param isCached the isCached to set
-	 * @since 0.4.1.0
+	 * @since 4.1.0
 	 */
 	public void setCached(boolean isCached)
 	{
@@ -1207,7 +1218,7 @@ public class YADAQuery {
   /**
    * The object representation of the SQL query.
    * @return the statement
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   public Statement getStatement() {
     return this.statement;
@@ -1216,9 +1227,92 @@ public class YADAQuery {
   /**
    * The object representation of the SQL query.
    * @param statement the statement to set
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   public void setStatement(Statement statement) {
     this.statement = statement;
+  }
+  
+  /**
+   * Standard accessor for variable
+   * @return the list of columns linked to JDBC parameters
+   */
+  public String[] getParameterizedColumns() { return this.parameterizedColumns; }
+  /**
+   * Standard accessor for variable
+   * @return the list of columns referenced by {@code in} clauses
+   */
+  public String[] getIns() { return this.ins; }
+  /**
+   * Standard accessor for variable
+   * @return the list of columns referenced by the SQL query
+   * @deprecated since 7.1.0
+   */
+  @Deprecated
+  public String[] getColumns() { return this.columns; }
+  /**
+   * Standard mutator for variable
+   * @param parameterizedColumns list of columns with JDBC parameters
+   */
+  public void setParameterizedColumns(String[] parameterizedColumns) { this.parameterizedColumns = parameterizedColumns; }
+  /**
+   * Standard mutator for variable
+   * @param ins list of columns in {@code IN} clauses
+   */
+  public void setIns(String[] ins) { this.ins = ins; }
+  /**
+   * Standard mutator for variable
+   * @param columns list of columns in the SQL query
+   * @deprecated since 7.1.0
+   */
+  @Deprecated
+  public void setColumns(String[] columns) { this.columns = columns; }
+  
+  /**
+   * Standard accessor for variable
+   * @return the list of columns linked to JDBC parameters
+   */
+  public List<Column> getParameterizedColumnList() { return this.parameterizedColumnList; }
+  /**
+   * Standard accessor for variable
+   * @return the list of columns referenced by {@code in} clauses
+   */
+  public List<Column> getInList() { return this.inList; }
+  /**
+   * Standard accessor for variable
+   * @return the list of columns referenced by the SQL query
+   */
+  public List<Column> getColumnList() { return this.columnList; }
+
+  /**
+   * Standard mutator for variable
+   * @param columnList list of columns in the SQL query
+   */
+  public void setColumnList(List<Column> columnList) {
+    this.columnList = columnList;
+  }
+  
+  /**
+   * Standard mutator for variable
+   * @param inList list of columns in {@code IN} clauses
+   */
+  public void setInList(List<Column> inList) {
+    this.inList = inList;
+  }
+  
+  /**
+   * Standard mutator for variable
+   * @param parameterizedColumnList list of columns with JDBC parameters
+   */
+  public void setParameterizedColumnList(List<Column> parameterizedColumnList) {
+    this.parameterizedColumnList = parameterizedColumnList;
+  }
+
+  /**
+   * Standard accessor for variable
+   * @param inExpressionMap column to expression map for processing IN clauses
+   */
+  public void setInExpressionMap(Map<Column, InExpression> inExpressionMap) {
+    this.inExpressionMap = inExpressionMap;
   }
 }

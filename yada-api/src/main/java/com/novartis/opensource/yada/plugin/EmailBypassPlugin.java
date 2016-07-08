@@ -26,7 +26,7 @@ import com.novartis.opensource.yada.util.MailUtils;
 /**
  * Provides a convenient platform for sending emails from YADA client apps, particularly 
  * @author David Varon
- * @since 0.3.0.0
+ * @since 3.0.0
  */
 public class EmailBypassPlugin extends AbstractBypass {
 	/**

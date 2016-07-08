@@ -16,7 +16,7 @@ package com.novartis.opensource.yada.plugin;
 
 /**
  * @author Dave Varon
- * @since 0.7.0.0
+ * @since 7.0.0
  *
  */
 public interface ContentPolicy extends SecurityPolicy {
@@ -32,7 +32,7 @@ public interface ContentPolicy extends SecurityPolicy {
    * Provides route to inject HTTP header value into content policy.
    * @param header the name of the header from which to retrieve the value
    * @return the value of the request header, or {@code null} if the header was not included
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   public String getHeader(String header);
 
@@ -40,7 +40,7 @@ public interface ContentPolicy extends SecurityPolicy {
    * Provides route to inject HTTP cookie value into the content policy.
    * @param cookie the name of the cookie for which to retrieve the value
    * @return the value of the desired cookie or {@code null} if the cookie was not included in the request
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   public String getCookie(String cookie);
 }

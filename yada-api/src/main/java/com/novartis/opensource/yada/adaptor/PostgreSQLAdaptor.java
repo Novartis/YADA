@@ -22,7 +22,7 @@ import com.novartis.opensource.yada.YADARequest;
  * For connecting to PostgreSQL databases via JDBC.
  * 
  * @author David Varon
- * @since 0.4.1.0
+ * @since 4.1.0
  */
 public class PostgreSQLAdaptor extends JDBCAdaptor {
 	

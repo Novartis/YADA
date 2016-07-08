@@ -34,7 +34,7 @@ import com.novartis.opensource.yada.util.QueryUtils;
 /**
  * An adaptor for reading from and writing to safe, designated directories on the YADA server.
  * @author David Varon
- * @since 0.4.0.0
+ * @since 4.0.0
  */
 public class FileSystemAdaptor extends Adaptor
 {

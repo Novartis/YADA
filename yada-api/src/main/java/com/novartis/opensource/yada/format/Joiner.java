@@ -39,7 +39,7 @@ import com.novartis.opensource.yada.YADARequest;
 /**
  * Executes on-the-fly joins of result sets from multiple queries.  For the moment, only supports delimited and shallow JSON results. (Isn't that enough?!)
  * @author Dave Varon
- * @since  0.6.2.0
+ * @since  6.2.0
  *
  */
 public class Joiner {

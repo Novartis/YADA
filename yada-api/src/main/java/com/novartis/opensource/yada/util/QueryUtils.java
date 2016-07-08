@@ -38,7 +38,14 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.YADAMarkupParameter;
+import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
+import net.sf.jsqlparser.expression.operators.relational.InExpression;
+import net.sf.jsqlparser.expression.operators.relational.ItemsList;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
+import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.statement.Statement;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -62,7 +69,7 @@ import com.novartis.opensource.yada.adaptor.SOAPAdaptor;
 /**
  * Utilities for query string manipulation and accounting.
  * 
- * @since 0.4.0.0
+ * @since 4.0.0
  * @author David Varon
  * 
  */
@@ -438,7 +445,7 @@ public class QueryUtils
 		return FILESYSTEM_ADAPTOR_CLASS.isAssignableFrom(adaptorClass);
 	}
 	/**
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @param adaptorClass
 	 *          the class name of the YADA adaptor associated to the query
 	 * @return boolean true if the Class of the JDBCAdaptor param is a
@@ -461,18 +468,27 @@ public class QueryUtils
 	@SuppressWarnings("static-method")
 	private void processJDBCStatement(YADAQuery yq) throws YADAParserException
 	{
+	  // new method
 		Parser parser = new Parser();
-		Hashtable<String,String[]> ht = null;
-
-		ht = parser.parse(yq.getYADACode());
+		parser.parseDeparse(yq.getYADACode());
 		yq.setStatement(parser.getStatement());
-		if (ht.size() > 0)
-		{
-			yq.setType(ht.get(Parser.TYPE)[0]);
-			yq.setColumns(ht.get(Parser.COLUMNS));
-			yq.setIns(ht.get(Parser.IN_COLUMNS));
-			yq.setParameterizedColumns(ht.get(Parser.JDBC_COLUMNS));
-		}
+		yq.setType(parser.getStatementType());
+    yq.setColumnList(parser.getColumnList());
+    yq.setInList(parser.getInColumnList());
+    yq.setParameterizedColumnList(parser.getJdbcColumnList());
+    yq.setInExpressionMap(parser.getInExpressionMap());
+		
+    // old method
+//		Hashtable<String,String[]> ht = null;
+//		ht = parser.parse(yq.getYADACode());
+//		yq.setStatement(parser.getStatement());
+//		if (ht.size() > 0)
+//		{
+//			yq.setType(ht.get(Parser.TYPE)[0]);
+//			yq.setColumns(ht.get(Parser.COLUMNS));
+//			yq.setIns(ht.get(Parser.IN_COLUMNS));
+//			yq.setParameterizedColumns(ht.get(Parser.JDBC_COLUMNS));
+//		}
 	}
 
 	/**
@@ -486,16 +502,16 @@ public class QueryUtils
 	 *           when the adaptor can't be found or instantiated
 	 */
 
-	// private Hashtable<String,String[]> processUnparsableStatement(String code)
 	public void processStatement(YADAQuery yq) throws YADAUnsupportedAdaptorException
 	{
-		String code = getConformedCode(yq.getYADACode());
+		String         code         = getConformedCode(yq.getYADACode());
 		Class<Adaptor> adaptorClass = yq.getAdaptorClass();
 		if (isJdbc(yq.getAdaptorClass()))
 		{
 			try
 			{
-				processJDBCStatement(yq);
+			  // Attempts to parse the JDBC statement
+				processJDBCStatement(yq); 
 			} 
 			catch (YADAParserException e)
 			{
@@ -743,8 +759,8 @@ public class QueryUtils
 	 */
 	public boolean requiresConnection(YADAQuery yq)
 	{
-		return (yq.getProtocol().equals(Parser.JDBC) || yq.getProtocol()
-																											.equals(Parser.SOAP));
+		return (yq.getProtocol().equals(Parser.JDBC) 
+		    || yq.getProtocol().equals(Parser.SOAP));
 	}
 
 	/**
@@ -759,7 +775,7 @@ public class QueryUtils
 	 *         not {@code null}, has a length > 0, equals {@code true}, and the
 	 *         query type is equal to {@link Parser#INSERT}, {@link Parser#UPDATE}
 	 *         , or {@link Parser#DELETE}
-	 * @since 0.4.1.0
+	 * @since 4.1.0
 	 */
 	public boolean isCommitQuery(YADAQuery yq)
 	{
@@ -921,6 +937,50 @@ public class QueryUtils
 		}
 		return dataTypes;
 	}
+	
+	/**
+	 * This method creates a list for positional-indexed storage of data values,
+   * then iterates over the list of jdbc-parameterized columns, extracting the
+   * corresponding values from the data map. It then stores the value in the
+   * list at it's proper positional index. Finally, the indexed value list is
+   * added to the list of value lists in the query {@code yq}, at position {@code row}.
+   * 
+   * This method uses the value returned by {@link YADAQuery#getParameterizedColumnList()} 
+   * instead of {@link YADAQuery#getParameterizedColumns()}, and 
+   * supercedes {@link #setValsInPosition(YADAQuery, int)} 
+   * 
+	 * @param yq the query containing the data to process
+   * @param row the index of the data list
+   * @since 7.1.0
+	 */
+	public void setPositionalParameterValues(YADAQuery yq, int row) 
+	{
+	  List<String> valsInPosition = new ArrayList<>();
+    if (yq.getData().size() > 0)
+    {
+      List<Column> columns = yq.getParameterizedColumnList();
+      Map<String,String[]> data = yq.getDataRow(row);
+      for (int j = 0; j < columns.size(); j++)
+      {
+        String colName = columns.get(j).getColumnName();
+        if(data.containsKey(YADA_COLUMN + (j + 1)))
+          colName = YADA_COLUMN + (j + 1);
+        else if (data.containsKey(colName.toUpperCase()))
+          colName = colName.toUpperCase();
+          
+        String[] valsForColumn;
+
+        valsForColumn = data.get(colName);
+
+        for (String val : valsForColumn)
+        {
+          l.debug("Column [" + String.valueOf(j + 1) + ": " + columns.get(j) + "] has value [" + val + "]");
+          valsInPosition.add(val);
+        }
+      }
+    }
+    yq.addVals(row, valsInPosition);
+	}
 
 	/**
 	 * This method creates a list for positional-indexed storage of data values,
@@ -944,10 +1004,12 @@ public class QueryUtils
 			Map<String,String[]> data = yq.getDataRow(row);
 			for (int j = 0; j < columns.length; j++)
 			{
-
-				String colName = data.containsKey(columns[j])
-																											? columns[j]
-																											: QueryUtils.YADA_COLUMN + (j + 1);
+				String colName = columns[j]; 
+				if(data.containsKey(YADA_COLUMN + (j + 1)))
+          colName = YADA_COLUMN + (j + 1);
+        else if (data.containsKey(colName.toUpperCase()))
+          colName = colName.toUpperCase();   
+				    
 				String[] valsForColumn;
 
 				valsForColumn = data.get(colName);
@@ -1121,6 +1183,107 @@ public class QueryUtils
 			l.error(e.getMessage());
 		}
 	}
+	
+	/**
+	 * Uses the metadata collected during {@link Parser#parseDeparse(String)} to
+	 * modify the {@link Statement} by appending positional parameters to IN clause
+	 * expression lists, dynamically, based on the data passed in the request. 
+	 * @param yq
+	 * @param row
+	 * @return the modified YADA SQL
+	 * @throws YADAParserException 
+	 * @since 7.1.0
+	 */
+	public String processInList(YADAQuery yq, int row) throws YADAParserException
+	{
+	  Parser parser = new Parser();
+	  // Are there "in" columns
+	  if(yq.getInList().size() > 0)
+	  {
+	    try 
+	    {
+	      parser.parseDeparse(yq.getYADACode());
+	    } 
+	    catch (YADAParserException e) 
+	    {
+	      String msg = "Unable to reparse statement for IN clause processing.";
+	      throw new YADAParserException(msg, e);
+	    }
+	    List<Column>             inColumns  = parser.getInColumnList();
+	    Map<Column,InExpression> inExprs    = parser.getInExpressionMap();
+	    Map<String,String[]>     dataForRow = yq.getDataRow(row);
+	    
+	    // iterate inColumns list
+	    for(int colIndex=0; colIndex<inColumns.size(); colIndex++)
+	    {
+	      Column inColumn = inColumns.get(colIndex);
+	      if(inColumn != null)
+	      {
+	        String colName = inColumn.getColumnName(); // json params
+	        if(dataForRow.containsKey(YADA_COLUMN + (colIndex+1)))
+	        { // standard params
+	          colName = YADA_COLUMN + (colIndex + 1);
+	        }
+	        else if(dataForRow.containsKey(colName.toUpperCase()))
+	        { // json params uppper case
+	          colName = colName.toUpperCase();
+	        }
+	        
+	        // length of value array for inColumn
+	        int dataLen = dataForRow.get(colName).length;
+	        
+	        // special case of comma-separated strings, e.g., ["A,B,C"] (instead of ["A","B","C"]) 
+	        if(dataLen == 1)
+	        {
+	          dataForRow.put(colName, dataForRow.get(colName)[0].split(","));
+	          dataLen = dataForRow.get(colName).length;
+	        }
+	        
+	        // special case of standard params without brackets e.g., p=1,2,3,4
+	        if(colName.startsWith(YADA_COLUMN)
+	            && colIndex == (inColumns.size() - 1) // last index
+	            && dataForRow.keySet().size() > inColumns.size()) // more values
+	        {
+	          StringBuilder inVals = new StringBuilder();
+	          for(int i=colIndex+1;i<=dataForRow.keySet().size();i++)
+	          {
+	            if(i > colIndex+1)
+	              inVals.append(",");
+	            String name = YADA_COLUMN + i;
+	            int j=0;
+	            while(j<dataForRow.get(name).length)
+	            { 
+	              if(j > 0)
+	                inVals.append(",");
+	              inVals.append(dataForRow.get(name)[j++]);
+	            }
+	          }
+	          
+	          dataForRow.put(colName, inVals.toString().split(","));
+	          dataLen  = dataForRow.get(colName).length;
+	        }
+	        
+	        	        
+	        // amend the in clause with the additional markup
+	        InExpression     inExpr         = inExprs.get(inColumn);
+	        ItemsList        rightItemsList = inExpr.getRightItemsList();
+	        List<Expression> rightItemsExpressionList = ((ExpressionList)rightItemsList).getExpressions();
+	        String           dataType = String.valueOf(((YADAMarkupParameter)rightItemsExpressionList.get(0)).getType());
+	        for(int i=0;i<dataLen-1;i++)
+	        {
+	          YADAMarkupParameter ymp = new YADAMarkupParameter();
+	          ymp.setType(dataType);
+	          rightItemsExpressionList.add(ymp);
+	        }
+	        ((ExpressionList)rightItemsList).setExpressions(rightItemsExpressionList);
+	        inExpr.setRightItemsList(rightItemsList);
+	      }
+	    }
+	    yq.addDataTypes(row, getDataTypes(parser.getStatement().toString()));
+	    yq.addParamCount(row, yq.getDataTypes(row).length);
+	  }
+	  return parser.getStatement().toString();
+	}
 
 	/**
 	 * This method uses a variety of variables from {@code yq} to determine the
@@ -1136,29 +1299,28 @@ public class QueryUtils
 	 *          the index of the list of value lists in the query containing the
 	 *          data to evaluate
 	 * @return modified SQL code
+	 * @deprecated since 7.1.0
 	 */
+	@Deprecated
 	public String processInColumns(YADAQuery yq, int row)
 	{
 		String[] inColumns = yq.getIns();
-		String coreSql = yq.getYADACode();
-		LinkedHashMap<String,String[]> newData = new LinkedHashMap<>(); // to
-																																										// be
-																																										// i.e.,
-																																										// YADA_1:[],YADA_2:[]
+		String   coreSql   = yq.getYADACode();
+		LinkedHashMap<String,String[]> newData = new LinkedHashMap<>(); // to be i.e., YADA_1:[],YADA_2:[]
 		if (inColumns.length > 0)
 		{
-			String[] columns = yq.getParameterizedColumns();
-			Map<String,String[]> data = yq.getDataRow(row);
-			char[] dataTypes = yq.getDataTypes(row);
+			String[]             columns   = yq.getParameterizedColumns();
+			Map<String,String[]> data      = yq.getDataRow(row);
+			char[]               dataTypes = yq.getDataTypes(row);
 			Matcher matcher;
 
 			l.debug("Processing inColumns [" + StringUtils.join(inColumns, ",") + "]");
 			for (String in : inColumns)
 			{
 				int colIndex = -1, j = 0;
-				String inCol = in.toUpperCase(); // TODO case senstivity
+				String inCol = in.toUpperCase(); // TODO case sensitivity
 
-				// get the index of the 'incolumn' in the 'columns' array
+				// get the index of the 'incolumn' in the 'JDBCcolumns' array
 				l.debug("Looking for column [" + inCol + "] in columns array " + ArrayUtils.toString(columns));
 				while (j < columns.length && colIndex != j)
 				{

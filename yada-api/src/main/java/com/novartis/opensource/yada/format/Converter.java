@@ -23,7 +23,7 @@ import com.novartis.opensource.yada.YADAQueryResult;
 
 /**
  * The YADA API for formatting query results for insertion into {@link Response} objects. 
- * @since 0.4.0.0
+ * @since 4.0.0
  * @author David Varon
  *
  */

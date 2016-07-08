@@ -40,7 +40,7 @@ import com.novartis.opensource.yada.adaptor.JDBCAdaptor;
  * The methods in this class use a {@link java.sql.ResultSet} as source data and return it's content as
  * an {@link org.w3c.dom.DocumentFragment} containing {@code ROW} elements with nested data.
  * 
- * @since 0.4.0.0
+ * @since 4.0.0
  * @author David Varon
  *
  */

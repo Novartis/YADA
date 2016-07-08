@@ -126,7 +126,7 @@ public class Service {
 	
 	/**
 	 * Stores the {@code request} in the {@link YADARequest} object and calls {@link #handleRequest(String, Map)}.
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @param request the servlet request created by the servlet container 
 	 * @throws YADARequestException when a request parameter is malformed
 	 */
@@ -904,7 +904,7 @@ public class Service {
 	
 	/**
 	 * Insantiates the response class and initiates result composition.
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @return {@link String} containing the formatted response.
 	 * @throws YADAConverterException when the {@link com.novartis.opensource.yada.format.Converter} implementation encounters an error or can't be instantiated by the {@link Response}
 	 * @throws YADAResponseException when the {@link Response} implementation fails to execute successfully
@@ -991,7 +991,7 @@ public class Service {
 
   /**
 	 * Execute the bypass plugin 
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @param yq the yada query object
 	 * @throws YADAPluginException when the plugin fails to execute successfully
 	 */
@@ -1061,7 +1061,7 @@ public class Service {
 	
 	/**
 	 * Executes the preprocess plugin
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @param yq the yada query object
 	 * @throws YADAPluginException when the plugin fails to execute successfully
 	 */

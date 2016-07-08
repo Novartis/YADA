@@ -25,7 +25,7 @@ import net.sf.ehcache.CacheManager;
 /**
  * A stubbed servlet for setting up the YADA environment. It instantiates the ehcache.
  * @author David Varon
- * @since 0.4.1.0
+ * @since 4.1.0
  */
 public class YADAInit extends HttpServlet {
 
@@ -43,7 +43,7 @@ public class YADAInit extends HttpServlet {
 	
 	/**
 	 * Initialization of ehcache for YADA Index.  See {@link "http://ehcache.org"}
-	 * @since 0.4.1.0
+	 * @since 4.1.0
 	 */
 	@Override
 	public void init() 

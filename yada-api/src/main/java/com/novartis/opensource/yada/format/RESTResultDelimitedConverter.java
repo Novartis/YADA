@@ -34,7 +34,7 @@ import com.novartis.opensource.yada.io.YADAIOException;
 
 /**
  * @author David Varon
- * @since 0.4.0.0
+ * @since 4.0.0
  */
 public class RESTResultDelimitedConverter extends AbstractConverter {
 

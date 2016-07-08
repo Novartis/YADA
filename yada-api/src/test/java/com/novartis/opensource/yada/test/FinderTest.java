@@ -24,7 +24,7 @@ import com.novartis.opensource.yada.YADAQueryConfigurationException;
 /**
  * Contains methods for testing query retrieval and query retrieval failure.
  * @author David Varon
- * @since 0.4.0.0
+ * @since 4.0.0
  */
 public class FinderTest {
 	

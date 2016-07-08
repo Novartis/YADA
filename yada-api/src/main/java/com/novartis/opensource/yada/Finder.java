@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
 /**
  * Provides for retrieval YADA query code and metadata from the YADA Index as encapsulated {@link YADAQuery} objects.
  * @author David Varon
- * @since 0.4.0.0
+ * @since 4.0.0
  */
 public class Finder 
 {
@@ -270,7 +270,7 @@ public class Finder
 	
 	/**
 	 * Overloaded version of {@link #getQuery(String, boolean)} always passing {@code true} in the second {@code updateStats} arg.
-	 * @since 0.5.0.0
+	 * @since 5.0.0
 	 * @param q the stored canonical name of the desired {@link YADAQuery} 
 	 * @return {@link YADAQuery} object encapsulating the query code and parameters
 	 * @throws YADAFinderException if the query {@code q} can't be found in the YADA index.  Check your spelling and case.
@@ -291,7 +291,7 @@ public class Finder
 	 * </p>
 	 *
 	 * 
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @param q the stored canonical name of the desired {@link YADAQuery} 
 	 * @param updateStats set to {@code true} to execute parallel operation to query update access count and date, {@code false} to suppress the operation
 	 * @return {@link YADAQuery} object encapsulating the query code and parameters

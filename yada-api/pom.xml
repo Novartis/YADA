@@ -8,7 +8,7 @@
   </parent>
   <groupId>com.novartis.opensource</groupId>
   <artifactId>yada-api</artifactId>
-  <version>7.1.0-SNAPSHOT
+  <version>7.1.0-SNAPSHOT</version>
   <name>yada-api</name>
   <url>http://opensource.nibr.com/yada/yada-api</url>
   <distributionManagement>

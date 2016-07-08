@@ -33,7 +33,7 @@ import com.novartis.opensource.yada.YADARequest;
 /**
  * Updates all queries in the cache.  Useful when updating the YADA Index from the command line.
  * @author David Varon
- * @since 0.4.1.0
+ * @since 4.1.0
  */
 public class CacheUpdater extends AbstractBypass
 {

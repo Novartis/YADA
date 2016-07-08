@@ -43,49 +43,49 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
 {
   /**
    * Constant equal to {@value}
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   protected static final String AUTH_PATH_RX = "auth.path.rx";
   
   /**
    * Constant equal to {@value}
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   protected static final String AUTH_TOKEN = "auth.token";
   
   /**
    * Constant equal to {@value}
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   protected static final String TOKEN_VALIDATOR = "token.validator";
   
   /**
    * Constant equal to {@value}
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   protected static final String CONTENT_POLICY = "content.policy";
   
   /**
    * Constant equal to {@value}
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   protected static final String EXECUTION_POLICY = "execution.policy";
   
   /**
    * Constant equal to {@value}
-   * @since 0.7.0.0
+   * @since 7.0.0
    */  
   protected static final String EXECUTION_POLICY_INTERFACE = "ExecutionPolicy";
   
   /**
    * Constant equal to {@value}
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   protected static final String CONTENT_POLICY_INTERFACE   = "ContentPolicy";
   
   /**
    * Constant equal to {@value}
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   protected static final String VOID   = "void";
   
@@ -100,7 +100,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
     
   /**
    * Constant equal to {@value}
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   private static final String PLUGIN_PKG = "com.novartis.opensource.yada.plugin.";
   
@@ -116,31 +116,31 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   
   /**
    * The authentication token, e.g., user id
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   private Object token = null;
   
   /**
    * The {@link TokenValidator}
-   * @since 0.7.0.0 
+   * @since 7.0.0 
    */
   private TokenValidator tokenValidator;
   
   /**
    * The {@link SecurityPolicy}
-   * @since 0.7.0.0 
+   * @since 7.0.0 
    */
   private SecurityPolicy securityPolicy;  
   
   /**
    * The {@code args} {@link List} from {@link YADARequest#getArgs}
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   private List<String> args;
   
   /**
    * The {@code preArgs} {@link List} from {@link YADARequest#getPreargs}
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   private List<String> preargs;
   
@@ -190,7 +190,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
 
 	/**
 	 * Convenience method with calls {@link #validateURL()}, {@link #validateToken()}, {@link #applyExecutionPolicy()}, and {@link #applyContentPolicy()}
-	 * @since 0.7.0.0
+	 * @since 7.0.0
 	 */
 	@Override
 	public void validateYADARequest() throws YADASecurityException
@@ -222,7 +222,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
 	/**
 	  * Throws an exception if the URL returned by {@code req.getRequestURL()} is unauthenticated.
 	  * @throws YADAPluginException if a non-authenticated URL is requested
-	  * @since 0.7.0.0
+	  * @since 7.0.0
 	  */
 	@Override
 	public void validateURL() throws YADASecurityException 
@@ -240,7 +240,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
 	
 	/**
    * Default implementation calls {@link TokenValidator#validate()} via injection
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   @Override
   public void validateToken() throws YADASecurityException
@@ -253,7 +253,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
    * or {@link #preargs} or from {@link System#getProperty(String)}
    * @param key
    * @return the value mapped to {@code key} or an empty {@link String}
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   protected String getArgumentValue(String key) 
   {
@@ -284,7 +284,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
    * @param list the argument parameter list to review
    * @param key the name in the argument name=value pair to retrieve
    * @return the value mapped to {@code key} or {@code null}
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   private String getListEntry(List<String> list, String key)
   {
@@ -334,7 +334,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   
   /**
    * Default implementation intended for override
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   @Override
   public void setToken() 
@@ -345,7 +345,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   /**
    * Standard mutator for variable
    * @param token 
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   @Override
   public void setToken(Object token)
@@ -357,7 +357,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
    * Standard accessor for variable
    * @return the value of the validated {@code NIBR521} header
    * @throws YADASecurityException when token retrieval fails
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   @Override
   public Object getToken() throws YADASecurityException 
@@ -390,7 +390,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   /**
    * No arg mutator for variable, gets FQCN from args or properties 
    * @throws YADASecurityException 
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   public void setTokenValidator() throws YADASecurityException
   {
@@ -432,7 +432,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   /**
    * Standard mutator for variable
    * @param tokenValidator the {@link TokenValidator} instance
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   public void setTokenValidator(TokenValidator tokenValidator)
   {
@@ -442,7 +442,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   /**
    * Standard accessor for variable
    * @return the {@link TokenValidotor} instance
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   public TokenValidator getTokenValidator() 
   {
@@ -452,7 +452,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   /**
    * Default implementation of {@link SecurityPolicy#applyPolicy()}, intended for override
    * @throws YADASecurityException
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   @Override
   public void applyPolicy() throws YADASecurityException
@@ -463,7 +463,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   /**
    * Default implementation of {@link SecurityPolicy#applyPolicy(SecurityPolicy)}, intended for override
    * @throws YADASecurityException
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   @Override
   public void applyPolicy(SecurityPolicy securityPolicy) throws YADASecurityException
@@ -474,7 +474,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   /**
    * Default implementation of does nothing, intended for override
    * @throws YADASecurityException
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   @Override
   public void applyExecutionPolicy() throws YADASecurityException
@@ -485,7 +485,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   /**
    * Default implementation of does nothing, intended for override
    * @throws YADASecurityException
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   @Override
   public void applyContentPolicy() throws YADASecurityException
@@ -495,7 +495,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   
   /**
    * @return the args
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   public List<String> getArgs() {
     return this.args;
@@ -503,7 +503,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
 
   /**
    * @param args the args to set
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   public void setArgs(List<String> args) 
   {
@@ -512,7 +512,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   
   /**
    * @return the preargs
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   public List<String> getPreArgs() {
     return this.preargs;
@@ -520,7 +520,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
 
   /**
    * @param preargs the preargs to set
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   public void setPreargs(List<String> preargs) 
   {
@@ -547,7 +547,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
    * No arg mutator for variable, gets FQCN from args or properties 
    * @param policyType either {@link #CONTENT_POLICY} or {@link #EXECUTION_POLICY}
    * @throws YADASecurityException 
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   public void setSecurityPolicy(String policyType) throws YADASecurityException
   {
@@ -684,7 +684,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   
   /**
    * Sets the current security policy to {@code null}.
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   public void clearSecurityPolicy() {
     this.securityPolicy = null;

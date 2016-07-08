@@ -33,7 +33,7 @@ import com.novartis.opensource.yada.YADAQueryResult;
 import com.novartis.opensource.yada.adaptor.JDBCAdaptor;
 
 /**
- * @since 0.4.0.0
+ * @since 4.0.0
  * @author David Varon
  *
  */

@@ -22,7 +22,7 @@ import com.novartis.opensource.yada.YADARequest;
 /**
  * Contains methods for testing api performance
  * @author David Varon
- * @since 0.4.1.0
+ * @since 4.1.0
  */
 public class PerfTest {
 	

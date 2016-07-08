@@ -18,7 +18,7 @@ import java.util.List;
 
 /**
  * @author Dave Varon
- * @since 0.7.0.0
+ * @since 7.0.0
  */
 public interface SecurityPolicy {
 
@@ -41,14 +41,14 @@ public interface SecurityPolicy {
   /**
    * Constant equal to {@value}.
    * Refers to the value stored in the {@code YADA_A11N.POLICY} column pertaining to the protected qname.
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   public static final String CONTENT_POLICY_CODE = "C";
   
   /**
    * Constant equal to {@value}
    * Refers to the value stored in the {@code YADA_A11N.POLICY} column pertaining to the protected qname.
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   public static final String EXECUTION_POLICY_CODE = "E";
   /**

@@ -45,7 +45,7 @@ import com.novartis.opensource.yada.YADAConnectionException;
 /**
  * Test class responsible for validating {@link ConnectionFactory} methods, and also for setup of JNDI context necessary for testing.
  * @author David Varon
- * @since 0.4.0.0
+ * @since 4.0.0
  */
 public class ConnectionFactoryTest {
 

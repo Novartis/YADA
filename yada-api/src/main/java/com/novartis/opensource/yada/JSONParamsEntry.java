@@ -33,7 +33,7 @@ import com.novartis.opensource.yada.util.YADAUtils;
  * passed to the framework in a request.
  *  
  * @author David Varon
- * @since 0.4.0.0
+ * @since 4.0.0
  * @see JSONParams
  */
 public class JSONParamsEntry { 

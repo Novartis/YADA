@@ -151,12 +151,12 @@ public class YADAUtils {
 	public final static String   PARAM_FRAG_UPDATE_STATS  = "UPDATE_STATS";
 	/**
    * A constant equal to: {@value}
-   * @since 0.6.2.0
+   * @since 6.2.0
    */
   public final static String   PARAM_FRAG_JOIN          = "JOIN";
   /**
    * A constant equal to: {@value}
-   * @since 0.6.2.0
+   * @since 6.2.0
    */
   public final static String   PARAM_FRAG_LEFTJOIN      = "LEFTJOIN";
 	/**
@@ -194,7 +194,7 @@ public class YADAUtils {
 	 * 
 	 * @return this YADA framework version derived from JNDI {@code yada_version} variable 
 	 * @throws YADAResourceException when the JNDI path cannot be found or read
-	 * @since 0.5.1.0
+	 * @since 5.1.0
 	 */
 	public static String getVersion() throws YADAResourceException 
 	{

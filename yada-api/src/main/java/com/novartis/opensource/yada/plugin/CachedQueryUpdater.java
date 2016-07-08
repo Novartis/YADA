@@ -37,7 +37,7 @@ import com.novartis.opensource.yada.YADAQueryConfigurationException;
  * {@link Bypass} plugin.
  * 
  * @author David Varon
- * @since 0.4.1.0
+ * @since 4.1.0
  */
 public class CachedQueryUpdater extends AbstractPostprocessor
 {

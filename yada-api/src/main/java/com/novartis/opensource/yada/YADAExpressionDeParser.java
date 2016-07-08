@@ -18,7 +18,9 @@
 package com.novartis.opensource.yada;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
@@ -56,8 +58,14 @@ public class YADAExpressionDeParser extends
 	private ArrayList<Column>     columns  		    = new ArrayList<>();
 	/**
 	 * An index of columns referenced by SQL {@code IN} clauses
+	 * @deprecated since 7.1.0
 	 */
-	private ArrayList<Column>     inColumns		    = new ArrayList<>();
+	@Deprecated
+  private ArrayList<Column>     inColumns		    = new ArrayList<>();
+	/**
+	 * An index of columns referenced by SQL {@code IN} clauses
+	 */
+	private List<Column>          inColumnList    = new ArrayList<>();
 	/**
 	 * An index of columns associated to JDBC parameter symbols
 	 */
@@ -66,6 +74,10 @@ public class YADAExpressionDeParser extends
 	 * A list of SQL expressions
 	 */
 	private List<Expression>      expressions       = null;
+	/**
+   * A list of SQL "IN" expressions
+   */
+  private Map<Column,InExpression> inExpressionMap = new HashMap<>();
 	/**
 	 * A flag for managing query deparsing state
 	 */
@@ -76,8 +88,14 @@ public class YADAExpressionDeParser extends
 	public boolean                hasSubSelect      = false;
 	/**
 	 * A flag for managing query deparsing state
+	 * @deprecated since 7.1.0
 	 */
-	private boolean               inExpression      = false;
+	@Deprecated
+  private boolean               inExpression      = false;
+	/**
+   * A flag for managing query deparsing state
+   */
+  private boolean               insideExpression  = false;
 	/**
 	 * A flag for managing query deparsing state
 	 */
@@ -93,11 +111,11 @@ public class YADAExpressionDeParser extends
 	
 	/**
 	 * A flag for managing query deparsing state, set to {@code true} when traversing an SQL expression. 
-	 * @param inExpression set to {@code true} if the deparser is handling an SQL expression.
+	 * @param insideExpression set to {@code true} if the deparser is handling an SQL expression.
 	 */
-	public void setInExpression(boolean inExpression)
+	public void setInExpression(boolean insideExpression)
 	{
-		this.inExpression = inExpression;
+		this.insideExpression = insideExpression;
 	}
 	
 	/**
@@ -150,7 +168,7 @@ public class YADAExpressionDeParser extends
 	public void visit(Column column)
 	{
 		super.visit(column);
-		if(this.inExpression)
+		if(this.insideExpression)
 			this.pendingLeftColumn = column;
 		this.columns.add(column);
 	}
@@ -187,12 +205,12 @@ public class YADAExpressionDeParser extends
 	}
 	
 	/**
-	 * Sets {@link #inExpression} flag to {@code true} and calls handler.
+	 * Sets {@link #insideExpression} flag to {@code true} and calls handler.
 	 */
 	@Override
 	public void visit(InExpression in)
 	{
-		this.inExpression = true;
+		this.insideExpression = true;
 		super.visit(in);
 		handleInExpression(in);
 	}
@@ -203,7 +221,7 @@ public class YADAExpressionDeParser extends
 	@Override
 	public void visit(Function f)
 	{
-		//inExpression = true;
+		//insideExpression = true;
 		this.inFunction = true;
 		super.visit(f);
 		handleFunction(f);
@@ -219,7 +237,7 @@ public class YADAExpressionDeParser extends
 		{
 			l.debug("Function contains jdbc parameter");	
 		}
-		else if(this.inExpression && this.hasJdbcParameter)
+		else if(this.insideExpression && this.hasJdbcParameter)
 		{
 			l.debug("Function contains jdbc parameter");
 			this.jdbcColumns.add(this.pendingLeftColumn);
@@ -232,12 +250,18 @@ public class YADAExpressionDeParser extends
 	 */
 	public void handleInExpression(InExpression in)
 	{
-		if (this.inExpression && this.hasJdbcParameter)
+		if (this.insideExpression && this.hasJdbcParameter)
 		{
 			this.jdbcColumns.add(this.pendingLeftColumn);
 			this.inColumns.add(this.pendingLeftColumn);
+			while(this.inColumnList.size() < this.jdbcColumns.size() - 1)
+			{
+			  this.inColumnList.add(null);
+			}
+			this.inColumnList.add(this.pendingLeftColumn);
+			this.getInExpressionMap().put(this.pendingLeftColumn,in);
 		}
-		this.inExpression = false;
+		this.insideExpression = false;
 		this.hasJdbcParameter = false;
 		this.pendingLeftColumn = null;
 	}
@@ -248,7 +272,7 @@ public class YADAExpressionDeParser extends
 	@Override
 	public void visit(EqualsTo expr)
 	{
-		this.inExpression = true;
+		this.insideExpression = true;
 		super.visit(expr);
 		handleBinaryExpression(expr);
 	}
@@ -259,7 +283,7 @@ public class YADAExpressionDeParser extends
 	@Override
 	public void visit(NotEqualsTo expr)
 	{
-		this.inExpression = true;
+		this.insideExpression = true;
 		super.visit(expr);
 		handleBinaryExpression(expr);
 	}
@@ -270,7 +294,7 @@ public class YADAExpressionDeParser extends
 	@Override
 	public void visit(MinorThan expr)
 	{
-		this.inExpression = true;
+		this.insideExpression = true;
 		super.visit(expr);
 		handleBinaryExpression(expr);
 	}
@@ -281,7 +305,7 @@ public class YADAExpressionDeParser extends
 	@Override
 	public void visit(MinorThanEquals expr)
 	{
-		this.inExpression = true;
+		this.insideExpression = true;
 		super.visit(expr);
 		handleBinaryExpression(expr);
 	}
@@ -292,7 +316,7 @@ public class YADAExpressionDeParser extends
 	@Override
 	public void visit(GreaterThan expr)
 	{
-		this.inExpression = true;
+		this.insideExpression = true;
 		super.visit(expr);
 		handleBinaryExpression(expr);
 	}
@@ -303,7 +327,7 @@ public class YADAExpressionDeParser extends
 	@Override
 	public void visit(GreaterThanEquals expr)
 	{
-		this.inExpression = true;
+		this.insideExpression = true;
 		super.visit(expr);
 		handleBinaryExpression(expr);
 	}
@@ -314,13 +338,13 @@ public class YADAExpressionDeParser extends
 	@Override
 	public void visit(LikeExpression expr)
 	{
-		this.inExpression = true;
+		this.insideExpression = true;
 		super.visit(expr);	
 		handleBinaryExpression(expr);
 	}
 	
 	/**
-	 * @since 0.7.0.0
+	 * @since 7.0.0
 	 */
 	@Override
 	public void visit(YADAMarkupParameter expr)
@@ -335,11 +359,11 @@ public class YADAExpressionDeParser extends
 	 */
 	public void handleBinaryExpression(BinaryExpression be)
 	{
-		if (this.inExpression && this.hasJdbcParameter)
+		if (this.insideExpression && this.hasJdbcParameter)
 		{
 			this.jdbcColumns.add(this.pendingLeftColumn);
 		}
-		this.inExpression = false;
+		this.insideExpression = false;
 		this.hasJdbcParameter = false;
 		this.pendingLeftColumn = null;
 	}
@@ -363,12 +387,35 @@ public class YADAExpressionDeParser extends
 	}
 	
 	/**
+   * 
+   * @return java.util.ArrayList the <code>ins</code> java.util.ArrayList 
+   */
+  public List<Column> getInColumnList()
+  {
+    return this.inColumnList;
+  }
+	
+	/**
 	 * @return java.util.ArrayList the <code>jdbcColumns</code> java.util.ArrayList 
 	 */
 	public ArrayList<Column> getJdbcColumns()
 	{
 		return this.jdbcColumns;
 	}
+
+  /**
+   * @return the inExpressionMap
+   */
+  public Map<Column,InExpression> getInExpressionMap() {
+    return this.inExpressionMap;
+  }
+
+  /**
+   * @param inExpressionMap the inExpressionMap to set
+   */
+  public void setInExpressionMap(Map<Column,InExpression> inExpressionMap) {
+    this.inExpressionMap = inExpressionMap;
+  }
 	
 	
 

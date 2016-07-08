@@ -52,7 +52,7 @@ import com.novartis.opensource.yada.util.YADAUtils;
  * query-based data structures for storing and mapping source connections,
  * statements, and results.
  * 
- * @since 0.4.0.0
+ * @since 4.0.0
  * @author David Varon
  * @see Service#execute()
  * @see Service#handleRequest(javax.servlet.http.HttpServletRequest)
@@ -116,7 +116,7 @@ public class QueryManager
 	 * effectively bootstraps query management process by calling
 	 * {@link #processQueries()}
 	 * 
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @param yadaReq
 	 *          YADA request configuration
 	 * @throws YADAUnsupportedAdaptorException
@@ -173,7 +173,7 @@ public class QueryManager
 	 *           converted into a JSONObject
 	 * @throws YADAParserException
 	 *           when query code cannot be parsed successfully
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 */
 	private void processQueries() throws YADAQueryConfigurationException, YADAConnectionException, YADAFinderException, YADAResourceException, YADAUnsupportedAdaptorException, YADARequestException, YADAAdaptorException, YADAParserException
 	{
@@ -425,7 +425,7 @@ public class QueryManager
 	 * Adds {@code source} to the internal {@code #deferredCommits} list for execution of commit on the connection after
 	 * results are parsed.
 	 * @param source the jndi path of the source to commit later
-	 * @since 0.4.2.0
+	 * @since 4.2.0
 	 */
 	private void deferCommit(String source)
 	{
@@ -548,7 +548,7 @@ public class QueryManager
    * @param code the SQL to map to the statement
    * @throws YADAConnectionException when the statement is not yet in the map, and the connection
    *           deliver it
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   private void storePreparedStatement(YADAQuery yq, String code, int row) throws YADAConnectionException
   {
@@ -619,7 +619,7 @@ public class QueryManager
 	}
 	
 	/**
-   * @since 0.7.0.0
+   * @since 7.0.0
    * @throws YADAResourceException
    *           when a query's source attribute can't be found in the application
    *           context, or there is another problem with the context
@@ -699,9 +699,12 @@ public class QueryManager
         
         for (int row = 0; row < dataSize; row++)
         {
-          if(yq.getIns() != null && yq.getIns().length > 0)
+          //if(yq.getIns() != null && yq.getIns().length > 0)
+          if(yq.getInList() != null && yq.getInList().size() > 0)
           {
-            conformedCode = this.qutils.getConformedCode(this.qutils.processInColumns(  yq, row));
+            //conformedCode = this.qutils.getConformedCode(this.qutils.processInColumns(yq, row));
+            conformedCode = this.qutils.getConformedCode(this.qutils.processInList(yq,row));
+            
           }
           
           if(yq.getType().equals(Parser.SELECT))
@@ -740,7 +743,8 @@ public class QueryManager
             l.debug(msg);
             storePreparedStatementForCount(yq, yq.getPstmt(row), wrappedCode);
           }
-          this.qutils.setValsInPosition(yq, row);
+          //this.qutils.setValsInPosition(yq, row);
+          this.qutils.setPositionalParameterValues(yq, row);
         } // end data loop
       } // end if callable
     } // end if JDBC
@@ -787,7 +791,7 @@ public class QueryManager
 	}
 
 	/**
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @throws YADAResourceException
 	 *           when a query's source attribute can't be found in the application
 	 *           context, or there is another problem with the context
@@ -811,11 +815,11 @@ public class QueryManager
 		{
 		  prepQueryForExecution(yq);
 		} // query loop
-	} // end prepareQueryPackages
+	} 
 
 	/**
 	 * Populates the data and parameter storage in the query object, using values passed in request object
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @param jSONParams
 	 *          the request param containing the query information to process
 	 * @return array of {@link YADAQuery} objects corresponding to JSONParams entries
@@ -850,7 +854,7 @@ public class QueryManager
 	 * @param yq the {@link YADAQuery} to augment
 	 * @param entry the {@link JSONParamsEntry} containing the values to store in the query
 	 * @return the augmented version of {@code yq}
-	 * @since 0.4.2.0
+	 * @since 4.2.0
 	 * @throws YADAQueryConfigurationException
 	 *           the the YADA request is malformed
  	 * @throws YADAUnsupportedAdaptorException when the adaptor attached to the query object can't be found or instantiated
@@ -880,7 +884,7 @@ public class QueryManager
 	 *           the the YADA request is malformed
 	 * @throws YADAUnsupportedAdaptorException when the adaptor attached to the query object can't be found or instantiated
 	 * @throws YADAResourceException when the query {@code q} can't be found in the index
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 */
 	YADAQuery endowQuery(String q) throws YADAConnectionException, YADAFinderException, YADAQueryConfigurationException, YADAResourceException, YADAUnsupportedAdaptorException
 	{
@@ -903,7 +907,7 @@ public class QueryManager
 
 	/**
 	 * Populates the data and parameter storage in the query object, using values passed in request object
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @param yq
 	 *          the query object to be processed
 	 * @return {@code yq}, now endowed with metadata
@@ -940,12 +944,13 @@ public class QueryManager
 		//TODO review instances where YADAQueryConfigurationException is thrown
 		this.qutils.setProtocol(yq);
 		yq.setAdaptor(this.qutils.getAdaptor(yq.getAdaptorClass(), this.yadaReq));
-		
 		yq.setConformedCode(this.qutils.getConformedCode(yq.getYADACode()));
 		for (int row = 0; row < yq.getData().size(); row++)
 		{
+		  // TODO perhaps move this functionality to the deparsing step? 
 		  yq.addDataTypes(row, this.qutils.getDataTypes(yq.getYADACode()));
-		  yq.addParamCount(row, yq.getDataTypes().get(0).length);
+		  int paramCount = yq.getDataTypes().get(0).length;
+		  yq.addParamCount(row, paramCount);
 		}
 		return yq;
 	}
@@ -953,7 +958,7 @@ public class QueryManager
 	/**
 	 * Accessor for array of {@link YADAQuery} objects.
 	 * 
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @return array of YADAQuery objects
 	 */
 	public YADAQuery[] getQueries()

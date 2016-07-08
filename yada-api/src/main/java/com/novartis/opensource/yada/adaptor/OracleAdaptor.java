@@ -169,7 +169,7 @@ public class OracleAdaptor extends JDBCAdaptor {
 	
 	/**
    * Enables checking for {@link JDBCAdaptor#ORACLE_TIMESTAMP_FMT} if {@code val} does not conform to {@link JDBCAdaptor#STANDARD_TIMESTAMP_FMT}
-   * @since 0.5.1.1
+   * @since 5.1.1
    */
   @Override
   protected void setTimestampParameter(PreparedStatement pstmt, int index, char type, String val) throws SQLException 
@@ -200,7 +200,7 @@ public class OracleAdaptor extends JDBCAdaptor {
 	
 	/**
 	 * Enables checking for {@link JDBCAdaptor#ORACLE_DATE_FMT} if {@code val} does not conform to {@link JDBCAdaptor#STANDARD_DATE_FMT}
-	 * @since 0.5.1.1
+	 * @since 5.1.1
 	 */
 	@Override
 	protected void setDateParameter(PreparedStatement pstmt, int index, char type, String val) throws SQLException 

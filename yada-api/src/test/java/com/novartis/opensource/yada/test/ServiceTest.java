@@ -587,7 +587,7 @@ public class ServiceTest
    * @throws YADAQueryConfigurationException when request creation fails
    * @throws IOException if the {@link InputStream} used for reading test files
    *         can't be closed
-   * @since 0.5.1.0
+   * @since 5.1.0
    */
   public void prepOrClean(String[] paths) throws URISyntaxException, IOException, YADAQueryConfigurationException
   {

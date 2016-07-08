@@ -25,7 +25,7 @@ import org.json.JSONObject;
 
 /**
  * A container for storing indexed query results, their converted forms, and row counts. 
- * @since 0.4.0.0
+ * @since 4.0.0
  * @author David Varon
  *
  */
@@ -244,7 +244,7 @@ public class YADAQueryResult {
 	
 	/**
 	 * Convenience method to facilitate result formatting.
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @return {@code true} if format is JSON, XML; otherwise {@code false}
 	 */
 	public boolean isFormatStructured()

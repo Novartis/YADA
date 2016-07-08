@@ -39,7 +39,7 @@ import org.apache.log4j.Logger;
  * objects configured using jndi.
  * 
  * @author David Varon
- * @since 0.1.0.0
+ * @since 1.0.0
  */
 public class ConnectionFactory
 {
@@ -119,7 +119,7 @@ public class ConnectionFactory
 	 * @param cacheManager the name of the cache manager, ({@code YADAIndexManager})
 	 * @param cache the name of the desired cache ({@code YADAIndex}
 	 * @return {@link Cache} object
-	 * @since 0.4.1.0
+	 * @since 4.1.0
 	 */
 	public static Cache getCacheConnection(String cacheManager, String cache) {
 		CacheManager manager = CacheManager.getCacheManager(cacheManager);

@@ -28,7 +28,7 @@ import org.json.JSONObject;
 import com.novartis.opensource.yada.YADAQueryResult;
 
 /**
- * @since 0.4.0.0
+ * @since 4.0.0
  * @author David Varon
  *
  */

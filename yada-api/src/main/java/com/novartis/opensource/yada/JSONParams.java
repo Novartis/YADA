@@ -32,7 +32,7 @@ import org.json.JSONObject;
  * <p>which in turns parses out to:</p>
  * <p><code>query : { DATA: [ array of data ], PARAMS: [ array of params ] }</code></p>
  * 
- * @since 0.4.0.0               
+ * @since 4.0.0               
  * @author David Varon
  * @see JSONParamsEntry
  */
@@ -48,7 +48,7 @@ public class JSONParams extends LinkedHashMap<String, JSONParamsEntry> {
 	
 	/** 
 	 * Default constructor, provides no additional functionality.
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 */
 	public JSONParams() {	}
 	
@@ -59,7 +59,7 @@ public class JSONParams extends LinkedHashMap<String, JSONParamsEntry> {
 	 * 
 	 * <code>[{"qname":"name of query","DATA":[{"col_1":"val_1",..."col_n":"val_n"},{...},...]}</code> 
 	 * 
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @param jp the json string to convert to an object
 	 * @throws YADAQueryConfigurationException when the object can't be created, probably due to a malformed, or non-compliant json string.
 	 */
@@ -87,7 +87,7 @@ public class JSONParams extends LinkedHashMap<String, JSONParamsEntry> {
 	 * <p>Currently, only JSON syntax checking is performed, but no YADA syntax validation against the <a href="">JSONParams specification</a> is performed.</p> 
 	 * 
 	 * This is the constructor called by {@link Service#handleRequest(javax.servlet.http.HttpServletRequest)} when encountering a JSONParams url parameter.
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @param jp an array containing json strings 
 	 * @throws YADAQueryConfigurationException when {@code jp} is not convertable into a {@link JSONParams} object 
 	 * @see YADARequest#setJsonParams(String[])
@@ -176,7 +176,7 @@ public class JSONParams extends LinkedHashMap<String, JSONParamsEntry> {
 	
 	/**
 	 * Prints the value of the {@link JSONParams} object as a {@link LinkedHashMap}.
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 */
 	@Override
 	public String toString() {
@@ -188,7 +188,7 @@ public class JSONParams extends LinkedHashMap<String, JSONParamsEntry> {
 	/**
 	 * Adds a new entry to the internal {@link LinkedHashMap} with the {@code qname} 
 	 * as a key and an empty {@link JSONParamsEntry} as a value.
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @param qname the new key to add to the map
 	 */
 	public void put(String qname) {
@@ -201,7 +201,7 @@ public class JSONParams extends LinkedHashMap<String, JSONParamsEntry> {
 	 * If {@code qname} is not yet in the map, it is added first.
 	 * <p>Calls {@link JSONParamsEntry#addData(LinkedHashMap)} to perform the {@link LinkedHashMap} to {@link JSONParamsEntry} conversion.</p>
 	 * 
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @param qname the query name to add to the map
 	 * @param data the data to add to the entry associated to the query in the map 
 	 */
@@ -216,7 +216,7 @@ public class JSONParams extends LinkedHashMap<String, JSONParamsEntry> {
 	 * If {@code qname} is not yet in the map, it is added first.
 	 * <p>Calls {@link JSONParamsEntry#addData(JSONObject)} to perform the {@link LinkedHashMap} to {@link JSONParamsEntry} conversion.</p>
 	 * 
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @param qname the query name to add to the map
 	 * @param data the data to add to the entry associated to the query in the map 
 	 */
@@ -229,7 +229,7 @@ public class JSONParams extends LinkedHashMap<String, JSONParamsEntry> {
 	/**
 	 * Returns a boolean value corresponding to the String parameter passed to the method.
 	 * 
-	 * @since 0.4.0.0
+	 * @since 4.0.0
 	 * @param count the value of the {@code count} YADAParam
 	 * @return {@code true} if {@code count} = {@code "true"} (the default,) or {@code false} if {@code "false"}
 	 */
@@ -361,7 +361,7 @@ public class JSONParams extends LinkedHashMap<String, JSONParamsEntry> {
 	/**
 	 * Convenience method to facilitate getting the list of qnames from this parameter.
 	 * @return a {@link String}[] of qnames
-	 * @since 0.4.1.0
+	 * @since 4.1.0
 	 */
 	public String[] getKeys() {
 		return this.keySet().toArray(new String[this.size()]);

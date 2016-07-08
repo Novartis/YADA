@@ -20,7 +20,7 @@ package com.novartis.opensource.yada.plugin;
 /**
  * A simple POJO for transferring security policy metadata to the method applying the security policy.
  * @author varonda1
- * @since 0.7.0.0
+ * @since 7.0.0
  */
 public class SecurityPolicyRecord {
 

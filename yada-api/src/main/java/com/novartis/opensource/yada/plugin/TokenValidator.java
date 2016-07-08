@@ -17,7 +17,7 @@ package com.novartis.opensource.yada.plugin;
 /**
  * 
  * @author David Varon
- * @since 0.7.0.0
+ * @since 7.0.0
  */
 public interface TokenValidator {
   
@@ -42,7 +42,7 @@ public interface TokenValidator {
   /**
    * No arg mutator for variable, gets FQCN from args or properties 
    * @throws YADASecurityException 
-   * @since 0.7.0.0
+   * @since 7.0.0
    */
   public void setToken() throws YADASecurityException;
 }
