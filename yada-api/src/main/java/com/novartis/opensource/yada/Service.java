@@ -524,11 +524,6 @@ public class Service {
 			{
 				String type = this.yadaReq.getRequest().getMethod(); 
 				j.put("Type",type);
-//				if(type.equals("GET"))
-//					query = this.yadaReq.getRequest().getQueryString();
-//				else
-//					query = "Not available";
-//				j.put("Query", URLDecoder.decode(query,"UTF-8"));
 			}
 			
 			String[] strace = sw.toString().replace("\t","").split("\n");

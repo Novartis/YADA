@@ -168,9 +168,6 @@ public class QueryFileTransformer implements IAnnotationTransformer2 {
           throw new IllegalStateException(e);
       }
       Object oldValue = memberValues.get(key);
-//      if (oldValue == null || oldValue.getClass() != newValue.getClass()) {
-//          throw new IllegalArgumentException();
-//      }
       memberValues.put(key,newValue);
       return oldValue;
   }

@@ -699,12 +699,9 @@ public class QueryManager
         
         for (int row = 0; row < dataSize; row++)
         {
-          //if(yq.getIns() != null && yq.getIns().length > 0)
           if(yq.getInList() != null && yq.getInList().size() > 0)
           {
-            //conformedCode = this.qutils.getConformedCode(this.qutils.processInColumns(yq, row));
             conformedCode = this.qutils.getConformedCode(this.qutils.processInList(yq,row));
-            
           }
           
           if(yq.getType().equals(Parser.SELECT))

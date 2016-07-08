@@ -2523,13 +2523,6 @@ public class YADARequest {
 		l.debug(getFormattedDebugString("user", this.user));
 	}
 	
-//	/**
-//	 * @since 4.0.0
-//	 */
-//	public void setAuthUser(String[] authUser) {
-//		this.authUser = authUser[0];
-//	}
-	
 	/**
 	 * Standard mutator for variable
 	 * @deprecated As of YADA 0.4.0.0
@@ -3002,7 +2995,6 @@ public class YADARequest {
 		while (iter.hasNext()) {
 			DiskFileItem fi = (DiskFileItem) iter.next();
 			l.debug(fi);
-			// String output = "";
 			// set parameters from form fields
 			if (fi.isFormField()) 
 			{

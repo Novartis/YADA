@@ -249,7 +249,6 @@ public class Gatekeeper extends AbstractPreprocessor {
       {
         @SuppressWarnings("null")
         String[] polCols    = policyIndices.split("\\s");
-        //String[] polVals    = new String[polCols.length];
         StringBuilder polVals = new StringBuilder();
 
         if(reqHasParams)

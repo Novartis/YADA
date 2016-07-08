@@ -239,7 +239,6 @@ public class Parser implements StatementVisitor {
         .getSelectVisitor();
     select.getSelectBody().accept(selectVisitor);
     addColumnNamesToLists();
-//    setType(SELECT);
     setStatementType(SELECT);
   }
 
@@ -253,7 +252,6 @@ public class Parser implements StatementVisitor {
         getStringBuffer());
     dp.deParse(delete);
     addColumnNamesToLists();
-//    setType(DELETE);
     setStatementType(DELETE);
   }
 
@@ -286,7 +284,6 @@ public class Parser implements StatementVisitor {
       update.getWhere().accept(getExpressionDeParser());
     }
     addColumnNamesToLists();
-//    setType(UPDATE);
     setStatementType(UPDATE);
   }
 
@@ -331,7 +328,6 @@ public class Parser implements StatementVisitor {
           .accept(getExpressionDeParser().getSelectVisitor());
       addColumnNamesToLists();
     }
-//    setType(INSERT);
     setStatementType(INSERT);
   }
 

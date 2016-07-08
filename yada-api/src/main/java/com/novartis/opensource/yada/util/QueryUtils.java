@@ -477,18 +477,6 @@ public class QueryUtils
     yq.setInList(parser.getInColumnList());
     yq.setParameterizedColumnList(parser.getJdbcColumnList());
     yq.setInExpressionMap(parser.getInExpressionMap());
-		
-    // old method
-//		Hashtable<String,String[]> ht = null;
-//		ht = parser.parse(yq.getYADACode());
-//		yq.setStatement(parser.getStatement());
-//		if (ht.size() > 0)
-//		{
-//			yq.setType(ht.get(Parser.TYPE)[0]);
-//			yq.setColumns(ht.get(Parser.COLUMNS));
-//			yq.setIns(ht.get(Parser.IN_COLUMNS));
-//			yq.setParameterizedColumns(ht.get(Parser.JDBC_COLUMNS));
-//		}
 	}
 
 	/**

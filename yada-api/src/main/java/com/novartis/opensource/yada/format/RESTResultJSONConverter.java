@@ -48,7 +48,6 @@ public class RESTResultJSONConverter extends AbstractConverter
 	 */
 	public RESTResultJSONConverter() throws YADAResourceException, YADAIOException, YADAConverterException {
 	  // default constructor
-//	  setHarmonizer(new Harmonizer());
 	}
 	
 	/**
@@ -60,7 +59,6 @@ public class RESTResultJSONConverter extends AbstractConverter
 	 */
 	public RESTResultJSONConverter(YADAQueryResult yqr) throws YADAResourceException, YADAIOException, YADAConverterException {
 	  this.setYADAQueryResult(yqr);
-//	  setHarmonizer(new Harmonizer());
 	}
 	
 	/**

@@ -24,5 +24,5 @@ package com.novartis.opensource.yada.adaptor;
 public class YADAResultSet extends YADAAbstractResultSet {
 
 
-	// no implementation
+	// not implemented
 }

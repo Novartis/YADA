@@ -221,7 +221,6 @@ public class YADAExpressionDeParser extends
 	@Override
 	public void visit(Function f)
 	{
-		//insideExpression = true;
 		this.inFunction = true;
 		super.visit(f);
 		handleFunction(f);

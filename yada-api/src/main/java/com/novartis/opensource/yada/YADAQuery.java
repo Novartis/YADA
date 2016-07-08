@@ -952,22 +952,6 @@ public class YADAQuery {
 	public YADAQueryResult getResult() { return this.yadaQueryResult; }
 	/**
 	 * Standard accessor for variable
-	 * @return the list of columns linked to JDBC parameters
-	 */
-//	public String[] getParameterizedColumns() { return this.parameterizedColumns; }
-	/**
-	 * Standard accessor for variable
-	 * @return the list of columns referenced by {@code in} clauses
-	 */
-//	public String[] getIns() { return this.ins; }
-	/**
-	 * Standard accessor for variable
-	 * @return the list of columns referenced by the SQL query
-	 */
-//	public String[] getColumns() { return this.columns; }
-	
-	/**
-	 * Standard accessor for variable
 	 * @return the list of {@link HttpCookie} objects stored in the query
 	 * @since 5.1.0
 	 */

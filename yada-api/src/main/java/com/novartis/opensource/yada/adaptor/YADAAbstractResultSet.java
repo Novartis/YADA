@@ -353,17 +353,6 @@ public abstract class YADAAbstractResultSet implements ResultSet {
 		return null;
 	}
 	
-//	@Override
-//	public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
-//		return null;
-//	}
-//
-//	@Override
-//	public <T> T getObject(String columnLabel, Class<T> type)
-//			throws SQLException {
-//		return null;
-//	}
-	
   @Override
 	public Ref getRef(int columnIndex) throws SQLException {
 		return null;
