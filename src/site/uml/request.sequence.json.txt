@@ -1,0 +1,303 @@
+@startuml
+skinparam sequence {
+  ParticipantBackgroundColor #FED300
+  ParticipantBorderColor #923222
+  ActorBackgroundColor #FED300
+  ActorBorderColor #923222
+  ParticipantBackgroundColor #FED300
+  LifelineBorderColor #923222
+  ArrowColor #923222
+  
+}
+
+actor Client
+Participant yada.jsp
+Participant Service
+Participant Response
+Participant Converter
+Participant YADARequest
+Participant JSONParams
+Participant JSONParamsEntry
+Participant QueryManager
+Participant YADAQuery
+'Participant YADAParam
+Participant QueryUtils
+Participant Parser
+Participant Adaptor
+Participant Finder
+Participant ConnectionFactory
+Participant Cache
+
+database "YADA Index"
+database "Data Source"
+'Participant ResultSet
+'Participant ResultSetForCount
+
+|||
+'Activate Client
+'Activate yada.jsp
+'Activate ConnectionFactory
+'Activate Cache
+'Activate "YADA Index"
+'Activate "Data Source"
+== YADARequest Initialization ==
+Client -> yada.jsp
+yada.jsp -> Service : new()
+Activate Service
+Service -> YADARequest : new()
+Activate YADARequest
+YADARequest -[#AAAAAA]-> Service
+Service -> Service : handleRequest
+Service -> YADARequest : <<YADA Parameter setters>>
+YADARequest -> JSONParams : new()
+Activate JSONParams
+JSONParams -> JSONParams : convertJSONObjects()
+JSONParams -> JSONParamsEntry : new()
+Activate JSONParamsEntry
+JSONParamsEntry -[#AAAAAA]-> JSONParams
+JSONParams -[#AAAAAA]-> YADARequest
+YADARequest -[#AAAAAA]-> Service
+Service -[#AAAAAA]-> yada.jsp
+
+== YADAQuery Initialization ==
+ 
+yada.jsp -> Service : execute()
+Service -> QueryManager : new()
+Activate QueryManager
+QueryManager -> QueryUtils : new()
+Activate QueryUtils
+QueryManager -> QueryManager : processRequest()
+QueryManager -> QueryManager : setJsonParams()
+QueryManager -> YADARequest : getJsonParams()
+YADARequest -[#AAAAAA]-> QueryManager
+QueryManager -> QueryManager : setQueries()
+QueryManager -> QueryManager : endowQueries()
+QueryManager -> Finder : new()
+Activate Finder
+Finder -> Finder : getQuery()
+Finder -> ConnectionFactory : getCacheConnection()
+ConnectionFactory -> Cache : get()
+Cache -[#AAAAAA]-> ConnectionFactory
+ConnectionFactory -[#AAAAAA]-> Finder
+Finder -> YADAQuery : new(YADAQuery)
+Activate YADAQuery
+'YADAQuery -> YADAParam : new()
+'Activate YADAParam
+'YADAParam -[#AAAAAA]-> YADAQuery 
+YADAQuery -[#AAAAAA]-> Finder 
+Finder -[#AAAAAA]-> QueryManager : YADAQuery
+Deactivate Finder
+
+== Request and Query YADAParam mapping ==
+
+QueryManager -> QueryManager : endowQuery(YADAQuery, JSONParamsEntry)
+QueryManager -> JSONParamsEntry : getData()
+JSONParamsEntry -[#AAAAAA]-> QueryManager
+QueryManager -> YADAQuery : addAllData()
+YADAQuery -[#AAAAAA]-> QueryManager
+QueryManager -> JSONParamsEntry : getParams()
+JSONParamsEntry -[#AAAAAA]-> QueryManager
+QueryManager -> YADAQuery : addYADAQueryParams()
+YADAQuery -[#AAAAAA]-> QueryManager
+QueryManager -> YADAQuery : getColumnNameArray()
+YADAQuery -[#AAAAAA]-> QueryManager
+QueryManager -> YADAQuery : setParameterizedColumns()
+YADAQuery -[#AAAAAA]-> QueryManager
+QueryManager -> QueryManager : endowQuery(YADAQuery)
+QueryManager -> JSONParamsEntry : getParams()
+JSONParamsEntry -[#AAAAAA]-> QueryManager
+QueryManager -> QueryManager : addRequestParams()
+QueryManager -> YADARequest : getRequestParamsForQueries
+YADARequest -[#AAAAAA]-> QueryManager
+QueryManager -> YADAQuery : addRequestParams
+YADAQuery -[#AAAAAA]-> QueryManager
+QueryManager -> QueryUtils : getAdaptorClass()
+QueryUtils -> YADAQuery : getSource()
+YADAQuery -[#AAAAAA]-> QueryUtils
+QueryUtils -[#AAAAAA]-> QueryManager
+QueryManager -> QueryUtils : setProtocol
+QueryUtils -> YADAQuery : setProtocol
+YADAQuery -[#AAAAAA]-> QueryUtils
+QueryUtils -[#AAAAAA]-> QueryManager
+QueryManager -> YADAQuery : getAdaptorClass()
+YADAQuery -[#AAAAAA]-> QueryManager
+QueryManager -> QueryUtils : getAdaptor()
+QueryUtils -> Adaptor : newInstance()
+Activate Adaptor
+Adaptor -[#AAAAAA]-> QueryUtils
+QueryUtils -[#AAAAAA]-> QueryManager
+QueryManager -> YADAQuery : setAdaptor()
+YADAQuery -[#AAAAAA]-> QueryManager
+QueryManager -> YADAQuery : getYADACode()
+YADAQuery -[#AAAAAA]-> QueryManager
+QueryManager -> QueryUtils : getConformedCode()
+QueryUtils -[#AAAAAA]-> QueryManager
+QueryManager -> YADAQuery : setConformedCode()
+YADAQuery -[#AAAAAA]-> QueryManager
+QueryManager -> YADAQuery : addDataTypes()
+YADAQuery -[#AAAAAA]-> QueryManager
+QueryManager -> YADAQuery : addParamCount()
+YADAQuery -[#AAAAAA]-> QueryManager
+QueryManager -> QueryManager : setGlobalHarmonyMaps
+QueryManager -> QueryManager : setQueryHarmonyMaps
+
+== Query Prep == 
+
+QueryManager -> QueryManager : prepQueriesForExecution
+QueryManager -> YADAQuery : getSource()
+YADAQuery -[#AAAAAA]-> QueryManager
+QueryManager -> YADAQuery : getConformedCode()
+YADAQuery -[#AAAAAA]-> QueryManager
+QueryManager -> YADAQuery : getData().size()
+YADAQuery -[#AAAAAA]-> QueryManager
+QueryManager -> QueryUtils : requiresConnection()
+QueryUtils -[#AAAAAA]-> QueryManager
+QueryManager -> QueryManager : storeConnection
+QueryManager -> QueryUtils : processStatement()
+QueryUtils -> QueryUtils : getConformedCode()
+QueryUtils -> YADAQuery : getYADACode()
+YADAQuery -[#AAAAAA]-> QueryUtils
+QueryUtils -> YADAQuery : getAdaptorClass()
+YADAQuery -[#AAAAAA]-> QueryUtils
+
+== JDBC Statement processing ==
+
+QueryUtils -> QueryUtils : processJDBCStatement()
+QueryUtils -> Parser : new()
+Activate Parser
+Parser -[#AAAAAA]-> QueryUtils
+QueryUtils -> YADAQuery : getYADACode()
+YADAQuery -[#AAAAAA]-> QueryUtils
+QueryUtils -> Parser : parseDeparse()
+Parser -[#AAAAAA]-> QueryUtils
+QueryUtils -> Parser : getStatement()
+Parser -[#AAAAAA]-> QueryUtils
+QueryUtils -> YADAQuery : setStatement()
+YADAQuery -[#AAAAAA]-> QueryUtils
+QueryUtils -> Parser : getStatementType()
+Parser -[#AAAAAA]-> QueryUtils
+QueryUtils -> YADAQuery : setType()
+YADAQuery -[#AAAAAA]-> QueryUtils
+QueryUtils -> Parser : getColumnList()
+Parser -[#AAAAAA]-> QueryUtils
+QueryUtils -> YADAQuery : setColumnList()
+YADAQuery -[#AAAAAA]-> QueryUtils
+QueryUtils -> Parser : getInColumnList()
+Parser -[#AAAAAA]-> QueryUtils
+QueryUtils -> YADAQuery : setInList()
+YADAQuery -[#AAAAAA]-> QueryUtils
+QueryUtils -> Parser : getJdbcColumnList()
+Parser -[#AAAAAA]-> QueryUtils
+QueryUtils -> YADAQuery : setParameterizedColumnList()
+YADAQuery -[#AAAAAA]-> QueryUtils
+QueryUtils -> Parser : getInExpressionMap()
+Parser -[#AAAAAA]-> QueryUtils
+QueryUtils -> YADAQuery : setInExpressionMap()
+YADAQuery -[#AAAAAA]-> QueryUtils
+QueryUtils -> YADAQuery : setType()
+YADAQuery -[#AAAAAA]-> QueryUtils
+QueryUtils -[#AAAAAA]-> QueryManager
+'End processStatement()
+
+== JDBC Statement wrapping and extending == 
+
+QueryManager -> YADAQuery : get parameters
+YADAQuery -[#AAAAAA]-> QueryManager
+QueryManager -> QueryUtils : processInList()
+QueryUtils -[#AAAAAA]-> QueryManager
+QueryManager -> QueryUtils : getConformedCode()
+QueryUtils -[#AAAAAA]-> QueryManager
+QueryManager -> YADAQuery : getAdaptor()
+YADAQuery -[#AAAAAA]-> QueryManager
+QueryManager -> Adaptor : buildSelect() et al
+Adaptor -[#AAAAAA]-> QueryManager : wrapped code
+QueryManager -> QueryManager : storePreparedStatement
+QueryManager -> Adaptor : buildSelectCount() 
+Adaptor -[#AAAAAA]-> QueryManager : wrapped code
+QueryManager -> QueryManager : storePreparedStatementForCount
+
+== Parameterized value mapping ==
+
+QueryManager -> QueryUtils : setPositionalParameterValues()
+QueryUtils -> YADAQuery : getData().size()
+YADAQuery -[#AAAAAA]-> QueryUtils
+QueryUtils -> YADAQuery : getParameterizedColumnList()
+YADAQuery -[#AAAAAA]-> QueryUtils
+QueryUtils -> YADAQuery : getDataRow()
+YADAQuery -[#AAAAAA]-> QueryUtils
+QueryUtils -> QueryUtils : iterate columns 
+QueryUtils -> YADAQuery : addVals()
+YADAQuery -[#AAAAAA]-> QueryUtils
+QueryUtils -[#AAAAAA]-> QueryManager
+'End prepQueryForExecution
+'End processRequest
+
+== Request-level plugin processing ==
+
+QueryManager -[#AAAAAA]-> Service
+Service -> Service : _execute()
+Service -> Service : engage Bypass and Preprocessors
+
+loop QueryManager.getQueries
+
+  == Query-level plugin processing ==
+  Service -> Service : engage Bypass and Preprocessors
+  
+  == Query Execution == 
+
+  Service -> Adaptor : execute(YADAQuery)
+  Adaptor -> "Data Source" : execute
+  "Data Source" -[#AAAAAA]-> Adaptor : data/result
+  Adaptor -> YADAQuery : addResult()
+  YADAQuery -[#AAAAAA]-> Adaptor
+  Adaptor -[#AAAAAA]-> Service
+  Service -> QueryManager : commit()
+  QueryManager -[#AAAAAA]-> Service
+  
+  == Query-level plugin processing ==
+  
+  Service -> Service : engagePostprocess()
+
+end
+
+== Result Processing ==
+
+Service -> Response : compose()
+Activate Response
+Response -> Response : create()
+Response -> Response : append()
+Response -> Converter : getConverter()
+Activate Converter
+Converter -[#AAAAAA]-> Response
+Response -> Converter : convert()
+Converter -[#AAAAAA]-> Response : 
+Deactivate Converter
+Response -[#AAAAAA]-> Service : result
+Deactivate Response
+
+== Request-level plugin processing ==
+
+Service -> Service : engage PostProcess()
+
+== Result transmission ==
+
+Service -[#AAAAAA]-> yada.jsp : result
+Deactivate Service
+Deactivate Adaptor
+Deactivate QueryManager
+Deactivate QueryUtils
+Deactivate YADAQuery
+Deactivate Parser
+'Deactivate YADAParam
+Deactivate YADARequest
+Deactivate JSONParams
+Deactivate JSONParamsEntry
+yada.jsp -[#AAAAAA]-> Client : result
+'Deactivate ConnectionFactory
+'Deactivate Cache
+'Deactivate "YADA Index"
+'Deactivate "Data Source"
+'Deactivate yada.jsp
+Deactivate Client
+|||
+@enduml

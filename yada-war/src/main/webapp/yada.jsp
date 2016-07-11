@@ -90,8 +90,6 @@ else if (null != YADAPath && !("").equals(YADAPath))
 }
 else
 {
-	// there's an 'unchecked' warning on the 'getParameterMap' call which will be resolved
-	// by upgrading to Tomcat7/Servlet 3.0.
 	service.handleRequest(request);
 }
 

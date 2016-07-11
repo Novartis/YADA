@@ -142,12 +142,73 @@ public class QueryManager
 	 */
 	public QueryManager(YADARequest yadaReq) throws YADAQueryConfigurationException, YADAResourceException, YADAConnectionException, YADAFinderException, YADAUnsupportedAdaptorException, YADARequestException, YADAAdaptorException, YADAParserException
 	{
-		setYADAReq(yadaReq);
-		if (YADAUtils.useJSONParams(yadaReq))
-			setJsonParams(yadaReq.getJsonParams());
-		processQueries();
+//		setYADAReq(yadaReq);
+//		if (YADAUtils.useJSONParams(yadaReq))
+//			setJsonParams(yadaReq.getJsonParams());
+//		processQueries();
+	  processRequest(yadaReq);
+	}
+	
+	
+	/**
+	 * Default constructor
+	 * @since 7.1.0
+	 */
+	public QueryManager() {
+	  
 	}
 
+	/**
+   * A broker method which calls {@link #endowQuery(String)} (for standard param requests)
+   * or {@link #endowQueries(JSONParams)} for json params requests, followed by setting
+   * harmony maps, and 
+   * {@link #prepQueriesForExecution()} in succession
+   * 
+   * @param yadaReq the {@link YADARequest} to process
+   * @throws YADAFinderException
+   *           when there is an issue retrieving a query from the YADA index
+   * @throws YADAConnectionException
+   *           when there is an issue opening a connection to a source
+   *           referenced by a query
+   * @throws YADAQueryConfigurationException
+   *           if request does not contain either a {@code qname} or {@code q},
+   *           or a {@code JSONParams} or {@code j} parameter
+   * @throws YADAUnsupportedAdaptorException
+   *           when the adaptor can't be instantiated, or when it can't be found
+   * @throws YADAResourceException
+   *           when a query's source attribute can't be found in the application
+   *           context, or there is another problem with the context
+   * @throws YADAAdaptorException
+   *           when a query cannot be built by the adaptor
+   * @throws YADARequestException
+   *           when filters are included in the request config, but can't be
+   *           converted into a JSONObject
+   * @throws YADAParserException
+   *           when query code cannot be parsed successfully
+   * @since 7.1.0
+   */
+	private void processRequest(YADARequest yadaReq) throws YADAQueryConfigurationException, YADAConnectionException, YADAFinderException, YADAResourceException, YADAUnsupportedAdaptorException, YADARequestException, YADAAdaptorException, YADAParserException
+	{
+	  setYADAReq(yadaReq);
+    if (YADAUtils.hasQname(getYADAReq()))
+    {
+      setQueries(new YADAQuery[] {endowQuery(getYADAReq().getQname())});
+    }
+    else if (YADAUtils.hasJSONParams(getYADAReq())) //TODO this is a redundant call, see the constructor
+    {
+      setJsonParams(yadaReq.getJsonParams());
+      setQueries(endowQueries(getJsonParams()));
+    }
+    else
+    {
+      String msg = "Your request must contain a 'qname', 'q', 'JSONParams', or 'j' parameter.";
+      throw new YADARequestException(msg);
+    }
+    setGlobalHarmonyMaps();
+    setQueryHarmonyMaps();
+    prepQueriesForExecution();
+	}
+	
 	/**
 	 * A broker method which calls {@link #endowQuery(String)} (for standard param requests)
 	 * or {@link #endowQueries(JSONParams)} for json params requests, followed by
@@ -174,7 +235,10 @@ public class QueryManager
 	 * @throws YADAParserException
 	 *           when query code cannot be parsed successfully
 	 * @since 4.0.0
+	 * @deprecated since 7.1.0
 	 */
+	@SuppressWarnings("unused")
+  @Deprecated
 	private void processQueries() throws YADAQueryConfigurationException, YADAConnectionException, YADAFinderException, YADAResourceException, YADAUnsupportedAdaptorException, YADARequestException, YADAAdaptorException, YADAParserException
 	{
 		if (YADAUtils.hasJSONParams(this.yadaReq)) //TODO this is a redundant call, see the constructor
@@ -807,7 +871,6 @@ public class QueryManager
 	 */
 	private void prepQueriesForExecution() throws YADAResourceException, YADAUnsupportedAdaptorException, YADAConnectionException, YADARequestException, YADAAdaptorException, YADAParserException
 	{
-
 		for (YADAQuery yq : this.getQueries())
 		{
 		  prepQueryForExecution(yq);
@@ -919,7 +982,7 @@ public class QueryManager
 	YADAQuery endowQuery(YADAQuery yq) throws YADAQueryConfigurationException, YADAResourceException, YADAUnsupportedAdaptorException
 	{
 	  int index = 0;
-	  if (YADAUtils.useJSONParams(this.yadaReq))
+	  if (getJsonParams() != null)
 	    index = ArrayUtils.indexOf(getJsonParams().getKeys(), yq.getQname());
 		yq.addRequestParams(this.yadaReq.getRequestParamsForQueries(),index);
 		yq.setAdaptorClass(this.qutils.getAdaptorClass(yq.getSource()));
@@ -981,6 +1044,14 @@ public class QueryManager
 	 */
 	private boolean getUpdateStats() {
 		return this.yadaReq.getUpdateStats();
+	}
+	
+	/**
+	 * Standard accessor.
+	 * @return the local {@link YADARequest}
+	 */
+	private YADARequest getYADAReq() {
+	  return this.yadaReq;
 	}
 
 	/**

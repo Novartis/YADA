@@ -468,6 +468,7 @@ public class YADAUtils {
 	 */
 	private static boolean hasPlugin(String type, YADARequest yadaReq)
 	{
+	  //TODO use this method to short-circuit to plugin processing
 		String[] plugin = yadaReq.getPlugin();
 		if(plugin == null || plugin.length == 0)
 		{
