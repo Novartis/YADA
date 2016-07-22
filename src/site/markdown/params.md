@@ -14,11 +14,9 @@
 <a name="params"></a>  
 ## Alphabetical Parameter List  
 
-- [args]  
-- [bypassargs]  
-- [colHead]  
+- [colHead] *(provisional)*
 - [commitQuery]  
-- [compact]  
+- [compact] *(provisional)*
 - [converter]  
 - [cookies]
 - [count]  
@@ -32,19 +30,16 @@
 - [join]
 - [JSONParams]  
 - [leftJoin]
-- [labels]  
+- [labels] *(provisional)*
 - [mail]  
 - [pagesize]  
 - [pagestart]  
-- [parallel]  
 - [params]  
-- [paramset]  
-- [path]  
+- [paramset] *(provisional)*
+- [path] *(internal use only)*
 - [plugin]  
-- [postargs]  
-- [preargs]  
 - [pretty]  
-- [protocol]  
+- [protocol] *(internal use only)*
 - [proxy]  
 - [qname]  
 - [response]  
@@ -52,7 +47,7 @@
 - [sortkey]  
 - [sortorder]  
 - [updateStats]
-- [uploadItems]  
+- [uploadItems] *(internal use only)*
 - [user]  
 - [viewlimit]  
 
@@ -62,14 +57,14 @@
 
 ### Query Configuration Parameters
 
-- [compact]
+- [compact] *(provisional)*
 - [cookies]
 - [count]
 - [countOnly]
 - [JSONParams]
 - [params]
-- [paramset]
-- [path]
+- [paramset] *(provisional)*
+- [path] *(internal use only)*
 - [proxy]
 - [qname]
 - [user]
@@ -77,10 +72,9 @@
 ### Query Processing Parameters
 
 - [commitQuery]
-- [parallel]
-- [protocol]
+- [protocol] *(internal use only)*
 - [updateStats]
-- [uploadItems]
+- [uploadItems] *(internal use only)*
 
 ### Result Limiting/Extending Parameters
 
@@ -95,12 +89,12 @@
 
 ### Result Formatting Parameters
 
-- [colHead]
+- [colHead] *(provisional)*
 - [converter]
 - [delimiter]
 - [export]
 - [format]
-- [labels]
+- [labels] *(internal use only)*
 - [pretty]
 - [response]
 - [rowDelimiter]
@@ -109,10 +103,17 @@
 
 ### Plugin Parameters
 
-- [args]
-- [bypassargs]
 - [mail]
 - [plugin]
+
+### Deprecated Parameters
+
+- [args]
+- [bypassargs]
+- [method]
+- [overargs]
+- [parallel]
+- [plugintype]
 - [postargs]
 - [preargs]
 
@@ -122,24 +123,24 @@
 <a name="args"></a>  
 
 
-**Name**: `args`  
-**Alias**: `a`  
-**Required**: No  
-**Default**: empty list  
-**Accepted Values**: comma-delimited list of strings  
-**Description**: When accompanied by a single `plugin` or `pl` parameter, used as the default argument list, per below.  
+**Name _(deprecated)_**: `args`  
+**Alias _(deprecated)_**: `a`  
+**Required _(deprecated)_**: No  
+**Default _(deprecated)_**: empty list  
+**Accepted Values _(deprecated)_**: comma-delimited list of strings  
+**Description _(deprecated)_**: **Deprecated**. When accompanied by a single `plugin` or `pl` parameter, used as the default argument list, per below.  
 A comma-separated list of values to be passed to the plugin designated in the `plugin` or `pl` parameter value. The plugin should be expecting these values as positional arguments, i.e.,`arg1,arg2,...argN`. When using script plugins, the first argument must contain the path to the registered script (relative to the `yada_bin` directory,) i.e., `myscript.pl,arg1,arg2,...argN`. See the [Plugin Guide] for more info.  
 
 <a name="bypassargs"></a>
 
 ----  
 
-**Name**: `bypassargs`  
-**Alias**: `b`  
-**Required**: No  
-**Default**: empty list  
-**Accepted Values**: comma-delimited list of strings  
-**Description** A comma-separated list of values to be passed to the plugin designated in the `plugin` or `pl` parameter value. The plugin should be expecting these values as positional arguments, i.e., `arg1,arg2,...argN`. When using script plugins, the first argument must contain the path to the registered script (relative to the `yada_bin` directory,) i.e., `myscript.pl,arg1,arg2,...argN`. See the [Plugin Guide] for more info.  
+**Name _(deprecated)_**: `bypassargs`  
+**Alias _(deprecated)_**: `b`  
+**Required _(deprecated)_**: No  
+**Default _(deprecated)_**: empty list  
+**Accepted Values _(deprecated)_**: comma-delimited list of strings  
+**Description _(deprecated)_**: **Deprecated**.A comma-separated list of values to be passed to the plugin designated in the `plugin` or `pl` parameter value. The plugin should be expecting these values as positional arguments, i.e., `arg1,arg2,...argN`. When using script plugins, the first argument must contain the path to the registered script (relative to the `yada_bin` directory,) i.e., `myscript.pl,arg1,arg2,...argN`. See the [Plugin Guide] for more info.  
 
 <a name="colHead"></a>  
 
@@ -457,23 +458,23 @@ Custom delimiters are now supported, which automatically set the format to `deli
 
 ----
 
-**Name**: `postargs`  
-**Alias**: `pa`  
-**Required**: No  
-**Default**: empty list	  
-**Accepted Values**: comma-delimited list of strings  
-**Description**: A comma-separated list of values to be passed to the plugin designated in the `plugin` or `pl` parameter value. The plugin should be expecting these values as positional arguments, i.e., `arg1,arg2,...argN`. When using script plugins, the first argument must contain the path to the registered script (relative to the `yada_bin` directory,) i.e., `myscript.pl,arg1,arg2,...argN`. See the [Plugin Guide] for more info.  
+**Name _(Deprecated)_**: `postargs`  
+**Alias _(Deprecated)_**: `pa`  
+**Required _(Deprecated)_**: No  
+**Default _(Deprecated)_**: empty list	  
+**Accepted Values _(Deprecated)_**: comma-delimited list of strings  
+**Description _(Deprecated)_**: **Deprecated**. A comma-separated list of values to be passed to the plugin designated in the `plugin` or `pl` parameter value. The plugin should be expecting these values as positional arguments, i.e., `arg1,arg2,...argN`. When using script plugins, the first argument must contain the path to the registered script (relative to the `yada_bin` directory,) i.e., `myscript.pl,arg1,arg2,...argN`. See the [Plugin Guide] for more info.  
 
 <a name="preargs"></a>  
 
 ----
 
-**Name**: `preargs`  
-**Alias**: `pr`  
-**Required**: No  
-**Default**: empty list	  
-**Accepted Values**: comma-delimited list of strings  
-**Description**: A comma-separated list of values to be passed to the plugin designated in the `plugin` or `pl` parameter value. The plugin should be expecting these values as positional arguments, i.e., `arg1,arg2,...argN`. When using script plugins, the first argument must contain the path to the registered script (relative to the `yada_bin` directory,) i.e., `myscript.pl,arg1,arg2,...argN`. See the [Plugin Guide] for more info.  
+**Name _(Deprecated)_**: `preargs`  
+**Alias _(Deprecated)_**: `pr`  
+**Required _(Deprecated)_**: No  
+**Default _(Deprecated)_**: empty list	  
+**Accepted Values _(Deprecated)_**: comma-delimited list of strings  
+**Description _(Deprecated)_**: A comma-separated list of values to be passed to the plugin designated in the `plugin` or `pl` parameter value. The plugin should be expecting these values as positional arguments, i.e., `arg1,arg2,...argN`. When using script plugins, the first argument must contain the path to the registered script (relative to the `yada_bin` directory,) i.e., `myscript.pl,arg1,arg2,...argN`. See the [Plugin Guide] for more info.  
 
 <a name="pretty"></a>  
 
