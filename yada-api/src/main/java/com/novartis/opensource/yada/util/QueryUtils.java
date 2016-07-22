@@ -1287,7 +1287,7 @@ public class QueryUtils
 	 *          the index of the list of value lists in the query containing the
 	 *          data to evaluate
 	 * @return modified SQL code
-	 * @deprecated since 7.1.0
+	 * @deprecated as of 7.1.0
 	 */
 	@Deprecated
 	public String processInColumns(YADAQuery yq, int row)

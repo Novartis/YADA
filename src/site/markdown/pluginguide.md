@@ -5,7 +5,7 @@
     <img src="../resources/images/blox250.png"/>
 </div> 
 
-
+### ==NOTE: The Plugin API has been revised for release 7.1.0. Only the `pl` parameter is required now, and arguments formerly passed with now deprecated `a`, `pr`, `pa`, or `b` parameters will instead be appended to the `pl` parameter, after the plugin class-name and a comma.  Read on for details.==
 
 YADA plugins are intended, like most plugin implementations, to extend functionality in unexpected, unpredicted (to api authors), and incredibly useful ways. 
 
@@ -43,22 +43,33 @@ hostname:port/yada.jsp?q=YADA test SELECT&pl=TestPreprocessor
 hostname:port/yada.jsp?q=YADA test SELECT&pl=com.novartis.opensource.yada.plugin.TestPreprocessor
 ```
 
-To pass arguments to the plugin class, use the appropriate *arg* parameter: 
-
-* `args`:  for any Java® plugin–the plugin type, pre, post, bypass is autodetected, so the generic args param is useful
-* `preargs`, `pr`: for any preprocessor plugin
-* `postargs`, `pa`: for any postprocessor plugin
-* `bypassargs`, `b`: for any bypass plugin
-
-The following examples would resolve identically:
+To pass arguments to a plugin class or script, simply append the a comma-separated list to the `pl` parameter, after the class name, and a comma:
 
 ```c
-# args parameter
-hostname:port/yada.jsp?q=YADA test SELECT&pl=TestPreprocessor&args=abc,def
-
-# preargs parameter
-hostname:port/yada.jsp?q=YADA test SELECT&pl=TestPreprocessor&preargs=abc,def
+hostname:port/yada.jsp?q=YADA test SELECT&pl=TestPreprocessor,abc,def
 ```
+
+
+> The following information is @deprecated as of 7.1.0.  It is here for context, reference, and backward-compatibility. For new installations, it can be ignored.
+>   
+> To pass arguments to the plugin class, use the appropriate *arg* parameter: 
+
+> * `args`:  for any Java® plugin–the plugin type, pre, post, bypass is autodetected, so the generic args param is useful
+> * `preargs`, `pr`: for any preprocessor plugin
+> * `postargs`, `pa`: for any postprocessor plugin
+> * `bypassargs`, `b`: for any bypass plugin
+
+> The following examples would resolve identically:
+
+> ```c
+> # args parameter
+> hostname:port/yada.jsp?q=YADA test SELECT&pl=TestPreprocessor&args=abc,def
+
+> # preargs parameter
+> hostname:port/yada.jsp?q=YADA test SELECT&pl=TestPreprocessor&preargs=abc,def
+> ```  
+ 
+
 ### Usage and API 
 
 As described earlier, plugins are separated into three categories, each represented by a java interface:
@@ -269,6 +280,10 @@ Here's an example of a request-level preprocessor. This is the implementation of
 		{
 			throw new YADAPluginException("Unable to parse result.");
 		}
+		
+        // plugins shouldn't stomp on other plugins
+        lyadaReq.setPlugin(yadaReq.getPluginConfig());
+		
 		// return the new locally created request object
 		return lyadaReq;
 	}
@@ -410,20 +425,15 @@ Script plugins adhere to the same contracts as Java® plugins. In fact, they are
 
 > Note: Script plugins, for the moment, may only be used at the request level, not at the query level. 
 
-To call a script plugin, simply indicate the script name, and it's arguments, in the appropriate "args" parameter in the request:
+To call a script plugin, simply use the included script plugin classes as the first argument to the `pl` or `plugin` parameter, the script name as the 2nd argument, and any other arguments subsequently.
 
-```bash
-http://example.com/yada.jsp?qname=myquery&postargs=myscript.pl,arg1,arg2
-```
-
-### Rules
-
-Note the following rules for calling and processing a Script Plugin:
-
-1. The `plugin` or `pl` parameter is optional. If omitted, one of the following specific argument parameters must be used: `preargs`, `pr`, `postargs`, `pa`, `bypassargs`, `b`
-3. If the `plugin` or `pl` parameter is included, the generic `args` or `a` parameter may be used
-4. The first value in the argument parameter must be the path to the executable script, relative to the `YADA_BIN` directory
-5. Any proceeding arguments should adhere to the order expected by the script denoted in the first argument
+1. The `pl` or `plugin` parameter is now required. 
+2. The first element of the comma-delimited value of this parameter must be one of the following:
+  3. ScriptPreprocessor
+  4. ScriptPostprocessor
+  5. ScriptBypass
+6. The second element of the comma-separated value of this parameter must be the path to the executable script, relative to the `YADA_BIN` directory. 
+7. Any proceeding arguments should adhere to the order expected by the script denoted in the first argument
 6. The arguments passed to the script will be the "stringified" versions of the values passed to the built-in Java® handler plugins' engage methods
   7. For both `ScriptPreprocessor` and `ScriptBypass` this will be a JSON representation of the `YADARequest` object
   8. For `ScriptPostprocessor` this will be both a JSON representation of the `YADARequest` object and the `String` result of the query
@@ -432,32 +442,68 @@ Note the following rules for calling and processing a Script Plugin:
   11. For both `ScriptPostprocessor` and `ScriptBypass`, the return value must be a string result effectively intended to be returned to the client
 
 ### Syntax examples
-As shown in the code samples below, dynamic type detection enables the exclusion of the `plugin`, or `pl` request parameter when calling script plugins. If the parameter is excluded, however, it is critical to use the correct type-specific "args" parameter.
 
 ```c
 # the following calls are equivalent
 
-# with both plugin and type-specific args
-http://example.com/yada.jsp?qname=myquery&plugin=ScriptPostprocessor&postargs=myscript.pl,arg1,arg2  
+# with both plugin, script, args
+http://example.com/yada.jsp?qname=myquery&plugin=ScriptPostprocessor,myscript.pl,arg1,arg2  
 
-# with plugin and generic args
-http://example.com/yada.jsp?qname=myquery&plugin=ScriptPostprocessor&args=myscript.pl,arg1,arg2     
+# with alias
+http://example.com/yada.jsp?qname=myquery&pl=ScriptPostprocessor,myscript.pl,arg1,arg2     
+```  
+  
 
-# without plugin, with type-specific args
-http://example.com/yada.jsp?qname=myquery&postargs=myscript.pl,arg1,arg2                            
- 
- 
-# the following calls are also equivalent, but use the short names
+> The following information is @deprecated as of 7.1.0.  It is here for context, reference, and backward-compatibility. For new installations, it can be ignored.
+>   
+> To call a script plugin, simply indicate the script name, and it's arguments, in the appropriate "args" parameter in the request:
 
-# with both plugin and type-specific args
+>```bash
+>http://example.com/yada.jsp?qname=myquery&postargs=myscript.pl,arg1,arg2
+>```
+
+> ### Rules
+
+> Note the following rules for calling and processing a Script Plugin:
+
+> 1. The `plugin` or `pl` parameter is optional. If omitted, one of the following specific argument parameters must be used: `preargs`, `pr`, `postargs`, `pa`, `bypassargs`, `b`
+> 3. If the `plugin` or `pl` parameter is included, the generic `args` or `a` parameter may be used
+> 4. The first value in the argument parameter must be the path to the executable script, relative to the `YADA_BIN` directory
+> 5. Any proceeding arguments should adhere to the order expected by the script denoted in the first argument
+> 6. The arguments passed to the script will be the "stringified" versions of the values passed to the built-in Java® handler plugins' engage methods
+>  7. For both `ScriptPreprocessor` and `ScriptBypass` this will be a JSON representation of the `YADARequest` object
+>  8. For `ScriptPostprocessor` this will be both a JSON representation of the `YADARequest` object and the `String` result of the query
+> 9. The return values of scripts must adhere to the proper syntax
+>  10. For `ScriptPreprocessor` the return value must be a JSON string convertible into a `YADARequest` object.  See the [script preprocessor section](#scriptpreproc_spec) for details.
+>  11. For both `ScriptPostprocessor` and `ScriptBypass`, the return value must be a string result effectively intended to be returned to the client
+
+> ### Syntax examples
+> As shown in the code samples below, dynamic type detection enables the exclusion of the `plugin`, or `pl` request parameter when calling script plugins. If the parameter is excluded, however, it is critical to use the correct type-specific "args" parameter.
+
+> ```c
+> # the following calls are equivalent
+>
+> # with both plugin and type-specific args
+> http://example.com/yada.jsp?qname=myquery&plugin=ScriptPostprocessor&postargs=myscript.pl,arg1,arg2  
+
+> # with plugin and generic args
+> http://example.com/yada.jsp?qname=myquery&plugin=ScriptPostprocessor&args=myscript.pl,arg1,arg2     
+> 
+> # without plugin, with type-specific args
+> http://example.com/yada.jsp?qname=myquery&postargs=myscript.pl,arg1,arg2                            
+> 
+> 
+> # the following calls are also equivalent, but use the short names
+>
+> # with both plugin and type-specific args
 http://example.com/yada.jsp?q=myquery&pl=ScriptPostprocessor&pa=myscript.pl,arg1,arg2   
-
-# with plugin and generic args
+>
+> # with plugin and generic args
 http://example.com/yada.jsp?q=myquery&pl=ScriptPostprocessor&a=myscript.pl,arg1,arg2    
-
-#without plugin, with type-specific args
-http://example.com/yada.jsp?q=myquery&pa=myscript.pl,arg1,arg2                          
-```
+>
+> # without plugin, with type-specific args
+> http://example.com/yada.jsp?q=myquery&pa=myscript.pl,arg1,arg2                          
+>```
 
 <a name="scriptpreproc_spec"></a>
 ### com.novartis.opensource.yada.plugin.ScriptPreprocessor

@@ -259,9 +259,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 <a name="issues"></a>
 ## Known Issues (last updated 25-OCT-2015)
 
-* Date and time value syntax, just like in the real world, are database-vendor specific. Use vendor-specific literals and functions.  Check the test queries for guidance.
-* Speaking of dates and times, right now the TestNG tests which validate date and time values pass only on machines in the "America/NewYork" timezone. This is likely because the insert statements used to put the test data into the test table is not specific.   
-* There are two drivers for SQL Server®.  The one I picked has problems, and I haven't made time to work with the other.
+See the [Github Issues List](https://github.com/Novartis/YADA/issues)
  
 [Other Documentation]: #other
 [Getting into the YADA Mindset]: #mindset

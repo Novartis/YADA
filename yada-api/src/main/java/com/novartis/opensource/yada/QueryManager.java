@@ -235,7 +235,7 @@ public class QueryManager
 	 * @throws YADAParserException
 	 *           when query code cannot be parsed successfully
 	 * @since 4.0.0
-	 * @deprecated since 7.1.0
+	 * @deprecated as of 7.1.0
 	 */
 	@SuppressWarnings("unused")
   @Deprecated

@@ -219,7 +219,7 @@ define(
 	  	this.showParams = function(e,d) {
 	  		var self = this;
 	  		var $table = $('#default-params');
-	  		var params = [{TARGET:$('#query-name').val(),NAME:'',VALUE:'',RULE:1}];
+	  		var params = [{TARGET:$('#query-name').val(),NAME:'',VALUE:'',RULE:1,ID:0}];
   			if(d.params != undefined && d.params.length > 0)
   			{
   				params = d.params;
@@ -236,8 +236,9 @@ define(
 			  	$table.dataTable({
 		  			data:params,
 		  			type:"POST",
-		  			"lengthMenu": [[ 5, 10, -1 ],[5, 10, 'All']],
-		  			dom:'t<"bottom-l"i><"bottom-c"p><"bottom-r"l>',
+		  			//"lengthMenu": [[ 5, 10, -1 ],[5, 10, 'All']],
+		  			//dom:'t<"bottom-l"i><"bottom-c"p><"bottom-r"l>',
+		  			dom:'',
 		  			columnDefs:[
 							{
 								targets:1,
@@ -285,7 +286,8 @@ define(
 		  				{data:"NAME",title:"Parameter",sortable:false},
 		  				{data:"VALUE",title:"Value",sortable:false},
 		  				{data:"RULE",title:"Mutability",sortable:false},
-		  				{data:"ACTION",title:"Action",sortable:false,defaultContent:'<button type="button" class="fa fa-save fa-save-md" title="Save"><button type="button" class="fa fa-remove fa-remove-md" title="Remove" style="color:red"/><button type="button" class="fa fa-plus fa-plus-md" title="Add Another" style="color:green"/>'}
+		  				{data:"ACTION",title:"Action",sortable:false,defaultContent:'<button type="button" class="fa fa-save fa-save-md" title="Save"><button type="button" class="fa fa-remove fa-remove-md" title="Remove" style="color:red"/><button type="button" class="fa fa-plus fa-plus-md" title="Add Another" style="color:green"/>'},
+		  				{data:"ID",title:"Id",visible:false,name:"ID"}
 		  			]
 		  		});
 	  		}
@@ -322,7 +324,10 @@ define(
 	  		var table = $('#default-params').DataTable();
 	  		var data  = table.data();
 	  		if (data.length == 1 && data[0].NAME == "" && data[0].VALUE == "")
+	  		{
+	  		  // set data 'status' to new on new row html tr nodes in table
 	  			$(table.rows().nodes()[data.length - 1]).data('status','new');
+	  		}
 	  	};
 	  	
 	  	this.saveParam = function(e,d) {
@@ -334,6 +339,7 @@ define(
 	  		data     = table.row($tr).data(),
 	  		action   = $(e.target).closest('tr').data('status') == 'new' ? 'insert' : 'update',
 	  		target   = data.TARGET,
+	  		id       = data.ID,
 	  		name     = $tr.find('input[id^="name-"]').val(),
 	  		rule     = $tr.find('input[name^="rule-"]:checked').val(),
 	  		radio    = $tr.find('input[type="radio"][name^="value-"]'), 
@@ -342,19 +348,22 @@ define(
 	  			val = radio.filter(':checked').val();
 	  		else
 	  			val = $tr.find('input[id^="value-"]').val();
-	  		var params   = {TARGET:target,NAME:name,VALUE:val,RULE:rule},
-	  		j = [{qname:'YADA '+action+' default param',DATA:[params]}];
-	  		$.ajax({
-	  			//url:'/yada.jsp',
-	  			type:'POST',
-	  			data:{
-	  				j:JSON.stringify(j)
-	  			},
-	  			success: function(data) {
-	  				table.row($tr).data(params).draw();
-	  				$tr.removeData('status');
-	  			}
-	  		});
+	  		if(name != "")
+	  		{
+  	  		var params   = {ID:id,TARGET:target,NAME:name,VALUE:val,RULE:rule},
+  	  		j = [{qname:'YADA '+action+' default param',DATA:[params]}];
+  	  		$.ajax({
+  	  			//url:'/yada.jsp',
+  	  			type:'POST',
+  	  			data:{
+  	  				j:JSON.stringify(j)
+  	  			},
+  	  			success: function(data) {
+  	  				table.row($tr).data(params).draw();
+  	  				$tr.removeData('status');
+  	  			}
+  	  		});
+	  		}
 	  	};
 	  	
 	  	this.removeParam = function(e,d) {
@@ -362,27 +371,47 @@ define(
 	  		var self = this,
 	  		$table   = $('#default-params'),
 	  		table    = $table.DataTable(),
-	  		$tr      = $(e.target).closest('tr'),
-	  		j = [{qname:'YADA delete default param',DATA:[table.row($tr).data()]}];
-	  		$.ajax({
-	  			//url:'/yada.jsp',
-	  			type:'POST',
-	  			data:{
-	  				j:JSON.stringify(j)
-	  			},
-	  			success: function(data) {
-	  	  		table.row($tr).remove().draw();
-	  	  		if(table.data().length == 0)
-	  	  			self.addParam();
-	  			}
-	  		});
+	  		$tr      = $(e.target).closest('tr');
+	  		if($(table.row($tr).nodes()).data('status') != 'new')
+	  		{
+	  		  var data = table.row($tr).data();
+  	  		var j = [{qname:'YADA delete default param',DATA:[data]}];
+  	  		j.push({qname:'YADA delete prop for target',DATA:[{TARGET:data.TARGET + '-' + data.ID}]});
+  	  		$.ajax({
+  	  			//url:'/yada.jsp',
+  	  			type:'POST',
+  	  			data:{
+  	  				j:JSON.stringify(j)
+  	  			},
+  	  			success: function(data) {
+  	  	  		table.row($tr).remove().draw();
+  	  	  		if(table.data().length == 0)
+  	  	  			self.addParam();
+  	  	  		self.trigger('update-security-panel',{});
+  	  			}
+  	  			
+  	  		});
+	  		}
 	  	};
+	  	
+	  	
 	  	
 	  	this.addParam = function(e,d) {
 	  		var self = this;
 	  		var $table = $('#default-params');
-	  		var params = {TARGET:$('#query-name').val(),NAME:'',VALUE:'',RULE:1};
-	  		var table  = $table.DataTable(); 
+	  		var table  = $.fn.DataTable.isDataTable( '#default-params' ) ? $table.DataTable() : null; 
+	  		var name = '', value = '', rule = 1, id = 1, idCol;
+	  		if(d !== undefined)
+	  	  {
+	  		  name = d.NAME||''; 
+	  		  value = d.VALUE||'';
+	  		  rule = d.RULE||1;
+	  		  var idCol = table !== null ? table.column('ID:name') : null;
+	  		  id = d.ID || (idCol !== null && idCol.length > 0) ? idCol.data().sort().reverse()[0] + 1 : 1;
+	  	  }
+	  		
+	  		var params = {TARGET:$('#query-name').val(),NAME:name,VALUE:value,RULE:rule,ID:id};
+	  		
 	  		table.row.add(params).draw();
 	  		var lastIndex = table.data().length - 1;
 	  		$(table.rows().nodes()[lastIndex]).data('status','new');
@@ -395,6 +424,7 @@ define(
 	  	});
 	  	
 	    this.after('initialize', function () {
+	      this.on('add-param',this.addParam)
 	     	this.on('show-params',this.showParams);
 	     	this.on('draw.dt',this.enrich);
 	     	this.on('click',{

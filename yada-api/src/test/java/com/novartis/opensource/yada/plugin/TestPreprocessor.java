@@ -49,6 +49,7 @@ public class TestPreprocessor extends AbstractPreprocessor
 		String      qname    = yadaReq.getQname();
 		// create a new request object
 		YADARequest lyadaReq = new YADARequest();
+
 		// set the qname
 		lyadaReq.setQname(new String[] { qname });
 		// execute the new request with the original qname
@@ -85,9 +86,13 @@ public class TestPreprocessor extends AbstractPreprocessor
 		} 
 		catch (JSONException e)
 		{
-			throw new YADAPluginException("Unable to parse result.");
+		  throw new YADAPluginException("Unable to parse result.");
 		}
-		// return the new locally created request object
-		return lyadaReq;
+		
+    // plugins shouldn't stomp on other plugins
+    lyadaReq.setPlugin(yadaReq.getPluginConfig());
+		
+    // return the new locally created request object
+    return lyadaReq;
 	}
 }

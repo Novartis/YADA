@@ -134,6 +134,25 @@
 	margin-left: 10px;
 }
 
+.arg-string {
+	background-color: #EEE;
+	padding: 4px 4px 8px 4px;
+	display: inline-block;
+	overflow-wrap: break-word;
+}
+
+.policy-group {
+	border: 1px solid #EEE;
+	border-radius: 4px;
+	padding: 5px;
+	margin: -3px;
+}
+
+.remove-policy-group label {
+	position: relative;
+	right: 13px;
+}
+
 /*
  * Bootstrap overrides
  */

@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -69,14 +70,24 @@ import com.novartis.opensource.yada.util.QueryUtils;
  */
 public class YADAQuery {
 
-	/**
+	
+  /**
 	 * Local logger handle
 	 */
 	private static Logger l = Logger.getLogger(YADAQuery.class);
 	/**
+	 * Constant equal to {@value}
+	 */
+	private static final String PROP_PROTECTED = "protected";
+	/**
 	 * Cached-status indicator
 	 */
 	private boolean isCached = false;
+	/**
+	 * The app to which the query is mapped
+	 * @since 7.1.0
+	 */
+	private String     app;
 	/**
 	 * The query name 
 	 */
@@ -107,6 +118,11 @@ public class YADAQuery {
 	 */
 	private List<YADAParam>              					yqParams = new ArrayList<>();
 	/**
+	 * A list of properties
+	 * @since 7.1.0
+	 */
+	private Set<YADAProperty>                     properties = new HashSet<>();
+	/**
 	 * The cookies
 	 * @since 5.1.0
 	 */
@@ -127,7 +143,7 @@ public class YADAQuery {
 	private List<Column> inList;
 	/**
 	 * A list of all columns referenced by the query
-	 * @deprecated since 7.1.0 
+	 * @deprecated as of 7.1.0 
 	 */
 	@Deprecated
 	private String[]   columns;
@@ -261,6 +277,7 @@ public class YADAQuery {
   			this.addParam(param);
 			}
 		}
+		this.setProperties(yq.getProperties());
 	}
 	
 	/**
@@ -572,7 +589,7 @@ public class YADAQuery {
 		YADAParam param = new YADAParam(key,val,YADAParam.QUERY, YADAParam.OVERRIDEABLE);
 		addParam(param);
 	}
-
+	
 	/**
 	 * Adds {@code param} to the internal list
 	 * @param param parameter object
@@ -594,6 +611,16 @@ public class YADAQuery {
 			getYADAQueryParams().add(param);
 			setKey(param);
 		}
+	}
+	
+	/**
+	 * Adds the property to the {@link Set} of {@link #properties} 
+	 * @param prop
+	 * @since 7.1.0
+	 */
+	public void addProperty(YADAProperty prop)
+	{
+	  this.getProperties().add(prop);
 	}
 	
 	/**
@@ -1188,6 +1215,24 @@ public class YADAQuery {
 	{
 		return this.isCached;
 	}
+	
+	/**
+	 * Interrogates the {@link #properties} {@link Set} to look for security properties
+	 * @return {@code true} if there is a {@link YADAProperty} with a {@code name = "protected"}
+	 * @since 7.1.0
+	 */
+	public boolean isProtected()
+	{
+	  if(this.getProperties().size() > 0)
+	  {
+	    for(YADAProperty prop : this.getProperties())
+	    {
+	      if(prop.getName().equals(PROP_PROTECTED) && Boolean.parseBoolean(prop.getValue()))
+	        return true;
+	    }
+	  }
+	  return false;
+	}
 
 	/**
 	 * Sets the cached status
@@ -1230,7 +1275,7 @@ public class YADAQuery {
   /**
    * Standard accessor for variable
    * @return the list of columns referenced by the SQL query
-   * @deprecated since 7.1.0
+   * @deprecated as of 7.1.0
    */
   @Deprecated
   public String[] getColumns() { return this.columns; }
@@ -1247,7 +1292,7 @@ public class YADAQuery {
   /**
    * Standard mutator for variable
    * @param columns list of columns in the SQL query
-   * @deprecated since 7.1.0
+   * @deprecated as of 7.1.0
    */
   @Deprecated
   public void setColumns(String[] columns) { this.columns = columns; }
@@ -1298,5 +1343,41 @@ public class YADAQuery {
    */
   public void setInExpressionMap(Map<Column, InExpression> inExpressionMap) {
     this.inExpressionMap = inExpressionMap;
+  }
+
+  /**
+   * Standard accessor for variable
+   * @return the app
+   * @since 7.1.0
+   */
+  public String getApp() {
+    return this.app;
+  }
+
+  /**
+   * Standard mutator for variable
+   * @param app the app to set
+   * @since 7.1.0
+   */
+  public void setApp(String app) {
+    this.app = app;
+  }
+
+  /**
+   * Standard accessor for variable
+   * @return the properties
+   * @since 7.1.0
+   */
+  public Set<YADAProperty> getProperties() {
+    return this.properties;
+  }
+
+  /**
+   * Standard mutator for variable
+   * @param properties the properties to set
+   * @since 7.1.0
+   */
+  public void setProperties(Set<YADAProperty> properties) {
+    this.properties = properties;
   }
 }

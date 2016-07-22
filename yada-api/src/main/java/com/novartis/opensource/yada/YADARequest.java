@@ -23,8 +23,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -64,20 +66,20 @@ public class YADARequest {
 	// constants
 	/**
 	 * A constant equal to: {@value}. This is the default value for the {@code method} or {@code m} parameter.
-	 * @deprecated as of 0.4.0.0
+	 * @deprecated as of 4.0.0
 	 */
 	@Deprecated
 	public static final String METHOD_GET 				= "get";
 	/**
 	 * A constant equal to: {@value}. This value is still necessary for backward compatiblity when expecting
 	 * an update query to return an integer result, rather than a JSON object.
-	 * @deprecated as of 0.4.0.0
+	 * @deprecated as of 4.0.0
 	 */
 	@Deprecated
 	public static final String METHOD_UPDATE 			= "update";
 	/**
 	 * A constant equal to: {@value}. 
-	 * @deprecated as of 0.4.0.0, as this is now detected automatically.
+	 * @deprecated as of 4.0.0, as this is now detected automatically.
 	 */
 	@Deprecated
 	public static final String METHOD_UPLOAD 			= "upload";
@@ -162,7 +164,7 @@ public class YADARequest {
 	/**
 	 * A constant equal to: {@value}.  Included here for consistency. Use {@code QUERY_BYPASS} instead.
 	 * @since 4.0.0
-	 * @deprecated as of 0.4.0.0
+	 * @deprecated as of 4.0.0
 	 */
 	@Deprecated
 	public static final String QUERY_OVERRIDE  	  = "QueryBypass";
@@ -251,14 +253,23 @@ public class YADARequest {
 	// PL = Param Long
 	// PS = Param Short
 	/**
-	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * A constant equal to: {@value}. Used internally for query parameter access and mutation.
+	 * @since 7.1.0
 	 */
+	public static final String PS_ARGLIST     = "a";
+	/**
+	 * A constant equal to: {@value}
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
+	 * @deprecated as of 7.1.0
+	 */
+	@Deprecated
 	public static final String PS_ARGS        = "a";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
+	 * @deprecated as of 7.1.0
 	 */
+	@Deprecated
 	public static final String PS_BYPASSARGS  = "b";
 	/**
    * A constant equal to: {@value}
@@ -274,60 +285,60 @@ public class YADARequest {
 	 * A constant equal to: {@value}
 	 * This is a global parameter.
 	 * The default value associated to this param is {@code true}.
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_COUNT       = "c";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_COMMITQUERY = "cq";
 	/**
 	 * A constant equal to: {@value}
 	 * This is a global parameter.
 	 * The default value associated to this param is {@code false}.
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_COUNTONLY   = "co";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_CONVERTER   = "cv";
 	/**
 	 * A constant equal to: {@value}
 	 * This is a global parameter.
 	 * The default value associated to this parameter is {@link YADARequest#DEFAULT_DELIMITER}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_DELIMITER   = "d";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_EXPORT      = "e";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_EXPORTLIMIT = "el";
 	/**
 	 * A constant equal to: {@value}
 	 * This is a global parameter.
 	 * The default value associated to this parameter is {@code null}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_FILTERS     = "fi";
 	/**
 	 * A constant equal to: {@value}
 	 * This is a global parameter.
 	 * The default value associated to this parameter is {@link YADARequest#FORMAT_JSON}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_FORMAT      = "f";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_JSONPARAMS  = "j";
 	/**
@@ -344,82 +355,88 @@ public class YADARequest {
    * A constant equal to: {@value}
    * This is a global parameter.
    * The default value associated to this parameter is {@code null}
-   * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+   * @since 4.0.0 (Short param aliases were first added in 4.0.0)
    */
 	public static final String PS_HARMONYMAP  = "h";
 	/**
 	 * A constant equal to: {@value}
 	 * This is a global parameter.
 	 * The default value associated to this parameter is {@link YADARequest#METHOD_GET}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
-	 * @deprecated as of 0.4.0.0
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
+	 * @deprecated as of 4.0.0
 	 */
 	@Deprecated
 	public static final String PS_METHOD      = "m";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
+	 * @deprecated as of 7.1.0
 	 */
+	@Deprecated
 	public static final String PS_OVERARGS    = "o";	
 	/**
 	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_PAGE        = "pg";
 	/**
 	 * A constant equal to: {@value}
 	 * This is a global parameter.
 	 * The default value associated to this param is {@link YADARequest#DEFAULT_PAGE_SIZE}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_PAGESIZE    = "pz";
 	/**
 	 * A constant equal to: {@value}
  	 * This is a global parameter.
 	 * The default value associated to this param is {@link YADARequest#DEFAULT_START_PAGE}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_PAGESTART   = "pg";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_PARAMS      = "p";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_PARAMSET    = "ps";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_PLUGIN      = "pl";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
-	 * @deprecated as of 0.4.0.0
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
+	 * @deprecated as of 4.0.0
 	 */
 	@Deprecated
 	public static final String PS_PLUGINTYPE  = "pt";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
-	 */
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
+   * @deprecated as of 7.1.0
+   */
+  @Deprecated
 	public static final String PS_POSTARGS    = "pa";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
-	 */
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
+   * @deprecated as of 7.1.0
+   */
+  @Deprecated
 	public static final String PS_PREARGS     = "pr";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_PRETTY      = "py";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_PROTOCOL    = "pc";
 	/**
@@ -429,59 +446,63 @@ public class YADARequest {
 	public static final String PS_PROXY       = "px";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_QNAME       = "q";
 	/**
 	 * A constant equal to: {@value}
 	 * This is a global parameter.
 	 * The default value associated to this parameter is {@link YADARequest#DEFAULT_ROW_DELIMITER}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_ROW_DELIMITER = "rd";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_RESPONSE    = "r";
 	/**
 	 * A constant equal to: {@value}
 	 * This is a global parameter.
 	 * The default value is {@code null}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_SORTKEY     = "s";
 	/**
 	 * A constant equal to: {@value}
 	 * This is a global parameter.
 	 * The default value associated to this param is {@link YADARequest#SORT_ASC}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_SORTORDER   = "so";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 5.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 5.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_UPDATE_STATS = "us";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_USER        = "u";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 0.4.0.0)
+	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 */
 	public static final String PS_VIEWLIMIT   = "vl";
 	/**
 	 * A constant equal to: {@value}
+	 * @deprecated as of 7.1.0
 	 */
+	@Deprecated
 	public static final String PL_ARGS        = "args";
 	/**
 	 * A constant equal to: {@value}.  This constant has replaced {@link YADARequest#PL_OVERARGS} to avoid 
 	 * java compiler annotation errors with the caused by name conficts, i.e., {@code @Override} 
 	 * @since 4.0.0
+	 * @deprecated as of 7.1.0
 	 */
+	@Deprecated
 	public static final String PL_BYPASSARGS  = "bypassargs";
 	/**
 	 * A constant equal to: {@value}
@@ -583,13 +604,13 @@ public class YADARequest {
 	 * A constant equal to: {@value}
 	 * This is a global parameter.
 	 * The default value associated to this parameter is {@link YADARequest#METHOD_GET}
-	 * @deprecated as of 0.4.0.0
+	 * @deprecated as of 4.0.0
 	 */
 	@Deprecated
 	public static final String PL_METHOD      = "method";
 	/**
 	 * A constant equal to: {@value}.  Use {@link YADARequest#PL_BYPASSARGS} instead.
-	 * @deprecated as of 0.4.0.0
+	 * @deprecated as of 4.0.0
 	 */
 	@Deprecated
 	public static final String PL_OVERARGS    = "overargs";
@@ -626,7 +647,7 @@ public class YADARequest {
   //TODO There is no alias for PL_PATH
 	public static final String PL_PATH        = "path";
 	/**
-	 * @deprecated as of 0.4.0.0
+	 * @deprecated as of 4.0.0
 	 */
   //TODO There is no alias for PL_LABELS
 	@Deprecated
@@ -637,17 +658,21 @@ public class YADARequest {
 	public static final String PL_PLUGIN      = "plugin";
 	/**
 	 * A constant equal to: {@value}
-	 * @deprecated as of 0.4.0.0
+	 * @deprecated as of 4.0.0
 	 */
 	@Deprecated
 	public static final String PL_PLUGINTYPE  = "plugintype";
 	/**
 	 * A constant equal to: {@value}
+	 * @deprecated
 	 */
+	@Deprecated
 	public static final String PL_POSTARGS    = "postargs";
 	/**
 	 * A constant equal to: {@value}
+	 * @deprecated as of 7.1.0
 	 */
+	@Deprecated
 	public static final String PL_PREARGS     = "preargs";
 	/**
 	 * A constant equal to: {@value}
@@ -872,7 +897,7 @@ public class YADARequest {
 	private String     mail;
 	/**
 	 * YADA execution method. Defaults to {@link #METHOD_GET}
-	 * @deprecated as of 0.4.0.0
+	 * @deprecated as of 4.0.0
 	 */
 	@Deprecated
 	private String     method 	 	  = METHOD_GET;
@@ -886,7 +911,7 @@ public class YADARequest {
 	private int        pageStart 	  = DEFAULT_START_PAGE;
 	/**
 	 * Flag indicating whether to process count query in separate thread.
-	 * @deprecated as of 0.4.0.0: Never called.
+	 * @deprecated as of 4.0.0: Never called.
 	 */
 	@Deprecated
 	private boolean    parallel     = false;
@@ -909,7 +934,7 @@ public class YADARequest {
 	private String[]   plugin 	    = null;
 	/**
 	 * Plugin class type, either {@link #PREPROCESS}, {@link #POSTPROCESS}, or {@link #BYPASS}
-	 * @deprecated since 0.4.0.0
+	 * @deprecated as of 4.0.0
 	 */
 	@Deprecated
 	private String[]   pluginType   = {PREPROCESS};
@@ -965,7 +990,7 @@ public class YADARequest {
 	private int        viewLimit 	  = -1;
 	/**
 	 * A data structure for storing json params values
-	 * @deprecated as of 0.4.0.0
+	 * @deprecated as of 4.0.0
 	 */
 	@Deprecated
 	private Map<String,List<Map<String,String>>> 
@@ -995,19 +1020,30 @@ public class YADARequest {
 	private List<FileItem> uploadItems;
 	/**
 	 * Plugin arguments
+	 * @since 7.1.0
 	 */
+	private List<List<String>> argLists = new ArrayList<>();
+	/**
+	 * Plugin arguments
+   */
 	private List<String>   args 	  = new ArrayList<>();
 	/**
 	 * Preprocessor plugin arguments
-	 */
+   * @deprecated as of 7.1.0
+   */
+  @Deprecated
 	private List<String>   preArgs 	= new ArrayList<>();
 	/**
 	 * Postprocessor plugin arguments
-	 */
+   * @deprecated as of 7.1.0
+   */
+  @Deprecated
 	private List<String>   postArgs = new ArrayList<>();
 	/**
 	 * Bypass plugin arguments
-	 */
+   * @deprecated as of 7.1.0
+   */
+  @Deprecated
 	private List<String>   bypassArgs = new ArrayList<>();
 	
 	/**
@@ -1445,7 +1481,9 @@ public class YADARequest {
 	/**
 	 * Adds a value to the {@code #args} list
 	 * @param arg the value to add to the list
-	 */
+   * @deprecated as of 7.1.0
+   */
+  @Deprecated
 	public void addArg(String arg) {
 		this.args.add(arg);
 	}
@@ -1453,7 +1491,9 @@ public class YADARequest {
 	/**
 	 * Adds a value to the {@code #preArgs} list
 	 * @param arg the value to add to the list
-	 */
+   * @deprecated as of 7.1.0
+   */
+  @Deprecated
 	public void addPreArg(String arg) {
 		this.preArgs.add(arg);
 	}
@@ -1461,8 +1501,9 @@ public class YADARequest {
 	/**
 	 * Adds a value to the {@code #postArgs} list
 	 * @param arg the value to add to the list
+	 * @deprecated as of 7.1.0
 	 */
-
+	@Deprecated
 	public void addPostArg(String arg) {
 		this.postArgs.add(arg);
 	}
@@ -1489,7 +1530,9 @@ public class YADARequest {
 	/**
 	 * Adds a value to the {@code #bypassArgs} list
 	 * @param arg the value to add to the list
-	 */
+   * @deprecated as of 7.1.0
+   */
+  @Deprecated
 	public void addBypassArg(String arg) {
 		this.bypassArgs.add(arg);
 	}
@@ -1499,38 +1542,63 @@ public class YADARequest {
 	 */
 	
 	/**
-	 * Standard mutator for variable
-	 * @deprecated As of YADA 0.4.0.0.  Use {@link #setArgs(String[])}.
+	 * Used internally by {@link Service#engage} methods to pin an 
+	 * argument list at a specific index in {@link #getArgLists()} to 
+	 * the plugin at that index in {@link #getPlugin()}.
+	 * 
+	 * <p><strong>Undeprecated</strong> in 7.1.0 to use internally.</p>
 	 * @param args the list of args to pass to the plugin
 	 */
-	@Deprecated
-	public void setArgs(List<String> args) {
+	void setArgs(List<String> args) {
 		this.args = args;
-		l.debug(getFormattedDebugString("args", args.toString()));
+		if(args != null)
+		  l.debug(getFormattedDebugString("args", args.toString()));
 	}
 	
 	/**
-	 * Array mutator for variable, preferred for compatibility with {@link javax.servlet.http.HttpServletRequest#getParameterMap()}
+	 * Array mutator for variable, preferred for compatibility with 
+	 * {@link javax.servlet.http.HttpServletRequest#getParameterMap()}
+	 * This method is used internally by {@link #invokeSetter(String,String[])} when args are passed in a query
+	 * string to the api, as in some test classes. The method effectively mandates that only a single
+	 * plugin will be handled, which is ok because the version 7.1.0 upgrade, which rendered this method
+	 * as deprecated, is what effectively enabled multiple plugins. In other words, pre-7.1.0, multiple plugins 
+	 * probably wouldn't work, so using the deprecated syntax shouldn't affect deprecated expectations. 
 	 * @param argArr the array of args to pass to the plugin
+	 * @deprecated as of 7.1.0
 	 */
+	@Deprecated
 	public void setArgs(String[] argArr)
 	{
-		String[] lArgs = argArr[0].split(PARAM_DELIMITER);
-		if (lArgs.length > 0)
-		{
-			for (String arg : lArgs)
-			{
-				this.addArg(arg);
-			}
-		}
-		l.debug(getFormattedDebugString("args", lArgs.toString()));
+	  
+	  // this operation will compensate for url strings that place plugin parameters first and 
+	  // argument parameters later, e.g.,
+	  // q=YADA test SELECT&pl=com.novartis.opensource.yada.plugin.ScriptBypass&a=scriptPluginBypassTest.pl&c=false
+	  // 
+	  if(getPluginArgs().size() > 0)
+	    getPluginArgs().set(0,new LinkedList<>(Arrays.asList(argArr[0].split(PARAM_DELIMITER))));
+	  else
+	  {
+	    if(argArr.length == 1)
+	      argArr = argArr[0].split(PARAM_DELIMITER);
+	    addPluginArgs(new LinkedList<>(Arrays.asList(argArr)));
+	  }
+		l.debug(getFormattedDebugString("args", argArr.toString()));
 	}
 	
+	/**
+	 * Adds the {@link List} of plugin {@link String}-arguments to the {@link List} of {@link List}s
+	 * @param args an indexed {@link List} of {@link String} objects containing the 
+	 * @since 7.1.0
+	 */
+	public void addPluginArgs(List<String> args)
+	{
+	  getPluginArgs().add(args);  
+	}
 
 	
 	/**
 	 * Sets the column header flag.
-	 * @deprecated As of YADA 0.4.0.0. Use {@link #setColhead(String[])} or {@link #setColHead(String[])}
+	 * @deprecated As of YADA 4.0.0. Use {@link #setColhead(String[])} or {@link #setColHead(String[])}
 	 * @param colhead flag for inclusion or exclusion of column headers in delimited responses
 	 */
 	@Deprecated
@@ -1564,7 +1632,7 @@ public class YADARequest {
 	
 	/**
 	 * Standard mutator for variable
-	 * @deprecated As of YADA 0.4.0.0. Use {@link #setCompact(String[])}
+	 * @deprecated As of YADA 4.0.0. Use {@link #setCompact(String[])}
 	 * @param compact flag to indicate whether or not to return default json response with short keys
 	 */
 	@Deprecated
@@ -1607,7 +1675,7 @@ public class YADARequest {
 	
 	/**
 	 * Standard mutatar for variable
-	 * @deprecated As of YADA 0.4.0.0. Use {@link #setCount(String[])}
+	 * @deprecated As of YADA 4.0.0. Use {@link #setCount(String[])}
 	 * @param count flag to indicate whether or not to execute the second query for counting results
 	 */
 	@Deprecated
@@ -1631,7 +1699,7 @@ public class YADARequest {
 	
 	/**
 	 * Standard mutator for variable
-	 * @deprecated As of YADA 0.4.0.0. Use {@link #setCountOnly(String[])}
+	 * @deprecated As of YADA 4.0.0. Use {@link #setCountOnly(String[])}
 	 * @param countOnly flag to indicate whether or not to skip the data query and execute only the count query
 	 */
 	@Deprecated
@@ -1672,7 +1740,7 @@ public class YADARequest {
 	
 	/** 
 	 * Standard mutator for variable
-	 * @deprecated As of YADA 0.4.0.0. Use {@link #setExport(String[])}
+	 * @deprecated As of YADA 4.0.0. Use {@link #setExport(String[])}
 	 * @param export flag to indicate whether or not to dump results to a file and return it's url to the client
 	 */
 	@Deprecated
@@ -1697,7 +1765,7 @@ public class YADARequest {
 	
 	/**
 	 * Standard mutator for variable
-	 * @deprecated As of YADA 0.4.0.0. Use {@link #setExportLimit(String[])}
+	 * @deprecated As of YADA 4.0.0. Use {@link #setExportLimit(String[])}
 	 * @param exportLimit maximim number of results to export
 	 */
 	@Deprecated
@@ -1722,7 +1790,7 @@ public class YADARequest {
 	
 	/**
 	 * Mutator for variable
-	 * @deprecated As of YADA 0.4.0.0.  Use {@link #setFilters(String[])}
+	 * @deprecated As of YADA 4.0.0.  Use {@link #setFilters(String[])}
 	 * @param filters json object conforming to filter spec
 	 */
 	@Deprecated
@@ -1778,7 +1846,7 @@ public class YADARequest {
 
 	/**
 	 * Standard mutator for variable
-	 * @deprecated As of YADA 0.4.0.0
+	 * @deprecated As of YADA 4.0.0
 	 * @param format the output type
 	 */
 	@Deprecated
@@ -1842,7 +1910,7 @@ public class YADARequest {
 	 *   },
 	 *   ...
 	 * ]
-	 * @deprecated as of 0.4.0.0
+	 * @deprecated as of 4.0.0
 	 * @param ja a json array conforming to the JSONParams spec
 	 * @throws YADARequestException when {@code ja} contains a malformed json string
 	 */
@@ -1865,7 +1933,7 @@ public class YADARequest {
 	 *   },
 	 *   ...
 	 * ]
-	 * @deprecated as of 0.4.0.0
+	 * @deprecated as of 4.0.0
 	 * @since 4.0.0
 	 * @param JSONParams an array containing a string conforming to the JSONParams specification
 	 * @throws YADARequestException  when {@code JSONParams} contains a malformed json string
@@ -1964,7 +2032,7 @@ public class YADARequest {
 	
 	
 	/**
-	 * @deprecated As of YADA 0.4.0.0
+	 * @deprecated As of YADA 4.0.0
 	 * @param labels {@code true} to include labels
 	 */
 	@Deprecated
@@ -1987,7 +2055,7 @@ public class YADARequest {
 	}
 	
 	/**
-	 * @deprecated As of YADA 0.4.0.0
+	 * @deprecated As of YADA 4.0.0
 	 * @param mail the mail spec
 	 */
 	@Deprecated
@@ -2006,7 +2074,7 @@ public class YADARequest {
 	}
 	
 	/**
-	 * @deprecated As of YADA 0.4.0.0
+	 * @deprecated As of YADA 4.0.0
 	 * @param method the yada request type
 	 */
 	@Deprecated
@@ -2024,7 +2092,7 @@ public class YADARequest {
 	}
 	
 	/**
-	 * @deprecated As of YADA 0.4.0.0
+	 * @deprecated As of YADA 4.0.0
 	 * @param args bypass plugin arguments
 	 */
 	@Deprecated
@@ -2036,7 +2104,9 @@ public class YADARequest {
 	/**
 	 * @since 4.0.0
 	 * @param argArr bypass plugin arguments
-	 */
+   * @deprecated as of 7.1.0
+   */
+  @Deprecated
 	public void setOverargs(String[] argArr) {
 		this.setBypassargs(argArr);
 	}
@@ -2044,7 +2114,9 @@ public class YADARequest {
 	/**
 	 * @since 4.0.0
 	 * @param argArr bypass plugin arguments
-	 */
+   * @deprecated as of 7.1.0
+   */
+  @Deprecated
 	public void setBypassargs(String[] argArr)
 	{
 		if (argArr.length > 0 && this.plugin == null)
@@ -2063,7 +2135,7 @@ public class YADARequest {
 	}
 	
 	/**
-	 * @deprecated As of YADA 0.4.0.0
+	 * @deprecated As of YADA 4.0.0
 	 * @param pretty flag indicating whether or not to pretty print JSON results
 	 */
 	@Deprecated
@@ -2115,7 +2187,7 @@ public class YADARequest {
 	}
 	
 	/**
-	 * @deprecated As of YADA 0.4.0.0
+	 * @deprecated As of YADA 4.0.0
 	 * @param pageSize the number of result "rows" to return
 	 */
 	@Deprecated
@@ -2144,7 +2216,7 @@ public class YADARequest {
 	}
 	
 	/**
-	 * @deprecated As of YADA 0.4.0.0
+	 * @deprecated As of YADA 4.0.0
 	 * @param pageStart the subset of results
 	 */
 	@Deprecated
@@ -2167,7 +2239,7 @@ public class YADARequest {
 	}
 	
 	/**
-	 * @deprecated As of YADA 0.4.0.0
+	 * @deprecated as of 4.0.0
 	 * @param parallel flag indicating whether or not to execute the count query in a separate thread
 	 */
 	@Deprecated
@@ -2179,7 +2251,7 @@ public class YADARequest {
 	/**
 	 * @since 4.0.0
 	 * @param parallel flag indicating whether or not to execute the count query in a separate thread
-	 * @deprecated since 0.4.0.0
+	 * @deprecated as of 4.0.0
 	 */
 	@Deprecated
 	public void setParallel(String[] parallel) {
@@ -2267,7 +2339,7 @@ public class YADARequest {
 	
 	/** 
 	 * Sets the class name or fully-qualified class name of the plugin.
-	 * @deprecated As of YADA 0.4.0.0
+	 * @deprecated as of 4.0.0
 	 * @param plugin the class name or fully-qualified class name of the plugin
 	 */
 	@Deprecated
@@ -2280,18 +2352,55 @@ public class YADARequest {
 	 * @since 4.0.0
 	 * @param plugin the class name or fully-qualified class name of the plugin
 	 */
-	public void setPlugin(String[] plugin) {
-		// only 1 plugin param, and a comma delimted string, rather than multiple params
-		if (plugin.length == 1 && plugin[0].indexOf(PARAM_DELIMITER)>-1)
-		{
-			this.plugin = plugin[0].split(PARAM_DELIMITER);
-		}
-		else
-		{
-			this.plugin = plugin;
-		}
-		l.debug(getFormattedDebugString("plugin", plugin));
-	}
+//	public void setPlugin(String[] plugin) {
+//	  
+//		this.plugin = plugin;
+//		l.debug(getFormattedDebugString("plugin", ArrayUtils.toString(plugin)));
+//	}
+	
+	/**
+   * Deconstructs the {@link YADARequest#PS_PLUGIN} string into a {@link Preprocess}, {@link Postprocess},
+   * or {@link Bypass} plugin, and {@link List} of plugin argument {@link List}s.  The original version
+   * of this method was a simple mutator for the {@link #plugin} variable.
+   * @param configs the {@link String}[] array passed in the url 
+   * @since 7.1.0
+   */
+  public void setPlugin(String[] configs) {
+    int length = configs.length;
+    this.plugin = new String[length];
+    for(int i=0;i<configs.length;i++) //each plugin parameter
+    {
+      String   config       = configs[i];
+      String[] pluginConfig = config.split(","); //separate the pl and args
+      this.plugin[i] = pluginConfig[0];
+      if(pluginConfig.length > 1) // there's args
+      {
+        String[] args = (String[])ArrayUtils.remove(pluginConfig, 0);
+        this.addPluginArgs(new LinkedList<>(Arrays.asList(args)));
+      }
+      else
+      {
+        this.addPluginArgs(null); // placeholder
+      }
+    }
+  }
+  
+  /**
+   * Utility method to enable passing of plugin configuration from one {@link YADARequest} to another. 
+   * This method assumes no plugin configuration exists in the calling {@link YADARequest}.
+   * 
+   * @param pluginConfig a {@link Map} containing the plugin configuration for the request
+   */
+  public void setPlugin(Map<String,List<String>> pluginConfig) {
+    int i = 0;
+    for(String plug : pluginConfig.keySet())
+    {
+      if(this.plugin == null || this.plugin.length == 0)
+        this.plugin = new String[pluginConfig.size()];
+      this.plugin[i] = plug;
+      this.addPluginArgs(pluginConfig.get(plug));
+    }
+  }
 	
 	/**
 	 * Sets the class name or fully-qualified class name of the response.  The default is 
@@ -2318,7 +2427,7 @@ public class YADARequest {
 	}
 	
 	/**
-	 * @deprecated As of YADA 0.4.0.0
+	 * @deprecated As of YADA 4.0.0
 	 * @param pluginType the type of the plugin, i.e., preprocessor, postprocessor, or bypass
 	 */
 	@Deprecated
@@ -2327,7 +2436,7 @@ public class YADARequest {
 	}
 	
 	/**
-	 * @deprecated As of YADA 0.4.0.0
+	 * @deprecated As of YADA 4.0.0
 	 * @since 4.0.0
 	 * @param pluginType the type of the plugin, i.e., preprocessor, postprocessor, or bypass
 	 */
@@ -2346,7 +2455,7 @@ public class YADARequest {
 	}
 	
 	/**
-	 * @deprecated As of YADA 0.4.0.0
+	 * @deprecated As of YADA 4.0.0
 	 * @param postArgs the args to pass to the post processor plugin
 	 */
 	@Deprecated
@@ -2358,7 +2467,9 @@ public class YADARequest {
 	/**
 	 * @since 4.0.0
 	 * @param postArgArr the args to pass to the post processor plugin
-	 */
+   * @deprecated as of 7.1.0
+   */
+  @Deprecated
 	public void setPostArgs(String[] postArgArr)
 	{
 		if (postArgArr.length > 0 && this.plugin == null)
@@ -2380,7 +2491,9 @@ public class YADARequest {
 	/**
 	 * Array mutator for variable, preferred for compatibility with {@link javax.servlet.http.HttpServletRequest#getParameterMap()}
 	 * @param postArgArr list of arguments to pass to the post processor plugin
-	 */
+   * @deprecated as of 7.1.0
+   */
+  @Deprecated
 	public void setPostargs(String[] postArgArr)
 	{
 		this.setPostArgs(postArgArr);
@@ -2388,7 +2501,7 @@ public class YADARequest {
 	
 	/**
 	 * Standard mutator for variable
-	 * @deprecated As of YADA 0.4.0.0. Use {@link #setPreargs(String[])}
+	 * @deprecated As of YADA 4.0.0. Use {@link #setPreargs(String[])}
 	 * @param preArgs list of arguments to pass to the preprocessor
 	 */
 	@Deprecated
@@ -2401,7 +2514,9 @@ public class YADARequest {
 	 * Array mutator for variable, preferred for compatibility with {@link javax.servlet.http.HttpServletRequest#getParameterMap()}
 	 * @param preArgArr list of arguments to pass to the preprocessor 
 	 * @since 4.0.0
-	 */
+   * @deprecated as of 7.1.0
+   */
+  @Deprecated
 	public void setPreargs(String[] preArgArr) {
 		this.setPreArgs(preArgArr);
 	}
@@ -2410,7 +2525,9 @@ public class YADARequest {
 	 * Array mutator for variable, preferred for compatibility with {@link javax.servlet.http.HttpServletRequest#getParameterMap()}
 	 * @param preArgArr list of arguments to pass to the preprocessor
 	 * @since 4.0.0
-	 */
+   * @deprecated as of 7.1.0
+   */
+  @Deprecated
 	public void setPreArgs(String[] preArgArr)
 	{
 		if (preArgArr.length > 0 && this.getPlugin() == null)
@@ -2430,7 +2547,7 @@ public class YADARequest {
 	
 	/**
 	 * Standard mutator for variable
-	 * @deprecated As of YADA 0.4.0.0
+	 * @deprecated As of YADA 4.0.0
 	 * @param qname the query name
 	 */
 	@Deprecated
@@ -2451,7 +2568,7 @@ public class YADARequest {
 	
 	/**
 	 * Standard mutator for variable
-	 * @deprecated As of YADA 0.4.0.0. Use {@link #setSortKey(String[])}.
+	 * @deprecated As of YADA 4.0.0. Use {@link #setSortKey(String[])}.
 	 * @param sortKey c
 	 */
 	@Deprecated
@@ -2471,7 +2588,7 @@ public class YADARequest {
 	
 	/**
 	 * Standard mutator for variable
-	 * @deprecated As of YADA 0.4.0.0. Use {@link #setSortOrder(String[])}
+	 * @deprecated As of YADA 4.0.0. Use {@link #setSortOrder(String[])}
 	 * @param sortOrder the sort order, defaults to {@link #SORT_ASC}
 	 */
 	@Deprecated
@@ -2505,7 +2622,7 @@ public class YADARequest {
 	
 	/**
 	 * Standard mutator for variable
-	 * @deprecated As of YADA 0.4.0.0
+	 * @deprecated As of YADA 4.0.0
 	 * @param user the user id passed in the request, defaults to {@link #DEFAULT_USER} 
 	 */
 	@Deprecated
@@ -2525,7 +2642,7 @@ public class YADARequest {
 	
 	/**
 	 * Standard mutator for variable
-	 * @deprecated As of YADA 0.4.0.0
+	 * @deprecated As of YADA 4.0.0
 	 * @param viewLimit the maximum number of rows to retrieve, independent of {@code pageSize}
 	 */
 	@Deprecated
@@ -2550,12 +2667,46 @@ public class YADARequest {
 	
 	
 	/**
-	 * Standard accessor for variable
+	 * Used internally by {@link Service#engage} methods.
 	 * @return the list containing the plugin args
-	 */
+   */
 	public List<String> getArgs() {
 		return this.args;
 	}
+	
+	/**
+	 * Standard accessor for variable.  Usually returns a mutable {@link LinkedList} 
+	 * @return the {@link List} of plugin arguments {@link List}s
+	 */
+	public List<List<String>> getArgLists() {
+	  return getPluginArgs();
+	}
+  
+  /**
+   * Standard accessor for variable
+   * @return the list of arg lists for each plugin
+   */
+  public List<List<String>> getPluginArgs() {
+    return this.argLists;
+  }
+  
+  /**
+   * A utility method for obtaining the plugin configuration
+   * @return a {@link Map} containing the plugin configuration
+   * @since 7.1.0
+   */
+  public Map<String,List<String>> getPluginConfig() {
+    //TODO consider a better queueing mech for plugins, so those processed can be
+    // popped off the stack so to speak, but also to retain original order.
+    Map<String,List<String>> pluginMap = new LinkedHashMap<>();
+    int i = 0;
+    for(String plugin : this.plugin)
+    {
+      List<String> args = getPluginArgs() != null ? getPluginArgs().get(i++) : null; 
+      pluginMap.put(plugin, args);
+    }
+    return pluginMap;
+  }
 	
 	/**
    * Standard accessor for variable
@@ -2692,7 +2843,7 @@ public class YADARequest {
 	
 	/**
 	 * Returns the old internal {@code JSONParams} object.  This object should no longer be used.
-	 * @deprecated as of 0.4.0.0
+	 * @deprecated as of 4.0.0
 	 * @return {@link java.util.Map}&lt;{@link String}, {@link java.util.List}&lt;{@link java.util.Map}&lt;{@link String},{@link String}&gt;&gt;&gt;
 	 */
 	@Deprecated
@@ -2738,7 +2889,9 @@ public class YADARequest {
 	 * Returns the list of arguments to be passed to the Bypass plugin
 	 * @return list of arguments to pass to the Bypass plugin
 	 * @see Bypass
+	 * @deprecated as of 7.1.0
 	 */
+	@Deprecated
 	public List<String> getBypassArgs() {
 		return this.bypassArgs;
 	}
@@ -2767,7 +2920,7 @@ public class YADARequest {
 	
 	/**
 	 * Returns a {@code boolean} value corresponding to the {@code parallel} url parameter
-	 * @deprecated as of 0.4.0.0
+	 * @deprecated as of 4.0.0
 	 * @return true if url parameter {@code parallel} was set to true, otherwise false 
 	 */
 	@Deprecated
@@ -2801,7 +2954,7 @@ public class YADARequest {
 	}
 	
 	/**
-	 * @deprecated As of YADA 0.4.0.0
+	 * @deprecated As of YADA 4.0.0
 	 * @return {@link String}[] array of {@code pluginType} parameter values
 	 */
 	@Deprecated
@@ -2812,7 +2965,9 @@ public class YADARequest {
 	/**
 	 * Returns the list of arguments passed to the {@link Postprocess} plugin
 	 * @return list of arguments passed to the {@link Postprocess} plugin
+	 * @deprecated as of 7.1.0
 	 */
+	@Deprecated
 	public List<String> getPostArgs() {
 		return this.postArgs;
 	}
@@ -2820,8 +2975,10 @@ public class YADARequest {
 	/**
 	 * Returns the list of arguments passed to the {@link Preprocess} plugin
 	 * @return list of arguments passed to the {@link Preprocess} plugin
-	 */
-	public List<String> getPreArgs() {
+   * @deprecated as of 7.1.0
+   */
+  @Deprecated
+  public List<String> getPreArgs() {
 		return this.preArgs;
 	}
 
@@ -2974,7 +3131,7 @@ public class YADARequest {
 	
 	
 	/**
-	 * @deprecated as of 0.4.0.0
+	 * @deprecated as of 4.0.0
 	 */
 	@Deprecated
 	public void resetJSONParams() {

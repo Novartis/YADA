@@ -141,7 +141,9 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   /**
    * The {@code preArgs} {@link List} from {@link YADARequest#getPreargs}
    * @since 7.0.0
+   * @deprecated as of 7.1.0
    */
+  @Deprecated
   private List<String> preargs;
   
 	/**
@@ -154,15 +156,16 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
 	public YADARequest engage(YADARequest yadaReq) throws YADAPluginException
 	{
 	  setYADARequest(yadaReq);
-	  String[] args = getYADAQuery().getYADAQueryParamValue(YADARequest.PS_PREARGS);
-    if(args != null && args.length > 0)
-      setPreargs(Arrays.asList(args));
-    else
-    {
-      args = getYADAQuery().getYADAQueryParamValue(YADARequest.PS_ARGS);
+	  String[] args = getYADAQuery().getYADAQueryParamValue(YADARequest.PS_ARGLIST);
+	  if(args != null && args.length > 0)
+      setArgs(Arrays.asList(args));
+	  else
+	  {
+  	  args = getYADAQuery().getYADAQueryParamValue(YADARequest.PS_PREARGS);
       if(args != null && args.length > 0)
-        setArgs(Arrays.asList(args));
-    }
+        setPreargs(Arrays.asList(args));
+	  }
+	  
 		return getYADARequest();
 	}
 
@@ -177,14 +180,14 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
 	{
 	  setYADARequest(yadaReq);
 	  setYADAQuery(yq);
-	  String[] args = getYADAQuery().getYADAQueryParamValue(YADARequest.PS_PREARGS);
-	  if(args != null && args.length > 0)
-	    setPreargs(Arrays.asList(args[0].split(",")));
+	  String[] args = getYADAQuery().getYADAQueryParamValue(YADARequest.PS_ARGLIST);
+    if(args != null && args.length > 0)
+      setArgs(Arrays.asList(args[0].split(",")));
 	  else
 	  {
-	    args = getYADAQuery().getYADAQueryParamValue(YADARequest.PS_ARGS);
+	    args = getYADAQuery().getYADAQueryParamValue(YADARequest.PS_PREARGS);
 	    if(args != null && args.length > 0)
-	      setArgs(Arrays.asList(args[0].split(",")));
+	      setPreargs(Arrays.asList(args[0].split(",")));
 	  }
 	}
 
@@ -521,7 +524,9 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   /**
    * @param preargs the preargs to set
    * @since 7.0.0
+   * @deprecated as of 7.1.0
    */
+  @Deprecated
   public void setPreargs(List<String> preargs) 
   {
     this.preargs = preargs;

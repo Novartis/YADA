@@ -4,6 +4,9 @@
     <img src="../resources/images/blox250.png"/>
 </div> 
 
+### ==NOTE: The Plugin API has been revised for release 7.1.0. Only the `pl` parameter is required now, and arguments formerly passed with now deprecated `a`, `pr`, `pa`, or `b` parameters will instead be appended to the `pl` parameter, after the plugin class-name and a comma.  See the [Plugin Guide] for details.==
+
+### NOTE: Also with release 7.1.0, a new Security Wizard in the yada-admin webapp will make it super-easy to configure your security implementation once you know what you want. Learn more about the Security Wizard in the [Admin Guide].
 
 YADA Security is comprised of a four-tier cascading system featuring
 
@@ -14,7 +17,7 @@ YADA Security is comprised of a four-tier cascading system featuring
 
 The mechanism for a YADA Security implementation is a *preprocessor plugin*, configured as a *default YADA parameter* attached to the query for which protection is desired. Such a plugin, `com.novartis.opensource.yada.plugin.Gatekeeper` is provided.
 
-When using a custom class other than `Gatekeeper` to implement security, it is still advantageous to extend `Gatekeeper`, or at least `com.novartis.opensource.yada.plugin.AbstractPreprocessor` if possible, as it contains many constants and default method implementations, and conveniences.
+When using a custom class other than `Gatekeeper` to implement security, it is still advantageous to extend `Gatekeeper`, or at least `com.novartis.opensource.yada.plugin.AbstractPreprocessor` if possible, as it contains many constants, default method implementations, and other conveniences.
 
 <img src="../resources/images/security_flow.png"/>
 
@@ -186,14 +189,12 @@ See [below](#confcontent) for how to configure this feature.
 
 <a name="confurl"></a>
 ## Configure URL validation
-As with all YADA security configurations, two default parameters are required.  In each case the value of `Target` is the `qname` of the proteced query.  The value `<qname>` is used here as a placeholder.
+As with all YADA security configurations, two default parameters are required.  In each case the value of `Target` is the `qname` of the proteced query.  The value `qname` is used here as a placeholder.
 
 Also:
 
-* `pl` is the alias for `plugin`  
-* `a` is the alias for `args`.  
-* `pr` can be used instead of `a` and is the alias for `preargs`  
-* `FQCN` = Fully Qualified Class Name, e.g., instead of `Gatekeeper`, `com.novartis.opensource.yada.plugin.Gatekeeper`. FQCN is typically only necessary if the package name is different (but class-loader issues could make a liar out of me.)
+* `pl` is the alias for the `plugin` YADA parameter
+* `FQCN` = Fully Qualified Class Name, e.g., instead of `Gatekeeper`, `com.novartis.opensource.yada.plugin.Gatekeeper`. FQCN is typically only necessary if the package name is different (but class-loader issues could make a liar out of me.) In the examples below, the value `class` is used as a placeholder.
 * Mutabiltiy = `1` = Non-overrideable (immutable)  
 * `regex` means a regular expression, i.e `myhost\.mydomain\..+`.  
   *  The default method `AbstractPreprocessor.validateURL(String pathRx)` supports both omission and inclusion of the protocol portion of the url, i.e., i.e `http://myhost\.mydomain\..+` is also a valid regular expression to use here.
@@ -205,9 +206,7 @@ Also:
 
 |Target|Name|Value|Mutability|Optional|
 |:----:|:--:|:----|:--------:|:-------|
-|qname|`pl`|class name or FQCN|1|No|
-|qname|`a` or `pr`|`auth.path.rx=<regex>` |1|Yes, with System property `auth.path.rx`
-
+|`qname`|`pl`|`class,auth.path.rx=<regex>`|1|The class is required in all cases. The name/value pair is optional if System property `auth.path.rx` is set|
 
 <a name="conftoken"></a>
 ## Configure Token Validation
@@ -218,9 +217,9 @@ Also:
 
 |Target|Name|Value|Mutability|Optional|
 |:----:|:--:|:----|:--------:|:-------|
-|qname|`pl`|class name or FQCN|1|No|
+|`qname`|`pl`|`class`|1|No|
 
-The token validation is configured only as a method in the security plugin.  
+The token validation is configured only as a method in the security plugin. There is no argument.
 
 The plugin should implement the `void validateToken()` method. The method has no return value, and should throw a `YADASecurityException` when encountering an invalid state.
 
@@ -262,7 +261,7 @@ INSERT INTO YADA_A11N (target, policy, qname, type) VALUES (<protected>,'E',<pro
     In the query above, 
     
     * `<protected>` refers to the qname of the protected query,
-    * `'E'` refers to Execution Policy
+    * `'E'` refers to Execution Policy. In the current version of the API, using the Security Wizard, this value is inserted automatically.
     * `<protector>` refers to the qname of the protector query,
     * `<type>` must be `blacklist` or `whitelist`. See [execution policy]  for more info.
  
@@ -301,10 +300,9 @@ execution.policy.columns=COL1 COL2 TOKEN
 
 |Target|Name|Value|Mutability|Optional|
 |:----:|:--:|:----|:--------:|:-------|
-|qname|`pl`|class name or FQCN|1|No|
-|qname|`a` or `pr`|`execution.policy.indices=<space-delim list of ints>`|1|Yes, if `execution.policy.indexes` or `execution.policy.columns` is included|
-|qname|`a` or `pr`|`execution.policy.indexes=<space-delim list of ints>` |1|Yes, if `execution.policy.indices` or `execution.policy.columns` is included|
-|qname|`a` or `pr`|`execution.policy.columns=<space-delim list of strings` |1|Yes, if `execution.policy.indexes` or `execution.policy.indices` is included|
+|`qname`|`pl`|`class,execution.policy.indices=<list of ints>`|1|Again, `class` is required. If `execution.policy.indexes` or `execution.policy.columns` is included then `..indices` is ot|
+|`qname`|`pl`|`class,execution.policy.indexes=<list of ints>` |1|Yes, if `execution.policy.indices` or `execution.policy.columns` is included, then `..indexes` is not.|
+|`qname`|`pl`|`class,execution.policy.columns=<list of strings` |1|Yes, if `execution.policy.indexes` or `execution.policy.indices` is included, then `..columns` is not.|
 
 > NOTE: if the same plugin class implements both `applyContentPolicy`  and `applyExecutionPolicy`, like `Gatekeeper`, but only one is required for a specific protected query, the unused policy must explicitly be set to `void`, e.g.,
 
@@ -323,8 +321,7 @@ a=content.policy.predicate=token=getQtoken,execution.policy=void
 
 |Target|Name|Value|Mutability|Optional|
 |:----:|:--:|:----|:--------:|:-------|
-|qname|`pl`|class name or FQCN|1|No|
-|qname|`a` or `pr`|`content.policy.predicate=<SQL where condition>`|1|No|
+|`qname`|`pl`|`class,content.policy.predicate=<SQL where condition>`|1|No|
 
 See [above](#featcontent), for details about what to substitute for `SQL where condition`.
 
@@ -365,8 +362,18 @@ a=content.policy.predicate=token=getQtoken,execution.policy=void
 ||√|>1|>1|√|YADA TEST sec multi params multi polcol use token|
 
 ### Content Policy
+|Method injection|multiple parameters|`group by` clause|`order by` clause|Qname|
+|:---------------|:-----------------:|:---------------:|:---------------------:|:----|
+|√||||YADA test sec get token|
+|√|√|||YADA test sec get token twice|
+|√|√|||YADA test sec get token twice with spaces|
+|√|√|||YADA test sec get token plus params|
+|√|√|||YADA test sec get token twice plus params|
+|√|√|||YADA test sec get token twice with spaces plus params|
+|√|√|√||YADA test sec get token plus params with group by|
+|√|√|√|√|YADA test sec get token plus params with group by order by|
 
-
-
+[Admin Guide]:admin.md
+[Plugin Guide]:pluginguide.md
 [execution policy]:#featexec
 [content policy]:#featcontent

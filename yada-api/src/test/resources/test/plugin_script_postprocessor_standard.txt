@@ -8,3 +8,8 @@ qname=YADA test SELECT&plugin=com.novartis.opensource.yada.plugin.ScriptPostproc
 qname=YADA test SELECT&plugin=ScriptPostprocessor&args=scriptPluginPostTest.pl&count=false
 qname=YADA test SELECT&plugin=ScriptPostprocessor&postargs=scriptPluginPostTest.pl&count=false
 qname=YADA test SELECT&postargs=scriptPluginPostTest.pl&count=false
+
+q=YADA test SELECT&pl=com.novartis.opensource.yada.plugin.ScriptPostprocessor,scriptPluginPostTest.pl&c=false
+q=YADA test SELECT&pl=ScriptPostprocessor,scriptPluginPostTest.pl&c=false
+qname=YADA test SELECT&plugin=com.novartis.opensource.yada.plugin.ScriptPostprocessor,scriptPluginPostTest.pl&count=false
+qname=YADA test SELECT&plugin=ScriptPostprocessor,scriptPluginPostTest.pl&count=false

@@ -46,8 +46,10 @@ import com.novartis.opensource.yada.plugin.Bypass;
 import com.novartis.opensource.yada.plugin.Postprocess;
 import com.novartis.opensource.yada.plugin.Preprocess;
 import com.novartis.opensource.yada.plugin.YADAPluginException;
+import com.novartis.opensource.yada.plugin.YADASecurityException;
 import com.novartis.opensource.yada.util.FileUtils;
 import com.novartis.opensource.yada.util.QueryUtils;
+import com.novartis.opensource.yada.util.YADAUtils;
 
 /**
  * Utility class handling process of execution of stored queries, and formatting of results via http requests.
@@ -95,7 +97,7 @@ public class Service {
 	 * @param yadaReq YADA request configuration
 	 */
 	public Service(YADARequest yadaReq) {
-		this.yadaReq = yadaReq;
+		setYADARequest(yadaReq);
 	}
 	
 	/**
@@ -120,7 +122,7 @@ public class Service {
 		{
 			map.put(pathElements[i], new String[] {pathElements[i+1]});
 		}
-		this.yadaReq.setRequest(request);
+		getYADARequest().setRequest(request);
 		handleRequest(request.getHeader("referer"), map);
 	}
 	
@@ -134,7 +136,7 @@ public class Service {
   public void handleRequest(HttpServletRequest request)
 	{
 		l.debug("Request query string is ["+request.getQueryString()+"]");
-		this.yadaReq.setRequest(request);
+		getYADARequest().setRequest(request);
 		// there's an 'unchecked' warning on the 'getParameterMap' call which will be resolved
 		// by upgrading to Tomcat7/Servlet 3.0.
 		handleRequest(request.getHeader("referer"), request.getParameterMap());
@@ -154,326 +156,329 @@ public class Service {
 	  {
   		if(paraMap.get(YADARequest.PL_ARGS) != null)
   		{
-  			this.yadaReq.setArgs(paraMap.get(YADARequest.PL_ARGS));
+  		  setDeprecatedPlugin(paraMap, YADARequest.PL_ARGS);
   		}
   		if(paraMap.get(YADARequest.PS_ARGS) != null)
   		{
-  			this.yadaReq.setArgs(paraMap.get(YADARequest.PS_ARGS));
+  		  setDeprecatedPlugin(paraMap, YADARequest.PS_ARGS);
   		}
   		if (paraMap.get(YADARequest.PL_COLHEAD) != null)
   		{
-  			this.yadaReq.setColhead(paraMap.get(YADARequest.PL_COLHEAD));
+  			getYADARequest().setColhead(paraMap.get(YADARequest.PL_COLHEAD));
   		}
   		if (paraMap.get(YADARequest.PL_COMMITQUERY) != null)
       {
-        this.yadaReq.setCommitQuery(paraMap.get(YADARequest.PL_COMMITQUERY));
+        getYADARequest().setCommitQuery(paraMap.get(YADARequest.PL_COMMITQUERY));
       }
       if (paraMap.get(YADARequest.PS_COMMITQUERY) != null)
       {
-        this.yadaReq.setCommitQuery(paraMap.get(YADARequest.PS_COMMITQUERY));
+        getYADARequest().setCommitQuery(paraMap.get(YADARequest.PS_COMMITQUERY));
       }
       if (paraMap.get(YADARequest.PS_COMPACT) != null)
       {
-        this.yadaReq.setCompact(paraMap.get(YADARequest.PS_COMPACT));
+        getYADARequest().setCompact(paraMap.get(YADARequest.PS_COMPACT));
       }
   		if (paraMap.get(YADARequest.PL_COMPACT) != null)
   		{
-  			this.yadaReq.setCompact(paraMap.get(YADARequest.PL_COMPACT));
+  			getYADARequest().setCompact(paraMap.get(YADARequest.PL_COMPACT));
   		}
   		if (paraMap.get(YADARequest.PL_CONVERTER) != null)
       {
-        this.yadaReq.setConverter(paraMap.get(YADARequest.PL_CONVERTER));
+        getYADARequest().setConverter(paraMap.get(YADARequest.PL_CONVERTER));
       }
       if (paraMap.get(YADARequest.PS_CONVERTER)!= null)
       {
-        this.yadaReq.setConverter(paraMap.get(YADARequest.PS_CONVERTER));
+        getYADARequest().setConverter(paraMap.get(YADARequest.PS_CONVERTER));
       }
   		if (paraMap.get(YADARequest.PL_COUNT) != null)
   		{
-  			this.yadaReq.setCount(paraMap.get(YADARequest.PL_COUNT));
+  			getYADARequest().setCount(paraMap.get(YADARequest.PL_COUNT));
   		}
   		if (paraMap.get(YADARequest.PS_COUNT) != null)
   		{
-  			this.yadaReq.setCount(paraMap.get(YADARequest.PS_COUNT));
+  			getYADARequest().setCount(paraMap.get(YADARequest.PS_COUNT));
   		}
   		if (paraMap.get(YADARequest.PL_COOKIES) != null)
       {
-        this.yadaReq.setCookies(paraMap.get(YADARequest.PL_COOKIES));
+        getYADARequest().setCookies(paraMap.get(YADARequest.PL_COOKIES));
       }
       if (paraMap.get(YADARequest.PS_COOKIES) != null)
       {
-        this.yadaReq.setCookies(paraMap.get(YADARequest.PS_COOKIES));
+        getYADARequest().setCookies(paraMap.get(YADARequest.PS_COOKIES));
       }
   		if (paraMap.get(YADARequest.PL_COUNTONLY) != null)
   		{
-  			this.yadaReq.setCountOnly(paraMap.get(YADARequest.PL_COUNTONLY));
+  			getYADARequest().setCountOnly(paraMap.get(YADARequest.PL_COUNTONLY));
   		}
   		if (paraMap.get(YADARequest.PS_COUNTONLY) != null)
   		{
-  			this.yadaReq.setCountOnly(paraMap.get(YADARequest.PS_COUNTONLY));
+  			getYADARequest().setCountOnly(paraMap.get(YADARequest.PS_COUNTONLY));
   		}
   		if (paraMap.get(YADARequest.PL_DELIMITER) != null)
   		{
-  			this.yadaReq.setDelimiter(paraMap.get(YADARequest.PL_DELIMITER));
+  			getYADARequest().setDelimiter(paraMap.get(YADARequest.PL_DELIMITER));
   		}
   		if (paraMap.get(YADARequest.PS_DELIMITER) != null)
   		{
-  			this.yadaReq.setDelimiter(paraMap.get(YADARequest.PS_DELIMITER));
+  			getYADARequest().setDelimiter(paraMap.get(YADARequest.PS_DELIMITER));
   		}
   		if (paraMap.get(YADARequest.PL_EXPORT) != null)
   		{
-  			this.yadaReq.setExport(paraMap.get(YADARequest.PL_EXPORT));
+  			getYADARequest().setExport(paraMap.get(YADARequest.PL_EXPORT));
   		}
   		if (paraMap.get(YADARequest.PS_EXPORT) != null)
   		{
-  			this.yadaReq.setExport(paraMap.get(YADARequest.PS_EXPORT));
+  			getYADARequest().setExport(paraMap.get(YADARequest.PS_EXPORT));
   		}
   		if (paraMap.get(YADARequest.PL_EXPORTLIMIT) != null)
   		{
-  			this.yadaReq.setExportLimit(paraMap.get(YADARequest.PL_EXPORTLIMIT));
+  			getYADARequest().setExportLimit(paraMap.get(YADARequest.PL_EXPORTLIMIT));
   		}
   		if (paraMap.get(YADARequest.PS_EXPORTLIMIT) != null)
   		{
-  			this.yadaReq.setExportLimit(paraMap.get(YADARequest.PS_EXPORTLIMIT));
+  			getYADARequest().setExportLimit(paraMap.get(YADARequest.PS_EXPORTLIMIT));
   		}
   		if (paraMap.get(YADARequest.PL_FILTERS) != null)
   		{
-  			this.yadaReq.setFilters(paraMap.get(YADARequest.PL_FILTERS));
+  			getYADARequest().setFilters(paraMap.get(YADARequest.PL_FILTERS));
   		}
   		if (paraMap.get(YADARequest.PS_FILTERS) != null)
   		{
-  			this.yadaReq.setFilters(paraMap.get(YADARequest.PS_FILTERS));
+  			getYADARequest().setFilters(paraMap.get(YADARequest.PS_FILTERS));
   		}
   		if (paraMap.get(YADARequest.PL_FORMAT) != null && !paraMap.get(YADARequest.PL_FORMAT).equals(YADARequest.FORMAT_JSON))
   		{
-  			this.yadaReq.setFormat(paraMap.get(YADARequest.PL_FORMAT));
+  			getYADARequest().setFormat(paraMap.get(YADARequest.PL_FORMAT));
   		}
   		if (paraMap.get(YADARequest.PS_FORMAT) != null && !paraMap.get(YADARequest.PS_FORMAT).equals(YADARequest.FORMAT_JSON))
   		{
-  			this.yadaReq.setFormat(paraMap.get(YADARequest.PS_FORMAT));
+  			getYADARequest().setFormat(paraMap.get(YADARequest.PS_FORMAT));
   		}
   		if (paraMap.get(YADARequest.PL_HARMONYMAP) != null)
   		{
-  			this.yadaReq.setHarmonyMap(paraMap.get(YADARequest.PL_HARMONYMAP));
+  			getYADARequest().setHarmonyMap(paraMap.get(YADARequest.PL_HARMONYMAP));
   		}
   		if (paraMap.get(YADARequest.PS_HARMONYMAP) != null)
   		{
-  			this.yadaReq.setHarmonyMap(paraMap.get(YADARequest.PS_HARMONYMAP));
+  			getYADARequest().setHarmonyMap(paraMap.get(YADARequest.PS_HARMONYMAP));
   		}
   		if (paraMap.get(YADARequest.PL_JSONPARAMS) != null)
   		{
-  			this.yadaReq.setJsonParams(paraMap.get(YADARequest.PL_JSONPARAMS));
+  			getYADARequest().setJsonParams(paraMap.get(YADARequest.PL_JSONPARAMS));
   		}
   		if (paraMap.get(YADARequest.PS_JSONPARAMS) != null)
   		{
-  			this.yadaReq.setJsonParams(paraMap.get(YADARequest.PS_JSONPARAMS));
+  			getYADARequest().setJsonParams(paraMap.get(YADARequest.PS_JSONPARAMS));
   		}
   		
   		if (paraMap.get(YADARequest.PL_JOIN) != null)
       {
-        this.yadaReq.setJoin(paraMap.get(YADARequest.PL_JOIN));
+        getYADARequest().setJoin(paraMap.get(YADARequest.PL_JOIN));
       }
   		if (paraMap.get(YADARequest.PS_JOIN) != null)
       {
-        this.yadaReq.setJoin(paraMap.get(YADARequest.PS_JOIN));
+        getYADARequest().setJoin(paraMap.get(YADARequest.PS_JOIN));
       }
   		if (paraMap.get(YADARequest.PL_LEFTJOIN) != null)
       {
-        this.yadaReq.setLeftJoin(paraMap.get(YADARequest.PL_LEFTJOIN));
+        getYADARequest().setLeftJoin(paraMap.get(YADARequest.PL_LEFTJOIN));
       }
       if (paraMap.get(YADARequest.PS_LEFTJOIN) != null)
       {
-        this.yadaReq.setLeftJoin(paraMap.get(YADARequest.PS_LEFTJOIN));
+        getYADARequest().setLeftJoin(paraMap.get(YADARequest.PS_LEFTJOIN));
       }
       
   		if (paraMap.get(YADARequest.PL_LABELS) != null)
   		{
-  			this.yadaReq.setLabels(paraMap.get(YADARequest.PL_LABELS));
+  			getYADARequest().setLabels(paraMap.get(YADARequest.PL_LABELS));
   		}
   		if (paraMap.get(YADARequest.PL_MAIL) != null)
   		{
-  			this.yadaReq.setMail(paraMap.get(YADARequest.PL_MAIL));
+  			getYADARequest().setMail(paraMap.get(YADARequest.PL_MAIL));
   		}
   		if (paraMap.get(YADARequest.PL_METHOD) != null && !paraMap.get(YADARequest.PL_METHOD).equals(YADARequest.METHOD_GET))
   		{
-  			this.yadaReq.setMethod(paraMap.get(YADARequest.PL_METHOD));
+  			getYADARequest().setMethod(paraMap.get(YADARequest.PL_METHOD));
   		}
   		if (paraMap.get(YADARequest.PS_METHOD) != null && !paraMap.get(YADARequest.PS_METHOD).equals(YADARequest.METHOD_GET))
   		{
-  			this.yadaReq.setMethod(paraMap.get(YADARequest.PS_METHOD));
+  			getYADARequest().setMethod(paraMap.get(YADARequest.PS_METHOD));
   		}
   		if (paraMap.get(YADARequest.PL_OVERARGS) != null)
   		{
-  			this.yadaReq.setBypassargs(paraMap.get(YADARequest.PL_OVERARGS));
+  		  setDeprecatedPlugin(paraMap, YADARequest.PL_OVERARGS);
   		}
   		if (paraMap.get(YADARequest.PS_OVERARGS) != null)
   		{
-  			this.yadaReq.setBypassargs(paraMap.get(YADARequest.PS_OVERARGS));
+  		  setDeprecatedPlugin(paraMap, YADARequest.PS_OVERARGS);
   		}
   		if (paraMap.get(YADARequest.PL_BYPASSARGS) != null)
   		{
-  			this.yadaReq.setBypassargs(paraMap.get(YADARequest.PL_BYPASSARGS));
+  		  setDeprecatedPlugin(paraMap, YADARequest.PL_BYPASSARGS);
   		}
   		if (paraMap.get(YADARequest.PS_BYPASSARGS) != null)
   		{
-  			this.yadaReq.setBypassargs(paraMap.get(YADARequest.PS_BYPASSARGS));
+  		  setDeprecatedPlugin(paraMap, YADARequest.PS_BYPASSARGS);
   		}
   		if (paraMap.get(YADARequest.PL_PAGE) != null)
   		{
-  			this.yadaReq.setPage(paraMap.get(YADARequest.PL_PAGE));
+  			getYADARequest().setPage(paraMap.get(YADARequest.PL_PAGE));
   		}
   		if (paraMap.get(YADARequest.PS_PAGE) != null)
   		{
-  			this.yadaReq.setPage(paraMap.get(YADARequest.PS_PAGE));
+  			getYADARequest().setPage(paraMap.get(YADARequest.PS_PAGE));
   		}
   		if (paraMap.get(YADARequest.PL_PAGESIZE) != null)
   		{
-  			this.yadaReq.setPageSize(paraMap.get(YADARequest.PL_PAGESIZE));
+  			getYADARequest().setPageSize(paraMap.get(YADARequest.PL_PAGESIZE));
   		}
   		if (paraMap.get(YADARequest.PS_PAGESIZE) != null)
   		{
-  			this.yadaReq.setPageSize(paraMap.get(YADARequest.PS_PAGESIZE));
+  			getYADARequest().setPageSize(paraMap.get(YADARequest.PS_PAGESIZE));
   		}
   		if (paraMap.get(YADARequest.PL_PAGESTART) != null)
   		{
-  			this.yadaReq.setPageStart(paraMap.get(YADARequest.PL_PAGESTART));
+  			getYADARequest().setPageStart(paraMap.get(YADARequest.PL_PAGESTART));
   		}
   		if (paraMap.get(YADARequest.PS_PAGESTART) != null)
   		{
-  			this.yadaReq.setPageStart(paraMap.get(YADARequest.PS_PAGESTART));
+  			getYADARequest().setPageStart(paraMap.get(YADARequest.PS_PAGESTART));
   		}
   		if (paraMap.get(YADARequest.PL_PARAMS) != null)
   		{
-  			this.yadaReq.setParams(paraMap.get(YADARequest.PL_PARAMS));
+  			getYADARequest().setParams(paraMap.get(YADARequest.PL_PARAMS));
   		}
   		if (paraMap.get(YADARequest.PS_PARAMS) != null)
   		{
-  			this.yadaReq.setParams(paraMap.get(YADARequest.PS_PARAMS));
+  			getYADARequest().setParams(paraMap.get(YADARequest.PS_PARAMS));
   		}
   		if (paraMap.get(YADARequest.PL_PATH) != null)
   		{
-  			this.yadaReq.setSortKey(paraMap.get(YADARequest.PL_PATH));
+  			getYADARequest().setSortKey(paraMap.get(YADARequest.PL_PATH));
   		}
   		if (paraMap.get(YADARequest.PL_PARALLEL) != null)
   		{
-  			this.yadaReq.setParallel(paraMap.get(YADARequest.PL_PARALLEL));
-  		}
-  		if (paraMap.get(YADARequest.PL_PLUGIN) != null)
-  		{
-  			this.yadaReq.setPlugin(paraMap.get(YADARequest.PL_PLUGIN));
-  		}
-  		if (paraMap.get(YADARequest.PS_PLUGIN) != null)
-  		{
-  			l.debug("really:"+paraMap.get(YADARequest.PS_PLUGIN));
-  			this.yadaReq.setPlugin(paraMap.get(YADARequest.PS_PLUGIN));
+  			getYADARequest().setParallel(paraMap.get(YADARequest.PL_PARALLEL));
   		}
   		if (paraMap.get(YADARequest.PL_PLUGINTYPE) != null && !paraMap.get(YADARequest.PL_PLUGINTYPE).equals(YADARequest.PREPROCESS))
   		{
-  			this.yadaReq.setPluginType(paraMap.get(YADARequest.PL_PLUGINTYPE));
+  			getYADARequest().setPluginType(paraMap.get(YADARequest.PL_PLUGINTYPE));
   		}
   		if (paraMap.get(YADARequest.PS_PLUGINTYPE) != null && !paraMap.get(YADARequest.PL_PLUGINTYPE).equals(YADARequest.PREPROCESS))
   		{
-  			this.yadaReq.setPluginType(paraMap.get(YADARequest.PS_PLUGINTYPE));
+  			getYADARequest().setPluginType(paraMap.get(YADARequest.PS_PLUGINTYPE));
   		}
   		if (paraMap.get(YADARequest.PL_POSTARGS) != null)
   		{
-  			this.yadaReq.setPostArgs(paraMap.get(YADARequest.PL_POSTARGS));
+  		  setDeprecatedPlugin(paraMap, YADARequest.PL_POSTARGS);
   		}
   		if (paraMap.get(YADARequest.PS_POSTARGS) != null)
   		{
-  			this.yadaReq.setPostArgs(paraMap.get(YADARequest.PS_POSTARGS));
+  		  setDeprecatedPlugin(paraMap, YADARequest.PS_POSTARGS);
   		}
   		if (paraMap.get(YADARequest.PL_PREARGS) != null)
   		{
-  			this.yadaReq.setPreArgs(paraMap.get(YADARequest.PL_PREARGS));
+  		  setDeprecatedPlugin(paraMap, YADARequest.PL_PREARGS);
   		}
   		if (paraMap.get(YADARequest.PS_PREARGS) != null)
   		{
-  			this.yadaReq.setPreArgs(paraMap.get(YADARequest.PS_PREARGS));
+  		  setDeprecatedPlugin(paraMap, YADARequest.PS_PREARGS);
   		}
+  		
+  		// the next two conditionals must come after pre, post, and bypass arg handling
+  		if (paraMap.get(YADARequest.PL_PLUGIN) != null)
+      {
+        getYADARequest().setPlugin(paraMap.get(YADARequest.PL_PLUGIN));
+      }
+      if (paraMap.get(YADARequest.PS_PLUGIN) != null)
+      {
+        getYADARequest().setPlugin(paraMap.get(YADARequest.PS_PLUGIN));
+      }
+      
+      
   		if (paraMap.get(YADARequest.PL_PRETTY) != null)
   		{
-  			this.yadaReq.setPretty(paraMap.get(YADARequest.PL_PRETTY));
+  			getYADARequest().setPretty(paraMap.get(YADARequest.PL_PRETTY));
   		}
   		if (paraMap.get(YADARequest.PS_PRETTY) != null)
   		{
-  			this.yadaReq.setPretty(paraMap.get(YADARequest.PS_PRETTY));
+  			getYADARequest().setPretty(paraMap.get(YADARequest.PS_PRETTY));
   		}
   		if (paraMap.get(YADARequest.PL_PROXY) != null)
   		{
-  			this.yadaReq.setProxy(paraMap.get(YADARequest.PL_PROXY));
+  			getYADARequest().setProxy(paraMap.get(YADARequest.PL_PROXY));
   		}
   		if (paraMap.get(YADARequest.PS_PROXY) != null)
   		{
-  			this.yadaReq.setProxy(paraMap.get(YADARequest.PS_PROXY));
+  			getYADARequest().setProxy(paraMap.get(YADARequest.PS_PROXY));
   		}
   		if (paraMap.get(YADARequest.PL_QNAME) != null && !paraMap.get(YADARequest.PL_QNAME).equals(YADARequest.DEFAULT_QNAME))
   		{
-  			this.yadaReq.setQname(paraMap.get(YADARequest.PL_QNAME));
+  			getYADARequest().setQname(paraMap.get(YADARequest.PL_QNAME));
   		}
   		if (paraMap.get(YADARequest.PS_QNAME) != null && !paraMap.get(YADARequest.PS_QNAME).equals(YADARequest.DEFAULT_QNAME))
   		{
-  			this.yadaReq.setQname(paraMap.get(YADARequest.PS_QNAME));
+  			getYADARequest().setQname(paraMap.get(YADARequest.PS_QNAME));
   		}
   		if (paraMap.get(YADARequest.PL_ROW_DELIMITER) != null)
   		{
-  			this.yadaReq.setRowDelimiter(paraMap.get(YADARequest.PL_ROW_DELIMITER));
+  			getYADARequest().setRowDelimiter(paraMap.get(YADARequest.PL_ROW_DELIMITER));
   		}
   		if (paraMap.get(YADARequest.PS_ROW_DELIMITER) != null)
   		{
-  			this.yadaReq.setRowDelimiter(paraMap.get(YADARequest.PS_ROW_DELIMITER));
+  			getYADARequest().setRowDelimiter(paraMap.get(YADARequest.PS_ROW_DELIMITER));
   		}
   		if (paraMap.get(YADARequest.PL_RESPONSE) != null)
   		{
-  			this.yadaReq.setResponse(paraMap.get(YADARequest.PL_RESPONSE));
+  			getYADARequest().setResponse(paraMap.get(YADARequest.PL_RESPONSE));
   		}
   		if (paraMap.get(YADARequest.PS_RESPONSE) != null)
   		{
-  			this.yadaReq.setResponse(paraMap.get(YADARequest.PS_RESPONSE));
+  			getYADARequest().setResponse(paraMap.get(YADARequest.PS_RESPONSE));
   		}
   		if (paraMap.get(YADARequest.PL_SORTKEY) != null)
   		{
-  			this.yadaReq.setSortKey(paraMap.get(YADARequest.PL_SORTKEY));
+  			getYADARequest().setSortKey(paraMap.get(YADARequest.PL_SORTKEY));
   		}
   		if (paraMap.get(YADARequest.PS_SORTKEY) != null)
   		{
-  			this.yadaReq.setSortKey(paraMap.get(YADARequest.PS_SORTKEY));
+  			getYADARequest().setSortKey(paraMap.get(YADARequest.PS_SORTKEY));
   		}
   		if (paraMap.get(YADARequest.PL_SORTORDER) != null && !paraMap.get(YADARequest.PL_SORTORDER).equals(YADARequest.SORT_ASC))
   		{
-  			this.yadaReq.setSortOrder(paraMap.get(YADARequest.PL_SORTORDER));
+  			getYADARequest().setSortOrder(paraMap.get(YADARequest.PL_SORTORDER));
   		}
   		if (paraMap.get(YADARequest.PS_SORTORDER) != null && !paraMap.get(YADARequest.PS_SORTORDER).equals(YADARequest.SORT_ASC))
   		{
-  			this.yadaReq.setSortOrder(paraMap.get(YADARequest.PS_SORTORDER));
+  			getYADARequest().setSortOrder(paraMap.get(YADARequest.PS_SORTORDER));
   		}
   		if (paraMap.get(YADARequest.PL_USER) != null && !paraMap.get(YADARequest.PL_USER).equals(YADARequest.DEFAULT_USER))
   		{
-  			this.yadaReq.setUser(paraMap.get(YADARequest.PL_USER));
+  			getYADARequest().setUser(paraMap.get(YADARequest.PL_USER));
   		}
   		if (paraMap.get(YADARequest.PS_USER) != null && !paraMap.get(YADARequest.PS_USER).equals(YADARequest.DEFAULT_USER))
   		{
-  			this.yadaReq.setUser(paraMap.get(YADARequest.PS_USER));
+  			getYADARequest().setUser(paraMap.get(YADARequest.PS_USER));
   		}
   		if (paraMap.get(YADARequest.PL_VIEWLIMIT) != null)
   		{
-  			this.yadaReq.setViewLimit(paraMap.get(YADARequest.PL_VIEWLIMIT));
+  			getYADARequest().setViewLimit(paraMap.get(YADARequest.PL_VIEWLIMIT));
   		}
   		if (paraMap.get(YADARequest.PS_VIEWLIMIT) != null)
   		{
-  			this.yadaReq.setViewLimit(paraMap.get(YADARequest.PS_VIEWLIMIT));
+  			getYADARequest().setViewLimit(paraMap.get(YADARequest.PS_VIEWLIMIT));
   		}
   		if (paraMap.get(YADARequest.PL_UPDATE_STATS) != null)
       {
-        this.yadaReq.setUpdateStats(paraMap.get(YADARequest.PL_UPDATE_STATS));
+        getYADARequest().setUpdateStats(paraMap.get(YADARequest.PL_UPDATE_STATS));
       }
       if (paraMap.get(YADARequest.PS_UPDATE_STATS) != null)
       {
-        this.yadaReq.setUpdateStats(paraMap.get(YADARequest.PS_UPDATE_STATS));
+        getYADARequest().setUpdateStats(paraMap.get(YADARequest.PS_UPDATE_STATS));
       }
-  		this.yadaReq.setParameterMap(paraMap);
+  		getYADARequest().setParameterMap(paraMap);
   		
-  		l.debug("current settings:\n"+this.yadaReq.toString());
+  		l.debug("current settings:\n"+getYADARequest().toString());
 	  }
 	  catch(YADARequestException e)
 	  {
@@ -500,6 +505,7 @@ public class Service {
 			YADAQuery yq = getCurrentQuery();
 			j.put("Help", "https://github.com/Novartis/YADA#other");
 			j.put("Source", "https://github.com/Novartis/YADA");
+			j.put("Version", YADAUtils.getVersion());
 			j.put("Exception", e.getClass().getName());
       j.put("Message",msg);
       j.put("Qname",yq != null ? yq.getQname() : "UNKNOWN");
@@ -520,9 +526,9 @@ public class Service {
   			  ja.put(jo);
   			}
       }
-			if(this.yadaReq.getRequest() != null && this.yadaReq.getRequest().getMethod() != null)
+			if(getYADARequest().getRequest() != null && getYADARequest().getRequest().getMethod() != null)
 			{
-				String type = this.yadaReq.getRequest().getMethod(); 
+				String type = getYADARequest().getRequest().getMethod(); 
 				j.put("Type",type);
 			}
 			
@@ -543,7 +549,7 @@ public class Service {
 			}
 			result = j.toString(2);
 		} 
-		catch (JSONException e1)
+		catch (JSONException | YADAResourceException e1)
 		{
 			e1.printStackTrace();
 		} 
@@ -569,7 +575,7 @@ public class Service {
 			 * If each request has a single adaptor, it precludes executing multiple queries across disparate sources 
 			 * 
 			 */
-			String method = this.yadaReq.getMethod();
+			String method = getYADARequest().getMethod();
 			if (YADARequest.METHOD_UPLOAD.equals(method))
 			{
 				result = executeUpload();
@@ -579,9 +585,9 @@ public class Service {
 				// automatically set backwards-compatibility for updates/inserts if method parameter for "update" is included
 				if(YADARequest.METHOD_UPDATE.equals(method))
 				{
-					this.yadaReq.setResponse(new String[] {"com.novartis.opensource.yada.format.CountResponse"});
+					getYADARequest().setResponse(new String[] {"com.novartis.opensource.yada.format.CountResponse"});
 				}
-				this.qMgr = new QueryManager(this.yadaReq);
+				this.qMgr = new QueryManager(getYADARequest());
 				//TODO Sequential execution: for drivers like vertica's which won't execute a second request if the resultset of the first is still open
 				result = _execute();
 			}
@@ -939,7 +945,7 @@ public class Service {
 			response = getDefaultResponse(format);
 		}
 		//TODO enable verbose response options which include details about processing of query
-		result = response.compose(getYADAQueryResults()).toString(this.yadaReq.getPretty());
+		result = response.compose(getYADAQueryResults()).toString(getYADARequest().getPretty());
 		
 		return result;
 	}
@@ -999,8 +1005,9 @@ public class Service {
 			String[] plugins  = yq.getYADAQueryParamValue(YADARequest.PS_PLUGIN);
 			if (null != plugins && plugins.length > 0)
 			{
-				for (String plugin : plugins)
-				{
+			  for (int i=0; i < plugins.length; i++)
+        {
+          String plugin = plugins[i];
 					l.debug("possible bypass plugin is["+plugin+"]");
 					if (null != plugin && !"".equals(plugin))
 					{
@@ -1018,6 +1025,8 @@ public class Service {
 									try
 									{
 										Object plugObj = pluginClass.newInstance();
+										if(getYADARequest().getPluginArgs().size() > 0) // api call might not set any args
+										  getYADARequest().setArgs(getYADARequest().getPluginArgs().get(i));
 										yqr = ((Bypass)plugObj).engage(getYADARequest(),yq);
 										yq.setResult(yqr);
 									}
@@ -1068,8 +1077,9 @@ public class Service {
 			String[] plugins  = yq.getYADAQueryParamValue(YADARequest.PS_PLUGIN);
 			if ( null != plugins && plugins.length > 0)
 			{
-				for (String plugin : plugins)
-				{
+			  for (int i=0; i < plugins.length; i++)
+	      {
+			    String plugin = plugins[i];
 					l.debug("possible preprocess plugin is["+plugin+"]");
 					if (null != plugin && !"".equals(plugin))
 					{
@@ -1086,6 +1096,8 @@ public class Service {
 								try
 								{
 									Object            plugObj     = pluginClass.newInstance();
+									if(getYADARequest().getPluginArgs().size() > 0) // api call might not set any args
+									  getYADARequest().setArgs(getYADARequest().getPluginArgs().get(i));
 									((Preprocess)plugObj).engage(getYADARequest(),yq);
 									// reset the query internals
 									try
@@ -1123,6 +1135,14 @@ public class Service {
 				}
 			}
 		}
+		else
+		{
+	    if(yq.isProtected())
+	    {
+	      String msg = "Unauthorized";
+	      throw new YADASecurityException(msg);
+	    }
+		}
 	}
 	
 	/**
@@ -1139,8 +1159,9 @@ public class Service {
 			String[] plugins  = yq.getYADAQueryParamValue(YADARequest.PS_PLUGIN);
 			if ( null != plugins && plugins.length > 0 )
 			{
-				for (String plugin : plugins)
-				{
+			  for (int i=0; i < plugins.length; i++)
+        {
+          String plugin = plugins[i];
 					l.debug("possible postprocess plugin is["+plugin+"]");
 					if (null != plugin && !"".equals(plugin))
 					{
@@ -1203,8 +1224,9 @@ public class Service {
 		String[] plugins  = lyadaReq.getPlugin();
 		if (null != plugins && plugins.length > 0)
 		{
-			for (String plugin : plugins)
-			{
+		  for (int i=0; i < plugins.length; i++)
+      {
+        String plugin = plugins[i];
 				l.debug("possible Bypass plugin is["+plugin+"]");
 				if (null != plugin && !"".equals(plugin))
 				{
@@ -1222,6 +1244,8 @@ public class Service {
 								try
 								{
 									Object plugObj = pluginClass.newInstance();
+									if(getYADARequest().getPluginArgs().size() > 0) // api call might not set any args
+									  getYADARequest().setArgs(getYADARequest().getPluginArgs().get(i));
 									result = ((Bypass)plugObj).engage(getYADARequest());
 								}
 								catch(InstantiationException e)
@@ -1268,8 +1292,10 @@ public class Service {
 		String[] plugins  = yReq.getPlugin();
 		if ( null != plugins && plugins.length > 0)
 		{
-			for (String plugin : plugins)
+		  // TODO evaluate vulnerabilities to circumvent query-level security plugins
+			for (int i=0; i < plugins.length; i++)
 			{
+			  String plugin = plugins[i];
 				l.debug("possible preprocess plugin is["+plugin+"]");
 				if (null != plugin && !"".equals(plugin))
 				{
@@ -1286,6 +1312,8 @@ public class Service {
 							try
 							{
 								Object plugObj = pluginClass.newInstance();
+								if(getYADARequest().getPluginArgs().size() > 0) // api call might not set any args
+								  yReq.setArgs(yReq.getPluginArgs().get(i));
 								setYADARequest(((Preprocess)plugObj).engage(yReq));
 								// reset query manager, as service parameters may have changed
 								try
@@ -1374,11 +1402,12 @@ public class Service {
 	private String engagePostprocess(String result) throws YADAPluginException
 	{
 		String   lResult = result;
-		String[] plugins = this.yadaReq.getPlugin();
+		String[] plugins = getYADARequest().getPlugin();
 		if ( null != plugins && plugins.length > 0 )
 		{
-			for (String plugin : plugins)
-			{
+		  for (int i=0; i < plugins.length; i++)
+      {
+        String plugin = plugins[i];
 				l.debug("possible postprocess plugin is["+plugin+"]");
 				if (null != plugin && !"".equals(plugin))
 				{
@@ -1394,7 +1423,9 @@ public class Service {
 							try
 							{
 								Object plugObj = pluginClass.newInstance();
-								lResult = ((Postprocess)plugObj).engage(this.yadaReq, lResult);
+								if(getYADARequest().getPluginArgs().size() > 0) // api call might not set any args
+								  getYADARequest().setArgs(getYADARequest().getPluginArgs().get(i));
+								lResult = ((Postprocess)plugObj).engage(getYADARequest(), lResult);
 							}
 							catch(InstantiationException e)
 							{
@@ -1444,5 +1475,28 @@ public class Service {
 	 */
 	public YADARequest getYADARequest() {
 		return this.yadaReq;
-	}	
+	}
+	
+	/**
+	 * Takes the old-style argument parameters and appends them to the {@link YADARequest#PS_PLUGIN} parameter.
+	 * The new config is then handled downstream during normal plugin parameter processing
+	 * @param paraMap the {@link Map} passed in the {@link HttpRequest}
+	 * @param constant the {@link YADARequest} argument constant
+	 */
+	private void setDeprecatedPlugin(Map<String, String[]> paraMap, String constant)
+	{
+	  String[] plugins = paraMap.get(YADARequest.PS_PLUGIN);
+    String plugin = "";
+    if(plugins == null)
+    {
+      plugins = paraMap.get(YADARequest.PL_PLUGIN);
+      if(plugins != null)
+        paraMap.remove(YADARequest.PL_PLUGIN);
+    }
+    if(plugins != null)
+    {
+      plugin = plugins[0] + "," + paraMap.get(constant)[0]; 
+    }
+    paraMap.put(YADARequest.PS_PLUGIN,new String[] { plugin });
+	}
 }

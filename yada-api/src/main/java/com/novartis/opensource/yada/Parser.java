@@ -412,7 +412,7 @@ public class Parser implements StatementVisitor {
    *         colums, plus the query type
    * @throws YADAParserException
    *           when an exception is encountered during the parsing operation
-   * @deprecated since 7.1.0
+   * @deprecated as of 7.1.0
    */
   @Deprecated
   public Hashtable<String, String[]> parse(String sql)
@@ -474,7 +474,7 @@ public class Parser implements StatementVisitor {
    * 
    * @param statementToProcess
    *          the deparsed query
-   * @deprecated since 7.1.0
+   * @deprecated as of 7.1.0
    */
   @Deprecated
   private void processStatement(Statement statementToProcess) {

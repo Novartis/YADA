@@ -60,6 +60,10 @@ public class YADAParam
 	 */
 	private boolean isDefault = false;
 	/**
+	 * The parameter id
+	 */
+	private int id;
+	/**
 	 * Default constructor
 	 */
 	public YADAParam()
@@ -82,21 +86,57 @@ public class YADAParam
 	}
 	
 	/**
-	 * Create a new instance with, presumably from the YADA index, with {@code isDefault} set to {@code true}.
-	 * @param target the parameter target, an app or query
-	 * @param name the parameter name
-	 * @param value the parameter value
-	 * @param rule the parameter mutability rule, {@link #OVERRIDEABLE} or {@link #NONOVERRIDEABLE}	 * @param isDefault
-	 * @param isDefault set to {@code true} when the parameter is retrieved from the YADA index, defaults to {@code false}
-	 */
-	public YADAParam(String name, String value, String target, int rule, boolean isDefault)
-	{
-		setName(name);
-		setValue(value);
-		setTarget(target);
-		setRule(rule);
-		setDefault(isDefault);
-	}
+   * Create a new instance with, presumably from the YADA index, with {@code isDefault} set to {@code true}.
+   * @param target the parameter target, an app or query
+   * @param name the parameter name
+   * @param value the parameter value
+   * @param rule the parameter mutability rule, {@link #OVERRIDEABLE} or {@link #NONOVERRIDEABLE}  * @param isDefault
+   * @param isDefault set to {@code true} when the parameter is retrieved from the YADA index, defaults to {@code false}
+   */
+  public YADAParam(String name, String value, String target, int rule, boolean isDefault)
+  {
+    setName(name);
+    setValue(value);
+    setTarget(target);
+    setRule(rule);
+    setDefault(isDefault);
+  }
+	
+	/**
+   * Create new instance with default {@code isDefault} value of {@code false}.
+	 * @param id the parameter id
+   * @param target the parameter target, an app or query
+   * @param name the parameter name
+   * @param value the parameter value
+   * @param rule the parameter mutability rule, {@link #OVERRIDEABLE} or {@link #NONOVERRIDEABLE}
+   */
+  public YADAParam(int id,String name, String value, String target, int rule)
+  {
+    setId(id);
+    setTarget(target);
+    setName(name);
+    setValue(value);
+    setRule(rule);
+  }
+  
+  /**
+   * Create a new instance with, presumably from the YADA index, with {@code isDefault} set to {@code true}.
+   * @param id the parameter id
+   * @param target the parameter target, an app or query
+   * @param name the parameter name
+   * @param value the parameter value
+   * @param rule the parameter mutability rule, {@link #OVERRIDEABLE} or {@link #NONOVERRIDEABLE}  * @param isDefault
+   * @param isDefault set to {@code true} when the parameter is retrieved from the YADA index, defaults to {@code false}
+   */
+  public YADAParam(int id, String name, String value, String target, int rule, boolean isDefault)
+  {
+    setId(id);
+    setName(name);
+    setValue(value);
+    setTarget(target);
+    setRule(rule);
+    setDefault(isDefault);
+  }
 	
 	/**
 	 * Standard accessor for variable.
@@ -186,12 +226,30 @@ public class YADAParam
 	@Override
 	public String toString()
 	{
-		return "{\"name\":\""+getName()
+		return "{"
+		    +"\"id\":\""+getId()
+		    +"\"name\":\""+getName()
 				+"\",\"value\":\""+getValue()
 				+"\",\"target\":\""+getTarget()
 				+"\",\"rule\":\""+getRule()
 				+"\",\"isDefault\":\""+String.valueOf(isDefault())+"\"}";
 	}
+
+  /**
+   * Standard accessor for variable.
+   * @return the id
+   */
+  public int getId() {
+    return id;
+  }
+
+  /**
+   * Standard mutator for variable.
+   * @param id the id to set
+   */
+  public void setId(int id) {
+    this.id = id;
+  }
 
 	
 }

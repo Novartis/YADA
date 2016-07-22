@@ -58,7 +58,7 @@ public class YADAExpressionDeParser extends
 	private ArrayList<Column>     columns  		    = new ArrayList<>();
 	/**
 	 * An index of columns referenced by SQL {@code IN} clauses
-	 * @deprecated since 7.1.0
+	 * @deprecated as of 7.1.0
 	 */
 	@Deprecated
   private ArrayList<Column>     inColumns		    = new ArrayList<>();
@@ -88,7 +88,7 @@ public class YADAExpressionDeParser extends
 	public boolean                hasSubSelect      = false;
 	/**
 	 * A flag for managing query deparsing state
-	 * @deprecated since 7.1.0
+	 * @deprecated as of 7.1.0
 	 */
 	@Deprecated
   private boolean               inExpression      = false;

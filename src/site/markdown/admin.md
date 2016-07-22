@@ -11,6 +11,7 @@
 
 See the [Quickstart/Deployment Guide] if you've not yet installed YADA on a server somewhere.  
 See the [User Guide] if you're not sure what you're going to do with admin tool.
+Skip to the [Security Wizard] section if that's what you need.
 
 
 ## Where is yada-admin?
@@ -18,7 +19,7 @@ See the [User Guide] if you're not sure what you're going to do with admin tool.
 YADA ships with a webapp called **yada-admin**. It should be accessible after install at your `YADA context/yada-admin` url.  For example, if you installed the quickstart app version 6.0.0 on your localhost in a default tomcat config (port 8080,) the yada-admin app would be accessible at
 
 ```
-http://localhost:8080/YADA-Quickstart-6.0.0/yada-admin
+http://localhost:8080/YADA-Quickstart-x.x.x/yada-admin
 ```
 ## Using yada-admin
 **yada-admin** enables the following activity:
@@ -31,6 +32,8 @@ http://localhost:8080/YADA-Quickstart-6.0.0/yada-admin
 5. Assign new default YADA parameters with values for existing queries
 6. Modify default YADA parameters and values
 7. Delete default YADA parameters
+8. Implement simple or complex security configurations on a per query basis
+9. Restrict execution of all queries for an application
 8. Update in-memory cache with new query versions and configuration automatically
 9. Backup all queries for the currently selected app to a JSON text file
 8. Switch between YADA apps 
@@ -131,7 +134,7 @@ To modify a query, click on the row containing the query you wish to edit.  The 
 
 <img src="../resources/images/ui-mod-query.png" width="600" height="400"/>
 
-Note that comments (i.e., documentation) can also be included.
+Note that comments (i.e., documentation) can also be included. This is also where the [Security Wizard] can be found to implement a protection scheme for a query.  (See the [Security Guide] for details.
 
 Also, note the `Qname` and `Query` can easily be copied to your clipboard with the copy buttons.
 
@@ -157,7 +160,7 @@ Click the `Rename` button and a dialog box will appear with the value `<APP> REN
 
 Click the `Copy` button and a dialog box will appear with the value `<APP> Copy of <qname>`:
 
-<img src="../resources/images/ui-copy.png" width="600" height="150"/> 
+<img src="../resources/images/ui-copy.png" width="600" height="175"/> 
 
 You have the option of including or excluding any YADA default parameters that might be set on the original query.
 
@@ -165,7 +168,117 @@ You have the option of including or excluding any YADA default parameters that m
 
 To filter the visible queries in the queries list by any string in the `qname` or `query` column, just type it in the filter box.  The found set of queries will reduce instantly.
 
-<img src="../resources/images/ui-filters.png" width="300" height="70"/>
+<img src="../resources/images/ui-filters.png" width="300" height="60"/>
+
+<a name="secwizard"></a>
+## Security Wizard
+As of version 7.1.0 there is a new wizard-like interface for securing data and query execution. As explained in the [Security Guide], protecting your data is acheived through four optional tiers of configuration:
+
+1. **URL Pattern Matching** (reject any query requested of the wrong url, host, path, etc)
+2. **Token Validation** (confirm the identity of a user)
+3. **Execution policies** (prohibit unauthorized execution of queries)
+4. **Content policies** (i.e., row-level filtering)
+
+Click on the `Security` panel header to expand the Security Wizard.
+
+<img src="../resources/images/ui-sec-hdr.png" width="750" height="40"/>
+
+The panel opens:
+
+<img src="../resources/images/ui-sec-empty.png" width="750" height="267"/>
+
+### Mark this query as secure
+
+It is possible to restrict execution of any query without proceeding to define the details of the protection scheme.  This is done by clicking on the "**Mark this query as secure**" checkbox highlighted in the image below:
+
+<img src="../resources/images/ui-sec-mark-query.png" width="750" height="267"/>
+
+When checked, as below, the query will fail execution with a `YADASecurityException`, returning the message `Unauthorized`. HTTP requests to such a query will be returned with a `Status = 403, Forbidden`
+
+<img src="../resources/images/ui-sec-mark-query-x.png" width="750" height="267"/>
+
+### Mark all *APP* queries as secure
+
+The next checkbox, "**Mark all *APP* queries as secure**" will have the same effect but for all queries mapped to ***APP***. ==Be very careful with this setting once your *APP* goes into production. It will disable execution of any *APP* queries for which a more specific protection scheme has not been implemented.== Specifically, if an *APP* is marked thusly, any *APP* query request will cause a `YADASecurityException` to be thrown until it has a security preprocessor plugin configured for it. 
+
+This checkbox exists essentially to lock down apps under development that will eventually have more granular protection scheme implementations. It is not acceptable nor advisable to leave data vulnerable during development.
+
+### Plugin
+
+<img src="../resources/images/ui-sec-plugin.png" width="750" height="267"/>
+
+The plugin field, highlighted in blue above, is rather self explanatory. It is analogous to the first argument of the `pl` or `plugin` URL parameter value. Thus, the same rules apply. The value must be a java class name or fully-qualified java class name referencing a subclass of `AbstractPreprocessor` or `Gatekeeper` implementation of one or more of the following interfaces `SecurityPolicy`, `ExecutionPolicy`, `ContentPolicy`, `Validation`, or `TokenValidator`.
+
+`Gatekeeper` is an effective option for most use-cases.  See the [Security Guide] for more information.
+
+### Actions
+
+<img src="../resources/images/ui-sec-actions.png" width="750" height="267"/>
+
+This is referenced next because it appears next, but it is not required to be used next. 
+
+What does each option do?
+
+#### Save changes
+
+`Save changes` is an essential step in protection scheme implementation.  Choosing this menu item performs the following tasks:
+
+* Saves the current state of the default parameter and related properties to the YADA index.
+* Updates the in-browser cache of default parameter and property data enabling the bookkeeping required to facilitate changes in the `Security` panel, as well synchronization of the `Security` and `Default Parameters` panel.
+
+**==You must click `Save changes` to store your current protection scheme.==** Omitting this step and clicking the blue `Save` button at the bottom of the `Edit Query` modal dialog box will not produce the desired results.
+
+#### Remove selected policies
+
+Click the `Remove` checkbox, highlighted in blue below, next to the policies you wish to delete from the protection scheme.  Choosing `Remove selected polities` will update the user interface and in-browser cache of security metadata (i.e., parameters and properties.) **==You must still click `Save changes` to update the protection scheme in the YADA index==**
+
+<img src="../resources/images/ui-sec-remove.png" width="750" height="267"/> 
+
+#### Add another policy (same plugin)
+
+Choose this menu item to add multiple security policies to your implementation. For example perhaps you want both a Content Policy and an Execution Policy.  This menu item will facilitate that.  Pictured below is the security panel with two policy sections:
+
+<img src="../resources/images/ui-sec-two-pols.png" width="750" height="348"/>
+
+**==You must still click `Save changes` to update the protection scheme in the YADA index==**
+
+#### Add another policy (different plugin)
+
+Sometimes you may want or need to use, for example, `Gatekeeper` for execution and content policies, but a custom plugin for `Token Validation`.  This menu item facilitates that and similar use cases.  Pictured below is the result of choosing this menu item:
+
+<img src="../resources/images/ui-sec-two-plug.png" width="750" height="457"/>
+
+**==You must choose `Save changes` from the menu next to each plugin to retain the recent changes to that protection scheme.==** The `Actions` menu only pertains to the nearest plugin.
+
+<a name="argstr"></a>
+### Argument String
+
+The argument string is a read-only element that displays the current configuration as if it were a URL parameter (omitting the plugin name from the first position).  Below is an example of a triple-protection scheme using URL pattern matching, and execution and content policies:
+
+<img src="../resources/images/ui-sec-argstr.png" width="750" height="505"/>
+
+Note that the *APP* to which the protector query for the execution policy belongs is `FOO` but the query it is protecting belongs to `YADA`. This is perfectly fine. In fact, it enables one to create a series of protector queries that might refer to a credential store shared across multiple apps.
+
+### Policy Type
+
+<img src="../resources/images/ui-sec-type.png" width="750" height="309"/>
+
+Each selection in the `Policy Type` drop-down potentially adds a security policy string to the default parameter proprocessor plugin argument string. The word *potentially* is used to remind you you must still **save changes** before the settings are retained.
+
+Making a selection from the `Policy Type` drop down will add required text to the `Argument` textarea, as in the image below.
+
+<img src="../resources/images/ui-sec-argdef.png" width="750" height="722"/>
+
+The text entered into the argument field upon seletion is the `name` portion of the argument `name=value` pair. The `value` is required to be entered by the user.  
+
+A few things to note:
+
+1. The `Token Validation` option results in the value `No argument required` and disabling of the textarea.  This option is in the list to facilitate configuration, but it does not have any affect. It also will not appear on subsequent re-displays of the security wizard whether or not it is employed.
+2. As explained in the [Security Guide], Execution Policy (Columns) and Execution Policy (Indices) are neither incompatible nor mutually exclusive. It may be preferable to use them both. 
+3. Also explained in the guide is the requirement to map a "Protector Query" to a "Protected Query" in an execution policy scheme. When selecting either `Execution Policy` choice from the `Policy Type` dropdown, the `Protector Qname` field appears. For the moment, this field must contain the same value for both choices, if both choices are used.
+4. Also explained in the guide is the fact that a "Protector Query" must be assigned a `Type`. A `whitelist` is expected to return at least 1 row to permit query execution. A `blacklist` must return zero rows to permit execution.
+
+For more information, see the [Security Guide].
 
 
 ## Default YADA Parameters
@@ -182,7 +295,7 @@ A default YADA parameter is tantamount to hardcoding a parameter and static valu
 
 To add a default YADA parameter to a query, start typing in the `Parameter` input box. An auto-suggest menu will appear.  If you don't know what a particular parameter means, roll over the menu item to see the popup hint.  Click on it to select it.
 
-<img src="../resources/images/ui-param-hint.png" width="600" height="330"/>
+<img src="../resources/images/ui-param-hint.png" width="750" height="655"/>
 
 Note that some YADA parameters expect boolean values, some integers, etc.  The `Value` input control should change based on your selection and validate your input as well.
 
@@ -251,7 +364,9 @@ Once you've selected the queries you wish to transfer, click the `Migrate` butto
 
 The UI will refresh. If you selected all the rows of the table, indicated there are no more queries to migrate. If you selected only some of the rows, only those previously unselected should appear.
 
+[Security Guide]: security.md
 [Plugin Guide]: pluginguide.md
 [Quickstart/Deployment Guide]: deployment.md
 [User Guide]: guide.md
 [YADA Parameter Specification]: params.md
+[Security Wizard]: #secwizard

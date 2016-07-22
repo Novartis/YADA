@@ -102,9 +102,17 @@ public class Finder
 	 */
 	private final static String YADA_QUERY       = "Q";
 	/**
-	 * Constant equal to: {@value}
-	 */
-	private final static String YADA_PARAMTARGET = "T";
+   * Constant equal to: {@value}
+   */
+  private final static String YADA_APP         = "A";
+  /**
+   * Constant equal to: {@value}
+   */
+  private final static String YADA_PARAMID     = "I";
+  /**
+   * Constant equal to: {@value}
+   */
+  private final static String YADA_PARAMTARGET = "T";
 	/**
 	 * Constant equal to: {@value}
 	 */
@@ -114,28 +122,49 @@ public class Finder
 	 */
 	private final static String YADA_PARAMVAL    = "VAL";
 	/**
-	 * Constant equal to: {@value}
-	 */
-	private final static String YADA_PARAMRULE   = "R";
+   * Constant equal to: {@value}
+   */
+  private final static String YADA_PARAMRULE   = "R";
+  /**
+   * Constant equal to: {@value}
+   */
+  private final static String YADA_PROPTARGET   = "PROPT";
+  /**
+   * Constant equal to: {@value}
+   */
+  private final static String YADA_PROPNAME   = "PROPN";
+  /**
+   * Constant equal to: {@value}
+   */
+  private final static String YADA_PROPVALUE   = "PROPV";
 	/**
 	 * Constant equal to: {@value}
 	 */
 	private final static String SQL_STATS      = "update yada_query set access_count=(select b.access_count+1 from yada_query b where b.qname = ?), last_access=? where qname = ?";
 	/**
-	 * Constant equal to: {@code select a.sql "+YADA_QUERY+", b.source "+YADA_SOURCE+", nvl(b.version,'na') "+YADA_VERSION+", nvl(c.target,'na') "+YADA_PARAMTARGET+", nvl(c.name,'na') "+YADA_PARAMNAME+", nvl(c.value,'na') "+YADA_PARAMVAL+", c.rule "+YADA_PARAMRULE+" from yada_query a join yada_query_conf b on a.app = b.app left join yada_params c on (a.app = c.target or a.name = c.target) where a.name = ? order by c.target}
+	 * Constant equal to: {@code select a.sql "+YADA_QUERY+", b.source "+YADA_SOURCE+", nvl(b.version,'na') "+YADA_VERSION+", nvl(c.target,'na') "+YADA_PARAMTARGET+", nvl(c.name,'na') "+YADA_PARAMNAME+", nvl(c.value,'na') "+YADA_PARAMVAL+", c.rule "+YADA_PARAMRULE+" from yada_query a join yada_query_conf b on a.app = b.app left join yada_param c on (a.app = c.target or a.name = c.target) where a.name = ? order by c.target}
 	 */
 	private final static String YADA_PKG_SQL   = "select "
 																							+ "a.query "+YADA_QUERY+", "
+																							+ "b.app "+YADA_APP+", "
 																							+ "b.source "+YADA_SOURCE+", "
 																							+ "b.version "+YADA_VERSION+", "
+																							+ "c.id "+YADA_PARAMID+", "
 																							+ "c.target "+YADA_PARAMTARGET+", " 
 																							+ "c.name "+YADA_PARAMNAME+", "
 																							+ "c.value "+YADA_PARAMVAL+", "
-																							+ "c.rule "+YADA_PARAMRULE+" "
+																							+ "c.rule "+YADA_PARAMRULE+", "
+																							+ "d.target "+YADA_PROPTARGET+", "
+																							+ "d.name "+YADA_PROPNAME+", "
+																							+ "d.value "+YADA_PROPVALUE+" "
 																							+ "from yada_query a "
-																							+ "join yada_query_conf b on a.app = b.app "
-																							+ "left join yada_params c on (a.app = c.target or a.qname = c.target) "
-																							+ "where a.qname = ? order by c.target";
+																							+ "join yada_query_conf b on (a.app = b.app) "
+																							+ "left join yada_param c on (a.app = c.target or a.qname = c.target) "
+																							+ "left join yada_prop d on (a.app = d.target or a.qname = d.target or c.target||'-'||c.id = d.target) "
+																							+ "where a.qname = ? "
+																							+ "order by c.target";
+	
+	
 	/**
 	 * Constant equal to: {@value}
 	 */
@@ -237,7 +266,7 @@ public class Finder
 				rs = pstmt.executeQuery();
 				if(!rs.isBeforeFirst())
 				{
-					String msg = "The request query ["+q+"] does not exist.";
+					String msg = "The requested query ["+q+"] does not exist.";
 					throw new YADAFinderException(msg);
 				}
 				while (rs.next())
@@ -249,8 +278,10 @@ public class Finder
 						yq.setCoreCode(rs.getString(YADA_QUERY));
 						yq.setSource(rs.getString(YADA_SOURCE));
 						yq.setQname(q);
+						yq.setApp(rs.getString(YADA_APP));
 					}
 					setDefaultParam(yq,rs);
+					setProperty(yq,rs);
 					row++;
 				}
 			} 
@@ -388,6 +419,33 @@ public class Finder
 			String msg = "Unable to set default params.";
 			throw new YADAQueryConfigurationException(msg,e);
 		}
+	}
+	
+	/**
+	 * 
+	 * @param yq The {@link YADAQuery} to which to attach {@link YADAProperty} objects
+	 * @param rs The {@link ResultSet} from which to retrieve the values
+	 * @throws YADAFinderException if a property target can't be retrieveed
+	 */
+	private void setProperty(YADAQuery yq, ResultSet rs) throws YADAFinderException
+	{
+	  String target;
+    try 
+    {
+      target = rs.getString(YADA_PROPTARGET);
+      if(target != null && !"".equals(target))
+      {
+        String name  = rs.getString(YADA_PROPNAME);
+        String value = rs.getString(YADA_PROPVALUE);
+        YADAProperty prop = new YADAProperty(target,name,value);
+        yq.addProperty(prop);
+      }
+    } 
+    catch (SQLException e) 
+    {
+      String msg = "Unable to set properties.";
+      throw new YADAFinderException(msg,e);
+    }
 	}
 	
 	/**

@@ -33,7 +33,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -84,15 +86,15 @@ import com.novartis.opensource.yada.util.YADAUtils;
 // TODO tests for query creation
 // TODO tests for query updating
 // TODO tests for query deletion
-// TODO tests for default plugins
-// TODO tests for query plugins
+
+// TODO tests for query plugins (security handles pre, need post and bypass)
 // TODO tests for pretty printing
-// TODO tests for pre and post processor plugins in same query
-// TODO tests for multiple plugins
+// TODO tests for multiple plugins (there is only one currently, for a pre and post)
 // TODO tests for e=true (export=true)
 // TODO tests for exportLimit
 // TODO validateIntegerResult method + break out these tests into separate files
 // TODO validateJSONFormatted method + break out these tests into separate files
+// TODO Exception tests, i.e, Finder exception (protector queries), Security exceptions, et al
 
 /**
  * Tests all manner of queries via API and HTTP. Uses query parameter strings
@@ -420,21 +422,31 @@ public class ServiceTest
     YADARequest yadaReq = new YADARequest();
     yadaReq.setUpdateStats(new String[] { "false" });
     String[] array = query.split(AMP);
+    Map<String, String[]> paraMap = new HashMap<>();
     for (String param : array)
     {
       String[] pair = param.split(EQUAL);
-      String key = pair[0];
-      String val = null;
-      if (pair.length > 1)
-        val = pair[1];
+      String[] vals = paraMap.get(pair[0]);
+      if(vals == null)
+      {
+        paraMap.put(pair[0], new String[] {pair[1]});
+      }
+      else
+      {
+        paraMap.put(pair[0],(String[])ArrayUtils.add(vals, pair[1]));
+      }
+    }
+    for (String key : paraMap.keySet())
+    {
+      String[] val = paraMap.get(key);//null;
       if (key.equals(YADARequest.PL_JSONPARAMS) || key.equals(YADARequest.PS_JSONPARAMS) && val != null)
-        yadaReq.setJsonParams(new JSONParams(new JSONArray(val)));
+        yadaReq.setJsonParams(new JSONParams(new JSONArray(val[0])));
       else
       {
         try
         {
           if (val != null)
-            yadaReq.invokeSetter(key, new String[] { val });
+            yadaReq.invokeSetter(key, val);
         }
         catch (YADARequestException e)
         {
@@ -1113,6 +1125,38 @@ public class ServiceTest
     logJSONResult(j);
     Assert.assertTrue(j.has("APP") || j.has("app"),"The plugin appears to have failed."); // postgres lowercases without quotes around alias
   }
+  
+  /**
+   * Tests Security API by causing failures (negative tests)
+   * 
+   * @param query the query to execute
+   * @throws YADAQueryConfigurationException when request creation fails
+   */
+  @Test(enabled = true, dataProvider = "QueryTests", groups = { "api", "plugins" })
+  @Assumption(methods = "isNotWindows")
+  @QueryFile(list = {})
+  public void testSecurityExceptions(String query) throws YADAQueryConfigurationException
+  {
+    if(query.equals("q=YADATEST test sec app property"))
+      YADAUtils.executeYADAGet(new String[] {"YADA insert prop"}, new String[] {"YADATEST,protected,true"});
+    else if(query.equals("q=YADATEST test sec query property"))
+      YADAUtils.executeYADAGet(new String[] {"YADA insert prop"}, new String[] {"YADATEST test sec query property,protected,true"});
+    
+    Service svc = prepareTest(query);
+    String result = svc.execute();
+    
+    if(query.equals("q=YADATEST test sec app property"))
+      YADAUtils.executeYADAGet(new String[] {"YADA delete prop for target"}, new String[] {"YADATEST"});
+    else if(query.equals("q=YADATEST test sec query property"))
+      YADAUtils.executeYADAGet(new String[] {"YADA delete prop for target"}, new String[] {"YADATEST test sec query property"});
+    
+    JSONObject j = new JSONObject(result);
+    logJSONResult(j);
+    Assert.assertTrue(j.has("Exception") && j.get("Exception").equals("com.novartis.opensource.yada.plugin.YADASecurityException") 
+        && j.has("Message") && j.get("Message").equals("Unauthorized"), "The Security API appears to have failed."); 
+  }
+  
+  
 
   /**
    * Tests listing the files in the yada io/in mapped directory.

@@ -65,7 +65,7 @@ public class XSLPostprocessor extends AbstractPostprocessor {
 		Transformer transformer;
 		try 
 		{	
-			List<String> args   = yadaReq.getPostArgs();
+			List<String> args   = yadaReq.getPostArgs().size() == 0 ? yadaReq.getArgs() : yadaReq.getPostArgs();
 			for(String arg:args)
 			{
 				if (arg.endsWith(".xsl"))
