@@ -804,8 +804,11 @@ public class QueryManager
             l.debug(msg);
             storePreparedStatementForCount(yq, yq.getPstmt(row), wrappedCode);
           }
-          //this.qutils.setValsInPosition(yq, row);
-          this.qutils.setPositionalParameterValues(yq, row);
+          
+          if(yq.getStatement() != null)
+            this.qutils.setPositionalParameterValues(yq, row);
+          else
+            this.qutils.setValsInPosition(yq, row);
         } // end data loop
       } // end if callable
     } // end if JDBC

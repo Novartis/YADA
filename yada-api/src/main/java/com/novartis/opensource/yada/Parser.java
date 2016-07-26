@@ -394,6 +394,7 @@ public class Parser implements StatementVisitor {
       this.setStatement(this.parserManager.parse(new StringReader(code)));
       this.deparse(this.getStatement());
     } catch (JSQLParserException e) {
+      l.error(e.getCause());
       String msg = "The query was not parsable.  Other than the query being invalid, this could be because it is non-compliant, unsupported, or not SQL";
       l.error(msg + "\n" + code);
       throw new YADAParserException(msg, e);
