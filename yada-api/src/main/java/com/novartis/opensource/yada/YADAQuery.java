@@ -266,8 +266,7 @@ public class YADAQuery {
 		for (YADAParam cachedParam : yq.getYADAQueryParams())
 		{
 			YADAParam param = new YADAParam();
-			String paramName = cachedParam.getName();
-			if(!paramName.equals(YADARequest.PS_HARMONYMAP)) // omit request-specific params
+			if(cachedParam.isDefault())
 			{
   			param.setName(cachedParam.getName());
   			param.setValue(cachedParam.getValue());

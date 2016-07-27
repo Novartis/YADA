@@ -405,7 +405,9 @@ public class Finder
 			{	
 				String target = rs.getString(YADA_PARAMTARGET) != null ? rs.getString(YADA_PARAMTARGET) : NOT_APPLICABLE;
 				String value  = rs.getString(YADA_PARAMVAL) != null ? rs.getString(YADA_PARAMVAL) : NOT_APPLICABLE;
+				String id     = rs.getString(YADA_PARAMID) != null ? rs.getString(YADA_PARAMID) : String.valueOf(0);
 				YADAParam param = new YADAParam();
+				param.setId(Integer.parseInt(id));
 				param.setName(name);
 				param.setTarget(target);
 				param.setValue(value);
