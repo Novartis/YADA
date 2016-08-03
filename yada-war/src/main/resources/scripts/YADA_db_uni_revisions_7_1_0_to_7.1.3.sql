@@ -14,3 +14,4 @@ a.created,
 a.created_by,
 a.comments' WHERE QNAME = 'YADA queries';
 UPDATE YADA_QUERY SET QUERY = 'delete from YADA_PARAM where target = ?v and name = ?v and value = ?v and rule = ?i' WHERE QNAME = 'YADA delete default param';
+

@@ -101,7 +101,8 @@ public class RESTAdaptor extends Adaptor {
 	public void execute(YADAQuery yq) throws YADAAdaptorExecutionException
 	{
 		resetCountParameter(yq);
-		for(int row=0;row<yq.getData().size();row++)
+		int rows = yq.getData().size() > 0 ? yq.getData().size() : 1;
+		for(int row=0;row<rows;row++)
 		{
 			String result = "";
 			yq.setResult();
