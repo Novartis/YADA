@@ -153,7 +153,7 @@ public class RESTAdaptor extends Adaptor {
 				  String 		   inputLine;
 				  while ((inputLine = in.readLine()) != null)
 	        {
-	          result += inputLine;
+	          result += String.format("%1s%n",inputLine);
 	        }
 				}
 				yqr.addResult(row, result);

@@ -11,7 +11,7 @@
 <urlrewrite>
 	
     <rule>
-      <note>This is a simple rewrite for backward compatibility, whene the jsp had a different name</note>
+      <note>This is a simple rewrite for backward compatibility, when the jsp had a different name</note>
       <from>^/service.jsp$</from>
       <to last="true">/yada.jsp</to>
     </rule>
