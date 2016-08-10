@@ -185,9 +185,15 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
       setArgs(Arrays.asList(args[0].split(",")));
 	  else
 	  {
-	    args = getYADAQuery().getYADAQueryParamValue(YADARequest.PS_PREARGS);
-	    if(args != null && args.length > 0)
-	      setPreargs(Arrays.asList(args[0].split(",")));
+	    args = getYADAQuery().getYADAQueryParamValue(YADARequest.PS_ARGS);
+      if(args != null && args.length > 0)
+        setArgs(Arrays.asList(args[0].split(",")));
+      else
+      {
+        args = getYADAQuery().getYADAQueryParamValue(YADARequest.PS_PREARGS);
+        if(args != null && args.length > 0)
+          setPreargs(Arrays.asList(args[0].split(",")));
+      }
 	  }
 	}
 

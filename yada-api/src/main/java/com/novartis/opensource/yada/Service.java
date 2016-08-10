@@ -22,6 +22,8 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -1008,6 +1011,18 @@ public class Service {
 			  for (int i=0; i < plugins.length; i++)
         {
           String plugin = plugins[i];
+       // check for default parameter plugin (args) unprocessed by Service.handleRequestParameters
+          int firstCommaIndex = plugin.indexOf(',');
+          String    args = "";
+          YADAParam yp   = null;
+          if(firstCommaIndex > -1)
+          {
+            args   = plugin.substring(firstCommaIndex+1);
+            plugin = plugin.substring(0, firstCommaIndex);
+            // add a query parameter for the arg list
+            yp = new YADAParam(YADARequest.PS_ARGLIST, args, yq.getQname(), YADAParam.NONOVERRIDEABLE, true); 
+            yq.addParam(yp);
+          }
 					l.debug("possible bypass plugin is["+plugin+"]");
 					if (null != plugin && !"".equals(plugin))
 					{
@@ -1028,7 +1043,11 @@ public class Service {
 										if(getYADARequest().getPluginArgs().size() > 0) // api call might not set any args
 										  getYADARequest().setArgs(getYADARequest().getPluginArgs().get(i));
 										yqr = ((Bypass)plugObj).engage(getYADARequest(),yq);
+										 // remove the param that was created earlier, to avoid potential conflicts later
+                    //TODO review security and other implications of removing the arglist parameter from the query object
+                    yq.getYADAQueryParams().remove(yp);
 										yq.setResult(yqr);
+										
 									}
 									catch(InstantiationException e)
 									{
@@ -1077,9 +1096,21 @@ public class Service {
 			String[] plugins  = yq.getYADAQueryParamValue(YADARequest.PS_PLUGIN);
 			if ( null != plugins && plugins.length > 0)
 			{
-			  for (int i=0; i < plugins.length; i++)
+			  for (int pluginIndex=0; pluginIndex < plugins.length; pluginIndex++)
 	      {
-			    String plugin = plugins[i];
+			    String plugin = plugins[pluginIndex];
+			    // check for default parameter plugin (args) unprocessed by Service.handleRequestParameters
+			    int firstCommaIndex = plugin.indexOf(',');
+			    String    args = "";
+			    YADAParam yp   = null;
+			    if(firstCommaIndex > -1)
+          {
+			      args   = plugin.substring(firstCommaIndex+1);
+			      plugin = plugin.substring(0, firstCommaIndex);
+			      // add a query parameter for the arg list
+			      yp = new YADAParam(YADARequest.PS_ARGLIST, args, yq.getQname(), YADAParam.NONOVERRIDEABLE, true); 
+			      yq.addParam(yp);
+          }
 					l.debug("possible preprocess plugin is["+plugin+"]");
 					if (null != plugin && !"".equals(plugin))
 					{
@@ -1095,13 +1126,14 @@ public class Service {
 								l.info("Found a query-level PREPROCESS plugin with the classname ["+plugin+"]");
 								try
 								{
-									Object            plugObj     = pluginClass.newInstance();
-									if(getYADARequest().getPluginArgs().size() > 0) // api call might not set any args
-									  getYADARequest().setArgs(getYADARequest().getPluginArgs().get(i));
+									Object plugObj = pluginClass.newInstance();
 									((Preprocess)plugObj).engage(getYADARequest(),yq);
 									// reset the query internals
 									try
 									{
+									  // remove the param that was created earlier, to avoid potential conflicts later
+									  //TODO review security and other implications of removing the arglist parameter from the query object
+									  yq.getYADAQueryParams().remove(yp);
 										this.qMgr.prepQueryForExecution(this.qMgr.endowQuery(yq));
 									} 
 									catch (YADAQueryConfigurationException|YADAResourceException|YADAUnsupportedAdaptorException e)
@@ -1162,6 +1194,18 @@ public class Service {
 			  for (int i=0; i < plugins.length; i++)
         {
           String plugin = plugins[i];
+          // check for default parameter plugin (args) unprocessed by Service.handleRequestParameters
+          int firstCommaIndex = plugin.indexOf(',');
+          String    args = "";
+          YADAParam yp   = null;
+          if(firstCommaIndex > -1)
+          {
+            args   = plugin.substring(firstCommaIndex+1);
+            plugin = plugin.substring(0, firstCommaIndex);
+            // add a query parameter for the arg list
+            yp = new YADAParam(YADARequest.PS_ARGLIST, args, yq.getQname(), YADAParam.NONOVERRIDEABLE, true); 
+            yq.addParam(yp);
+          }
 					l.debug("possible postprocess plugin is["+plugin+"]");
 					if (null != plugin && !"".equals(plugin))
 					{
@@ -1178,6 +1222,9 @@ public class Service {
 								{
 									Object            plugObj     = pluginClass.newInstance();
 									((Postprocess)plugObj).engage(yq);
+									// remove the param that was created earlier, to avoid potential conflicts later
+                  //TODO review security and other implications of removing the arglist parameter from the query object
+                  yq.getYADAQueryParams().remove(yp);
 								}
 								catch(InstantiationException e)
 								{

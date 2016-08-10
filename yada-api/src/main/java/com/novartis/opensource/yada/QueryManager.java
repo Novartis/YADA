@@ -20,10 +20,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -683,6 +685,10 @@ public class QueryManager
 	}
 	
 	/**
+	 * Prepares the query for execution by retrieving the wrapped query code, amending
+	 * it if needed, as prescribed by request parameters, and links the query statement
+	 * with it's database connection.
+	 * 
    * @since 7.0.0
    * @throws YADAResourceException
    *           when a query's source attribute can't be found in the application

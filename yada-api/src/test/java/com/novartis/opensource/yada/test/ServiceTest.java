@@ -1156,6 +1156,22 @@ public class ServiceTest
         && j.has("Message") && j.get("Message").equals("Unauthorized"), "The Security API appears to have failed."); 
   }
   
+  /**
+   * Tests Security API using default parameters
+   * 
+   * @param query the query to execute
+   * @throws YADAQueryConfigurationException when request creation fails
+   * @throws YADAResponseException when the test result is invalid
+   */
+  @Test(enabled = false, dataProvider = "QueryTests", groups = { "api", "plugins" })
+  @Assumption(methods = "isNotWindows")
+  @QueryFile(list = {})
+  public void testSecurityPlugins(String query) throws YADAQueryConfigurationException, YADAResponseException
+  {
+    Service svc = prepareTest(query);
+    String result = svc.execute();
+    Assert.assertTrue(validate(svc.getYADARequest(), svc.execute()) ,  "Data invalid for query: "+query);
+  }
   
 
   /**

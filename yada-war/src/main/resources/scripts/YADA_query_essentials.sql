@@ -87,3 +87,4 @@ INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA select props l
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA select protectors for target','select qname as "QNAME", type as "TYPE" from yada_a11n where target = ?v', 'YADABOT', 'YADA');
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA insert protector for target','insert into yada_a11n (target,policy,qname,type) values (?v,''E'',?v,?v)', 'YADABOT', 'YADA');
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA delete protector for target','delete from yada_a11n where target = ?v and qname = ?v', 'YADABOT', 'YADA');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA update protector for target','update yada_a11n set qname = ?v, type = ?v where target = ?v', 'YADABOT', 'YADA');

@@ -480,9 +480,10 @@ public class QueryUtils
 	}
 
 	/**
-	 * Called when the {@link CCJSqlParserManager#parse(java.io.Reader)} throws a
-	 * {@link JSQLParserException} Uses regular expression to infer the query
-	 * type.
+	 * Initiates the parse/deparse process for a statement, and 
+	 * recovers gracefully if {@link CCJSqlParserManager#parse(java.io.Reader)} throws a
+	 * {@link JSQLParserException} in which case it will use a regular expression to infer 
+	 * the query type.
 	 * 
 	 * @param yq
 	 *          the query object containing the code to parse

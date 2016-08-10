@@ -501,12 +501,28 @@ public class YADAQuery {
 	}
 	
 	/**
+	 * a {@link List} of {@link YADAParam} objects with {@link YADAParam#getName()} = {@code key}.
+	 * 
+	 * @param key the param name
+	 * @return a {@link List} of {@link YADAParam} objects with {@link YADAParam#getName()} = {@code key}
+	 * @since 7.1.4
+	 */
+	public List<YADAParam> getYADAQueryParamsForKey(String key) {
+	  List<YADAParam> paramList = new ArrayList<>();
+	  for(YADAParam yp : this.yqParams)
+	  {
+	    if(yp.getName().equals(key))
+	      paramList.add(yp);
+	  }
+	  return paramList;
+	}
+	
+	/**
 	 * Returns an array containing the value associated to param with name {@code key}
 	 * @param key name of parameter whose value is sought
 	 * @return an array containing the value associated to param with name {@code key} 
 	 */
 	public String[] getYADAQueryParamValue(String key) {
-		
 		if(getParam(key) != null)
 		{
 			String[] values = new String[] { getParam(key).getValue() };

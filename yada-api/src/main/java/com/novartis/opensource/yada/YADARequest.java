@@ -1594,7 +1594,6 @@ public class YADARequest {
 	{
 	  getPluginArgs().add(args);  
 	}
-
 	
 	/**
 	 * Sets the column header flag.
