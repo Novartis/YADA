@@ -77,43 +77,9 @@
 			<h1>YADA</h1>
 		</div>
 		
-		<!-- 
-		  Queries:
-		    √YADA new datasource
-		    √YADA update datasource
-		    √YADA delete datasource (actually just making inactive)
-		    √YADA select datasources
-		  
-		  Database:
-		  table: user-apps-role
-		  table: roles
-		    read-only query
-		    read-write query
-		    app-admin (can see and edit conf)
-		    yada-admin (can see all apps)
-		  
-		  js:
-		  √ app-mgmt (empty)
-		    √ display conf 
-		      if authorized (app-admin, yada-admin) 
-		    enable selection -> switch to query-table
-		    create new ds
-		    √ save changes
-		    √ delete (make inactive)
-		    mask password in shadow field
-		  popup login modal
-		    √ login - 
-		      check creds, 
-		      √ populate app-mgmt
-		  query-table
-		  
-		
-		 -->
-		
 		<div id="app-mgr" class="hidden container-fluid">
       <h1>App Manager</h1>
-      <div class="panel-group col-lg-12 col-md-12 col-sm-12" id="app-accordion" role="tablist" aria-multiselectable="true">
-      </div>  
+      <div class="panel-group col-lg-12 col-md-12 col-sm-12" id="app-accordion" role="tablist" aria-multiselectable="true"></div>  
     </div>
 		
 		<div id="user-mgmt" class="hidden"></div>

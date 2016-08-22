@@ -167,7 +167,7 @@ public class Finder
 																							+ "join yada_query_conf b on (a.app = b.app) "
 																							+ "left join yada_param c on (a.app = c.target or a.qname = c.target) "
 																							+ "left join yada_prop d on (a.app = d.target or a.qname = d.target or c.target||'-'||c.id = d.target) "
-																							+ "where b.active = 1"
+																							+ "where b.active = 1 "
 																							+ "and a.qname = ? "
 																							+ "order by c.target";
 	
