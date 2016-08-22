@@ -247,7 +247,7 @@ public class YADAUtils {
 		ResultSet rs = null;
 		try
 		{
-			Connection        c = ConnectionFactory.getConnection(Finder.getYADAJndi());
+			Connection        c = ConnectionFactory.getConnectionFactory().getConnection(ConnectionFactory.YADA_APP);
 			PreparedStatement p = c.prepareStatement(sql);
 			for(int i=1;i<=params.length;i++) 
 			{
@@ -293,7 +293,7 @@ public class YADAUtils {
 		ResultSet rs = null;
 		try
 		{
-			Connection        c = ConnectionFactory.getConnection(Finder.getYADAJndi());
+			Connection        c = ConnectionFactory.getConnectionFactory().getConnection(ConnectionFactory.YADA_APP);
 			PreparedStatement p = c.prepareStatement(sql);
 			rs = p.executeQuery();
 		} 
@@ -317,7 +317,7 @@ public class YADAUtils {
 		int               result = -1;
 		try 
 		{
-			c = ConnectionFactory.getConnection(Finder.JNDI_PREFIX+Finder.YADA_INDEX).prepareCall(sql);
+			c = ConnectionFactory.getConnectionFactory().getConnection(ConnectionFactory.YADA_APP).prepareCall(sql);
 			result = c.executeUpdate();
 		} 
 		catch (SQLException e) 

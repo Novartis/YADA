@@ -25,13 +25,13 @@ define(
 			         'domReady',
 			         'bootstrap',
 			         'component/header',
-			         'component/query-table',
-			         'component/app-selector',
+			         'component/login',
+			         'component/app-mgr',
 			         'component/migration',
 			         'component/query-params'
 			         ], 
 			         
-		  function ($, domReady, bootstrap, header, qtable, appSelector, migration, params) {
+		  function ($, domReady, bootstrap, header, login, appMgr, /*qtable, appSelector,*/ migration, params) {
 				
 				// set ajax defaults
 				var appContext = (this.context() != "ROOT" ? this.context() + '/': '');
@@ -78,7 +78,7 @@ define(
 		        return $.when.apply( null, deferreds ); // call $.when with all the deferreds and return the promise
 		    };
 
-				$.fn.highlight = function() {
+				$.fn.highlight = function(color) {
 				   $(this).each(function() {
 				        var el = $(this);
 				        el.before("<div/>");
@@ -94,13 +94,11 @@ define(
 				    });
 				};
 
-				var nest = $('.nest');
 
-				header.attachTo('body');
-				qtable.attachTo(document);
-				appSelector.attachTo('#app-selector');
+				header.attachTo('nav.main-menu');
+				//login.attachTo('#login');
+				appMgr.attachTo('#app-mgr');
 				migration.attachTo('.nest');
-				params.attachTo('#default-params');
 			});
 		}
 	}

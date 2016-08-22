@@ -71,70 +71,6 @@ public class ConnectionFactoryTest {
 			// load properties
 			setProps(properties);
 			
-			BasicDataSource ds = new BasicDataSource();
-			
-			try
-			{
-				Class<?> dsClass = Class.forName(ds.getClass().getName());
-				Set<Method> methods  = new HashSet<>();
-				Set<String> idxProps = new HashSet<>();
- 				// setters
-				for(Method method : dsClass.getMethods())
-				{
-					if(method.getName().startsWith("set"))
-						methods.add(method);
-				}
- 				// YADA.index properties
- 				for(String prop : getProps().keySet().toArray(new String[getProps().size()]))
- 				{
- 					if(prop.startsWith("YADA.index"))
- 					{
- 						idxProps.add(prop.split(Pattern.quote("."))[2]);
- 					}
- 				}
- 				// call setters with properties
-				for(String prop : idxProps.toArray(new String[idxProps.size()]))
-				{
-					for(Method method : methods.toArray(new Method[methods.size()]))
-					{
-		    			if(method.getName().toLowerCase().endsWith(prop.toLowerCase()))
-		    			{
-		    				method.setAccessible(true);
-		    				String type = method.getParameterTypes()[0].getName();
-		    				String val  = (String)getProps().get("YADA.index."+prop);
-		    				if(type.endsWith("String"))
-		    				{
-		    					method.invoke(ds, new Object[]{val});
-		    				}
-		    				else if(type.endsWith("Boolean") || type.endsWith("boolean"))
-		    				{
-		    					method.invoke(ds, new Object[]{Boolean.valueOf(val)});
-		    				}
-		    				else if(type.endsWith("Integer") || type.endsWith("int"))
-		    				{
-		    					method.invoke(ds, new Object[]{Integer.valueOf(val)});
-		    				}
-		    			}
-			    	}
-		    	}
-			} 
-			catch (ClassNotFoundException e)
-			{
-				e.printStackTrace();
-			} 
-			catch (IllegalArgumentException e)
-			{
-				e.printStackTrace();
-			} 
-			catch (IllegalAccessException e)
-			{
-				e.printStackTrace();
-			} 
-			catch (InvocationTargetException e)
-			{
-				e.printStackTrace();
-			}
-			            
       InitialContext ic = new InitialContext();
       try
       {
@@ -143,7 +79,6 @@ public class ConnectionFactoryTest {
 	      ic.createSubcontext("java:comp/env/jdbc");
 	      ic.createSubcontext("java:comp/env/adaptor");
 	      ic.createSubcontext("java:comp/env/io");
-	      ic.bind("java:comp/env/jdbc/yada",ds);
 	      ic.bind("java:comp/env/adaptor/"+getProps().get("YADA.index.driverClassName"), getProps().get("YADA.index.adaptor"));
 	      ic.bind("java:comp/env/yada_bin", getProps().get("YADA.bin"));
 	      ic.bind("java:comp/env/io/in", getProps().get("YADA.io.in"));
@@ -190,7 +125,7 @@ public class ConnectionFactoryTest {
    */
   @Test (groups = {"core"})
   public void getConnection() throws YADAConnectionException {
-    this.connection = ConnectionFactory.getConnection("java:comp/env/jdbc/yada");
+    this.connection = ConnectionFactory.getConnectionFactory().getConnection(ConnectionFactory.YADA_APP);
   }
   
   /**
@@ -201,7 +136,7 @@ public class ConnectionFactoryTest {
   @Test (groups = {"core"}, expectedExceptions=YADAConnectionException.class)
   public void getUnknownConnectionFail() throws YADAConnectionException 
   {
-  	ConnectionFactory.getConnection("jdbc/yomama");
+  	ConnectionFactory.getConnectionFactory().getConnection("jdbc/yomama");
   }
 
   /**
@@ -212,7 +147,7 @@ public class ConnectionFactoryTest {
 	@Test (groups = {"core"})
   public void getSOAPConnection() throws YADAConnectionException {
     //soapConnection = 
-    ConnectionFactory.getSOAPConnection();
+    ConnectionFactory.getConnectionFactory().getSOAPConnection();
   }
   
   /**

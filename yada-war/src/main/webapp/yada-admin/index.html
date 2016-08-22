@@ -59,24 +59,67 @@
 <!-- require.js v2.1.9 -->
 </head>
 <body style="margin: 6px;">
-	<nav class="navbar navbar-default" role="navigation">
+
+	<nav class="navbar navbar-default main-menu" role="navigation">
 		<ul class="nav navbar-nav">
-			<li id="app" class=""><a href="#" data-toggle="modal"
-				data-target="#app-selector">Choose App</a></li>
-			<li id="new-query" class=""><a href="#" data-toggle="modal"
-				data-target="#query-editor-container">New Query</a></li>
+<!-- 			<li id="app" class=""><a href="#" data-toggle="modal" data-target="#app-mgr">App Manager</a></li> -->
+      <li id="app" class=""><a href="#">App Manager</a></li>
+			<li id="new-query" class=""><a href="#">New Query</a></li>
 			<li id="toggle-view" class=""><a href="#">Toggle View</a></li>
 			<li id="backup" class=""><a href="#">Backup App</a>
-			<li id="migration" class=""><a href="#" data-toggle="modal"
-				data-target="#migration-target-selector">Migrate</a></li>
+			<li id="migration" class=""><a href="#">Migrate</a></li>
 		</ul>
 		<span class="version">v${display.version}</span>
 	</nav>
-	<div class="col-lg-12 nest">
-		<div id="app-selection">
+	<div class="col-lg-12 col-md-12 col-sm-12 nest">
+	
+		<div id="app-selection" class="hidden">
 			<h1>YADA</h1>
 		</div>
+		
+		<!-- 
+		  Queries:
+		    √YADA new datasource
+		    √YADA update datasource
+		    √YADA delete datasource (actually just making inactive)
+		    √YADA select datasources
+		  
+		  Database:
+		  table: user-apps-role
+		  table: roles
+		    read-only query
+		    read-write query
+		    app-admin (can see and edit conf)
+		    yada-admin (can see all apps)
+		  
+		  js:
+		  √ app-mgmt (empty)
+		    √ display conf 
+		      if authorized (app-admin, yada-admin) 
+		    enable selection -> switch to query-table
+		    create new ds
+		    √ save changes
+		    √ delete (make inactive)
+		    mask password in shadow field
+		  popup login modal
+		    √ login - 
+		      check creds, 
+		      √ populate app-mgmt
+		  query-table
+		  
+		
+		 -->
+		
+		<div id="app-mgr" class="hidden container-fluid">
+      <h1>App Manager</h1>
+      <div class="panel-group col-lg-12 col-md-12 col-sm-12" id="app-accordion" role="tablist" aria-multiselectable="true">
+      </div>  
+    </div>
+		
+		<div id="user-mgmt" class="hidden"></div>
+		
 		<table id="query-table" class="display cell-border"></table>
+		
 		<table id="migration-table" class="display cell-border">
 			<caption>
 				<p>
@@ -88,7 +131,47 @@
 				</p>
 			</caption>
 		</table>
-	</div>
+  </div> <!-- nest -->	
+	
+	<!--  /.modal -->
+	<div id="login" class="modal fade">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"
+            aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Login</h4>
+        </div>
+        <div class="modal-body container">
+          <form>
+            <div class="row">
+              <div class="col-sm-3">
+	              <div class="form-group">
+			            <label for="login-user">Username</label>
+			            <input type="text" id="login-user" class="form-control"/>
+	              </div>
+              </div>
+            </div>
+            <div class="row">
+            <div class="col-sm-3">
+	              <div class="form-group">
+	                <label for="login-pw">Password</label>
+	                <input type="password" id="login-pw" class="form-control"/>
+	              </div>
+              </div>
+            </div>
+            <div class="row">
+            <div class="col-sm-3">
+              <button type="button" id="login-btn" class="btn pull-right">Login</button>
+            </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>  
+  </div>
+	
+	<!--  /.modal -->
 	<div id="app-selector" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-sm">
 			<div class="modal-content">
@@ -106,6 +189,7 @@
 			</div>
 		</div>
 	</div>
+	
 	<!-- /.modal -->
 	<div id="qname-copy" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
@@ -133,6 +217,7 @@
 			</div>
 		</div>
 	</div>
+	
 	<!-- /.modal -->
 	<div id="migration-target-selector" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-sm">
@@ -151,6 +236,7 @@
 			</div>
 		</div>
 	</div>
+	
 	<!-- /.modal -->
 	<div id="query-editor-container" class="modal fade" tabindex="-1"
 		data-backdrop="static">
@@ -319,6 +405,7 @@
 		<!-- /.modal-dialog -->
 	</div>
 	<!-- /.modal -->
+	
 	<div id="compare"></div>
 
 </body>

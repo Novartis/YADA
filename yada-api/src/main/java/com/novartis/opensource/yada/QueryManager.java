@@ -994,7 +994,7 @@ public class QueryManager
 	  if (getJsonParams() != null)
 	    index = ArrayUtils.indexOf(getJsonParams().getKeys(), yq.getQname());
 		yq.addRequestParams(this.yadaReq.getRequestParamsForQueries(),index);
-		yq.setAdaptorClass(this.qutils.getAdaptorClass(yq.getSource()));
+		yq.setAdaptorClass(this.qutils.getAdaptorClass(yq.getApp()));
 		if(RESTAdaptor.class.equals(yq.getAdaptorClass()) && this.yadaReq.hasCookies())
     {
       for(String cookieName : this.yadaReq.getCookies())

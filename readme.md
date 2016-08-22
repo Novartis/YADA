@@ -145,7 +145,8 @@ Maybe you have to provide a RESTful interface to an existing application, and ne
 * Data vendor- and technology-agnostic
 * Accesses any JDBC, SOAP, or REST, and some Filesystem datasources 
 * Delivers data as JSON (default), XML, or CSV, TSV, Pipe, or custom-delimited, natively, and in any other format via custom Response and Converter classes, or Plugins
-* 4-layer security model including url and token validation, query-execution authorization, and dynamic-predicate-based, pre-execution, row-level filtering
+* 4-tier security model including url and token validation, query-execution authorization, and dynamic-predicate-based, pre-execution, row-level filtering
+* Dynamic datasource configuration (*no-bounce mounts!*) and container-independent connection pooling using [HikariCP](https://github.com/brettwooldridge/HikariCP)
 * Executes multiple queries in a single HTTP request
 * On-the-fly inner and outer joins across disparate data sources
 * Ad hoc Harmonization (i.e., single http request to multiple data sources with harmonized results)
@@ -154,20 +155,10 @@ Maybe you have to provide a RESTful interface to an existing application, and ne
 * Processes file uploads
 * Compatible with any client that speaks HTTP (e.g., web browser, python, curl, javascript, spotfire, curl, web service, mobile app, etc)
 * Flexible Java® and Script plugin API to preprocess request parameters, post-process results, or override normal processing altogether
-* EhCache query-index caching
+* [EhCache](http://www.ehcache.org/) query-index caching
 * Security (via Cookie forwarding and/or Default Plugins)
 * Support for Oracle®, MySQL®, Vertica®, PostgreSQL®, SQLite®
 * Tomcat 7 and JDK 1.7-compatible (YADA 6)
-* _Coming Soon_: ElasticSearch® support
-* _Coming Soon_: ElasticSearch®-based result and aggregate-result caching
-* _Coming Soon_: Spark-based result post-processor
-* _Coming Soon_: Dynamic memory management and caching to facilitate large-scale request queuing and high volume result transformation in high frequency environments
-* _Coming Later_: SQL DDL
-* _Coming Later_: Dynamic datasource configuration
-* _Coming Later_: MongoDB® and other NoSQL support
-* _Coming Later_: SQL Server® support
-* _Coming Later_: Node.js® port (maybe?)
-* _Coming Later_: Standalone java application
 
 <a name="arch"></a>
 # Architecture
@@ -218,11 +209,12 @@ YADA ships with scripts for using, as the YADA Index:
 * SQLite®
 * Oracle®
 
-Soon the index will be stored in ElasticSearch®, but ultimately, it is vendor-agnostic. Other supported data sources currently include 
+The index is ultimately vendor-agnostic. Currently other supported data sources currently include 
 
 * Vertica® 
 * SOAP
 * REST
+* Unix filesystems
 
 MongoDB®, SQL Server®, and other datasource compatibility will be added soon.
 
@@ -257,8 +249,7 @@ Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 
 <a name="issues"></a>
-## Known Issues (last updated 25-OCT-2015)
-
+## Known Issues
 See the [Github Issues List](https://github.com/Novartis/YADA/issues)
  
 [Other Documentation]: #other

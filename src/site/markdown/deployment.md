@@ -38,7 +38,7 @@
 
 First, acquire the [YADA-Quickstart] application in one of the following ways:
 
-* Click any of the [YADA-Quickstart] links throughout this document to download the `YADA-Quickstart-<version>.war` file from the github repo release page. These links will always point to the latest dot-release, which could be more recent than this documentation.
+* Find the [latest release](https://github.com/Novartis/YADA/releases/latest) on github and download the binary
 
 or
 
@@ -51,9 +51,9 @@ Refer to the appropriate section below, either [I downloaded the war file](#tocW
 
 If you cloned from github, skip to the next section.
 
-The downloadable war is pre-built using default values for context paths and resource configurations. Inspect and modify `META-INF/context.xml` as needed. Documentation to assist this effort is inline, in the file.
+The downloadable war is pre-built using default values for context paths and resource configurations. Drop the war into your existing tomcat container, and wait for it to explode. Then, inspect and modify `WEB-INF/classes/YADA.properties`, and `META-INF/context.xml` as needed. Documentation to assist this effort is inline, in the file.
 
-After conforming `META-INF/context.xml` for your environment, simply drop it into your existing tomcat container.
+After conforming `WEB-INF/classes/YADA.properties` and `META-INF/context.xml` for your environment, simply restart tomcat.
 
 The pre-built war uses a local [SQLite®] file for the YADA index. This is not likely to be your final implementation–nor should it–however, it is possible to use it to perform sanity checks and more extensive automated testing. 
 
@@ -66,7 +66,7 @@ You will soon run the maven `package` goal.
 
 First, however, you have an opportunity to ensure maven builds the war file with the correct contextual values for your environment. Find the `build.properties` file in the appropriate `YADA-Quickstart/src/main/resources/` subdirectory (i.e., `local` or `dev`,) and modify per your environment. 
 
-If the `local` properties file is left unchanged, the default `local` build will create a warfile identical to the downloadable version referenced in the previous section. It is preferable to modify `build.properties` before building, rather than to modify `context.xml` afterward. This is because in the future, you can automate deployment of the warfile using a variety of methods, including maven-cargo-plugin, custom scripts, or continuous integration (CI) services, and you won't want to, or won't be enabled to modify the     `context.xml` between build and deployment. Information about the settings in `build.properties` can be found inline, in the file.
+If the `local` properties file is left unchanged, the default `local` build will create a warfile identical to the downloadable version referenced in the previous section. It is preferable to modify `build.properties` before building, rather than to modify `YADA.properties` and `context.xml` afterward. This is because in the future, you can automate deployment of the warfile using a variety of methods, including maven-cargo-plugin, custom scripts, or continuous integration (CI) services, and you won't want to, or won't be enabled to modify `YADA.properties` or `context.xml` between build and deployment. Information about the settings in `build.properties` can be found inline, in the file.
 
 After making your desired changes, simply run `mvn package` in the `YADA-Quickstart` directory.  This will result in a `YADA-Quickstart-<version>.war` file in the `target` subdirectory.  This warfile can now be copied to your tomcat container.
 
@@ -78,7 +78,7 @@ After making your desired changes, simply run `mvn package` in the `YADA-Quickst
 To confirm YADA is running, access the following url:
 `http://host.domain:port/yada.jsp?q=YADA+default&py=true`
 
-Obviously, substitute `host.domain:port` with your environment's values. `q` is the alias for `qname` which points to the named YADA query you will execute. `py` is the alias for `pretty` which "pretty-prints" the JSON string.
+Obviously, substitute `host.domain:port` with your environment's values. `q` is the alias for `qname` which points to the named YADA query you will execute. `py` is the alias for `pretty` which "pretty-prints" the JSON string. If you're using a browser, and a browser plugin to format JSON, you can omit `py=true`.
 
 Your result should be the a JSON object string containing `YADA is alive!` in your browser.
 
@@ -97,7 +97,7 @@ Your result should be the a JSON object string containing `YADA is alive!` in yo
 <a name="tocFilesys"></a>
 ###  Additional Filesystem Configuration  
 
-As alluded to above, there are a few filesystem touchpoints that need to be configured. If you've read the comments embedded in `build.properties` and `context.xml` you already know what to expect. The easiest (and default) configuration is to create a filesystem path `/apps/yada` and deploy, create, or link all other relevent directories beneath.
+As alluded to above, there are a few filesystem touchpoints that need to be configured. If you've read the comments embedded in `build.properties`, `YADA.properties`, and `context.xml` you already know what to expect. The easiest (and default) configuration is to create a filesystem path `/apps/yada` and deploy, create, or link all other relevent directories beneath.
 
 If you are deploying multiple instances on the same server, e.g., for dev and test, you can append the "env" value to the path, e.g., `/apps/yada/local` or `/apps/yada/dev`. This can also be a symlink to it's own directory. 
 
@@ -156,7 +156,31 @@ The [YADA-Quickstart] default settings include a [SQLite®] pre-populated implem
 
 > NOTE: An imminent future version of YADA will prefer [ElasticSearch®] for the YADA Index.
 
-If you cloned the YADA-Quickstart github repo you'll find configuration scripts for Oracle®, MySQL®, and PostgreSQL®, and scripts for inserting the essential queries to enable YADA to work, and queries to run the TestNG tests in the following directory:
+Whether you cloned the YADA-Quickstart on github or downloaded the war file, you may want to view the database configuration scripts for Oracle®, MySQL®, and PostgreSQL®, and SQLite®, as well as scripts for inserting the essential queries to enable YADA to work, and queries to run the TestNG tests.  These scripts are in the main [YADA](https://github.com/Novartis/YADA) repo in the following directory:
+
+```
+YADA
+  |
+  +-- yada-war
+        |
+        +-- src
+             |
+             +-- main
+                  |
+                  +-- resources
+                       |
+                       +-- scripts
+                            |
+                            +-- YADA_db_MySQL.sql
+                            +-- YADA_db_Oracle.sql
+                            +-- YADA_db_PostgreSQL.sql
+                            +-- YADA_db_SQLite.sql
+                            +-- YADA_query_essentials.sql
+                            +-- YADA_query_tests.sql
+                            +-- YADA_db_uni_<old>_to_<new>.sql
+```
+
+The default SQLite® db is found in YADA-Quickstart here:
 
 ```
 YADA-Quickstart
@@ -167,15 +191,11 @@ YADA-Quickstart
             |
             +-- resources
                  |
-                 +-- YADA_db_MySQL.sql
-                 +-- YADA_db_Oracle.sql
-                 +-- YADA_db_PostgreSQL.sql
-                 +-- YADA_db_SQLite.sql
-                 +-- YADA_query_essentials.sql
-                 +-- YADA_query_tests.sql
                  +-- YADA.db
 ```
 In addition to the vendor-specific configuration script, one must run `YADA_query_essentials.sql` as well. `YADA_query_tests.sql` need only be executed if it is intended to run the TestNG tests.
+
+The `...db_uni_<old>_to_<new>.sql` scripts are for upgrades to existing dbs only.
 
 <a name="tocAutomation"></a>
 ###  Automation  
@@ -581,7 +601,7 @@ Detailed instructions follow.
 <a name="tocVars"></a>
 ####  Environment Variables
 
-As elucidated in the `build.properties` and `context.xml` files, there are a few environment variables which can (and should) be used to more securely pass values to the build. These include usernames, password, et al.
+As elucidated in the `build.properties`, `context.xml`, and `YADA.properties` files, there are a few environment variables which can (and should) be used to more securely pass values to the build. These include usernames, password, et al.
 
 In `build.properties`, referenced by deployment and test scripts
 
@@ -598,7 +618,7 @@ The environment variable substitutions are provided already in `src/main/resourc
 
 > If you look at the test configuration in the `yada-war` submodule of the `YADA` project, you'll see multiple configurations for different database engines. That may add clarity to this config, or it may confuse you more.
 
-The properties values are substituted in `src/main/webapp/META-INF/context.xml` during the resources build phase.
+The properties values are substituted in `src/main/webapp/WEB-INF/classes/YADA.properties` and `src/main/webapp/META-INF/context.xml` during the resources build phase.
 
 ```sh
 YADA.index.adaptor=${env.YADA_INDEX_ADAPTOR}

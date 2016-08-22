@@ -20,6 +20,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
 
+import com.novartis.opensource.yada.ConnectionFactory;
+
 import net.sf.ehcache.CacheManager;
 
 /**
@@ -55,8 +57,7 @@ public class YADAInit extends HttpServlet {
  			URL url = getClass().getResource(file);
  	 		CacheManager.create(url);
  		}
- 		
- 		
+ 		ConnectionFactory.getConnectionFactory();
  		//TODO implement URL string mapping 
 	}
  	

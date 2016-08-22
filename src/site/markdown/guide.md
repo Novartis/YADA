@@ -9,14 +9,14 @@
 
 If you know your way around a computer, like a developer or data expert, this is a good place to be. If you need a bit more help, like a spreadsheet jockey or designer, use the [Beginners' Guide/FAQ]
 
-1. [Using YADA] (i.e., making YADA Requests)
-2. YADA Markup
-3. Defintions
-4. The YADA "Service"
-5. Query Authoring 
-6. The YADAQuery object
-7. Client-side Development
-8. Tips and Tricks
+1. [Using YADA] 
+2. [YADA Markup]
+3. [Defintions](#defs)
+4. [The YADA "Service"](#svc)
+5. [Query Authoring](#authoring)
+6. The YADAQuery object (coming soon)
+7. Client-side Development (coming soon)
+8. Tips and Tricks (coming soon)
 
 <a name="using"></a>
 # Using YADA
@@ -24,6 +24,7 @@ If you know your way around a computer, like a developer or data expert, this is
 
 Every request must contain either both `qname` and `params` request parameters, or a `JSONParams` parameter.  Note that short parameter names are also available, so the previous sentence could read: Every query must contain either both `q` and `p` request parameters, or a `j` parameter
 
+<a name="markup"></a>
 ## YADA Markup
 
 For authoring queries, use the following markup for parameter symbols:
@@ -36,7 +37,7 @@ For authoring queries, use the following markup for parameter symbols:
 |?d    |DATE                   |Any date data type           |
 |?t    |TIME                   |Any time data type           |
 
-
+<a name="defs"></a>
 ## Definitions
 
 Some terms that are used repeatedly throughout the documentation:
@@ -50,6 +51,7 @@ Some terms that are used repeatedly throughout the documentation:
 |protocols         |a reference to one of the supported protocols, i.e., JDBC, SOAP, REST, or FILE
 |YADA markup       |The modification of the query parameter symbol to indicate the datatype of the parameter in the query itself, e.g., `?v, ?i, ?d, ?n, ?t`
 
+<a name="svc"></a>
 # YADA Services
 
 
@@ -81,7 +83,7 @@ curl "http://example.com/yada.jsp?JSONParams=[{qname:YADA default,DATA:[{}]}]"
 # using short param names:
 # curl "http://example.com/yada.jsp?j=[{qname:YADA default,DATA:[{}]}]"
 ```
-
+<a name="authoring"></a>
 # Query Authoring
 
 
@@ -149,6 +151,7 @@ Parameterized JDBC queries require data typing, because values correspond to dat
 |?i    |INTEGER,INT          |Any integer data type        |
 |?n    |NUMBER,DECIMAL       |Any floating point data type |
 |?d    |DATE                 |Any date data type           |
+|?t    |TIME                 |Any time data type           |
 
 
 ## SQL (JDBC)
@@ -217,6 +220,7 @@ And the result:
 
 [Go to top]: #top
 [Using YADA]: #using
+[YADA Markup]: #markup
 [YADA Requests]: #requests
 [JDBC queries with datatypes]: ''
 

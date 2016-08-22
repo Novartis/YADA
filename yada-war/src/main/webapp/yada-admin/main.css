@@ -82,18 +82,49 @@
  * app-selector styles 
  */
 
-#app-selection,
-#app-selection h1 {
+/* #app-selection,
+#app-selection h1, */
+.nest h1,
+#app-mgr .panel h4 {
 	width:100%;
 	margin: auto;
+	margin-top: 9px;
 	text-align: center;
 }
 
-#app-selector .modal-body {
+/* #app-selector .modal-body {
 	min-height: 50px;
 	width: 100%;
+} */
+
+#app-accordion {
+	margin-top: 15px;
 }
 
+#app-accordion input[type="checkbox"] {
+	-webkit-box-shadow: none;
+	margin-right: 5px;
+}
+
+#app-accordion .panel-heading {
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+#app-accordion .progress {
+	padding: 0;
+	margin-top: 6px;
+	margin-bottom: 0;
+}
+
+.app-save {
+	margin-bottom: 2px;
+}
+
+#app-mgr .alert {
+	padding: 6px;
+	margin-bottom: 2px;
+}
 /* Query Editor Modal */
 
 #query-editor {

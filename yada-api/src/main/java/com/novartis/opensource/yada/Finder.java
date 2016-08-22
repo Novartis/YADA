@@ -91,12 +91,18 @@ public class Finder
 	
 	/**
 	 * Constant equal to: {@value}
+	 * @deprecated since 8.0.0
 	 */
+	@Deprecated
 	private final static String YADA_VERSION     = "VER";
+	/**
+   * Constant equal to: {@value}
+   */
+  private final static String YADA_SOURCE      = "S";
 	/**
 	 * Constant equal to: {@value}
 	 */
-	private final static String YADA_SOURCE      = "S";
+	private final static String YADA_CONF        = "C";
 	/**
 	 * Constant equal to: {@value}
 	 */
@@ -148,7 +154,7 @@ public class Finder
 																							+ "a.query "+YADA_QUERY+", "
 																							+ "b.app "+YADA_APP+", "
 																							+ "b.source "+YADA_SOURCE+", "
-																							+ "b.version "+YADA_VERSION+", "
+																							+ "b.conf "+YADA_CONF+", "
 																							+ "c.id "+YADA_PARAMID+", "
 																							+ "c.target "+YADA_PARAMTARGET+", " 
 																							+ "c.name "+YADA_PARAMNAME+", "
@@ -161,7 +167,8 @@ public class Finder
 																							+ "join yada_query_conf b on (a.app = b.app) "
 																							+ "left join yada_param c on (a.app = c.target or a.qname = c.target) "
 																							+ "left join yada_prop d on (a.app = d.target or a.qname = d.target or c.target||'-'||c.id = d.target) "
-																							+ "where a.qname = ? "
+																							+ "where b.active = 1"
+																							+ "and a.qname = ? "
 																							+ "order by c.target";
 	
 	
@@ -242,12 +249,12 @@ public class Finder
 	 */
 	public YADAQuery getQueryFromIndex(String q) throws YADAConnectionException, YADAFinderException, YADAQueryConfigurationException
 	{
-		ResultSet rs = null;
+	  ResultSet rs = null;
 		YADAQuery yq = new YADAQuery();
 		try
 		{
 			
-			Connection        conn  = ConnectionFactory.getConnection(getYADAJndi());
+			Connection        conn  = com.novartis.opensource.yada.ConnectionFactory.getConnectionFactory().getConnection(com.novartis.opensource.yada.ConnectionFactory.YADA_APP);
 			PreparedStatement pstmt;
 			try
 			{
@@ -273,8 +280,7 @@ public class Finder
 				{
 					if (row == 0)
 					{
-						String v = rs.getString(YADA_VERSION);
-						yq.setVersion(v == null ||  v.equals(NOT_APPLICABLE) ? "" : v);
+					  yq.setVersion("");
 						yq.setCoreCode(rs.getString(YADA_QUERY));
 						yq.setSource(rs.getString(YADA_SOURCE));
 						yq.setQname(q);
@@ -337,7 +343,7 @@ public class Finder
 		final String qname = q;
 		YADAQuery yq        = null; 
 		Element   cachedYq  = null;
-		Cache     yadaIndex = ConnectionFactory.getCacheConnection(YADA_CACHE_MGR,YADA_CACHE);
+		Cache     yadaIndex = ConnectionFactory.getConnectionFactory().getCacheConnection(YADA_CACHE_MGR,YADA_CACHE);
 		
 		if(yadaIndex != null)
 		{  
@@ -466,7 +472,7 @@ public class Finder
 		String querySql    = SQL_STATS;
 		try
 		{
-			Connection conn = ConnectionFactory.getConnection(JNDI_PREFIX + YADA_INDEX);
+			Connection conn = ConnectionFactory.getConnectionFactory().getConnection(ConnectionFactory.YADA_APP);
 			
 			try
 			{
@@ -492,7 +498,7 @@ public class Finder
 			}
 			catch (SQLException e)
 			{
-				String msg = "The lookup query caused an error. This could be because the query name ("+qname+") was mistyped or doesn't exist in the YADA Index";
+				String msg = "The update query caused an error. This could be because the query name ("+qname+") was mistyped or doesn't exist in the YADA Index";
 				throw new YADAFinderException(msg,e);
 			}
 			

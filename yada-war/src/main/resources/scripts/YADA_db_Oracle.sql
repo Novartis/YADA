@@ -19,14 +19,17 @@ CREATE TABLE YADA.YADA_QUERY
 CREATE TABLE YADA.YADA_QUERY_CONF 
 (	
 	APP     VARCHAR(20)   NOT NULL, 
-	SOURCE  VARCHAR(4000) NOT NULL, 
-	VERSION VARCHAR(20)
+	NAME    VARCHAR(20),
+  DESCR   VARCHAR(400),
+	SOURCE  VARCHAR(4000), 
+	CONF    VARCHAR(4000),
+	ACTIVE  INT DEFAULT 1
 );
 
 CREATE TABLE YADA.YADA_PARAM 
 (	
-  ID     VARCHAR(255),
-	TARGET VARCHAR(20)   NOT NULL, 
+    ID     VARCHAR(255),
+	TARGET VARCHAR(255)   NOT NULL, 
 	NAME   VARCHAR(20)   NOT NULL, 
 	VALUE  VARCHAR(4000) NOT NULL, 
 	RULE   VARCHAR(1)    DEFAULT 1
@@ -57,16 +60,22 @@ CREATE TABLE YADA.YADA_PROP
   VALUE VARCHAR(4000)
 );
 
-
+-- YADA_UG is a whitelist table for the yada-admin webapp
+CREATE TABLE IF YADA.YADA_UG
+(
+  APP VARCHAR(20) NOT NULL,
+  UID VARCHAR(255) NOT NULL,
+  ROLE VARCHAR(20) NOT NULL
+);
 
 USE YADA;
 
 -- INSERT YADA INDEX QUERY CONF
 DELETE from YADA_QUERY_CONF where app = 'YADA' and source = 'java:comp/env/jdbc/yada';
-INSERT into YADA_QUERY_CONF (APP,SOURCE,VERSION) values ('YADA','java:comp/env/jdbc/yada',null);
-INSERT into YADA_QUERY_CONF (APP,SOURCE,VERSION) values ('YADATEST','java:comp/env/jdbc/yada',null);
-INSERT into YADA_QUERY_CONF (APP,SOURCE,VERSION) values ('QGO','http://www.ebi.ac.uk/QuickGO/GTerm?',null);
-INSERT into YADA_QUERY_CONF (APP,SOURCE,VERSION) values ('YADAFSIN','file:///io/in',null);
+INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADA','java:comp/env/jdbc/yada',null);
+INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADATEST','java:comp/env/jdbc/yada',null);
+INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('QGO',null,'http://www.ebi.ac.uk/QuickGO/GTerm?');
+INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADAFSIN',null,'file:///io/in');
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA default','select ''YADA is alive'' from dual','YADABOT','YADA');
 @YADA_query_essentials.sql;
 @YADA_query_tests.sql;

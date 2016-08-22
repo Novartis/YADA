@@ -50,7 +50,7 @@ public class CacheUpdater extends AbstractBypass
   @Override
 	public String engage(YADARequest yadaReq) throws YADAPluginException
 	{
-		Cache yadaIndex = ConnectionFactory.getCacheConnection(Finder.YADA_CACHE_MGR,Finder.YADA_CACHE);
+		Cache yadaIndex = ConnectionFactory.getConnectionFactory().getCacheConnection(Finder.YADA_CACHE_MGR,Finder.YADA_CACHE);
 		for(Object q : yadaIndex.getKeys().toArray(new Object[yadaIndex.getKeys().size()]))
 		{
 			try

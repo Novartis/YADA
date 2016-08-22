@@ -495,6 +495,15 @@ define(
 	  		});
 	  	};
 	  	
+      this.destroy = function(e,d) {
+        $('nav.main-menu li').addClass('disabled');
+        $('#new-query,#migration').removeAttr('data-toggle');
+        $('#new-query,#migration').removeAttr('data-target');
+        if ($.fn.DataTable.isDataTable(this.attr['mig-table']))
+          this.select('mig-table').DataTable().destroy();
+        this.teardown();
+      }
+	  	
 	  	this.displayParamsForMigration = function(e,d) {
 	  		var self = this;
 	  		if($.fn.DataTable.isDataTable( '#migration-table' ))
@@ -548,7 +557,8 @@ define(
 	  	
 	  	this.defaultAttrs({
 	  		'migrationButton':'#migration-submit>button',
-	  		'migrationTableBody':'#migration-table tbody'
+	  		'migrationTableBody':'#migration-table tbody',
+	  		'mig-table':'#migration-table'
 	  	});
 	  	
 	  	this.after('initialize', function () {
@@ -559,6 +569,7 @@ define(
 	  			migrationButton:this.migrate
 	  		});
 	  		this.on('draw.dt',this.displayParamsForMigration);
+	  		this.on('destroy.ya.migration-table', this.destroy);
       });
 	  }
 });

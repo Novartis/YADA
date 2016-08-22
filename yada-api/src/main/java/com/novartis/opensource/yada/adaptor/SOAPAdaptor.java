@@ -237,7 +237,7 @@ public class SOAPAdaptor extends Adaptor {
 	 */
 	@Override
 	public String build(YADAQuery yq) throws YADAAdaptorException {
-		String source   = yq.getSource();
+	  String conf     = ConnectionFactory.getConnectionFactory().getWsSourceMap().get(yq.getApp());
 		String queryStr = yq.getYADACode();
 		try {
 			JSONObject querySpec = new JSONObject(queryStr);
@@ -245,7 +245,7 @@ public class SOAPAdaptor extends Adaptor {
 			this.soapPass     = querySpec.getString(SOAP_PASSWORD_KEY);
 			this.soapAction   = querySpec.getString(SOAP_ACTION_KEY);
 			this.soapData     = querySpec.getString(SOAP_DATA_KEY);
-			this.soapSource   = source;
+			this.soapSource   = conf;
 			
 			if (querySpec.has(SOAP_DOMAIN_KEY))
 			{

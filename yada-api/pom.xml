@@ -4,11 +4,11 @@
   <parent>
     <groupId>com.novartis.opensource</groupId>
     <artifactId>YADA</artifactId>
-    <version>7.1.5-SNAPSHOT</version>
+    <version>8.0.0-SNAPSHOT</version>
   </parent>
   <groupId>com.novartis.opensource</groupId>
   <artifactId>yada-api</artifactId>
-  <version>7.1.5-SNAPSHOT</version>
+  <version>8.0.0-SNAPSHOT</version>
   <name>yada-api</name>
   <url>http://opensource.nibr.com/yada/yada-api</url>
   <distributionManagement>
@@ -32,6 +32,13 @@
   <profiles>
     <profile>
       <id>test-pgsql</id>
+      <properties>
+        <YADA.index.url>${YADA.pgsql.index.url}</YADA.index.url>
+        <YADA.index.username>${YADA.pgsql.index.username}</YADA.index.username>
+        <YADA.index.password>${YADA.pgsql.index.password}</YADA.index.password>
+        <YADA.index.autoCommit>false</YADA.index.autoCommit>
+        <YADA.index.driverClassName>${YADA.pgsql.index.driverClassName}</YADA.index.driverClassName>
+      </properties>
       <build>
         <plugins>
           <plugin>
@@ -83,6 +90,13 @@
     </profile>
     <profile>
       <id>test-oracle</id>
+      <properties>
+        <YADA.index.url>${YADA.oracle.index.url}</YADA.index.url>
+        <YADA.index.username>${YADA.oracle.index.username}</YADA.index.username>
+        <YADA.index.password>${YADA.oracle.index.password}</YADA.index.password>
+        <YADA.index.autoCommit>false</YADA.index.autoCommit>
+        <YADA.index.driverClassName>${YADA.oracle.index.driverClassName}</YADA.index.driverClassName>
+      </properties>
       <build>
         <plugins>
           <plugin>
@@ -134,6 +148,13 @@
     </profile>
     <profile>
       <id>test-mysql</id>
+      <properties>
+        <YADA.index.url>${YADA.mysql.index.url}</YADA.index.url>
+        <YADA.index.username>${YADA.mysql.index.username}</YADA.index.username>
+        <YADA.index.password>${YADA.mysql.index.password}</YADA.index.password>
+        <YADA.index.autoCommit>false</YADA.index.autoCommit>
+        <YADA.index.driverClassName>${YADA.mysql.index.driverClassName}</YADA.index.driverClassName>
+      </properties>
       <build>
         <plugins>
           <plugin>
@@ -186,6 +207,13 @@
     </profile>
     <profile>
       <id>test-sqlite</id>
+      <properties>
+        <YADA.index.url>${YADA.sqlite.index.url}</YADA.index.url>
+        <YADA.index.username>${YADA.sqlite.index.username}</YADA.index.username>
+        <YADA.index.password>${YADA.sqlite.index.password}</YADA.index.password>
+        <YADA.index.autoCommit>true</YADA.index.autoCommit>
+        <YADA.index.driverClassName>${YADA.sqlite.index.driverClassName}</YADA.index.driverClassName>
+      </properties>
       <build>
         <plugins>
           <plugin>
@@ -237,6 +265,13 @@
     </profile>
     <profile>
       <id>test-proxy</id>
+      <properties>
+        <YADA.index.url>${YADA.pgsql.index.url}</YADA.index.url>
+        <YADA.index.username>${YADA.pgsql.index.username}</YADA.index.username>
+        <YADA.index.password>${YADA.pgsql.index.password}</YADA.index.password>
+        <YADA.index.autoCommit>false</YADA.index.autoCommit>
+        <YADA.index.driverClassName>${YADA.pgsql.index.driverClassName}</YADA.index.driverClassName>
+      </properties>
       <build>
         <plugins>
           <plugin>
@@ -288,6 +323,13 @@
     </profile>
     <profile>
       <id>test-noproxy</id>
+      <properties>
+        <YADA.index.url>${YADA.pgsql.index.url}</YADA.index.url>
+        <YADA.index.username>${YADA.pgsql.index.username}</YADA.index.username>
+        <YADA.index.password>${YADA.pgsql.index.password}</YADA.index.password>
+        <YADA.index.autoCommit>false</YADA.index.autoCommit>
+        <YADA.index.driverClassName>${YADA.pgsql.index.driverClassName}</YADA.index.driverClassName>
+      </properties>
       <build>
         <plugins>
           <plugin>
@@ -339,6 +381,13 @@
     </profile>
     <profile>
       <id>test-fs</id>
+      <properties>
+        <YADA.index.url>${YADA.pgsql.index.url}</YADA.index.url>
+        <YADA.index.username>${YADA.pgsql.index.username}</YADA.index.username>
+        <YADA.index.password>${YADA.pgsql.index.password}</YADA.index.password>
+        <YADA.index.autoCommit>false</YADA.index.autoCommit>
+        <YADA.index.driverClassName>${YADA.pgsql.index.driverClassName}</YADA.index.driverClassName>
+      </properties>
       <build>
         <plugins>
           <plugin>
@@ -396,9 +445,11 @@
     <resources>
       <resource>
         <directory>${basedir}/src/main/resources/conf</directory>
+        <filtering>true</filtering>
         <includes>
           <include>ehcache.xml</include>
           <include>log4j.properties</include>
+          <include>YADA.properties</include>
         </includes>
       </resource>
       <resource>
@@ -409,6 +460,15 @@
       </resource>
     </resources>
     <testResources>
+      <testResource>
+        <directory>${basedir}/src/main/resources/conf</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>ehcache.xml</include>
+          <include>log4j.properties</include>
+          <include>YADA.properties</include>
+        </includes>
+      </testResource>
       <testResource>
         <directory>${basedir}/src/test/resources/conf</directory>
         <filtering>true</filtering>
@@ -818,6 +878,11 @@
 		  <artifactId>hsqldb</artifactId>
 		  <version>2.3.3</version>
 		</dependency>
+		<dependency>
+      <groupId>com.zaxxer</groupId>
+      <artifactId>HikariCP</artifactId>
+      <version>2.4.7</version>
+    </dependency>
   </dependencies>
 </project>
 	

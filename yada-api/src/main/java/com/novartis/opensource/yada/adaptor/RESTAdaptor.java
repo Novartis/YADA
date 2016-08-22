@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
+import com.novartis.opensource.yada.ConnectionFactory;
 import com.novartis.opensource.yada.YADAQuery;
 import com.novartis.opensource.yada.YADAQueryResult;
 import com.novartis.opensource.yada.YADARequest;
@@ -179,8 +180,8 @@ public class RESTAdaptor extends Adaptor {
 	 */
 	@Override
 	public String build(YADAQuery yq) {
-		String source = yq.getSource();
+	  String conf   = ConnectionFactory.getConnectionFactory().getWsSourceMap().get(yq.getApp());
 		String uri    = yq.getYADACode();
-		return source + uri;
+		return conf + uri;
 	}
 }

@@ -16,7 +16,7 @@ define(
   [
 	'flight',
 	'jquery',
-	'bootstrap',
+	'bootstrap'
   ],
   function (flight,$) {
 	'use strict';
@@ -28,9 +28,24 @@ define(
 	  	this.enrich = function() {
 
 	  	}; 
+	  	
+	  	this.defaultAttrs({
+	  	  'app-menu': '#app a',
+	  	  'mig-menu': '#migration a',
+	  	  'app-mgr' : '#app-mgr',
+	  	  'query-table' : '#query-table',
+	  	  'mig-table'   : '#migration-table'
+	  	});
 	      
       this.after('initialize', function () {
-      	this.enrich();
+      	//this.enrich();
+        this.on('click',{
+          'app-menu':function() { 
+             this.trigger(this.attr['query-table'], 'destroy.ya.query-table',{});
+             this.trigger(this.attr['mig-table'], 'destroy.ya.migration-table',{});
+             this.trigger(this.attr['app-mgr'],'init-request.ya.app-mgr',{}); 
+           }
+        });
       });
 	  }
 });

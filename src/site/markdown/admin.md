@@ -19,12 +19,14 @@ Skip to the [Security Wizard] section if that's what you need.
 YADA ships with a webapp called **yada-admin**. It should be accessible after install at your `YADA context/yada-admin` url.  For example, if you installed the quickstart app version 6.0.0 on your localhost in a default tomcat config (port 8080,) the yada-admin app would be accessible at
 
 ```
-http://localhost:8080/YADA-Quickstart-x.x.x/yada-admin
+http://localhost:8080/YADA-Quickstart-6.0.0/yada-admin
 ```
 ## Using yada-admin
 **yada-admin** enables the following activity:
 
-1. Create new JDBC, SOAP, REST, or FILE queries for configured YADA apps using the syntax-coloring-enabled editor from [CodeMirror](https://codemirror.net/)
+1. Configure access to JDBC, SOAP, REST, or FILE datasources, also known as *YADA apps*.
+2. Activate or deactivate apps (queries associated to inactive apps cannot be executed)
+2. Create new JDBC, SOAP, REST, or FILE queries for configured YADA apps using the syntax-coloring-enabled editor from [CodeMirror](https://codemirror.net/)
 3. Modify existing queries
 4. Rename existing queries
 5. Copy (duplicate) existing queries with a new name
@@ -59,49 +61,56 @@ As elucidated in the [User GUide], for authoring queries, use the following mark
 It looks like this (hopefully, most of the time:)
 
 ![ui](../resources/images/ui-ui.png)
+
 ### Toolbar
 The application menubar enables you to switch apps, create a query, toggle the query code format, backup the queries to a JSON text file, or migrate queries from one YADA index to another.
 
-<img src="../resources/images/ui-toolbar.png" width="515" height="60"/>
+<img src="../resources/images/ui-toolbar.png" width="515" height="56
+"/>
 
-## Apps
+## App Manager
 
 ### Switching
-To switch between apps, click the `Choose App` button:
+To switch between apps, click the `App Manager` button. This will bring you to the 
 
-<img src="../resources/images/ui-choose-app.png" width="100" height="50"/>
+<img src="../resources/images/ui-choose-app.png" width="100" height="45"/>
 
-The dialog will appear with an auto-complete dropdown.  Click or Down-arrow/Enter on your app of interest.
+This will bring you to the **App Manager** page, where you will see a list of buttons with App names, and "Queries" buttons to right.
 
-<img src="../resources/images/ui-choose-app-menu.png" width="400" height="250"/>
+<img src="../resources/images/ui-app-mgr.png" width="515" height="215"/>
 
-### Backup
-To backup the queries for the currently selected application to a JSON text file, simply click the "Backup App" button.
+### Creating an App
 
-<img src="../resources/images/ui-backup-btn.png" width="100" height="50"/>
+Simply click the "new" item at the top of the App list directly under **App Manager**. The panel will open with placeholders and (JDBC) defaults, to help you configure the app. 
 
-This will create a local file entitled `<APP>_YADA_backup.json`.  
+Some conventions apply:
 
-The format of the file is is a fully formed YADA JSONParams string containing the query `YADA new query`, intended to enable simple reaccession of all the queries contained therein (for example by passing the content to a curl command.) 
+* The `Code` field is typically all caps and 3 characters.
+* The `Name` field is a short name, for example what you call the datasource when speaking about it.
+* The `Description` is useful for others, or to remind you in 4 years why you configured the source in the first place.
+* The `Configuration` field is where, for **JDBC**, all your connection pool properties should be entered. Defaults settings are preconfigured, except where the value *<replace>* is present. Also, a link to [HikariCP](https://github.com/brettwooldridge/HikariCP) documentation is provided in a comment in this field. **JDBC** configurations are converted to Java [Properties](https://docs.oracle.com/javase/7/docs/api/java/util/Properties.html) objects at runtime, so the syntax of the `Configuration` field must conform to that specification. Simply put, properties are `key=value` pairs separated by line feeds (newlines). `value` may contain `=` (equals sign) characters, spaces, etc. Be careful not to include trailing spaces in `value` strings unintentionally. Again, see the [HikariCP](https://github.com/brettwooldridge/HikariCP) docs for details on all acceptable `key=value` options, as well as how to include custom-driver-only properties.
 
-This is intended as a either a disaster recovery or version control mechanism. One can, for example, periodically use the backup feature and commit the current version to svn, github, etc.
+For **REST**, **SOAP**, and **Filesystem** datasources, simply put the appropriate URL in this field. See the examples below.
 
-> NOTE: It is important that before this file is sent in a YADA request, that all the queries contained in therein are deleted from the target system first, lest they be duplicated.
+Also, don't forget to make the app "Active" if desired, and click "Save".
 
-Sample backup file:  
+#### Preliminary JDBC example
+<img src="../resources/images/ui-new-app.png" width="515" height="410"/>
 
-```json
-[{"qname":"YADA new query",
-  "DATA":[
-  {"ACCESS_COUNT":"91","CREATED_BY":"UNKNOWN1","APP":"YADA","QUERY":"select qname from yada_query where app = ?v","DEFAULT_PARAMS":"0","MODIFIED":"2016-07-02 03:10:52","QNAME":"YADA foo","COMMENTS":"","LAST_ACCESS":"2016-07-03 09:44:11.533","MODIFIED_BY":"VARONDA1","CREATED":"2016-05-21 13:28:39"},
-  {"ACCESS_COUNT":"3780","CREATED_BY":"","APP":"YADA","QUERY":"select app label from yada_query_conf where lower(app) like lower('%'||?v||'%')","DEFAULT_PARAMS":"0","MODIFIED":"","QNAME":"YADA apps","COMMENTS":"","LAST_ACCESS":"2016-06-28 16:14:09.652","MODIFIED_BY":"","CREATED":""},
-  {"ACCESS_COUNT":"","CREATED_BY":"YADABOT","APP":"YADA","QUERY":"select qname,app from yada_query","DEFAULT_PARAMS":"0","MODIFIED":"","QNAME":"YADA test","COMMENTS":"","LAST_ACCESS":"","MODIFIED_BY":"","CREATED":""},
-  ...
-  ]
-}]
-```
+#### Completed REST example
+<img src="../resources/images/ui-ebi.png" width="515" height="408"/>
+
+### Changing an App configuration
+
+Simply click on the name of the app in the list, make your changes and save.  The UI will indicate if changes were successful.
+
+<img src="../resources/images/ui-app-mgr-success.png" width="515" height="410"/>
 
 ## Queries
+
+To view, create, edit, or delete queries for a particular app, start by clicking the `Queries` button to the right of the app's name in App Manager.
+
+<img src="../resources/images/ui-queries.png" width="100" height="54"/>
 
 Any changes to queries made in the `yada-admin` tool result in updating of the in-memory [ehcache](http://www.ehcache.org/), via the [CachedQueryUpdater](http://opensource.nibr.com/YADA/yada-api/apidocs/com/novartis/opensource/yada/plugin/CachedQueryUpdater.html) post-processor plugin (see the [Plugin Guide].)
 
@@ -280,6 +289,10 @@ A few things to note:
 
 For more information, see the [Security Guide].
 
+> Note: A word about yada-admin app security. It's coming...
+> 
+> A default implementation will be provided which will enable a standard, manually curated user/group/role option for locking down the admin app.  We want this implementation to be easily swappable or compatible with your organization's existing security infrastructure, so we are taking a little extra time to facilitate that feature.
+
 
 ## Default YADA Parameters
 
@@ -339,7 +352,7 @@ Migration effectively means copying selected queries from one YADA index to anot
 
 To begin migration, click the `Migrate` button in the toolbar.
 
-<img src="../resources/images/ui-migrate.png" width="100" height="60"/>
+<img src="../resources/images/ui-migrate.png" width="100" height="53"/>
 
 A modal popup with autosuggest will appear.  Start typing the name of the target YADA index, e.g., test.
 
@@ -363,6 +376,33 @@ Once you've selected the queries you wish to transfer, click the `Migrate` butto
 <img src="../resources/images/ui-migrate-exec.png" width="100" height="60"/>
 
 The UI will refresh. If you selected all the rows of the table, indicated there are no more queries to migrate. If you selected only some of the rows, only those previously unselected should appear.
+
+## Backup
+To backup the queries for the currently selected application to a JSON text file, simply click the "Backup App" button.
+
+<img src="../resources/images/ui-backup-btn.png" width="100" height="50"/>
+
+This will create a local file entitled `<APP>_YADA_backup.json`.  
+
+The format of the file is is a fully formed YADA JSONParams string containing the query `YADA new query`, intended to enable simple reaccession of all the queries contained therein (for example by passing the content to a curl command.) 
+
+This is intended as a either a disaster recovery or version control mechanism. One can, for example, periodically use the backup feature and commit the current version to svn, github, etc.
+
+> NOTE: It is important that before this file is sent in a YADA request, that all the queries contained in therein are deleted from the target system first, lest they be duplicated.
+
+Sample backup file:  
+
+```json
+[{"qname":"YADA new query",
+  "DATA":[
+  {"ACCESS_COUNT":"91","CREATED_BY":"UNKNOWN1","APP":"YADA","QUERY":"select qname from yada_query where app = ?v","DEFAULT_PARAMS":"0","MODIFIED":"2016-07-02 03:10:52","QNAME":"YADA foo","COMMENTS":"","LAST_ACCESS":"2016-07-03 09:44:11.533","MODIFIED_BY":"VARONDA1","CREATED":"2016-05-21 13:28:39"},
+  {"ACCESS_COUNT":"3780","CREATED_BY":"","APP":"YADA","QUERY":"select app label from yada_query_conf where lower(app) like lower('%'||?v||'%')","DEFAULT_PARAMS":"0","MODIFIED":"","QNAME":"YADA apps","COMMENTS":"","LAST_ACCESS":"2016-06-28 16:14:09.652","MODIFIED_BY":"","CREATED":""},
+  {"ACCESS_COUNT":"","CREATED_BY":"YADABOT","APP":"YADA","QUERY":"select qname,app from yada_query","DEFAULT_PARAMS":"0","MODIFIED":"","QNAME":"YADA test","COMMENTS":"","LAST_ACCESS":"","MODIFIED_BY":"","CREATED":""},
+  ...
+  ]
+}]
+```
+
 
 [Security Guide]: security.md
 [Plugin Guide]: pluginguide.md

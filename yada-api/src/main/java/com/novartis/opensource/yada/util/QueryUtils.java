@@ -52,6 +52,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
 
+import com.novartis.opensource.yada.ConnectionFactory;
 import com.novartis.opensource.yada.Finder;
 import com.novartis.opensource.yada.Parser;
 import com.novartis.opensource.yada.YADAConnectionException;
@@ -65,6 +66,7 @@ import com.novartis.opensource.yada.adaptor.FileSystemAdaptor;
 import com.novartis.opensource.yada.adaptor.JDBCAdaptor;
 import com.novartis.opensource.yada.adaptor.RESTAdaptor;
 import com.novartis.opensource.yada.adaptor.SOAPAdaptor;
+import com.zaxxer.hikari.HikariDataSource;
 
 /**
  * Utilities for query string manipulation and accounting.
@@ -118,8 +120,18 @@ public class QueryUtils
 	public static final String RX_FILE = "^file:.+$";
 	/**
 	 * A constant equal to: {@value}
+	 * @since 8.0.0
 	 */
-	public static final String RX_JDBC = "^java:.+/jdbc/.+$";
+	public static final String RX_JDBC_JNDI = "^java:.+/jdbc/.+$";
+	/**
+   * A constant equal to: {@value}
+   * @since 8.0.0
+   */
+  public static final String RX_JDBC_CONF = "(?s).*jdbcUrl=jdbc:.+";
+	/**
+   * A constant equal to: {@value}
+   */
+  public static final String RX_JDBC = "^jdbc:.+$";
 	/**
 	 * A constant equal to: {@value}
 	 */
@@ -234,7 +246,7 @@ public class QueryUtils
 		String driverName = "";
 		String className = REST_ADAPTOR_CLASS_NAME;
 		l.debug("JNDI source is [" + source + "]");
-		if (source.matches(RX_JDBC))
+		if (source.matches(RX_JDBC_JNDI))
 		{
 			Context ctx;
 			try
@@ -293,14 +305,53 @@ public class QueryUtils
 
 	/**
 	 * 
-	 * @param source the JNDI string or url mapped to the query's app in the YADA index
+	 * @param app the query's APP code
 	 * @return Class of type Adaptor mapped to the {@code source}
 	 * @throws YADAResourceException when {@code source} can't be found, or there is an issue with the application context
 	 * @throws YADAUnsupportedAdaptorException when the adaptor class mapped to {@code source} can't be found
 	 */
-	public Class<Adaptor> getAdaptorClass(String source) throws YADAResourceException, YADAUnsupportedAdaptorException
+	public Class<Adaptor> getAdaptorClass(String app) throws YADAResourceException, YADAUnsupportedAdaptorException
 	{
-		return getAdaptorClass(source, "");
+	  String driverName = "";
+    String className = REST_ADAPTOR_CLASS_NAME;
+    ConnectionFactory factory = ConnectionFactory.getConnectionFactory(); 
+    HikariDataSource ds = factory.getDataSourceMap().get(app);
+    if(ds != null)
+    {
+      driverName = ds.getDriverClassName();
+      className = Finder.getEnv("adaptor/" + driverName);
+    }
+    else 
+    {
+      String url = factory.getWsSourceMap().get(app);
+      if (url.matches(RX_SOAP))
+      {
+        className = SOAP_ADAPTOR_CLASS_NAME;
+      } 
+      else if (url.matches(RX_FILE))
+      {
+        className = FILESYSTEM_ADAPTOR_CLASS_NAME;
+      }
+    }
+    l.debug("JDBCAdaptor class is [" + className + "]");
+    
+    Class<Adaptor> adaptorClass;
+    try
+    {
+      adaptorClass = (Class<Adaptor>)Class.forName(className);
+      
+    } 
+    catch (ClassNotFoundException e)
+    {
+      String msg = "Could not find appropriate adaptor class";
+      throw new YADAUnsupportedAdaptorException(msg, e);
+    } 
+    catch (NoClassDefFoundError e)
+    {
+      String msg = "Compiled adaptor class could not be loaded";
+      throw new YADAUnsupportedAdaptorException(msg, e);
+    }
+    return adaptorClass;
 	}
 
 	/**
@@ -396,14 +447,14 @@ public class QueryUtils
 	 * Calls {@link #getAdaptorClass(String)} to get the class, then
 	 * {@link #getAdaptor(Class)} to get an instance, using the no-arg
 	 * constructor.
-	 * @param source the JNDI string or url mapped to the query's app in the YADA index.
-	 * @return an instance of the adaptor class mapped to {@code source}
+	 * @param app the YADA app assigned to the datasource
+	 * @return an instance of the adaptor class mapped to {@code app}
 	 * @throws YADAResourceException when {@code source} is not mapped to an adaptor
 	 * @throws YADAUnsupportedAdaptorException when the adaptor class cannot be instantiated
 	 */
-	public Adaptor getAdaptor(String source) throws YADAResourceException, YADAUnsupportedAdaptorException
+	public Adaptor getAdaptor(String app) throws YADAResourceException, YADAUnsupportedAdaptorException
 	{
-		Class<Adaptor> execClass = getAdaptorClass(source);
+		Class<Adaptor> execClass = getAdaptorClass(app);
 		return getAdaptor(execClass);
 	}
 

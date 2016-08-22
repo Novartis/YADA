@@ -261,8 +261,10 @@ public class YADAQuery {
 	public YADAQuery(YADAQuery yq) {
 		this.setVersion(new String(yq.getVersion()));
 		this.setCoreCode(new String(yq.getYADACode()));
-		this.setSource(new String(yq.getSource()));
+		String legacySource = yq.getSource() == null ? "" : yq.getSource();
+		this.setSource(legacySource);
 		this.setQname(new String(yq.getQname()));
+		this.setApp(new String(yq.getApp()));
 		for (YADAParam cachedParam : yq.getYADAQueryParams())
 		{
 			YADAParam param = new YADAParam();
@@ -863,37 +865,37 @@ public class YADAQuery {
 	 */
 	public void setConnection() throws YADAConnectionException 
 	{
-		this.setConnection(this.getSource());
+		this.setConnection(this.getApp());
 	}
 	
 	/**
 	 * Set a transactional connection for the source
 	 * 
 	 * @since 4.0.0
-	 * @param source the source stored in the query
+	 * @param app the app name stored in the query
 	 * @throws YADAConnectionException when the connection can't be opened
 	 */
-	public void setConnection(String source) throws YADAConnectionException 
+	public void setConnection(String app) throws YADAConnectionException 
 	{
-		this.setConnection(source, true);
+		this.setConnection(app, true);
 	}
 	
 	/**
 	 * Set a transactional or non-transactional connection for the source
 	 * @since 4.0.0
-	 * @param source the source stored in the query
+	 * @param app the app name stored in the query
 	 * @param transactions set to {@code true} to execute multiple queries as a single transaction.
 	 * @throws YADAConnectionException when the connection can't be opened
 	 */
-	public void setConnection(String source, boolean transactions) throws YADAConnectionException 
+	public void setConnection(String app, boolean transactions) throws YADAConnectionException 
 	{
 		if(this.getProtocol().equals(Parser.SOAP))
 		{
-			this.setSOAPConnection(ConnectionFactory.getSOAPConnection());
+			this.setSOAPConnection(ConnectionFactory.getConnectionFactory().getSOAPConnection());
 		}
 		else
 		{
-			this.setConnection(ConnectionFactory.getConnection(source));
+			this.setConnection(ConnectionFactory.getConnectionFactory().getConnection(app));
 			if(transactions)
 			{
 				try

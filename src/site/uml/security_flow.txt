@@ -7,7 +7,7 @@ skinparam activity {
   BorderColor #923222
   ArrowColor #923222
 }
-title 4-Tier Security API 
+title YADA 4-Tier Security API 
 start
 if(has 'auth.path.rx' property or argument) then (yes)
   :validateURL;

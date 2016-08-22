@@ -61,7 +61,7 @@ public class CachedQueryUpdater extends AbstractPostprocessor
 	public void engage(YADAQuery yq) throws YADAPluginException
 	{
 		String q = yq.getData().get(0).get(QNAME)[0];
-		Cache yadaIndex = ConnectionFactory.getCacheConnection(	Finder.YADA_CACHE_MGR,
+		Cache yadaIndex = ConnectionFactory.getConnectionFactory().getCacheConnection(	Finder.YADA_CACHE_MGR,
 																														Finder.YADA_CACHE);
 		try
 		{

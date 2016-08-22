@@ -12,7 +12,7 @@
 <!-- The contents of this file will be loaded for each web application -->
 <Context>
 	<Environment name="yada_version"                      override="false" type="java.lang.String" value="${display.version}" />
-  <Environment name="app_home"                          override="false" type="java.lang.String" value="${app.home}" />
+    <Environment name="app_home"                          override="false" type="java.lang.String" value="${app.home}" />
 	<Environment name="yada_home"                         override="false" type="java.lang.String" value="${app.home}/tomcat/webapps/ROOT" />
 	<Environment name="yada_bin"                          override="false" type="java.lang.String" value="${app.home}/bin/" />
 	<Environment name="yada_util"                         override="false" type="java.lang.String" value="${app.home}/tomcat/webapps/ROOT/util/" />
@@ -21,28 +21,11 @@
 	<Environment name="adaptor/org.sqlite.JDBC"           override="false" type="java.lang.String" value="com.novartis.opensource.yada.adaptor.SQLiteAdaptor" />
 	<Environment name="adaptor/oracle.jdbc.OracleDriver"  override="false" type="java.lang.String" value="com.novartis.opensource.yada.adaptor.OracleAdaptor" />
 	<Environment name="adaptor/com.mysql.jdbc.Driver"     override="false" type="java.lang.String" value="com.novartis.opensource.yada.adaptor.MySQLAdaptor" />
-  <Environment name="adaptor/org.postgresql.Driver" 	  override="false" type="java.lang.String" value="com.novartis.opensource.yada.adaptor.PostgreSQLAdaptor" />
+    <Environment name="adaptor/org.postgresql.Driver" 	  override="false" type="java.lang.String" value="com.novartis.opensource.yada.adaptor.PostgreSQLAdaptor" />
 	<Environment name="adaptor/com.vertica.jdbc.Driver"   override="false" type="java.lang.String" value="com.novartis.opensource.yada.adaptor.VerticaAdaptor" />
 	<Environment name="adaptor/SOAP" 					  override="false" type="java.lang.String" value="com.novartis.opensource.yada.adaptor.SoapAdaptor" />
 	<Environment name="adaptor/com.microsoft.sqlserver.jdbc.SQLServerDriver" override="false" type="java.lang.String" value="com.novartis.opensource.yada.adaptor.SQLServerAdaptor" />
 
-	<Resource name="jdbc/yada" 
-              auth="Container" 
-              type="javax.sql.DataSource" 
-              driverClassName="${YADA.index.driverClassName}" 
-              defaultAutoCommit="false" 
-              maxActive="100" 
-              maxIdle="30" 
-              maxWait="-1" 
-              removeAbandoned="true" 
-              removeAbandonedTimeout="600" 
-              validationQuery="${YADA.index.validationQuery}"
-              testOnBorrow="true" 
-              testWhileIdle="true"
-              username="${YADA.index.username}" 
-              password="${YADA.index.password}" 
-              url="${YADA.index.url}" 
-		/>
 		
 	<!-- Mail resource -->
 	<Resource name="mail/Session" auth="Container" type="javax.mail.Session"

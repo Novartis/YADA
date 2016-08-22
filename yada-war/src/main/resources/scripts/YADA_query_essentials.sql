@@ -20,7 +20,8 @@ a.created_by as "CREATED_BY",
 a.modified_by as	"MODIFIED_BY", 
 a.last_access as	"LAST_ACCESS", 
 a.access_count as "ACCESS_COUNT",
-count(b.target) as "DEFAULT_PARAMS"
+count(b.target) as "DEFAULT_PARAMS",
+a.comments as "COMMENTS"
 from yada_query a left
 join YADA_PARAM b on a.qname = b.target
 where app = ?v
@@ -33,7 +34,7 @@ a.access_count,
 a.modified,
 a.modified_by,
 a.created,
-a.created_by','YADABOT','YADA');
+a.created_by,a.comments','YADABOT','YADA');
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA queries for apps','select
 a.query as "QUERY", 
 a.app as "APP", 
@@ -44,11 +45,6 @@ a.modified_by as	"MODIFIED_BY",
 a.last_access as	"LAST_ACCESS", 
 a.access_count as "ACCESS_COUNT", 
 from yada_query a where a.app in (?v) ','YADABOT','YADA');
---no longer in use
---INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA select apps for migration','select a.app label, upper(to_char(max(b.modified),''dd-mon-yyyy'')) max_date
---from yada_query_conf a
---left join yada_query b on a.app = b.app
---group by a.app','YADABOT','YADA');
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA select default params','SELECT 
 id as "ID",
 target as "TARGET",
@@ -88,3 +84,28 @@ INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA select protect
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA insert protector for target','insert into yada_a11n (target,policy,qname,type) values (?v,''E'',?v,?v)', 'YADABOT', 'YADA');
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA delete protector for target','delete from yada_a11n where target = ?v and qname = ?v', 'YADABOT', 'YADA');
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA update protector for target','update yada_a11n set qname = ?v, type = ?v where target = ?v', 'YADABOT', 'YADA');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA new app','insert into yada_query_conf (app,name,descr,conf,active) values (?v,?v,?v,?v,?i)', 'YADABOT', 'YADA');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA update app','update yada_query_conf set name=?v, descr=?v, conf=?v, active=?i where app=?v', 'YADABOT', 'YADA');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA select apps','select app "APP", name "NAME", descr "DESCR", conf "CONF", active "ACTIVE" from yada_query_conf where app != ''YADA''', 'YADABOT', 'YADA');
+
+-- configs
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA update query','pl',1,'CachedQueryUpdater');
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pz',1,'-1');
+
+-- baseline sec
+-- ADMIN role has full crud for APP
+-- USER role can has read-only for APP (eventually USER should have full crud for his/her authored queries)
+-- YADA uid has full crud for all APPs
+INSERT into YADA_UG (app,uid,role) VALUES ('YADA','YADA','ADMIN');
+INSERT into YADA_UG (app,uid,role) VALUES ('YADA','YADAUSER','USER');
+
+-- 'YADA select apps' requires content policy to filter for uid in YADA_UG
+
+-- 'YADA insert...'   requires execution policy by whitelist for APP admins
+-- 'YADA update...'   same
+-- 'YADA delete...'   same
+-- 'YADA select...'   "internal" queries for properties, params, uniqueness, protectors, all require admin role
+
+-- 'YADA select...' 
+
+

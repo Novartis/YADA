@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
+import com.novartis.opensource.yada.ConnectionFactory;
 import com.novartis.opensource.yada.Finder;
 import com.novartis.opensource.yada.YADAQuery;
 import com.novartis.opensource.yada.YADAQueryResult;
@@ -189,12 +190,12 @@ public class FileSystemAdaptor extends Adaptor
 	 */
 	@Override
 	public String build(YADAQuery yq) throws YADAAdaptorException {
-		String source = yq.getSource();
+		String conf   = ConnectionFactory.getConnectionFactory().getWsSourceMap().get(yq.getApp());
 		String uriStr = yq.getYADACode();
 		String env    = "";
 		try
 		{
-			Matcher m   = SOURCE_RX.matcher(source);
+			Matcher m   = SOURCE_RX.matcher(conf);
 	
 			if(m.matches())
 			{

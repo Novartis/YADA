@@ -20,8 +20,11 @@ DROP TABLE IF EXISTS YADA.YADA_QUERY_CONF;
 CREATE TABLE IF NOT EXISTS YADA.YADA_QUERY_CONF 
 (	
 	APP     VARCHAR(20)   NOT NULL, 
-	SOURCE  VARCHAR(4000) NOT NULL, 
-	VERSION VARCHAR(20)
+	NAME    VARCHAR(20),
+    DESCR   VARCHAR(400),
+	SOURCE  VARCHAR(4000), 
+	CONF    VARCHAR(4000),
+	ACTIVE  INT DEFAULT 1
 );
 
 DROP TABLE IF EXISTS YADA.YADA_PARAM;
@@ -62,12 +65,21 @@ CREATE TABLE IF NOT EXISTS YADA.YADA_PROP
   VALUE VARCHAR(4000)
 );
 
-USE YADA;
+-- YADA_UG is a whitelist table for the yada-admin webapp
+DROP TABLE IF EXISTS YADA.YADA_UG;
+CREATE TABLE IF NOT EXISTS YADA.YADA_UG
+(
+  APP VARCHAR(20) NOT NULL,
+  UID VARCHAR(255) NOT NULL,
+  ROLE VARCHAR(20) NOT NULL
+);
 
-INSERT into YADA_QUERY_CONF (APP,SOURCE,VERSION) values ('YADA','java:comp/env/jdbc/yada',null);
-INSERT into YADA_QUERY_CONF (APP,SOURCE,VERSION) values ('YADATEST','java:comp/env/jdbc/yada',null);
-INSERT into YADA_QUERY_CONF (APP,SOURCE,VERSION) values ('QGO','http://www.ebi.ac.uk/QuickGO/GTerm?',null);
-INSERT into YADA_QUERY_CONF (APP,SOURCE,VERSION) values ('YADAFSIN','file:///io/in',null);
+-- INSERT YADA INDEX QUERY CONF
+DELETE from YADA_QUERY_CONF where app = 'YADA' and source = 'java:comp/env/jdbc/yada';
+INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADA','java:comp/env/jdbc/yada',null);
+INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADATEST','java:comp/env/jdbc/yada',null);
+INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('QGO',null,'http://www.ebi.ac.uk/QuickGO/GTerm?');
+INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADAFSIN',null,'file:///io/in');
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA default','select ''YADA is alive''','YADABOT','YADA');
 -- THESE LINES DON'T WORK IN WORKBENCH, BUT MAYBE ON CLI
 -- source YADA_query_essentials.sql;

@@ -29,7 +29,7 @@ define(
     function queryTable()
     {
 
-      this.app = 'YADA';
+      this.app = "";
       this.qname = '';
       this.comments = '';
       this.edit = '';
@@ -38,11 +38,23 @@ define(
       this.securityOptions = '';
       this.policyGroup = '';
 
+      this.refresh = function(e,d) {
+        this.app = d.app;
+        $('#app-selection h1').text(d.app).show();
+        $('nav.main-menu li').removeClass('disabled');
+        
+        $('#new-query,#migration').attr('data-toggle','modal');
+        $('#new-query').attr('data-target','#query-editor-container');
+        $('#migration').attr('data-target','#migration-target-selector');
+        
+        this.trigger('app-requested',{app:d.app});
+      };
+            
       this.enrich = function()
       { // triggered at init
         var self = this;
-        $('#toggle-view,#new-query').removeClass('disabled');
-
+        $('#app,#toggle-view,#new-query').removeClass('disabled');
+        $('#app-selection').removeClass('hidden');
         this.select('query-table').dataTable({
           autoWidth: false,
           ajax: {
@@ -50,9 +62,10 @@ define(
             type: "POST",
             data: function(d)
             {
+              var app = self.select('query-table').data('app');
               return $.extend({}, d, {
                 qname: self.attr.q_queries, // "YADA queries",
-                params: self.app,
+                params: app,
                 pz: "-1"
               });
             },
@@ -255,6 +268,22 @@ define(
         };
         return protectors.then(resolve);
       };
+      
+      this.destroy = function(e,d) {
+        $('nav.main-menu li').addClass('disabled');
+        $('#new-query,#migration').removeAttr('data-toggle');
+        $('#new-query,#migration').removeAttr('data-target');
+        $('#app-selection').hide();
+        if ($.fn.DataTable.isDataTable(this.attr.params))
+        {
+          this.select('params').DataTable().destroy();
+          this.select('params').empty();
+        }
+        if ($.fn.DataTable.isDataTable(this.attr['query-table']))
+          this.select('query-table').DataTable().destroy();
+        this.select('query-table').empty();
+        this.teardown();
+      }
 
       this.reloadTable = function(e, d)
       {
@@ -1409,29 +1438,30 @@ define(
         'container': '#query-editor-container',
         'container-title': '#query-editor-container .modal-title',
         'container-body': '#query-editor-container .modal-body',
-        'query-table': '#query-table',
-        'query-table-body': '#query-table tbody',
-        'qname': '#query-name',
-        'qname-box': '#query-name-box',
-        'query-comments': '#query-comments',
-        'clipboard': 'span.glyphicon-copy',
-        'qname-copy': '#qname-copy',
-        'qname-copy-input': '#uniq-name',
-        'qname-copy-incl': '#incl-param',
-        'qname-copy-save': '#qname-copy .btn-primary',
-        'qname-copy-cancel': '#qname-copy .btn-call-to-action',
-        'qname-copy-title': '#qname-copy .modal-title',
-        'qname-copy-body': '#qname-copy .modal-body',
+        'query-table'       : '#query-table',
+        'query-table-body'  : '#query-table tbody',
+        'qname'             : '#query-name',
+        'qname-box'         : '#query-name-box',
+        'query-comments'    : '#query-comments',
+        'clipboard'         : 'span.glyphicon-copy',
+        'qname-copy'        : '#qname-copy',
+        'qname-copy-input'  : '#uniq-name',
+        'qname-copy-incl'   : '#incl-param',
+        'qname-copy-save'   : '#qname-copy .btn-primary',
+        'qname-copy-cancel' : '#qname-copy .btn-call-to-action',
+        'qname-copy-title'  : '#qname-copy .modal-title',
+        'qname-copy-body'   : '#qname-copy .modal-body',
         'view-error-details': '#view-error-details',
-        'error-details': '#error-details',
-        'clipboard-editor': '#query-code-copy',
-        'code': '#query-editor textarea',
-        'tooltip': '#query-editor-container [data-toggle="tooltip"]'
+        'error-details'     : '#error-details',
+        'clipboard-editor'  : '#query-code-copy',
+        'code'              : '#query-editor textarea',
+        'tooltip'           : '#query-editor-container [data-toggle="tooltip"]'
       });
 
       this.after('initialize', function()
       {
         var self = this;
+        this.app = this.$node.data('app');
         this.enrich();
         // event handlers
         this.on('change', {
@@ -1445,6 +1475,8 @@ define(
         });
         this.on('update-security-panel',this.policyUpdateSecurityPanel);
         this.on('app-requested', this.reloadTable);
+        this.on('view.ya.query-table', this.refresh);
+        this.on('destroy.ya.query-table', this.destroy);
         this.on('hide.bs.modal', this.clearQuery);
         this.on('save-error', this.error);
         this.on('save-success', this.saveSuccess);
