@@ -28,6 +28,8 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.Cookie;
 
+import org.json.JSONArray;
+
 import com.novartis.opensource.yada.ConnectionFactory;
 import com.novartis.opensource.yada.YADAConnectionException;
 import com.novartis.opensource.yada.YADAQuery;
@@ -378,6 +380,33 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   public String getHeader(String header)
   {
     return getYADARequest().getRequest().getHeader(header);
+  }
+  
+  @Override 
+  public Object getSessionAttribute(String attribute)
+  {
+    return getYADARequest().getRequest().getSession().getAttribute(attribute);
+  }
+  
+  /**
+   * Convenience method to get the user id value for security policy application
+   * @return a json string containing the {@code UID} value stored in the {@code YADA.user.privs} session attribute
+   */
+  public String getLoggedUser()
+  {
+    return ((JSONArray)getSessionAttribute("YADA.user.privs")).getJSONObject(0).getString("UID");
+  }
+  
+  @Override
+  public String getValue(String key)
+  {
+    return getYADAQuery().getDataRow(0).get(key)[0];
+  }
+  
+  @Override
+  public String getValue(int index)
+  {
+    return getYADAQuery().getDataRow(0).get("YADA_"+index)[0];
   }
   
   @Override

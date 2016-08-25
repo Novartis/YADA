@@ -1132,7 +1132,7 @@ public class ServiceTest
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    */
-  @Test(enabled = true, dataProvider = "QueryTests", groups = { "api", "plugins" })
+  @Test(enabled = false, dataProvider = "QueryTests", groups = { "api", "plugins" })
   @Assumption(methods = "isNotWindows")
   @QueryFile(list = {})
   public void testSecurityExceptions(String query) throws YADAQueryConfigurationException
@@ -1153,7 +1153,7 @@ public class ServiceTest
     JSONObject j = new JSONObject(result);
     logJSONResult(j);
     Assert.assertTrue(j.has("Exception") && j.get("Exception").equals("com.novartis.opensource.yada.plugin.YADASecurityException") 
-        && j.has("Message") && j.get("Message").equals("Unauthorized"), "The Security API appears to have failed."); 
+        && j.has("Message") && j.getString("Message").startsWith("Unable to process security spec"), "The Security API appears to have failed."); 
   }
   
   /**
@@ -2173,8 +2173,8 @@ public class ServiceTest
    */
   public static void logQuery(String query) 
   {
-    if(System.getProperty(LOG_STDOUT) != null )
-      System.out.println("\nQuery: " + query);
+    //if(System.getProperty(LOG_STDOUT) != null )
+    System.out.println("\nQuery: " + query + " ");
     System.out.print(".");
   }
 

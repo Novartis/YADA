@@ -374,9 +374,10 @@ define(
 	  		$tr      = $(e.target).closest('tr');
 	  		if($(table.row($tr).nodes()).data('status') != 'new')
 	  		{
-	  		  var data = table.row($tr).data();
+	  		  var app = $('#app-selection').text().trim();
+	  		  var data = $.extend({},table.row($tr).data(),{APP:app});
   	  		var j = [{qname:'YADA delete default param',DATA:[data]}];
-  	  		j.push({qname:'YADA delete prop for target',DATA:[{TARGET:data.TARGET + '-' + data.ID}]});
+  	  		j.push({qname:'YADA delete prop for target',DATA:[{TARGET:data.TARGET + '-' + data.ID, APP:app}]});
   	  		$.ajax({
   	  			//url:'/yada.jsp',
   	  			type:'POST',

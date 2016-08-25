@@ -7,6 +7,7 @@
 > NOTE: The term `YADA app` is effectively synonymous with `YADA datasource`
 
  
+
 ## Installed and Oriented?
 
 See the [Quickstart/Deployment Guide] if you've not yet installed YADA on a server somewhere.  

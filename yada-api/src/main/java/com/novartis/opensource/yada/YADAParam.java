@@ -228,7 +228,7 @@ public class YADAParam
 	{
 		return "{"
 		    +"\"id\":\""+getId()
-		    +"\"name\":\""+getName()
+		    +"\",\"name\":\""+getName()
 				+"\",\"value\":\""+getValue()
 				+"\",\"target\":\""+getTarget()
 				+"\",\"rule\":\""+getRule()

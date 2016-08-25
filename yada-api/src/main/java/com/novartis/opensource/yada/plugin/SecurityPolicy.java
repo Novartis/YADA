@@ -87,4 +87,44 @@ public interface SecurityPolicy {
    * @return {@code true} if {@code TYPE} is {@link #BLACKLIST}
    */
   public boolean isBlacklist(String type);
+  
+  /**
+   * Provides route to inject HTTP header value into security policy.
+   * @param header the name of the header from which to retrieve the value
+   * @return the value of the request header, or {@code null} if the header was not included
+   * @since 7.0.0
+   */
+  public String getHeader(String header);
+
+  /**
+   * Provides route to inject HTTP cookie value into the security policy.
+   * @param cookie the name of the cookie for which to retrieve the value
+   * @return the value of the desired cookie or {@code null} if the cookie was not included in the request
+   * @since 7.0.0
+   */
+  public String getCookie(String cookie);
+  
+  /**
+   * Provides route to inject session variables into the security policy.
+   * @param attribute the name of the session attribute for which to retrieve the value
+   * @return the value of the desired attribute or {@code null} if the attribute was not included in the session
+   * @since 8.1.0
+   */
+  public Object getSessionAttribute(String attribute);
+  
+  /**
+   * Provides route to inject data values passed in request into the security policy.
+   * @param key the name of the column for which to retrieve the value
+   * @return the value of the desired column or {@code null} if the column was not included in the request
+   * @since 8.1.0
+   */
+  public String getValue(String key);
+  
+  /**
+   * Provides route to inject data values passed in request into the security policy.
+   * @param index the index of the column for which to retrieve the value
+   * @return the value of the desired column or {@code null} if the column was not included in the request
+   * @since 8.1.0
+   */
+  public String getValue(int index);
 }

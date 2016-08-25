@@ -34,6 +34,7 @@ import net.sf.jsqlparser.statement.select.SelectBody;
 import net.sf.jsqlparser.util.deparser.ExpressionDeParser;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.novartis.opensource.yada.Finder;
@@ -81,7 +82,11 @@ public class Gatekeeper extends AbstractPreprocessor {
    * Constant equal to {@value}
    */
   protected static final String CONTENT_POLICY_PREDICATE = "content.policy.predicate";
- 
+  /** 
+   * Constant equal to {@value}
+   * @since 8.1.0
+   */
+  protected static final String RX_INJECTION  = "get[A-Z][a-zA-Z0-9_]+\\([A-Za-z0-9_]*\\)";
   /**
    * Validates the request host, user, security params, and security query
    * execution results
@@ -173,7 +178,7 @@ public class Gatekeeper extends AbstractPreprocessor {
     String  policyIndices       = getArgumentValue(EXECUTION_POLICY_INDICES);
     policyIndices = policyIndices == null ? getArgumentValue(EXECUTION_POLICY_INDEXES) : policyIndices;
     String  polColParams_rx     = "^([\\d]+\\s?)+$";
-    String  polColJSONParams_rx = "^([A-Za-z0-9_]+\\s?)+$";
+    String  polColJSONParams_rx = "^([A-Za-z0-9_():\"]+\\s?)+$";
     String  result              = "";
     int     index               = -1;
     boolean policyHasParams     = false;
@@ -194,7 +199,6 @@ public class Gatekeeper extends AbstractPreprocessor {
       {
         policyHasJSONParams = true;
       }
-      // (hasParams || hasJSONParams) == true or false
       
       // request and policy must have syntax compatibility, i.e., matching param syntax, or no params
       if((policyHasParams && !reqHasJSONParams) || (policyHasJSONParams && !reqHasParams) 
@@ -289,19 +293,47 @@ public class Gatekeeper extends AbstractPreprocessor {
         // 2. add user column if necessary
         @SuppressWarnings("null")
         String[] polCols = policyColumns.split("\\s");
-        for(String colname : polCols) 
+        for(String colspec : polCols) 
         {
-          if(!dataRow.containsKey(colname))
+          if(!dataRow.containsKey(colspec))
           {
-            dataRow.put(colname, new String[] {(String)getToken()});
-            break;
+            // this is where the method can be injected
+            //dataRow.put(colname, new String[] {(String)getToken()});
+            //break;
+            String[] pair        = colspec.split(":");
+            String   colname     = pair[0];
+            String   colval      = pair[1];
+            Pattern  rxInjection = Pattern.compile(RX_INJECTION);
+            Matcher  m1          = rxInjection.matcher(colval);
+            if(!m1.matches())
+            {
+              String msg = "Unathorized. Injected method invocation failed.";
+              throw new YADASecurityException(msg);
+            }
+            
+            String method = colval.substring(0,colval.indexOf('('));
+            String arg    = colval.substring(colval.indexOf('(')+1,colval.indexOf(')'));
+            Object val    = null;
+            try 
+            {
+              if(arg.equals(""))
+                val = getClass().getMethod(method).invoke(this, new Object[] {});
+              else
+                val = getClass().getMethod(method, new Class[] { java.lang.String.class }).invoke(this, new Object[] {arg});
+            } 
+            catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) 
+            {
+              String msg = "Unathorized. Injected method invocation failed.";
+              throw new YADASecurityException(msg, e);
+            }
+            dataRow.put(colname, new String[] {(String)val});
           }
         }
         // 3. execute the security query
         JSONParamsEntry jpe = new JSONParamsEntry();
         jpe.addData(dataRow);
         JSONParams jp = new JSONParams(a11nQname, jpe);
-        result = YADAUtils.executeYADAGetWithJSONParams(jp);
+        result = YADAUtils.executeYADAGetWithJSONParamsNoStats(jp);
       }
       else
       {
@@ -338,7 +370,6 @@ public class Gatekeeper extends AbstractPreprocessor {
     
     String SPACE            = " ";
     StringBuilder contentPolicy = new StringBuilder(); 
-    String        RX_INJECTION  = "get[A-Z][a-zA-Z0-9_]+\\([A-Za-z0-9_]*\\)";
     Pattern       rxInjection   = Pattern.compile(RX_INJECTION);
     String        rawPolicy     = getArgumentValue(CONTENT_POLICY_PREDICATE);
     Matcher       m1            = rxInjection.matcher(rawPolicy);
@@ -347,6 +378,7 @@ public class Gatekeeper extends AbstractPreprocessor {
     // field = getToken
     // field = getCookie(string)
     // field = getHeader(string)
+    // field = getUser()
     // field = getRandom(string)
     
     if(!m1.find())
@@ -433,6 +465,23 @@ public class Gatekeeper extends AbstractPreprocessor {
     String quote = "'";
     return quote + getToken() + quote;
   }
+  
+  /**
+   * Utility function for content policy
+   * @return the auth token wrapped in single quotes
+   * @throws YADASecurityException
+   * @since 8.1.0
+   */
+  public String getQLoggedUser() throws YADASecurityException
+  {
+    String user = ((JSONArray)getSessionAttribute("YADA.user.privs")).getJSONObject(0).getString("UID");
+    String quote = "'";
+    return quote + user + quote;
+  }
+  
+  /**
+   * Utility function for content policy
+   */
   
   /**
    * Utility function for content policy

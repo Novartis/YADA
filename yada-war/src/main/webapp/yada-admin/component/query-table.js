@@ -40,14 +40,14 @@ define(
 
       this.refresh = function(e,d) {
         this.app = d.app;
-        $('#app-selection h1').text(d.app).show();
+        $('#app-selection').show().find('h1').text(d.app)
         $('nav.main-menu li').removeClass('disabled');
         
         $('#new-query,#migration').attr('data-toggle','modal');
         $('#new-query').attr('data-target','#query-editor-container');
         $('#migration').attr('data-target','#migration-target-selector');
         
-        this.trigger('app-requested',{app:d.app});
+        //this.trigger('app-requested',{app:d.app});
       };
             
       this.enrich = function()
@@ -64,8 +64,9 @@ define(
             {
               var app = self.select('query-table').data('app');
               return $.extend({}, d, {
-                qname: self.attr.q_queries, // "YADA queries",
-                params: app,
+//                qname: self.attr.q_queries, // "YADA queries",
+//                params: app,
+                j:JSON.stringify([{qname:self.attr.q_queries,DATA:[{APP:app}]}]),
                 pz: "-1"
               });
             },
@@ -181,8 +182,9 @@ define(
         var sourceParams = $.ajax({
           type: 'POST',
           data: {
-            q: this.attr.q_params, // 'YADA select default params for app',
-            p: this.app,
+            //q: this.attr.q_params, // 'YADA select default params for app',
+            //p: this.app,
+            j:JSON.stringify([{qname:this.attr.q_params,DATA:[{APP:this.app}]}]),
             pz: -1,
             c: false
           }
@@ -191,11 +193,11 @@ define(
       };
       
       this.getPropertiesRequest = function() {
+        var self = this;
         var props = $.ajax({
           type: 'POST',
           data: {
-            q: this.attr.q_props, // 'YADA select default params for app',
-            p: this.app,
+            j:JSON.stringify([{qname:self.attr.q_props,DATA:[{TARGET:self.app}]}]),
             pz: -1,
             c: false
           }
@@ -208,8 +210,9 @@ define(
         var protectors = $.ajax({
           type: 'POST',
           data: {
-            q: self.attr.q_protectors, // 'YADA select protectors for target',
-            p: self.qname,
+            //q: self.attr.q_protectors, // 'YADA select protectors for target',
+            //p: self.qname,
+            j:JSON.stringify([{qname:self.attr.q_protectors,DATA:[{TARGET:self.qname}]}]),
             pz: -1,
             c: false
           }
@@ -532,8 +535,8 @@ define(
       { // triggered by 'copy' and 'rename'
         // buttons
         this.restoreFooter();
-        var self = this, qname = this.qname, query = this.query, action = $(e.target).prop('id').replace('button-',
-            '');
+        var self = this, qname = this.qname, query = this.query, 
+            action = $(e.target).prop('id').replace('button-','');
         this.select('button-cancel').click();
         this.select('qname-copy').modal('show').data({
           'qname': qname,
@@ -580,8 +583,7 @@ define(
         var check = $.ajax({
           type: 'POST',
           data: {
-            q: this.attr.q_unique, // 'YADA check uniqueness',
-            p: qname
+            j:JSON.stringify([{qname:self.attr.q_unique,DATA:[{QNAME:qname,APP:self.app}]}]),
           }
         });
         var resolve = function(data)
@@ -644,7 +646,7 @@ define(
             return el;
           });
           j.push({
-            qname: this.attr.q_new_param,
+            qname: self.attr.q_new_param,
             DATA: jParams
           });
           // j.push({qname:'YADA insert default param',DATA:jParams});
@@ -698,10 +700,9 @@ define(
         if (params.length > 0)
         {
           j.push({
-            'qname': this.attr.q_delete_param,
-            'DATA': params
+            'qname': self.attr.q_delete_param,
+            'DATA': $.extend({},params,{APP:self.app})
           });
-          // j.push({'qname':'YADA delete default param','DATA':params});
         }
         var del = $.ajax({
           type: 'POST',
@@ -749,16 +750,16 @@ define(
         var details = '';
         this.edit = '';
 
-        if (d.error.Exception != undefined && d.error.StackTrace != undefined)
+        if (d.error.responseJSON.Exception != undefined && d.error.responseJSON.StackTrace != undefined)
         {
           details = '<div id="error-details">';
-          if (d.error.Exception != undefined)
-            details += "<br/>Exception:" + d.error.Exception;
-          if (d.error.StackTrace != undefined)
+          if (d.error.responseJSON.Exception != undefined)
+            details += "<br/>Exception:" + d.error.responseJSON.Exception;
+          if (d.error.responseJSON.StackTrace != undefined)
           {
             for (var i = 0; i < 5; i++)
             {
-              details += "<br/>" + d.error.StackTrace[i];
+              details += "<br/>" + d.error.responseJSON.StackTrace[i];
             }
             details += "<br/>...";
           }
@@ -1006,14 +1007,15 @@ define(
           if(qaction == 'insert')
           {
             // jp data object to insert param-targeted properties
-            var propData = [{TARGET:self.qname+'-'+id,NAME:'protected',VALUE:'true'}];
+            var propData = [{TARGET:self.qname+'-'+id,NAME:'protected',VALUE:'true',APP:self.app}];
             
             // do we need to insert the query properties too?
             var qProp   = _.filter(self.select('nest').data('properties'),{
               TARGET:target, NAME:'protected', VALUE:'true'
             });
             if(qProp.length == 0)
-              propData.push({TARGET:target, NAME:'protected', VALUE:'true'});
+              propData.push({TARGET:target, NAME:'protected', VALUE:'true',APP:self.app});
+            
             j.push({qname:self.attr.q_new_prop,DATA:propData});
           }
           
@@ -1112,8 +1114,7 @@ define(
             $.ajax({
               type: 'POST',
               data: {
-                q: self.attr.q_new_prop,
-                p: [ self.qname, 'protected', 'true' ].join(',')
+                j:JSON.stringify([{qname:self.attr.q_new_prop,DATA:[{TARGET:self.qname,NAME:'protected',VALUE:'true',APP:self.app}]}]),
               },
               success: function(data) {
                 self.getProperties();
@@ -1131,8 +1132,7 @@ define(
             $.ajax({
               type: 'POST',
               data: {
-                q: self.attr.q_delete_prop,
-                p: [ self.qname, 'protected', 'true' ].join(',')
+                j:JSON.stringify([{qname:this.attr.q_delete_prop,DATA:[{TARGET:self.qname,NAME:'protected',VALUE:'true',APP:self.app}]}]),
               },
               success: function(data) {
                 self.getProperties();
@@ -1158,8 +1158,7 @@ define(
             $.ajax({
               type: 'POST',
               data: {
-                q: self.attr.q_new_prop,
-                p: [ self.app, 'protected', 'true' ].join(',')
+                j:JSON.stringify([{qname:self.attr.q_new_prop,DATA:[{TARGET:self.app,NAME:'protected',VALUE:'true',APP:self.app}]}]),
               },
               success: function(data) {
                 self.getProperties();
@@ -1177,8 +1176,7 @@ define(
             $.ajax({
               type: 'POST',
               data: {
-                q: self.attr.q_delete_prop,
-                p: [ self.app, 'protected', 'true' ].join(',')
+                j:JSON.stringify([{qname:this.attr.q_delete_prop,DATA:[{TARGET:self.app,NAME:'protected',VALUE:'true',APP:self.app}]}]),
               },
               success: function(data) {
                 self.getProperties();
@@ -1496,6 +1494,7 @@ define(
         this.on('focusout', {
           'qname': this.setQname
         });
+        Params.attachTo(this.select('params'));
       });
     }
   }

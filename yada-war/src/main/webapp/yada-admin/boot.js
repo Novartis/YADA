@@ -96,7 +96,17 @@ define(
 
 
 				header.attachTo('nav.main-menu');
-				//login.attachTo('#login');
+				$.ajax({
+				  type: 'POST',
+				  data: {
+				    q:'YADA select prop value',
+				    p:['system','login'].join(',')
+				  },
+				  success:function(resp) {
+				    if(resp.RESULTSET.ROWS[0].VALUE == 'default')
+				      login.attachTo('#login');
+				  }
+				});
 				appMgr.attachTo('#app-mgr');
 				migration.attachTo('.nest');
 			});

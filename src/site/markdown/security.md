@@ -270,30 +270,59 @@ INSERT INTO YADA_A11N (target, policy, qname, type) VALUES (<protected>,'E',<pro
   * `execution.policy.columns` are for queries requested with JSONParams.
   * To support both request syntaxes, add both configurations to the argument list
   * The value of `execution.policy.indices` or `execution.policy.indexes` is a space-delimited list of positional parameters, e.g., `execution.policy.indexes=0 4 5`. To include the security token in the list (presumably set previously in the `validateToken` step,) use an integer greater than or equal to the size of the parameter list passed in the request.  
-*  The value of `execution.policy.columns` is a space-delimited list of column names. 
+*  The value of `execution.policy.columns` is a space-delimited list of column names and/or column/method pairs, e.g., `COL:getMethod(arg)`
 
   
   
 ```c 
 # execution.policy.indices 
 
+# Example:
 # Request with 3 parameters
+
 http://yada.mydomain.com/q/MY query/p/x,10,2.2  
 
+# Example:
 # Execution policy argument includes  
 # the first and second parameters (values 'x' and '10',)  
 # and the security token.
+
 execution.policy.indices=0,1,3  
 ``` 
 
 ```c 
 # execution.policy.columns
 
+# Example:
 # Request with 3 parameters
 http://yada.mydomain.com/yada.jsp?j=[{qname:MY query,DATA:[{COL1:x,COL2:10,COL3:2.2}]}]
 
-# Execution policy argument includes  the names of columns.
-execution.policy.columns=COL1 COL2 TOKEN
+# Example:
+# Execution policy argument includes the names of columns.
+#
+#   The protector query in this example might be:
+#     'select * from tableA where COL1=?v and COL2=?i and ID=?v'
+#
+#   'COL1' and 'COL2' were both passed to the protected query.
+#
+#   So we want to pass the values of 'COL1' and 'COL2' respectively
+#   along with the secure token, to the 'ID' column:
+
+execution.policy.columns=COL1 COL2 ID:getToken()
+
+# Example: 
+# Execution policy argument with method and argument.
+# 
+#   The protector query in this example might be:
+#     'select * from tableA where COL1=?v and BAR=?v'
+#
+#   'COL1' was passed to the protected query.
+#
+#   So we want to pass the value of the validated 'FOO' cookie
+#   to the 'BAR' column in the protector query, along
+#   with the value of 'COL1'
+
+execution.policy.columns=COL1 BAR:getCookie(FOO)
 ```
 
 > Note: this is typically (and recommended to be) completed using the yada-admin webapp.  Modifying the YADA index directly can lead to unexpected behavior, which is a big deal especially in the context of security
@@ -302,7 +331,7 @@ execution.policy.columns=COL1 COL2 TOKEN
 |:----:|:--:|:----|:--------:|:-------|
 |`qname`|`pl`|`class,execution.policy.indices=<list of ints>`|1|Again, `class` is required. If `execution.policy.indexes` or `execution.policy.columns` is included then `..indices` is ot|
 |`qname`|`pl`|`class,execution.policy.indexes=<list of ints>` |1|Yes, if `execution.policy.indices` or `execution.policy.columns` is included, then `..indexes` is not.|
-|`qname`|`pl`|`class,execution.policy.columns=<list of strings` |1|Yes, if `execution.policy.indexes` or `execution.policy.indices` is included, then `..columns` is not.|
+|`qname`|`pl`|`class,execution.policy.columns=<list of strings>` |1|Yes, if `execution.policy.indexes` or `execution.policy.indices` is included, then `..columns` is not.|
 
 > NOTE: if the same plugin class implements both `applyContentPolicy`  and `applyExecutionPolicy`, like `Gatekeeper`, but only one is required for a specific protected query, the unused policy must explicitly be set to `void`, e.g.,
 

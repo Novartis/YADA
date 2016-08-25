@@ -81,6 +81,12 @@ define(
             this.select('accordion').append(html);
             if(appObj.ACTIVE == 0)
               $('#app-hdr-'+appObj.APP+' .panel-title').css('color','#777');
+            if(appObj.CONF == "UNAUTHORIZED")
+            {
+              $('#app-submit-'+appObj.APP).remove();
+              $('#app-'+appObj.APP).find('input,textarea').attr('disabled','disabled');
+            }
+            
             $('#app-'+appObj.APP).data('app-data',appObj);
           }
         }
@@ -171,11 +177,14 @@ define(
 	  	    var now = parseInt(new Date().getTime()/1000);
 	  	    $('.progress-bar').css('width',((now-start)/300)*100 + '%');
 	  	  },3000)
-        
+        var j = [{qname:self.attr[q],DATA:[{APP:code,NAME:name,DESCR:desc,CONF:conf,ACTIVE:active}]}];
+	  	  if(app == 'new')
+	  	    j.push({qname:self.attr.q_insert_admin,DATA:[{APP:code,UID:$(self.attr.nest).data('uid')}]});
+	  	  
 	  	  $.ajax({
 	  	    type:'POST',
 	  	    data:{
-	  	      j : JSON.stringify([{qname:self.attr[q],DATA:[{APP:code,NAME:name,DESCR:desc,CONF:conf,ACTIVE:active}]}])
+	  	      j : JSON.stringify(j)
 	  	    },
 	  	    success: function(resp) {
 	  	      if(app == 'new') 
@@ -232,10 +241,12 @@ define(
 	  	  'q_insert_app'  : 'YADA new app',
 	  	  'q_update_app'  : 'YADA update app',
 	  	  'q_delete_app'  : 'YADA delete app',
+	  	  'q_insert_admin': 'YADA new app admin',
 	  	  'accordion'     : '#app-accordion',
 	  	  'save'          : '.app-save',
 	  	  'btn-qname'     : '.btn-qname',
-	  	  'query-table'   : '#query-table'
+	  	  'query-table'   : '#query-table',
+	  	  'nest'          : '.nest'
  	  	});
 	      
       this.after('initialize', function () {
@@ -247,7 +258,8 @@ define(
       	  'save':this.saveApp,
       	  'btn-qname':this.goToQueries
       	});
-      	this.trigger(this.$node,'init-request.ya.app-mgr',{});
+      	// TODO remove the init-request trigger once login is finished
+      	//this.trigger(this.$node,'init-request.ya.app-mgr',{});
       });
 	  }
 });

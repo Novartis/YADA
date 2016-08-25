@@ -69,6 +69,13 @@ CREATE TABLE IF NOT EXISTS YADA_PROP
   VALUE VARCHAR(4000)
 );
 
+DROP TABLE IF EXISTS YADA_USER;
+CREATE TABLE YADA_USER
+(
+  UID VARCHAR(255) NOT NULL,
+  PW  VARCHAR(20) NOT NULL
+);
+
 -- YADA_UG is a whitelist table for the yada-admin webapp
 DROP TABLE IF EXISTS YADA_UG;
 CREATE TABLE IF NOT EXISTS YADA_UG
@@ -81,7 +88,16 @@ CREATE TABLE IF NOT EXISTS YADA_UG
 -- INSERT YADA INDEX QUERY CONF
 DELETE from YADA_QUERY_CONF where app = 'YADA' and source = 'java:comp/env/jdbc/yada';
 INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADA','java:comp/env/jdbc/yada',null);
-INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADATEST','java:comp/env/jdbc/yada',null);
+INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADATEST','java:comp/env/jdbc/yada','jdbcUrl=jdbc:sqlite:${YADA.local.sqlite.home}/YADA.db
+username=yada
+password=yada
+autoCommit=false
+connectionTimeout=300000
+idleTimeout=600000
+maxLifetime=1800000
+minimumIdle=5
+maximumPoolSize=100
+driverClassName=org.sqlite.JDBC');
 INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('QGO',null,'http://www.ebi.ac.uk/QuickGO/GTerm?');
 INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADAFSIN',null,'file:///io/in');
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA default','select ''YADA is alive''','YADABOT','YADA');

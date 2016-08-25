@@ -430,6 +430,26 @@ public class YADAUtils {
 	}
 	
 	/**
+   * Executes the queries defined in {@code jp} and returns the result.
+   * @param jp the configuration object
+   * @return String result of statement execution
+   *
+   */
+  public static String executeYADAGetWithJSONParamsNoStats(com.novartis.opensource.yada.JSONParams jp) 
+  {
+    YADARequest yadaReq = new YADARequest();
+    yadaReq.setCount(NOCOUNT);
+    yadaReq.setUpdateStats(NOCOUNT);
+    yadaReq.setJsonParams(jp);
+    Service service = new Service();
+    service.setYADARequest(yadaReq);
+    return service.execute();
+  }
+  
+  
+	
+	
+	/**
 	 * One-liner execution of a YADA "update" query.  Sets {@code response} to {@link com.novartis.opensource.yada.format.CountResponse}, 
 	 * returning only the {@code int} result, as a {@link String}, of caurse.
 	 * @param jp the configuration object
