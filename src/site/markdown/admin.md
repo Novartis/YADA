@@ -22,6 +22,15 @@ YADA ships with a webapp called **yada-admin**. It should be accessible after in
 ```
 http://localhost:8080/YADA-Quickstart-6.0.0/yada-admin
 ```
+## Logging in
+* Use user `test`, and password `testt` to poke around in the quickstart config.  
+* Look at the `YADA_USER` table for usernames/passwords.  
+* Add a row to `YADA_UG` (yada user/group) table to grant access to a user for an app and its queries.  
+* `ADMIN` roles get to add new apps, and create, update, delete queries.  
+* `USER` roles get read-only access.
+* All of this stuff is modifiable
+
+
 ## Using yada-admin
 **yada-admin** enables the following activity:
 

@@ -2,6 +2,8 @@
 
 DELETE from YADA_QUERY where app = 'YADA' and qname not like 'YADA test%' and qname not like '%secured%' and qname not like '%YSEC%' and qname not in ('YADA yada','YADA user is authorized','YADA sql tester','YADA select nextval','YADA select multiple nextvals');
 
+-- sanity check
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA default','select ''YADA is alive''','YADABOT','YADA');
 -- parameter dml
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA select default params','SELECT id as "ID", target as "TARGET", name as "NAME", value as "VALUE", rule as "RULE" FROM YADA_PARAM where target in (?v) and target not in (''YADA apps'',''YADA queries'',''YADA new query'',''YADA delete query'',''YADA insert usage log'',''YADA update query'')','YADABOT','YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select default params','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=app:getValue(TARGET) uid:getLoggedUser()');
