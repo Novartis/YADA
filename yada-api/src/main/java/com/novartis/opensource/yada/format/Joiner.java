@@ -245,7 +245,9 @@ public class Joiner {
         for(String hdr : jHdr)
         {
           String _hdr = hdr.replaceAll("\"","");
-          if(dupeCheck.contains(_hdr) && (specSet == null || specSet.contains(_hdr)))
+          if(dupeCheck.contains(_hdr) 
+              && (specSet == null 
+                  || (specSet.contains(_hdr) || specSet.contains(_hdr.toLowerCase()) || specSet.contains(_hdr.toUpperCase()))))
           {
             // table to columns
             if(!S_t2c.containsKey(table))
