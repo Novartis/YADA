@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.novartis.opensource</groupId>
 	<artifactId>YADA</artifactId>
-	<version>8.1.2-SNAPSHOT</version>
+	<version>8.2.0</version>
 	<name>YADA</name>
 	<url>http://opensource.nibr.com/yada</url>
 	<description>YADA (Yet Another Data Abstraction) Thin Server Framework</description>
@@ -46,7 +46,7 @@
 	  <connection>scm:git:ssh:git@github.com:Novartis/YADA.git</connection>
 	  <developerConnection>scm:git:ssh://git@github.com/Novartis/YADA.git</developerConnection>
 	  <url>scm:git:ssh://github.com/Novartis/YADA</url>
-	  <tag>HEAD</tag>
+	  <tag>8.2.0</tag>
   </scm>
 	<properties>
     <display.version>${project.version}</display.version>
