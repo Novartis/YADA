@@ -27,6 +27,7 @@ q=YADA test sec multi params multi polcol&p=Z,10
 q=YADA test sec multi params multi polcol indexes&p=Z,10
 q=YADA test sec multi params multi polcol use token&p=Z,10
 q=YADA test sec multi params multi polcol use token indexes&p=Z,10
+q=YADA test sec multi params multi polcol use token indexes injection syntax&p=Z,10
 
 # Execution Policy multi-syntax standard params
 q=YADA test sec one param one derived polcol uni&p=Z
@@ -36,3 +37,4 @@ q=YADA test sec multi params one polcol uni&p=Z,10
 q=YADA test sec multi params one polcol use token uni&p=Z,10
 q=YADA test sec multi params multi polcol uni&p=Z,10
 q=YADA test sec multi params multi polcol use token uni&p=Z,10
+q=YADA test sec multi params multi polcol use token uni injection syntax&p=Z,10

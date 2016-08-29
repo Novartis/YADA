@@ -246,8 +246,12 @@ public class YADAQuery {
    * @since 7.1.0
    */
   private Map<Column, InExpression> inExpressionMap;
-	
-	
+	/**
+	 * Placeholder for the access count, to facilitate vendor-agnosticism
+	 * @since 8.1.1
+	 * @see "https://github.com/Novartis/YADA/issues/24"
+	 */
+	private int accessCount;
 	/**
 	 * Default constructor
 	 */
@@ -1396,5 +1400,23 @@ public class YADAQuery {
    */
   public void setProperties(Set<YADAProperty> properties) {
     this.properties = properties;
+  }
+
+  /**
+   * Standard accessor for var
+   * @return the accessCount
+   * @since 8.1.1
+   */
+  public int getAccessCount() {
+    return accessCount;
+  }
+
+  /**
+   * Standard mutator for var
+   * @param accessCount the accessCount to set
+   * @since 8.1.1
+   */
+  public void setAccessCount(int accessCount) {
+    this.accessCount = accessCount;
   }
 }

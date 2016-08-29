@@ -253,7 +253,7 @@ Execution policy configuration is a little more involved. [Skip to Content Polic
 To configure an execution policy, the following steps must be completed:
 
 1. Add a protector query to the YADA index using the admin tool
-2. Map the protector query to the protected query in the `YADA_A11N` table using the following query syntax. (NOTE: this will be supported in the yada-admin UI in an imminent dot release.)
+2. Map the protector query to the protected query in the `YADA_A11N` table using the following query syntax. This is configurable simply by adding a security configuration using the security wizard in the admin tool.
 
   ```sql
 INSERT INTO YADA_A11N (target, policy, qname, type) VALUES (<protected>,'E',<protector>,<type>) 
@@ -269,7 +269,8 @@ INSERT INTO YADA_A11N (target, policy, qname, type) VALUES (<protected>,'E',<pro
   * `execution.policy.indices` or `execution.policy.indexes` are for queries requested with standard parameters, i.e., `qname` and `params`
   * `execution.policy.columns` are for queries requested with JSONParams.
   * To support both request syntaxes, add both configurations to the argument list
-  * The value of `execution.policy.indices` or `execution.policy.indexes` is a space-delimited list of positional parameters, e.g., `execution.policy.indexes=0 4 5`. To include the security token in the list (presumably set previously in the `validateToken` step,) use an integer greater than or equal to the size of the parameter list passed in the request.  
+  * The value of `execution.policy.indices` or `execution.policy.indexes` is a space-delimited list of positional parameters, e.g., `execution.policy.indexes=0 4 5`, or a combination of positional parameters and injected methods: `execution.policy.indices=0 4 5:getToken()` or `execution.policy.indices=1 2:getHeader(arg)`. 
+  * To include just the security token in the list (presumably set previously in the `validateToken` step,) use an integer greater than or equal to the size of the parameter list passed in the request. The injected method name can be omitted in this case  
 *  The value of `execution.policy.columns` is a space-delimited list of column names and/or column/method pairs, e.g., `COL:getMethod(arg)`
 
   
@@ -287,7 +288,15 @@ http://yada.mydomain.com/q/MY query/p/x,10,2.2
 # the first and second parameters (values 'x' and '10',)  
 # and the security token.
 
-execution.policy.indices=0,1,3  
+execution.policy.indices=0 1 3  
+
+# Example:
+# Exection policy argument includes
+# the first parameter, and for the second,
+# an value of the 'FOO' header,
+# obtained from an injected method
+
+execution.policy.indices=0 1:getHeader(FOO)
 ``` 
 
 ```c 

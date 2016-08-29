@@ -143,10 +143,18 @@ public class Finder
    * Constant equal to: {@value}
    */
   private final static String YADA_PROPVALUE   = "PROPV";
+  /**
+   * Constant equal to: {@value}
+   */
+  private final static String YADA_ACCESS_COUNT   = "AC";
 	/**
 	 * Constant equal to: {@value}
 	 */
 	private final static String SQL_STATS      = "update yada_query set access_count=(select b.access_count+1 from yada_query b where b.qname = ?), last_access=? where qname = ?";
+	/**
+   * Constant equal to: {@value}
+   */
+	private final static String SQL_STATS_WCOUNT = "update yada_query set access_count = ?,last_access = ? where qname = ?";
 	/**
 	 * Constant equal to: {@code select a.sql "+YADA_QUERY+", b.source "+YADA_SOURCE+", nvl(b.version,'na') "+YADA_VERSION+", nvl(c.target,'na') "+YADA_PARAMTARGET+", nvl(c.name,'na') "+YADA_PARAMNAME+", nvl(c.value,'na') "+YADA_PARAMVAL+", c.rule "+YADA_PARAMRULE+" from yada_query a join yada_query_conf b on a.app = b.app left join yada_param c on (a.app = c.target or a.name = c.target) where a.name = ? order by c.target}
 	 */
@@ -162,7 +170,8 @@ public class Finder
 																							+ "c.rule "+YADA_PARAMRULE+", "
 																							+ "d.target "+YADA_PROPTARGET+", "
 																							+ "d.name "+YADA_PROPNAME+", "
-																							+ "d.value "+YADA_PROPVALUE+" "
+																							+ "d.value "+YADA_PROPVALUE+", "
+																							+ "a.access_count "+YADA_ACCESS_COUNT+" "
 																							+ "from yada_query a "
 																							+ "join yada_query_conf b on (a.app = b.app) "
 																							+ "left join yada_param c on (a.app = c.target or a.qname = c.target) "
@@ -285,6 +294,7 @@ public class Finder
 						yq.setSource(rs.getString(YADA_SOURCE));
 						yq.setQname(q);
 						yq.setApp(rs.getString(YADA_APP));
+						yq.setAccessCount(rs.getInt(YADA_ACCESS_COUNT));
 					}
 					setDefaultParam(yq,rs);
 					setProperty(yq,rs);
@@ -362,33 +372,38 @@ public class Finder
   			yq.setCached(true);
   			l.debug("YADAQuery ["+qname+"] stored in cache.");
   		}
-		}
-		
-		if(updateStats)
-		{
-			// log usage of query 
-			(new Thread() {
-				
-				@Override
-				public void run() {
-					try
-					{
-						updateQueryStatistics(qname);
-					} 
-					catch (YADAConnectionException e)
-					{
-						l.error(e.getMessage(),e);
-					} 
-					catch (YADAFinderException e)
-					{
-						l.error(e.getMessage(),e);
-					} 
-					finally
-					{
-						//TODO what happens in finally block?
-					}
-				}
-			}).start();
+  	
+  		if(yq != null)
+  		{
+  		  yq.setAccessCount(yq.getAccessCount() + 1);
+    		final int accessCount = yq.getAccessCount();
+    		if(updateStats)
+    		{
+    			// log usage of query 
+    			(new Thread() {
+    				
+    				@Override
+    				public void run() {
+    					try
+    					{
+    						updateQueryStatistics(qname,accessCount);
+    					} 
+    					catch (YADAConnectionException e)
+    					{
+    						l.error(e.getMessage(),e);
+    					} 
+    					catch (YADAFinderException e)
+    					{
+    						l.error(e.getMessage(),e);
+    					} 
+    					finally
+    					{
+    						//TODO what happens in finally block?
+    					}
+    				}
+    			}).start();
+    		}
+  		}
 		}
 				
 		return yq;
@@ -457,13 +472,69 @@ public class Finder
 	}
 	
 	/**
+   * A utility method called in a separate thread by {@link Finder#getQuery(String)} to increment a query-access counter in the YADA Index.
+   * 
+   * @param qname the name of the query just requested
+   * @throws YADAConnectionException when the YADA Index can't be accessed
+   * @throws YADAFinderException when {@code qname} can't be found in the YADA Index.
+   * @see Finder#getQuery(String)
+   * @since 8.1.1
+   */
+  void updateQueryStatistics(String qname, int accessCount) throws YADAConnectionException, YADAFinderException
+  {
+
+    l.debug("Updating Query Stats for ["+qname+"]");
+    PreparedStatement pstmt = null;
+    String querySql    = SQL_STATS_WCOUNT;
+    try
+    {
+      Connection conn = ConnectionFactory.getConnectionFactory().getConnection(ConnectionFactory.YADA_APP);
+      
+      try
+      {
+        pstmt = conn.prepareStatement(querySql);
+        pstmt.setInt(1,accessCount);
+        long t = new Date().getTime();
+        java.sql.Timestamp sqlDateVal = new java.sql.Timestamp(t);
+        pstmt.setTimestamp(2, sqlDateVal);
+        pstmt.setString(3,qname);
+        
+      } 
+      catch (SQLException e)
+      {
+        String msg = "Unable to create or configure the PreparedStatement used to update the access statistics for the requested query in the YADA Index.  This could be a serious configuration issue.";
+        throw new YADAConnectionException(msg,e);
+      }
+      
+      try
+      {
+        pstmt.executeUpdate();
+        if(!conn.getAutoCommit())
+          conn.commit();
+      }
+      catch (SQLException e)
+      {
+        String msg = "The update query caused an error. This could be because the query name ("+qname+") was mistyped or doesn't exist in the YADA Index";
+        throw new YADAFinderException(msg,e);
+      }
+      
+    }
+    finally
+    {
+      ConnectionFactory.releaseResources(pstmt);
+    }
+  }
+	
+	/**
 	 * A utility method called in a separate thread by {@link Finder#getQuery(String)} to increment a query-access counter in the YADA Index.
 	 * 
 	 * @param qname the name of the query just requested
 	 * @throws YADAConnectionException when the YADA Index can't be accessed
 	 * @throws YADAFinderException when {@code qname} can't be found in the YADA Index.
 	 * @see Finder#getQuery(String)
+	 * @deprecated since 8.1.1
 	 */
+  @Deprecated
 	void updateQueryStatistics(String qname) throws YADAConnectionException, YADAFinderException
 	{
 

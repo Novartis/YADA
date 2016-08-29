@@ -86,7 +86,12 @@ public class Gatekeeper extends AbstractPreprocessor {
    * Constant equal to {@value}
    * @since 8.1.0
    */
-  protected static final String RX_INJECTION  = "get[A-Z][a-zA-Z0-9_]+\\([A-Za-z0-9_]*\\)";
+  protected static final String RX_COL_INJECTION  = "(([a-zA-Z0-9_]+):)?(get[A-Z][a-zA-Z0-9_]+\\([A-Za-z0-9_]*\\))";
+  /** 
+   * Constant equal to {@value}
+   * @since 8.1.0
+   */
+  protected static final String RX_IDX_INJECTION  = "(([0-9]+):)?(get[A-Z][a-zA-Z0-9_]+\\([A-Za-z0-9_]*\\))";
   /**
    * Validates the request host, user, security params, and security query
    * execution results
@@ -177,10 +182,11 @@ public class Gatekeeper extends AbstractPreprocessor {
     String  policyColumns       = getArgumentValue(EXECUTION_POLICY_COLUMNS);
     String  policyIndices       = getArgumentValue(EXECUTION_POLICY_INDICES);
     policyIndices = policyIndices == null ? getArgumentValue(EXECUTION_POLICY_INDEXES) : policyIndices;
-    String  polColParams_rx     = "^([\\d]+\\s?)+$";
-    String  polColJSONParams_rx = "^([A-Za-z0-9_():\"]+\\s?)+$";
+    String  polColParams_rx     = "^(("+RX_IDX_INJECTION+"|[\\d]+)\\s?)+$";
+    String  polColJSONParams_rx = "^(("+RX_COL_INJECTION+"|[A-Za-z0-9_]+)\\s?)+$";
     String  result              = "";
     int     index               = -1;
+    String  injectedIndex       = "";
     boolean policyHasParams     = false;
     boolean policyHasJSONParams = false;
     boolean reqHasParams        = getYADARequest().getParams() == null || getYADARequest().getParams().length == 0 ? false : true;
@@ -252,7 +258,7 @@ public class Gatekeeper extends AbstractPreprocessor {
       if(policyHasParams && !reqHasJSONParams)
       {
         @SuppressWarnings("null")
-        String[] polCols    = policyIndices.split("\\s");
+        String[]      polCols = policyIndices.split("\\s");
         StringBuilder polVals = new StringBuilder();
 
         if(reqHasParams)
@@ -262,14 +268,58 @@ public class Gatekeeper extends AbstractPreprocessor {
             // handle as params
             // 1. get params from query
             List<String> vals = getYADAQuery().getVals(0);
-            index = Integer.parseInt(polCols[i]);
+            try
+            {
+              index = Integer.parseInt(polCols[i]);
+            }
+            catch(NumberFormatException e)
+            {
+              injectedIndex = polCols[i];
+            }
             // 2. pass user column
             if(polVals.length() > 0)
               polVals.append(",");
-            if(index >= vals.size())
-              polVals.append((String)getToken());
+            
+            if(injectedIndex.equals("") && index > -1)
+            {
+              if(index >= vals.size())
+                polVals.append((String)getToken());
+              else
+                polVals.append(vals.get(index));
+            }
             else
-              polVals.append(vals.get(index));
+            {
+              Pattern  rxInjection = Pattern.compile(RX_IDX_INJECTION);
+              Matcher  m1          = rxInjection.matcher(injectedIndex);
+              if(m1.matches() && m1.groupCount() == 3) // injection
+              {
+                // parse regex: this is where the method value is injected
+                String   colIdx      = m1.group(2);
+                String   colval      = m1.group(3);
+                
+                // find and execute injected method
+                String method = colval.substring(0,colval.indexOf('('));
+                String arg    = colval.substring(colval.indexOf('(')+1,colval.indexOf(')'));
+                Object val    = null;
+                try 
+                {
+                  if(arg.equals(""))
+                    val = getClass().getMethod(method).invoke(this, new Object[] {});
+                  else
+                    val = getClass().getMethod(method, new Class[] { java.lang.String.class }).invoke(this, new Object[] {arg});
+                } 
+                catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) 
+                {
+                  String msg = "Unathorized. Injected method invocation failed.";
+                  throw new YADASecurityException(msg, e);
+                }
+                
+                // add/replace item in dataRow 
+                polVals.append(val);
+              }
+            }
+            index = -1;
+            injectedIndex = "";
           }
           // 3. execute the security query
           result = YADAUtils.executeYADAGet(new String[] { a11nQname }, new String[] {polVals.toString()});
@@ -295,22 +345,18 @@ public class Gatekeeper extends AbstractPreprocessor {
         String[] polCols = policyColumns.split("\\s");
         for(String colspec : polCols) 
         {
-          if(!dataRow.containsKey(colspec))
+          // dataRow can look like, e.g.: {COL1:val1,COL2:val2}
+          // polCols can look like, e.g.: COL2 APP:getValue(TARGET)
+
+          Pattern  rxInjection = Pattern.compile(RX_COL_INJECTION);
+          Matcher  m1          = rxInjection.matcher(colspec);
+          if(m1.matches() && m1.groupCount() == 3) // injection
           {
-            // this is where the method can be injected
-            //dataRow.put(colname, new String[] {(String)getToken()});
-            //break;
-            String[] pair        = colspec.split(":");
-            String   colname     = pair[0];
-            String   colval      = pair[1];
-            Pattern  rxInjection = Pattern.compile(RX_INJECTION);
-            Matcher  m1          = rxInjection.matcher(colval);
-            if(!m1.matches())
-            {
-              String msg = "Unathorized. Injected method invocation failed.";
-              throw new YADASecurityException(msg);
-            }
+            // parse regex: this is where the method value is injected
+            String   colname     = m1.group(2);
+            String   colval      = m1.group(3);
             
+            // find and execute injected method
             String method = colval.substring(0,colval.indexOf('('));
             String arg    = colval.substring(colval.indexOf('(')+1,colval.indexOf(')'));
             Object val    = null;
@@ -326,12 +372,25 @@ public class Gatekeeper extends AbstractPreprocessor {
               String msg = "Unathorized. Injected method invocation failed.";
               throw new YADASecurityException(msg, e);
             }
+            
+            // add/replace item in dataRow 
             dataRow.put(colname, new String[] {(String)val});
           }
+          else 
+          {
+            if(!dataRow.containsKey(colspec)) // no injection AND no parameter
+            {
+              String msg = "Unathorized. Injected method invocation failed.";
+              throw new YADASecurityException(msg);
+            }
+          }
         }
+        
         // 3. execute the security query
         JSONParamsEntry jpe = new JSONParamsEntry();
-        jpe.addData(dataRow);
+        // dataRow now contains injected values () or passed values
+        // if values were injected, they've overwritten the passed in version
+        jpe.addData(dataRow); 
         JSONParams jp = new JSONParams(a11nQname, jpe);
         result = YADAUtils.executeYADAGetWithJSONParamsNoStats(jp);
       }
@@ -370,7 +429,7 @@ public class Gatekeeper extends AbstractPreprocessor {
     
     String SPACE            = " ";
     StringBuilder contentPolicy = new StringBuilder(); 
-    Pattern       rxInjection   = Pattern.compile(RX_INJECTION);
+    Pattern       rxInjection   = Pattern.compile(RX_COL_INJECTION);
     String        rawPolicy     = getArgumentValue(CONTENT_POLICY_PREDICATE);
     Matcher       m1            = rxInjection.matcher(rawPolicy);
     int           start         = 0;

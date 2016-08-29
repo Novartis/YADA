@@ -83,12 +83,12 @@ INSERT into YADA_PROP (target,name,value) VALUES ('YADA delete prop for target',
 -- app dml
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA select apps','select a.app "APP", a.name "NAME", a.descr "DESCR", CASE WHEN b.role = ''ADMIN'' THEN a.conf ELSE ''UNAUTHORIZED'' END "CONF", a.active "ACTIVE" from yada_query_conf a join yada_ug b on a.app = b.app where a.app != ''YADA''','YADABOT', 'YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pl',1,'Gatekeeper,execution.policy=void,content.policy.predicate=uid=getQLoggedUser()');
---INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=uid:getLoggedUser()');
+-- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=uid:getLoggedUser()');
 INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA select apps','YADA view protector','E','whitelist');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA select apps-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA select apps','protected','true');
 
---INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA apps','select app as "LABEL" from yada_query_conf where lower(app) like lower(''%''||?v||''%'')','YADABOT','YADA');
+-- INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA apps','select app as "LABEL" from yada_query_conf where lower(app) like lower(''%''||?v||''%'')','YADABOT','YADA');
 
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA new app','insert into yada_query_conf (app,name,descr,conf,active) values (?v,?v,?v,?v,?i)', 'YADABOT', 'YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA new app','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=uid:getLoggedUser()');
@@ -194,8 +194,8 @@ INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA select prop va
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA check credentials','select a.app "APP", a.uid "UID", a.role "ROLE" from yada_ug a join yada_user b on a.uid = b.uid where b.uid=?v and b.pw=?v','YADABOT','YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA check credentials','pl',1,'Login');
 -- 'YADA select apps' requires content policy to filter for uid in YADA_UG - user must be mapped to app in yada_ug table
---INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pl',1,'Gatekeeper,execution.policy=void,content.policy.predicate=uid=getLoggedUser()');
---INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=uid:getLoggedUser()');
+-- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pl',1,'Gatekeeper,execution.policy=void,content.policy.predicate=uid=getLoggedUser()');
+-- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=uid:getLoggedUser()');
 
 -- baseline sec
 -- ADMIN role has full crud for APP
