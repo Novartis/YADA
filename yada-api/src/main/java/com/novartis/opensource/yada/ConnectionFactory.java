@@ -70,6 +70,17 @@ public class ConnectionFactory {
    * @since 8.0.0
    */
   private final static String YADA_DS_CONF   = "CONF";
+  /**
+   * Constant equal to {@value}
+   * @since 8.2.1
+   */
+  public final static String TYPE_JDBC      = "JDBC";
+  /**
+   * Constant equal to {@value}
+   * @since 8.2.1
+   */
+  public final static String TYPE_URL       = "URL";
+  
   
   /**
    * Constant equal to {@value}. Used for retrieving app configs.
@@ -98,6 +109,12 @@ public class ConnectionFactory {
    * @since 8.0.0
    */
   private final static String YADA_DEFAULT_PROP_PATH = "/YADA.properties";
+  
+  /**
+   * Constant equal to {@value}. Enables comments in configs
+   * @since 8.0.0
+   */
+  private final static String COMMENT = "#";
   
   
   /**
@@ -300,6 +317,20 @@ public class ConnectionFactory {
   }
   
   /**
+   * Returns the app type, either {@link #TYPE_JDBC} or {@link #TYPE_URL} to facilitate apdaptor loading
+   * @param app the app code 
+   * @return the app type
+   * @since 8.2.1
+   */
+  public String getAppConnectionType(String app) {
+    if(this.getDataSourceMap().get(app) != null)
+      return TYPE_JDBC;
+    else if(this.getWsSourceMap().get(app) != null)
+      return TYPE_URL;
+    return null;
+  }
+  
+  /**
    * Creates and stores a datasource in the {@link #dataSourceMap}
    * @param conf {@link Map} containing datasource configs from database
    * @since 8.0.0
@@ -316,8 +347,11 @@ public class ConnectionFactory {
         String lines[] = propStr.split("\\r?\\n");
         for(String line : lines)
         {
-          String[] pair = line.split("=",2);
-          props.put(pair[0], pair[1]);
+          if(!line.startsWith(COMMENT))
+          {
+            String[] pair = line.split("=",2);
+            props.put(pair[0], pair[1]);
+          }
         }
         props.put("poolName","HikariPool-"+app);
         

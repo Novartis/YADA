@@ -309,19 +309,27 @@ public class QueryUtils
 	 * @return Class of type Adaptor mapped to the {@code source}
 	 * @throws YADAResourceException when {@code source} can't be found, or there is an issue with the application context
 	 * @throws YADAUnsupportedAdaptorException when the adaptor class mapped to {@code source} can't be found
+	 * @throws YADAConnectionException if a new datasource connection pool cannot be established or stored
 	 */
-	public Class<Adaptor> getAdaptorClass(String app) throws YADAResourceException, YADAUnsupportedAdaptorException
+	public Class<Adaptor> getAdaptorClass(String app) throws YADAResourceException, YADAUnsupportedAdaptorException, YADAConnectionException
 	{
 	  String driverName = "";
     String className = REST_ADAPTOR_CLASS_NAME;
     ConnectionFactory factory = ConnectionFactory.getConnectionFactory(); 
-    HikariDataSource ds = factory.getDataSourceMap().get(app);
-    if(ds != null)
+    String type = factory.getAppConnectionType(app);
+    if(type == null)
     {
+      factory.createDataSources();
+      type = factory.getAppConnectionType(app);
+    }
+    
+    if(type.equals(ConnectionFactory.TYPE_JDBC))
+    {
+      HikariDataSource ds = factory.getDataSourceMap().get(app);
       driverName = ds.getDriverClassName();
       className = Finder.getEnv("adaptor/" + driverName);
     }
-    else 
+    else if(type.equals(ConnectionFactory.TYPE_URL))
     {
       String url = factory.getWsSourceMap().get(app);
       if (url.matches(RX_SOAP))
@@ -333,6 +341,7 @@ public class QueryUtils
         className = FILESYSTEM_ADAPTOR_CLASS_NAME;
       }
     }
+    
     l.debug("JDBCAdaptor class is [" + className + "]");
     
     Class<Adaptor> adaptorClass;
@@ -451,8 +460,9 @@ public class QueryUtils
 	 * @return an instance of the adaptor class mapped to {@code app}
 	 * @throws YADAResourceException when {@code source} is not mapped to an adaptor
 	 * @throws YADAUnsupportedAdaptorException when the adaptor class cannot be instantiated
+	 * @throws YADAConnectionException when the connection pool or string cannot be established
 	 */
-	public Adaptor getAdaptor(String app) throws YADAResourceException, YADAUnsupportedAdaptorException
+	public Adaptor getAdaptor(String app) throws YADAResourceException, YADAUnsupportedAdaptorException, YADAConnectionException
 	{
 		Class<Adaptor> execClass = getAdaptorClass(app);
 		return getAdaptor(execClass);

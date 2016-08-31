@@ -928,9 +928,10 @@ public class QueryManager
 	 *           the the YADA request is malformed
  	 * @throws YADAUnsupportedAdaptorException when the adaptor attached to the query object can't be found or instantiated
 	 * @throws YADAResourceException when the query {@code q} can't be found in the index
+	 * @throws YADAConnectionException when a connection pool or string cannot be established
  
 	 */
-	YADAQuery endowQuery(YADAQuery yq, JSONParamsEntry entry) throws YADAQueryConfigurationException, YADAResourceException, YADAUnsupportedAdaptorException 
+	YADAQuery endowQuery(YADAQuery yq, JSONParamsEntry entry) throws YADAQueryConfigurationException, YADAResourceException, YADAUnsupportedAdaptorException, YADAConnectionException 
 	{
 		yq.addAllData(entry.getData());
 		yq.addYADAQueryParams(entry.getParams());
@@ -987,8 +988,9 @@ public class QueryManager
 	 *           the the YADA request is malformed
 	 * @throws YADAUnsupportedAdaptorException when the adaptor attached to the query object can't be found or instantiated
 	 * @throws YADAResourceException when the query {@code q} can't be found in the index
+	 * @throws YADAConnectionException when a connection pool or string cannot be established
 	 */
-	YADAQuery endowQuery(YADAQuery yq) throws YADAQueryConfigurationException, YADAResourceException, YADAUnsupportedAdaptorException
+	YADAQuery endowQuery(YADAQuery yq) throws YADAQueryConfigurationException, YADAResourceException, YADAUnsupportedAdaptorException, YADAConnectionException 
 	{
 	  int index = 0;
 	  if (getJsonParams() != null)
