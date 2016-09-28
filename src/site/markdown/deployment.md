@@ -5,9 +5,15 @@
     <img src="../resources/images/blox250.png"/>
 </div> 
 
+<a name="toctldr"></a>
+## Tl;dr
+
+Find the [latest release](https://github.com/Novartis/YADA/releases/latest) on github and download the installer jar, double-click to launch, and when complete, consult `README.html` in the install directory.
+
 
 ##  Table of Contents  
 
+1. [Tl;dr](#toctldr)
 1. [Quickstart](#tocQuickstart)
   2. [Get YADA](#tocGetYADA) 
   2. [I downloaded the war file](#tocWarDownload)
@@ -33,29 +39,52 @@
 <a name="tocQuickstart"></a>
 ##  Quickstart  
 
+
 <a name="tocGetYADA"></a>
 ###  Get YADA  
 
 First, acquire the [YADA-Quickstart] application in one of the following ways:
 
-* Find the [latest release](https://github.com/Novartis/YADA/releases/latest) on github and download the binary
+* Find the [latest release](https://github.com/Novartis/YADA/releases/latest) on github and download the installer jar
 
 or
 
 * Clone the YADA-Quickstart github [repo](https://github.com/Novartis/YADA-Quickstart)
 
-Refer to the appropriate section below, either [I downloaded the war file](#tocWarDownload) or [I cloned the github repo](#tocGitClone):
+Refer to the appropriate section below, either [I downloaded the jar file](#tocWarDownload) or [I cloned the github repo](#tocGitClone):
 
 <a name="tocWarDownload"></a>
-###  I downloaded the war file 
+###  I downloaded the jar file 
 
 If you cloned from github, skip to the next section.
 
-The downloadable war is pre-built using default values for context paths and resource configurations. Drop the war into your existing tomcat container, and wait for it to explode. Then, inspect and modify `WEB-INF/classes/YADA.properties`, and `META-INF/context.xml` as needed. Documentation to assist this effort is inline, in the file.
+The downloadable jar is a java installer built using the popular open source [IzPack](http://izpack.org/) solution. In the current release, the installer will drop the [Tomcat 8.x](https://tomcat.apache.org/download-80.cgi) servlet container into a default or custom location, drop the warfile into `webapps`, inflate it, reconfigure it, along with a SQLite-based YADA index, for your environment, and recompress it. The installer will then drop `README.html` into the install directory which contains instructions for install validation and login.
 
-After conforming `WEB-INF/classes/YADA.properties` and `META-INF/context.xml` for your environment, simply restart tomcat.
+More specifically, the installer deploys the following:
 
-The pre-built war uses a local [SQLite®] file for the YADA index. This is not likely to be your final implementation–nor should it–however, it is possible to use it to perform sanity checks and more extensive automated testing. 
+```
+README.html
+ant.log
+apache-tomcat-8.0.24\
+bin\
+cruft\
+files\
+util\
+```
+* `util`, `files`, and `bin` directories will be empty.  
+* `cruft` contains install artifacts
+* `ant.log` is an install artifact
+* `apache-tomcat-<version>` is obviously the `$CATALINA_HOME` loctaion
+
+Inside `apache-tomcat-<version>` you'll find `YADA-Quickstart-<version>.war` and a like-name directory.
+
+The installer also puts the [Hypersql®] and [SQLite®] JDBC jars in `apache-tomcat-<version>/lib`.
+
+The Quickstart war uses a local [SQLite®] file for the YADA index. This is not likely to be your final implementation–nor should it–however, it is possible to use it to perform sanity checks and more extensive automated testing. This file is located in the `webapps` directory.
+
+In addition to conforming the YADA index to your environment, the `YADA.properties` file, which contains the YADA index configuration is also conformed, and located in `webapps/YADA-Quickstart-<version>/WEB-INF/classes`.
+
+> Note: If you choose to redeploy the war file to another tomcat instance, you may need to reset some of the configuration in `YADA.properties` and in the YADA index.
 
 Refer to the [Sanity Check](#tocSanity) to validate your install. If you have issues, check [Additional Filesystem Configuration](#tocFilesys) and [Caveats](#tocQuickstartCaveats).
 
@@ -816,3 +845,4 @@ mvn verify -P dev,war-deploy
 [eclipse]: http://eclipse.org
 [ElasticSearch®]: https://www.elastic.co/products/elasticsearch
 [psi-probe]: https://github.com/psi-probe/psi-probe
+[Hypersql®]: http://hsqldb.org/
