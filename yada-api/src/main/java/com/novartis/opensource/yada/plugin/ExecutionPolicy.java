@@ -21,7 +21,7 @@ package com.novartis.opensource.yada.plugin;
 public interface ExecutionPolicy extends SecurityPolicy {
   
   /**
-   * @throws YADASecurityException
+   * @throws YADASecurityException when the user is unauthorized or there is an error in policy processing
    */
   public void applyExecutionPolicy() throws YADASecurityException;
 }

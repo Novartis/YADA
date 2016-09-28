@@ -71,8 +71,7 @@ public abstract class Adaptor
 	/**
 	 * This is a stubbed method. Implementation required in non-abstract subclass
 	 * 
-	 * @param yq
-	 *          the {@link YADAQuery} containing the code to execute
+	 * @param yq the {@link YADAQuery} containing the code to execute
 	 * @throws YADAAdaptorExecutionException if exception is thrown during query execution 
 	 */
 	public void execute(YADAQuery yq) throws YADAAdaptorExecutionException
@@ -81,12 +80,10 @@ public abstract class Adaptor
 	}
 
 	/**
-	 * @param yq
-	 *          the {@link YADAQuery} from which to derive the source code and
+	 * @param yq the {@link YADAQuery} from which to derive the source code and
 	 *          other metadata for contruction of an executable query
 	 * @return executable code
-	 * @throws YADAAdaptorException
-	 *           if exception is thrown while conforming code to executable state
+	 * @throws YADAAdaptorException if exception is thrown while conforming code to executable state
 	 */
 	public String build(YADAQuery yq) throws YADAAdaptorException
 	{

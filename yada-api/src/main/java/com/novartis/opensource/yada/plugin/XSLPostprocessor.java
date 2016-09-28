@@ -49,7 +49,7 @@ public class XSLPostprocessor extends AbstractPostprocessor {
 	
 	/**
 	 * Instantiates a {@link TransformerFactory}, gets a new {@link Transformer} using the stylesheet
-	 * passed in the request's {@link YADARequest#postArgs}, transforms {@code result} and returns the output.
+	 * passed in the request's {@link YADARequest}{@code .postArgs}, transforms {@code result} and returns the output.
 	 * @see com.novartis.opensource.yada.plugin.Postprocess#engage(com.novartis.opensource.yada.YADARequest, java.lang.String)
 	 */
   @Override
@@ -71,7 +71,7 @@ public class XSLPostprocessor extends AbstractPostprocessor {
 				if (arg.endsWith(".xsl"))
 					xsl = arg;
 			}
-			transformer = tFactory.newTransformer(new javax.xml.transform.stream.StreamSource(Finder.getEnv("yada_util")+xsl));
+			transformer = tFactory.newTransformer(new javax.xml.transform.stream.StreamSource(Finder.getEnv("yada.util")+xsl));
 			// 3. Use the Transformer to transform an XML Source and send the output to a Result object.
 			setTransformerParameters(args, transformer);
 			transformer.transform

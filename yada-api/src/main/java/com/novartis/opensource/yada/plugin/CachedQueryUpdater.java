@@ -21,6 +21,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import com.novartis.opensource.yada.ConnectionFactory;
 import com.novartis.opensource.yada.Finder;
@@ -50,6 +51,10 @@ public class CachedQueryUpdater extends AbstractPostprocessor
 	 * Constant with value equal to: {@value}
 	 */
 	private final static String QNAME = "QNAME";
+	/**
+   * Constant with value equal to: {@value}
+   */
+  private final static String TARGET = "TARGET";
 
 	/**
 	 * Removes the {@link YADAQuery} from the cache, and re-requests it from
@@ -60,7 +65,9 @@ public class CachedQueryUpdater extends AbstractPostprocessor
 	@Override
 	public void engage(YADAQuery yq) throws YADAPluginException
 	{
-		String q = yq.getData().get(0).get(QNAME)[0];
+	  JSONObject data = new JSONObject(yq.getData().get(0));
+	  String column = data.has(TARGET) || data.has(TARGET.toLowerCase()) ? TARGET : QNAME;
+		String q = yq.getData().get(0).get(column)[0];
 		Cache yadaIndex = ConnectionFactory.getConnectionFactory().getCacheConnection(	Finder.YADA_CACHE_MGR,
 																														Finder.YADA_CACHE);
 		try
@@ -76,7 +83,9 @@ public class CachedQueryUpdater extends AbstractPostprocessor
 		} 
 		catch (YADAFinderException e)
 		{
-			throw new YADAPluginException(e.getMessage(), e);
+		  String msg = "An attempt was made to update the query ["+q+"] in the cache. This query daes not exist in the index. This is not uncommon updating default-parameter-related properties";
+		  l.debug(msg);
+			//throw new YADAPluginException(e.getMessage(), e);
 		} 
 		catch (YADAQueryConfigurationException e) 
 		{

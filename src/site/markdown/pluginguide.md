@@ -21,7 +21,7 @@ There are two plugin API at your disposal:
       
 ## ScriptPlugin API 
 
-   Enables any os-compatible executable stored on the server in the correct location (yada_bin) to be executed by the YADA service.  The ScriptPlugin API actually is an abstraction of the Java® Plugin API, using special Java® classes to make system calls to desired scripts. For the moment, Script Plugins can only be evaluated at the request level.
+   Enables any os-compatible executable stored on the server in the correct location (yada.bin) to be executed by the YADA service.  The ScriptPlugin API actually is an abstraction of the Java® Plugin API, using special Java® classes to make system calls to desired scripts. For the moment, Script Plugins can only be evaluated at the request level.
       
 ![Plugin Execution](../resources/images/plugin-arch.png)  
 *Request-level plugins execute in red boxes*
@@ -349,7 +349,7 @@ public String engage(YADARequest yadaReq, String result) throws YADAPluginExcept
 			if (arg.endsWith(".xsl"))
 				xsl = arg;
 		}
-		transformer = tFactory.newTransformer(new javax.xml.transform.stream.StreamSource(new Finder().getEnv("yada_util")+xsl));
+		transformer = tFactory.newTransformer(new javax.xml.transform.stream.StreamSource(new Finder().getEnv("yada.util")+xsl));
 		
 		// 3. Use the Transformer to transform an XML Source and send the output to a Result object.
 		setTransformerParameters(args, transformer);
@@ -432,7 +432,7 @@ To call a script plugin, simply use the included script plugin classes as the fi
   3. ScriptPreprocessor
   4. ScriptPostprocessor
   5. ScriptBypass
-6. The second element of the comma-separated value of this parameter must be the path to the executable script, relative to the `YADA_BIN` directory. 
+6. The second element of the comma-separated value of this parameter must be the path to the executable script, relative to the `yada.bin` directory. 
 7. Any proceeding arguments should adhere to the order expected by the script denoted in the first argument
 6. The arguments passed to the script will be the "stringified" versions of the values passed to the built-in Java® handler plugins' engage methods
   7. For both `ScriptPreprocessor` and `ScriptBypass` this will be a JSON representation of the `YADARequest` object
@@ -468,7 +468,7 @@ http://example.com/yada.jsp?qname=myquery&pl=ScriptPostprocessor,myscript.pl,arg
 
 > 1. The `plugin` or `pl` parameter is optional. If omitted, one of the following specific argument parameters must be used: `preargs`, `pr`, `postargs`, `pa`, `bypassargs`, `b`
 > 3. If the `plugin` or `pl` parameter is included, the generic `args` or `a` parameter may be used
-> 4. The first value in the argument parameter must be the path to the executable script, relative to the `YADA_BIN` directory
+> 4. The first value in the argument parameter must be the path to the executable script, relative to the `yada.bin` directory
 > 5. Any proceeding arguments should adhere to the order expected by the script denoted in the first argument
 > 6. The arguments passed to the script will be the "stringified" versions of the values passed to the built-in Java® handler plugins' engage methods
 >  7. For both `ScriptPreprocessor` and `ScriptBypass` this will be a JSON representation of the `YADARequest` object

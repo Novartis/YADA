@@ -103,9 +103,7 @@ public class JSONResponse extends AbstractResponse {
 	
 	/**
 	 * Iterates over the results, appending each set as a JSONObject in the {@code ROWS} array.
-	 * @throws YADAQueryConfigurationException 
-	 * @throws YADAResourceException 
-	 * @throws  
+	 * @throws YADAQueryConfigurationException when the {@link Response} spec in the request is malformed
 	 * @see com.novartis.opensource.yada.format.AbstractResponse#compose(com.novartis.opensource.yada.YADAQueryResult[])
 	 */
 	@Override
@@ -250,7 +248,7 @@ public class JSONResponse extends AbstractResponse {
 
 	/**
 	 * Passes {@code o} to the {@link Converter} and appends it to the internal JSON response object.
-	 * @throws YADAQueryConfigurationException 
+	 * @throws YADAQueryConfigurationException when the {@link Response} spec in the request is malformed
 	 * @see com.novartis.opensource.yada.format.AbstractResponse#append(java.lang.Object)
 	 */
 	@Override
@@ -261,7 +259,7 @@ public class JSONResponse extends AbstractResponse {
 		{
 		  JSONObject resultSet = null;
 		  Converter  converter = getConverter(this.yqr);
-		  boolean    count     = Boolean.valueOf(this.yqr.getYADAQueryParamValue(YADARequest.PS_COUNT)).booleanValue();
+		  boolean    count     = Boolean.parseBoolean(this.yqr.getYADAQueryParamValue(YADARequest.PS_COUNT));
 		  if(getHarmonyMap() != null)
 				converter.setHarmonyMap(getHarmonyMap());
 			JSONArray rows = (JSONArray)converter.convert(o);
@@ -312,7 +310,7 @@ public class JSONResponse extends AbstractResponse {
 				 * All these scenarios get wierder when page > 1 is involved, and sorting, filtering, etc.
 				 * Some default behavior must be identified and implemented, then options can be whatever.
 				 */
-				int pagesize = Integer.valueOf(this.yqr.getYADAQueryParamValue(YADARequest.PS_PAGESIZE)).intValue();
+				int pagesize = Integer.parseInt(this.yqr.getYADAQueryParamValue(YADARequest.PS_PAGESIZE));
 				if(pagesize < existing.length())
 				{
 					rows = new JSONArray();

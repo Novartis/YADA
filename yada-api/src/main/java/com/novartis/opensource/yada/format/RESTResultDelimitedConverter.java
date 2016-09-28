@@ -126,12 +126,8 @@ public class RESTResultDelimitedConverter extends AbstractConverter {
    * {@link java.lang.StringBuffer} containing tabular data delimited
    * accordingly per request parameters
    * 
-   * @param rs
-   *          the result set to convert
-   * @throws YADAConverterException 
-   * @throws SQLException
-   *           when {@link ResultSet} or {@link ResultSetMetaData} iteration
-   *           fails
+   * @param result the result set to convert
+   * @throws YADAConverterException when conversion fails
    */
   protected void getDelimitedRows(Object result) throws YADAConverterException  
   {

@@ -25,24 +25,24 @@ public interface Validation
 {
   
   /**
-   * @throws YADASecurityException
+   * @throws YADASecurityException when the user is unauthorized or there is an error in policy processing
    */
   public void validateYADARequest() throws YADASecurityException;
   
   /**
-   * @throws YADASecurityException
+   * @throws YADASecurityException when the user is unauthorized or there is an error in regex syntax
    */
   public void validateURL() throws YADASecurityException;
   
   /**
-   * @throws YADASecurityException
+   * @throws YADASecurityException when the user is unauthorized or there is an error in token processing
    */
   public void validateToken() throws YADASecurityException;
  
   
   /**
-   * @param securityPolicy
-   * @throws YADASecurityException
+   * @param securityPolicy the policy object
+   * @throws YADASecurityException when the user is unauthorized or there is an error in policy processing
    */
   public void applyPolicy(SecurityPolicy securityPolicy) throws YADASecurityException;
 }

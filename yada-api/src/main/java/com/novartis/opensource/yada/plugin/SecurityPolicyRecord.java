@@ -68,7 +68,7 @@ public class SecurityPolicyRecord {
    * @return the target
    */
   public String getTarget() {
-    return target;
+    return this.target;
   }
 
   /**
@@ -84,7 +84,7 @@ public class SecurityPolicyRecord {
    * @return the policyCode
    */
   public String getPolicyCode() {
-    return policyCode;
+    return this.policyCode;
   }
 
   /**
@@ -100,7 +100,7 @@ public class SecurityPolicyRecord {
    * @return the type
    */
   public String getType() {
-    return type;
+    return this.type;
   }
 
   /**
@@ -116,7 +116,7 @@ public class SecurityPolicyRecord {
    * @return the a11nQname
    */
   public String getA11nQname() {
-    return a11nQname;
+    return this.a11nQname;
   }
 
   /**

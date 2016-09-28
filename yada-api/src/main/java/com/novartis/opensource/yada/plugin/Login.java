@@ -17,6 +17,9 @@
  */
 package com.novartis.opensource.yada.plugin;
 
+import javax.servlet.http.HttpSession;
+import javax.tools.JavaCompiler;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -29,7 +32,7 @@ import com.novartis.opensource.yada.YADARequest;
  * as a postprocessor on the {@link YADARequest}. 
  * 
  * <p>When the {@link #engage(YADAQuery)} method is executed, it will examine the payload and if valid,
- * store it in the {@link HTTPSession}.</p>
+ * store it in the {@link HttpSession}.</p>
  *   
  * @author varonda1
  * @since 8.1.0
@@ -37,7 +40,7 @@ import com.novartis.opensource.yada.YADARequest;
 public class Login extends AbstractPostprocessor implements Preprocess{
 
   /**
-   * Examies the payload.  If it contains >0 rows, it will store the payload in the session.
+   * Examies the payload.  If it contains &gt;0 rows, it will store the payload in the session.
    * @throws YADASecurityException if the passed credentials are invalid
    */
   @Override

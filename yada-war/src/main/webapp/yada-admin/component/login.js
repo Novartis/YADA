@@ -26,7 +26,14 @@ define(
 	  function login() {
 		  
 	  	this.enrich = function() {
-
+	  	  this.trigger('nav.mainmenu','disable-app-mgr.ya.header',{});
+	  	  this.trigger('nav.mainmenu','disable-new-query.ya.header',{});
+	  	  this.trigger('nav.mainmenu','disable-toggle-view.ya.header',{});
+	  	  this.trigger('nav.mainmenu','disable-backup.ya.header',{});
+	  	  this.trigger('nav.mainmenu','disable-migration.ya.header',{});
+//	  	  $('nav.main-menu li').addClass('disabled');
+//        $('#new-query,#migration').removeAttr('data-toggle');
+//        $('#new-query,#migration').removeAttr('data-target');
 	  	}; 
 	  	
 	  	this.acceptCredentials = function(uid) {
@@ -79,7 +86,12 @@ define(
         this.on('click',{
           'button':this.checkCredentials
         });
-        //this.enrich();
+        this.on('keyup',{
+          'logpw':function(e,d) {
+            this.select('button').removeProp('disabled');
+          }
+        })
+        this.enrich();
         $('#login').modal({show:true});
       });
 	  }

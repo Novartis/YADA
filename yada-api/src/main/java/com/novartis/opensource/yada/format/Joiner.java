@@ -355,12 +355,10 @@ public class Joiner {
       sql.append(" GROUP BY");
       sql.append(gh);
       l.debug(sql.toString());
-      ResultSet rs = null;
       String colsep  = getYADAQueryParamValue(YADARequest.PS_DELIMITER);
       String recsep  = getYADAQueryParamValue(YADARequest.PS_ROW_DELIMITER);
-      try(PreparedStatement select = c.prepareStatement(sql.toString());)
+      try(PreparedStatement select = c.prepareStatement(sql.toString());ResultSet rs = select.executeQuery();)
       {
-        rs = select.executeQuery();
         if(isFormatStructured)
         {
           while(rs.next())
@@ -393,19 +391,6 @@ public class Joiner {
       {
         String msg = "Unable to format result sets.";
         throw new YADAResponseException(msg, e);
-      }
-      finally
-      {
-        try
-        {
-          if(rs != null)
-            rs.close();
-        }
-        catch(SQLException e)
-        {
-          String msg = "There was a problem releasing resources.";
-          throw new YADAResponseException(msg, e);
-        }
       }
     } 
     catch (SQLException e) 

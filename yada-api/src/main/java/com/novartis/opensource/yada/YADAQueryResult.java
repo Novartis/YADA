@@ -276,7 +276,7 @@ public class YADAQueryResult {
   }
   
   /**
-   * Returns {@code true} if any of the following have length > 0:
+   * Returns {@code true} if any of the following have length &gt; 0:
    * <ul>
    *  <li>{@link YADARequest#PL_JOIN}</li>
    *  <li>{@link YADARequest#PS_JOIN}</li>
@@ -301,7 +301,7 @@ public class YADAQueryResult {
   }
   
   /**
-   * Returns {@code true} if any of the following have length > 0:
+   * Returns {@code true} if any of the following have length &gt; 0:
    * <ul>
    *  <li>{@link YADARequest#PL_LEFTJOIN}</li>
    *  <li>{@link YADARequest#PS_LEFTJOIN}</li>

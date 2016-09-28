@@ -182,6 +182,11 @@ SELECT * FROM YADA_TEST where COL1 = 'Z' AND token = 'HAM_SANDWICH'
 
 Content policies currently apply to JDBC datasources only.
 
+## Execution Policies vs Content Policies
+These features are not mutually exclusive, in fact they are designed to enhance eachother or work independently.  Here is a visual explanation of their relationship:
+
+<img src="../resources/images/YADASecurity.png"/>
+
 See [below](#confcontent) for how to configure this feature.
 
 

@@ -20,12 +20,12 @@ import java.net.URL;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +50,6 @@ import net.sf.jsqlparser.statement.Statement;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
 
 import com.novartis.opensource.yada.ConnectionFactory;
 import com.novartis.opensource.yada.Finder;
@@ -229,18 +228,16 @@ public class QueryUtils
 	 * Retrieves the adaptor class from the application context given the
 	 * parameter values.
 	 * 
-	 * @param source
-	 *          the JNDI string or url mapped to the query's app in the YADA index
-	 * @param version
-	 *          the version of the framework, for selection of the proper adaptor
+	 * @param source the JNDI string or url mapped to the query's app in the YADA index
+	 * @param version the version of the framework, for selection of the proper adaptor
 	 * @return the {@link Class} of the appropriate adaptor
-	 * @throws YADAResourceException
-	 *           when {@code source} can't be found, or there is an issue with the
+	 * @throws YADAResourceException when {@code source} can't be found, or there is an issue with the
 	 *           application context
-	 * @throws YADAUnsupportedAdaptorException
-	 *           when the adaptor class mapped to {@code source} can't be found
+	 * @throws YADAUnsupportedAdaptorException when the adaptor class mapped to {@code source} can't be found
+	 * @deprecated since 8.0.0           
 	 */
 	@SuppressWarnings("unchecked")
+	@Deprecated
   public Class<Adaptor> getAdaptorClass(String source, String version) throws YADAResourceException, YADAUnsupportedAdaptorException
 	{
 		String driverName = "";
@@ -268,10 +265,10 @@ public class QueryUtils
 				String msg = "Could not find data source at " + source;
 				throw new YADAResourceException(msg, e);
 			}
-			//TODO checkout DriverManager as a preferred alternative to BasicDataSource for acquiring driverName.
+			
 			//TODO add integration tests for multiple containers after breaking tomcat dbcp dependency
 			//     http://docs.oracle.com/javase/1.5.0/docs/api/java/sql/DriverManager.html?is-external=true
-			driverName = ((BasicDataSource)ds).getDriverClassName();
+			driverName = ((HikariDataSource)ds).getDriverClassName();
 			l.debug("JDBC driver is [" + driverName + "]");
 			className = Finder.getEnv("adaptor/" + driverName + version);
 		} 
@@ -348,7 +345,6 @@ public class QueryUtils
     try
     {
       adaptorClass = (Class<Adaptor>)Class.forName(className);
-      
     } 
     catch (ClassNotFoundException e)
     {
@@ -379,15 +375,12 @@ public class QueryUtils
 	 * Returns an instance of {@code adaptorClass} using the "YADARequest"
 	 * constructor.
 	 * 
-	 * @param adaptorClass
-	 *          Class of type JDBCAdaptor mapped to the source string stored in
+	 * @param adaptorClass Class of type JDBCAdaptor mapped to the source string stored in
 	 *          the YADAQuery object
-	 * @param yadaReq
-	 *          request config
+	 * @param yadaReq request config
 	 * @return an adaptor instance of the provided class, with including the
 	 *         service parameters
-	 * @throws YADAUnsupportedAdaptorException
-	 *           when {@code adaptorClass} cannot be instantiated
+	 * @throws YADAUnsupportedAdaptorException when {@code adaptorClass} cannot be instantiated
 	 */
 	public Adaptor getAdaptor(Class<Adaptor> adaptorClass, YADARequest yadaReq) throws YADAUnsupportedAdaptorException
 	{
@@ -430,11 +423,9 @@ public class QueryUtils
 	/**
 	 * Returns an instance of {@code adaptorClass} using the no-arg constructor.
 	 * 
-	 * @param adaptorClass
-	 *          the class name of the YADA adaptor associated to the query
+	 * @param adaptorClass the class name of the YADA adaptor associated to the query
 	 * @return an instance of the provided class
-	 * @throws YADAUnsupportedAdaptorException
-	 *           when the {@code adaptorClass} cannot be instantiated
+	 * @throws YADAUnsupportedAdaptorException when the {@code adaptorClass} cannot be instantiated
 	 */
 	public Adaptor getAdaptor(Class<Adaptor> adaptorClass) throws YADAUnsupportedAdaptorException
 	{
@@ -522,8 +513,7 @@ public class QueryUtils
 	 * 
 	 * @param yq
 	 *          The query object containing the SQL to parse
-	 * @throws YADAParserException
-	 *           when the parser fails
+	 * @throws YADAParserException when the parser fails
 	 * @see com.novartis.opensource.yada.QueryManager
 	 */
 	@SuppressWarnings("static-method")
@@ -546,10 +536,8 @@ public class QueryUtils
 	 * {@link JSQLParserException} in which case it will use a regular expression to infer 
 	 * the query type.
 	 * 
-	 * @param yq
-	 *          the query object containing the code to parse
-	 * @throws YADAUnsupportedAdaptorException
-	 *           when the adaptor can't be found or instantiated
+	 * @param yq the query object containing the code to parse
+	 * @throws YADAUnsupportedAdaptorException when the adaptor can't be found or instantiated
 	 */
 
 	public void processStatement(YADAQuery yq) throws YADAUnsupportedAdaptorException
@@ -606,10 +594,8 @@ public class QueryUtils
 	 * Interrogates {@code yq} for the adaptor class and sets the protocol
 	 * attribute accordingly.
 	 * 
-	 * @param yq
-	 *          the query object in which to set the protocol attribute
-	 * @throws YADAUnsupportedAdaptorException
-	 *           when the adaptor class cannot be found
+	 * @param yq the query object in which to set the protocol attribute
+	 * @throws YADAUnsupportedAdaptorException when the adaptor class cannot be found
 	 */
 	public void setProtocol(YADAQuery yq) throws YADAUnsupportedAdaptorException
 	{
@@ -809,20 +795,20 @@ public class QueryUtils
 	 */
 	public boolean requiresConnection(YADAQuery yq)
 	{
-		return (yq.getProtocol().equals(Parser.JDBC) 
+		return (yq.getProtocol().equals(Parser.JDBC) // TODO this is now redundant to YADAQuery.getType -- perhaps this could be refactored 
 		    || yq.getProtocol().equals(Parser.SOAP));
 	}
 
 	/**
 	 * Returns {@code true} if the {@link YADARequest#PS_COMMITQUERY} parameter is
-	 * not {@code null}, has a length > 0, equals {@code true}, and the query type
+	 * not {@code null}, has a length &gt; 0, equals {@code true}, and the query type
 	 * is equal to {@link Parser#INSERT}, {@link Parser#UPDATE}, or
 	 * {@link Parser#DELETE}
 	 * 
 	 * @param yq
 	 *          the query to commit
 	 * @return {@code true} if the {@link YADARequest#PS_COMMITQUERY} parameter is
-	 *         not {@code null}, has a length > 0, equals {@code true}, and the
+	 *         not {@code null}, has a length &gt; 0, equals {@code true}, and the
 	 *         query type is equal to {@link Parser#INSERT}, {@link Parser#UPDATE}
 	 *         , or {@link Parser#DELETE}
 	 * @since 4.1.0
@@ -831,7 +817,7 @@ public class QueryUtils
 	{
 		return yq.getYADAQueryParamValue(YADARequest.PS_COMMITQUERY) != null 
 				&& yq.getYADAQueryParamValue(YADARequest.PS_COMMITQUERY).length > 0 
-				&& Boolean.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_COMMITQUERY)[0]).booleanValue() 
+				&& Boolean.parseBoolean(yq.getYADAQueryParamValue(YADARequest.PS_COMMITQUERY)[0]) 
 				&& (this.isInsert(yq) || this.isUpdate(yq) || this.isDelete(yq));
 	}
 
@@ -927,13 +913,10 @@ public class QueryUtils
 	 * Creates and returns a {@link java.sql.PreparedStatement} from {@code sql}
 	 * on the {@code conn}
 	 * 
-	 * @param sql
-	 *          conformed code (without YADA markup)
-	 * @param conn
-	 *          connection object derived from YADA query's source attribute
+	 * @param sql conformed code (without YADA markup)
+	 * @param conn connection object derived from YADA query's source attribute
 	 * @return the desired statement object
-	 * @throws YADAConnectionException
-	 *           when the connection cannot deliver the statement
+	 * @throws YADAConnectionException when the connection cannot deliver the statement
 	 */
 	public PreparedStatement getPreparedStatement(String sql, Connection conn) throws YADAConnectionException
 	{
@@ -1238,10 +1221,10 @@ public class QueryUtils
 	 * Uses the metadata collected during {@link Parser#parseDeparse(String)} to
 	 * modify the {@link Statement} by appending positional parameters to IN clause
 	 * expression lists, dynamically, based on the data passed in the request. 
-	 * @param yq
-	 * @param row
+	 * @param yq the query to process
+	 * @param row the index of the data array passed for processing
 	 * @return the modified YADA SQL
-	 * @throws YADAParserException 
+	 * @throws YADAParserException if parsing or deparsing the query encounters a non-conforming state 
 	 * @since 7.1.0
 	 */
 	public String processInList(YADAQuery yq, int row) throws YADAParserException

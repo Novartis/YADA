@@ -39,10 +39,10 @@ public class ScriptBypass extends AbstractBypass {
 	private static Logger l = Logger.getLogger(ScriptBypass.class);
 	
 	/**
-	 * Enables the execution of a script stored in the {@code YADA_BIN} directory.
+	 * Enables the execution of a script stored in the {@code yada.bin} directory.
 	 * To execute a script bypass plugin, pass {@code bypassargs}, or just {@code args}
 	 * the first argument being the name of the script executable, and the rest of the arguments
-	 * those, in order, to pass to it. If {@link YADARequest#getBypassArgs()} is not null
+	 * those, in order, to pass to it. If {@link YADARequest}{@code .getBypassArgs()} is not null
 	 * and {@link YADARequest#getPlugin()} is null, then the plugin will be set to 
 	 * {@link YADARequest#SCRIPT_BYPASS} automatically.
 	 * <p>
@@ -59,11 +59,11 @@ public class ScriptBypass extends AbstractBypass {
 		// add plugin
 		try 
 		{
-			cmds.add(Finder.getEnv("yada_bin")+args.remove(0));
+			cmds.add(Finder.getEnv("yada.bin")+args.remove(0));
 		} 
 		catch (YADAResourceException e)
 		{
-			String msg = "There was a problem locating the resource or variable identified by the supplied JNDI path (yada_bin) in the initial context.";
+			String msg = "There was a problem locating the resource or variable identified by the supplied JNDI path (yada.bin) in the initial context.";
 			throw new YADAPluginException(msg,e);
 		}
 		// add args

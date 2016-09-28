@@ -44,7 +44,7 @@ public class YADAInit extends HttpServlet {
  	
 	
 	/**
-	 * Initialization of ehcache for YADA Index.  See {@link "http://ehcache.org"}
+	 * Initialization of ehcache for YADA Index.  See <a href="http://ehcache.org">http://ehcache.org</a>
 	 * @since 4.1.0
 	 */
 	@Override

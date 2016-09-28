@@ -36,7 +36,7 @@ public class ResultSetResultHTMLConverter extends ResultSetResultDelimitedConver
   /**
    * Constructor with {@link YADAQueryResult}
    * @param yqr the container for result processing artifacts
-   * @throws YADAConverterException 
+   * @throws YADAConverterException when the {@link Converter} can't be instantiated 
    */
   public ResultSetResultHTMLConverter(YADAQueryResult yqr) throws YADAConverterException {
     super(yqr);

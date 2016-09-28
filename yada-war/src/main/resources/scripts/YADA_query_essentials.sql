@@ -2,6 +2,23 @@
 
 DELETE from YADA_QUERY where app = 'YADA' and qname not like 'YADA test%' and qname not like '%secured%' and qname not like '%YSEC%' and qname not in ('YADA yada','YADA user is authorized','YADA sql tester','YADA select nextval','YADA select multiple nextvals');
 
+-- properties
+INSERT INTO YADA_PROP (target,name,value) VALUES ('system','yada.version','${display.version}');
+INSERT INTO YADA_PROP (target,name,value) VALUES ('system','app.home','${app.home}');
+INSERT INTO YADA_PROP (target,name,value) VALUES ('system','yada.bin','${app.home}/bin/');
+INSERT INTO YADA_PROP (target,name,value) VALUES ('system','yada.util','${app.home}/util/');
+INSERT INTO YADA_PROP (target,name,value) VALUES ('system','io/out','${app.home}/files/out');
+INSERT INTO YADA_PROP (target,name,value) VALUES ('system','io/in','${app.home}/files/in');
+INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/org.sqlite.JDBC','com.novartis.opensource.yada.adaptor.SQLiteAdaptor');
+INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/oracle.jdbc.OracleDriver','com.novartis.opensource.yada.adaptor.OracleAdaptor');
+INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/com.mysql.jdbc.Driver','com.novartis.opensource.yada.adaptor.MySQLAdaptor');
+INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/org.postgresql.Driver','com.novartis.opensource.yada.adaptor.PostgreSQLAdaptor');
+INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/com.vertica.jdbc.Driver','com.novartis.opensource.yada.adaptor.VerticaAdaptor');
+
+INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/SOAP','com.novartis.opensource.yada.adaptor.SoapAdaptor');
+INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/com.microsoft.sqlserver.jdbc.SQLServerDriver','com.novartis.opensource.yada.adaptor.SQLServerAdaptor');
+INSERT INTO YADA_PROP (target,name,value) VALUES ('system','login','default');
+
 -- sanity check
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA default','select ''YADA is alive''','YADABOT','YADA');
 -- parameter dml
@@ -161,20 +178,20 @@ INSERT into YADA_PROP (target,name,value) VALUES ('YADA select protectors for ta
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA select protectors for target','protected','true');
 
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA insert protector for target','insert into yada_a11n (target,policy,qname,type) values (?v,''E'',?v,?v)', 'YADABOT', 'YADA');
-INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA insert protector for target','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=app:getValue(TARGET) uid:getLoggedUser()');
-INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA insert protector for target','YADA crud protector','E','whitelist');
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA insert protector for target','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=qname:getValue(TARGET) uid:getLoggedUser()');
+INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA insert protector for target','YADA crud by qname protector','E','whitelist');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA insert protector for target-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA insert protector for target','protected','true');
 
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA update protector for target','update yada_a11n set qname = ?v, type = ?v where target = ?v', 'YADABOT', 'YADA');
-INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA update protector for target','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=app:getValue(TARGET) uid:getLoggedUser()');
-INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA update protector for target','YADA crud protector','E','whitelist');
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA update protector for target','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=qname:getValue(TARGET) uid:getLoggedUser()');
+INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA update protector for target','YADA crud by qname protector','E','whitelist');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA update protector for target-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA update protector for target','protected','true');
 
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA delete protector for target','delete from yada_a11n where target = ?v and qname = ?v', 'YADABOT', 'YADA');
-INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA delete protector for target','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=app:getValue(TARGET) uid:getLoggedUser()');
-INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA delete protector for target','YADA crud protector','E','whitelist');
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA delete protector for target','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=qname:getValue(TARGET) uid:getLoggedUser()');
+INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA delete protector for target','YADA crud by qname protector','E','whitelist');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA delete protector for target-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA delete protector for target','protected','true');
 
@@ -187,7 +204,7 @@ INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA view protector
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA view by qname protector','select 1 from yada_ug where upper(role) in (''ADMIN'',''USER'') and app = (select app from yada_query where qname = ?v) and uid=?v','YADABOT','YADA');
 
 -- default login property
-INSERT into YADA_PROP  (target,name,value) VALUES ('system','login','default');
+
 -- check login property (unprotected -- is this a vulnerability?)
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA select prop value','select value "VALUE" from YADA_PROP where target=?v and name=?v','YADABOT','YADA');
 -- login query and defaut plugin
@@ -209,10 +226,21 @@ INSERT into YADA_UG (app,uid,role) VALUES ('YADA','YADA','ADMIN');
 INSERT into YADA_UG (app,uid,role) VALUES ('YADA','YADAUSER','USER');
 INSERT into YADA_UG (app,uid,role) VALUES ('YADAFSIN','test','ADMIN');
 INSERT into YADA_UG (app,uid,role) VALUES ('QGO','test','USER');
+INSERT into YADA_UG (app,uid,role) VALUES ('YADATEST','test','ADMIN');
 
 
 -- configuration
-INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA update query','pl',1,'CachedQueryUpdater');
-INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pz',1,'-1');
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('2','YADA update query','pl',1,'CachedQueryUpdater');
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('3','YADA update query','cv',1,'RESTResultJSONConverter');
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('4','YADA update query','cq',1,'true');
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('5','YADA update query','c',1,'false');
 
+-- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('2','YADA insert prop','pl',1,'CachedQueryUpdater');
+-- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('3','YADA insert prop','cv',1,'RESTResultJSONConverter');
+-- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('2','YADA delete prop','pl',1,'CachedQueryUpdater');
+-- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('3','YADA delete prop','cv',1,'RESTResultJSONConverter');
+-- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('4','YADA delete prop','cq',1,'true');
+-- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('5','YADA delete prop','c',1,'false');
+
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('2','YADA select apps','pz',1,'-1');
 

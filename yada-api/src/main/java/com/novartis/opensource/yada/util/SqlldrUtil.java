@@ -29,7 +29,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 
 import org.apache.log4j.Logger;
-import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
+import com.zaxxer.hikari.HikariDataSource;
+//import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
 
 /**
  * A utility for executing Oracle sqlldr from java
@@ -428,13 +429,13 @@ public class SqlldrUtil {
 	{
 		try 
 		{
-			Context         ctx = new InitialContext();
-			BasicDataSource ds  = (BasicDataSource)ctx.lookup(this.dataSource);
+			Context          ctx = new InitialContext();
+			HikariDataSource ds  = (HikariDataSource)ctx.lookup(this.dataSource);
 			
 			String          usr = ds.getUsername();
 			String          pwd = ds.getPassword();
 			String          db  = "";
-			String          url = ds.getUrl();
+			String          url = ds.getJdbcUrl();
 			Matcher         m   = JDBC_URL_RX.matcher(url);
 			if (m.matches())
 				db = m.group(1);

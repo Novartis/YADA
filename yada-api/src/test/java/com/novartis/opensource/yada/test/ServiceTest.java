@@ -722,7 +722,7 @@ public class ServiceTest
       connection.setDoOutput(true);
 
       // auth
-      if (Boolean.valueOf(this.auth).booleanValue())
+      if (Boolean.parseBoolean(this.auth))
       {
         setAuthentication(connection);
       }
@@ -804,7 +804,7 @@ public class ServiceTest
             encQuery += "/";
           encQuery += URLEncoder.encode(params[i], UTF8);
         }
-        if (Boolean.valueOf(this.auth).booleanValue())
+        if (Boolean.parseBoolean(this.auth))
         {
           target = "http://" + this.host + this.uri.substring(0, this.uri.lastIndexOf('/')) + encQuery;
         }
@@ -835,7 +835,7 @@ public class ServiceTest
       connection.setRequestMethod("GET");
 
       // auth
-      if (Boolean.valueOf(this.auth).booleanValue())
+      if (Boolean.parseBoolean(this.auth))
       {
         setAuthentication(connection);
       }
@@ -1169,7 +1169,6 @@ public class ServiceTest
   public void testSecurityPlugins(String query) throws YADAQueryConfigurationException, YADAResponseException
   {
     Service svc = prepareTest(query);
-    String result = svc.execute();
     Assert.assertTrue(validate(svc.getYADARequest(), svc.execute()) ,  "Data invalid for query: "+query);
   }
   
@@ -1888,33 +1887,26 @@ public class ServiceTest
       String line;
       int lineNum = 0;
       String header = "";
-      try
+      
+      while ((line = rd.readLine()) != null)
       {
-        while ((line = rd.readLine()) != null)
+        if (lineNum == 0)
         {
-          if (lineNum == 0)
-          {
-            header = line;
-          }
-          else if (lineNum > 0)
-          {
-            Matcher m = CSV.matcher(line);
-            if (!(line.equals(header) || m.matches()))
-            {
-              String msg = "Results do not conform to CSV format.\n" + line;
-              throw new YADAResponseException(msg);
-            }
-            if (lineNum == 1)
-              validateDelimitedData(line, YADARequest.FORMAT_CSV_STRING);
-          }
-          logStringResult(line);
-          lineNum++;
+          header = line;
         }
-      }
-      catch (IOException e)
-      {
-        String msg = "Unable to read the result.";
-        throw new YADAResponseException(msg, e);
+        else if (lineNum > 0)
+        {
+          Matcher m = CSV.matcher(line);
+          if (!(line.equals(header) || m.matches()))
+          {
+            String msg = "Results do not conform to CSV format.\n" + line;
+            throw new YADAResponseException(msg);
+          }
+          if (lineNum == 1)
+            validateDelimitedData(line, YADARequest.FORMAT_CSV_STRING);
+        }
+        logStringResult(line);
+        lineNum++;
       }
     }
     catch (IOException e1)
@@ -1939,33 +1931,25 @@ public class ServiceTest
       String line;
       int lineNum = 0;
       String header = "";
-      try
+      while ((line = rd.readLine()) != null)
       {
-        while ((line = rd.readLine()) != null)
+        if (lineNum == 0)
         {
-          if (lineNum == 0)
-          {
-            header = line;
-          }
-          else if (lineNum > 0)
-          {
-            Matcher m = TSV.matcher(line);
-            if (!(line.equals(header) || m.matches()))
-            {
-              String msg = "Results do not conform to TSV/tab format.\n" + line;
-              throw new YADAResponseException(msg);
-            }
-            if (lineNum == 1)
-              validateDelimitedData(line, YADARequest.FORMAT_TSV_STRING);
-          }
-          logStringResult(line);
-          lineNum++;
+          header = line;
         }
-      }
-      catch (IOException e)
-      {
-        String msg = "Unable to read the result.";
-        throw new YADAResponseException(msg, e);
+        else if (lineNum > 0)
+        {
+          Matcher m = TSV.matcher(line);
+          if (!(line.equals(header) || m.matches()))
+          {
+            String msg = "Results do not conform to TSV/tab format.\n" + line;
+            throw new YADAResponseException(msg);
+          }
+          if (lineNum == 1)
+            validateDelimitedData(line, YADARequest.FORMAT_TSV_STRING);
+        }
+        logStringResult(line);
+        lineNum++;
       }
     }
     catch (IOException e1)
@@ -1990,34 +1974,26 @@ public class ServiceTest
       String line;
       int lineNum = 0;
       String header = "";
-      try
+      while ((line = rd.readLine()) != null)
       {
-        while ((line = rd.readLine()) != null)
+        if (lineNum == 0)
         {
-          if (lineNum == 0)
-          {
-            header = line;
-          }
-          else if (lineNum > 0)
-          {
-            Matcher m = PSV.matcher(line);
-            if (!(line.equals(header) || m.matches()))
-            {
-              String msg = "Results do not conform to PSV/Pipe format.\n" + line;
-              throw new YADAResponseException(msg);
-            }
-            if (lineNum == 1)
-              // need to escape the pipe and it's preceding backslash in the regex
-              validateDelimitedData(line, "\\\\\\"+YADARequest.FORMAT_PIPE_STRING);
-          }
-          logStringResult(line);
-          lineNum++;
+          header = line;
         }
-      }
-      catch (IOException e)
-      {
-        String msg = "Unable to read the result.";
-        throw new YADAResponseException(msg, e);
+        else if (lineNum > 0)
+        {
+          Matcher m = PSV.matcher(line);
+          if (!(line.equals(header) || m.matches()))
+          {
+            String msg = "Results do not conform to PSV/Pipe format.\n" + line;
+            throw new YADAResponseException(msg);
+          }
+          if (lineNum == 1)
+            // need to escape the pipe and it's preceding backslash in the regex
+            validateDelimitedData(line, "\\\\\\"+YADARequest.FORMAT_PIPE_STRING);
+        }
+        logStringResult(line);
+        lineNum++;
       }
     }
     catch (IOException e1)

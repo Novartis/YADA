@@ -53,7 +53,7 @@ public class YADAUtils {
   /**
    * A constant equal to: {@value}, the JNDI key for the framework version value
    */
-  public final static String   YADA_VERSION             = "yada_version";
+  public final static String   YADA_VERSION             = "yada.version";
   /**
 	 * A constant equal to: {@value}
 	 */
@@ -192,7 +192,7 @@ public class YADAUtils {
 	/**
 	 * Returns the in-use version of the YADA framework.
 	 * 
-	 * @return this YADA framework version derived from JNDI {@code yada_version} variable 
+	 * @return this YADA framework version derived from JNDI {@code yada.version} variable 
 	 * @throws YADAResourceException when the JNDI path cannot be found or read
 	 * @since 5.1.0
 	 */
@@ -467,7 +467,7 @@ public class YADAUtils {
 	
 	/**
 	 * Returns {@code true} if {@code yadaReq} contains a {@code JSONParams} variable that is non-null and has
-	 * a size > 0.  This method does not validate the value, and could return {@code true} even if the 
+	 * a size &gt; 0.  This method does not validate the value, and could return {@code true} even if the 
 	 * json string is malformed or non-compliant.
 	 * @param yadaReq YADA request configuration
 	 * @return boolean status of the parameter

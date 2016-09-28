@@ -25,13 +25,10 @@ import java.util.regex.Pattern;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
-import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
-import net.sf.jsqlparser.statement.select.SelectBody;
-import net.sf.jsqlparser.util.deparser.ExpressionDeParser;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -40,6 +37,8 @@ import org.json.JSONObject;
 import com.novartis.opensource.yada.Finder;
 import com.novartis.opensource.yada.JSONParams;
 import com.novartis.opensource.yada.JSONParamsEntry;
+import com.novartis.opensource.yada.QueryManager;
+import com.novartis.opensource.yada.Service;
 import com.novartis.opensource.yada.YADAConnectionException;
 import com.novartis.opensource.yada.YADAFinderException;
 import com.novartis.opensource.yada.YADAQuery;
@@ -96,8 +95,8 @@ public class Gatekeeper extends AbstractPreprocessor {
    * Validates the request host, user, security params, and security query
    * execution results
    * 
-   * @throws YADAPluginException
-   *           , YADASecurityException
+   * @throws YADAPluginException when plugin processing fails
+   * @throws YADASecurityException when the user is unauthorized or there is an error in policy processing
    * @see com.novartis.opensource.yada.plugin.AbstractPreprocessor#engage(com.novartis.opensource.yada.YADARequest,
    *      com.novartis.opensource.yada.YADAQuery)
    */
@@ -116,11 +115,10 @@ public class Gatekeeper extends AbstractPreprocessor {
   }
 
   /**
-   * Overrides {@link TokenValidator#validate()}. Default sets token to value of
+   * Overrides {@link TokenValidator#validateToken()}. Default sets token to value of
    * {@link #DEFAULT_AUTH_TOKEN_PROPERTY} system property.
    * 
-   * @throws YADASecurityException
-   *           when the {@link #DEFAULT_AUTH_TOKEN_PROPERTY} is not set
+   * @throws YADASecurityException when the {@link #DEFAULT_AUTH_TOKEN_PROPERTY} is not set
    */
   @Override
   public void validateToken() throws YADASecurityException 
@@ -148,10 +146,7 @@ public class Gatekeeper extends AbstractPreprocessor {
    * Retrieves and processes the security query, and validates the results per
    * the security specification
    * 
-   * @param spec
-   *          the security specification for the requested query
-   * @throws YADASecurityException
-   *           when there is an issue retrieving or processing the security
+   * @throws YADASecurityException when there is an issue retrieving or processing the security
    *           query           
    */
   @Override
@@ -294,7 +289,7 @@ public class Gatekeeper extends AbstractPreprocessor {
               if(m1.matches() && m1.groupCount() == 3) // injection
               {
                 // parse regex: this is where the method value is injected
-                String   colIdx      = m1.group(2);
+                //String   colIdx      = m1.group(2);
                 String   colval      = m1.group(3);
                 
                 // find and execute injected method
@@ -336,7 +331,7 @@ public class Gatekeeper extends AbstractPreprocessor {
       // policy has JSONParams and req has compatible JSONParams
       else if(policyHasJSONParams && reqHasJSONParams) 
       { 
-        LOG.warn("Could not parse column value into integer -- it's probably a String");
+        LOG.debug("Could not parse protector column value into integer, assuming it's a String");
         // handle as JSONParams
         // 1. get JSONParams from query (params)
         LinkedHashMap<String, String[]> dataRow = getYADAQuery().getDataRow(0);
@@ -412,8 +407,8 @@ public class Gatekeeper extends AbstractPreprocessor {
   
   /**
    * Modifies the original query by appending a dynamic predicate
-   * <p>Recall the {@link Service#engagePreprocess} method
-   * will recall {@link QueryManager#endowQuery} to 
+   * <p>Recall the {@link Service}{@code .engagePreprocess} method
+   * will recall {@link QueryManager}{@code .endowQuery()} to 
    * reconform the code after this {@link Preprocess} 
    * disengages.
    * 
@@ -517,7 +512,7 @@ public class Gatekeeper extends AbstractPreprocessor {
   /**
    * Utility function for content policy
    * @return the auth token wrapped in single quotes
-   * @throws YADASecurityException
+   * @throws YADASecurityException when the token can't retrieved 
    */
   public String getQToken() throws YADASecurityException
   {
@@ -528,10 +523,9 @@ public class Gatekeeper extends AbstractPreprocessor {
   /**
    * Utility function for content policy
    * @return the auth token wrapped in single quotes
-   * @throws YADASecurityException
    * @since 8.1.0
    */
-  public String getQLoggedUser() throws YADASecurityException
+  public String getQLoggedUser() 
   {
     String user = ((JSONArray)getSessionAttribute("YADA.user.privs")).getJSONObject(0).getString("UID");
     String quote = "'";
@@ -546,7 +540,6 @@ public class Gatekeeper extends AbstractPreprocessor {
    * Utility function for content policy
    * @param cookie the desired HTTP request cookie
    * @return the value of {@code cookie} wrapped in single quotes
-   * @throws YADASecurityException
    */
   public String getQCookie(String cookie)
   {
@@ -559,7 +552,6 @@ public class Gatekeeper extends AbstractPreprocessor {
    * Utility function for content policy
    * @param header the desired HTTP request header
    * @return the value of {@code header} wrapped in single quotes
-   * @throws YADASecurityException
    */
   public String getQHeader(String header)
   {

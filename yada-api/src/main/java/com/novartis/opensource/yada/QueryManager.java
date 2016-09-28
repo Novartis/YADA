@@ -20,12 +20,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -121,26 +119,18 @@ public class QueryManager
 	 * @since 4.0.0
 	 * @param yadaReq
 	 *          YADA request configuration
-	 * @throws YADAUnsupportedAdaptorException
-	 *           when the adaptor can't be instantiated, or when it can't be found
-	 * @throws YADAFinderException
-	 *           when there is an issue retrieving a query from the YADA index
-	 * @throws YADAConnectionException
-	 *           when there is an issue opening a connection to a source
+	 * @throws YADAUnsupportedAdaptorException when the adaptor can't be instantiated, or when it can't be found
+	 * @throws YADAFinderException when there is an issue retrieving a query from the YADA index
+	 * @throws YADAConnectionException when there is an issue opening a connection to a source
 	 *           referenced by a query
-	 * @throws YADAResourceException
-	 *           when a query's source attribute can't be found in the application
+	 * @throws YADAResourceException when a query's source attribute can't be found in the application
 	 *           context, or there is another problem with the context
-	 * @throws YADAQueryConfigurationException
-	 *           if request does not contain either a {@code qname} or {@code q},
+	 * @throws YADAQueryConfigurationException if request does not contain either a {@code qname} or {@code q},
 	 *           or a {@code JSONParams} or {@code j} parameter
-	 * @throws YADAAdaptorException
-	 *           when a query cannot be built by the adaptor
-	 * @throws YADARequestException
-	 *           when filters are included in the request config, but can't be
+	 * @throws YADAAdaptorException when a query cannot be built by the adaptor
+	 * @throws YADARequestException when filters are included in the request config, but can't be
 	 *           converted into a JSONObject
-	 * @throws YADAParserException
-	 *           when a query code cannot be parsed successfully
+	 * @throws YADAParserException when a query code cannot be parsed successfully
 	 */
 	public QueryManager(YADARequest yadaReq) throws YADAQueryConfigurationException, YADAResourceException, YADAConnectionException, YADAFinderException, YADAUnsupportedAdaptorException, YADARequestException, YADAAdaptorException, YADAParserException
 	{
@@ -167,26 +157,18 @@ public class QueryManager
    * {@link #prepQueriesForExecution()} in succession
    * 
    * @param yadaReq the {@link YADARequest} to process
-   * @throws YADAFinderException
-   *           when there is an issue retrieving a query from the YADA index
-   * @throws YADAConnectionException
-   *           when there is an issue opening a connection to a source
+   * @throws YADAFinderException when there is an issue retrieving a query from the YADA index
+   * @throws YADAConnectionException when there is an issue opening a connection to a source
    *           referenced by a query
-   * @throws YADAQueryConfigurationException
-   *           if request does not contain either a {@code qname} or {@code q},
+   * @throws YADAQueryConfigurationException if request does not contain either a {@code qname} or {@code q},
    *           or a {@code JSONParams} or {@code j} parameter
-   * @throws YADAUnsupportedAdaptorException
-   *           when the adaptor can't be instantiated, or when it can't be found
-   * @throws YADAResourceException
-   *           when a query's source attribute can't be found in the application
+   * @throws YADAUnsupportedAdaptorException when the adaptor can't be instantiated, or when it can't be found
+   * @throws YADAResourceException when a query's source attribute can't be found in the application
    *           context, or there is another problem with the context
-   * @throws YADAAdaptorException
-   *           when a query cannot be built by the adaptor
-   * @throws YADARequestException
-   *           when filters are included in the request config, but can't be
+   * @throws YADAAdaptorException when a query cannot be built by the adaptor
+   * @throws YADARequestException when filters are included in the request config, but can't be
    *           converted into a JSONObject
-   * @throws YADAParserException
-   *           when query code cannot be parsed successfully
+   * @throws YADAParserException when query code cannot be parsed successfully
    * @since 7.1.0
    */
 	private void processRequest(YADARequest yadaReq) throws YADAQueryConfigurationException, YADAConnectionException, YADAFinderException, YADAResourceException, YADAUnsupportedAdaptorException, YADARequestException, YADAAdaptorException, YADAParserException
@@ -216,26 +198,18 @@ public class QueryManager
 	 * or {@link #endowQueries(JSONParams)} for json params requests, followed by
 	 * {@link #prepQueriesForExecution()} in succession
 	 * 
-	 * @throws YADAFinderException
-	 *           when there is an issue retrieving a query from the YADA index
-	 * @throws YADAConnectionException
-	 *           when there is an issue opening a connection to a source
+	 * @throws YADAFinderException when there is an issue retrieving a query from the YADA index
+	 * @throws YADAConnectionException when there is an issue opening a connection to a source
 	 *           referenced by a query
-	 * @throws YADAQueryConfigurationException
-	 *           if request does not contain either a {@code qname} or {@code q},
+	 * @throws YADAQueryConfigurationException if request does not contain either a {@code qname} or {@code q},
 	 *           or a {@code JSONParams} or {@code j} parameter
-	 * @throws YADAUnsupportedAdaptorException
-	 *           when the adaptor can't be instantiated, or when it can't be found
-	 * @throws YADAResourceException
-	 *           when a query's source attribute can't be found in the application
+	 * @throws YADAUnsupportedAdaptorException when the adaptor can't be instantiated, or when it can't be found
+	 * @throws YADAResourceException when a query's source attribute can't be found in the application
 	 *           context, or there is another problem with the context
-	 * @throws YADAAdaptorException
-	 *           when a query cannot be built by the adaptor
-	 * @throws YADARequestException
-	 *           when filters are included in the request config, but can't be
+	 * @throws YADAAdaptorException when a query cannot be built by the adaptor
+	 * @throws YADARequestException when filters are included in the request config, but can't be
 	 *           converted into a JSONObject
-	 * @throws YADAParserException
-	 *           when query code cannot be parsed successfully
+	 * @throws YADAParserException when query code cannot be parsed successfully
 	 * @since 4.0.0
 	 * @deprecated as of 7.1.0
 	 */
@@ -277,10 +251,13 @@ public class QueryManager
 	  {
 	    for(YADAQuery yq : getQueries())
 	    {
-	      YADAParam p = yq.getParam(YADARequest.PS_HARMONYMAP);
-	      if(p != null)
-	      {
-	        JSONObject j = new JSONObject(p.getValue());
+//	      YADAParam p = yq.getParam(YADARequest.PS_HARMONYMAP).get(0);
+//	      if(p != null)
+//	      {
+	      if(yq.hasParam(YADARequest.PS_HARMONYMAP) && yq.getParam(YADARequest.PS_HARMONYMAP).size() > 0)
+        {
+          YADAParam p = yq.getParam(YADARequest.PS_HARMONYMAP).get(0);
+          JSONObject j = new JSONObject(p.getValue());
 	        if(j.length() > 0)
 	        {
 	          globalHarmonyMap = populateGlobalHarmonyMap(globalHarmonyMap, j);
@@ -347,9 +324,9 @@ public class QueryManager
   	  ArrayList<YADAQuery> noMap  = new ArrayList<>();
   	  for(YADAQuery yq : this.queries)
   	  {
-  	    YADAParam p = yq.getParam(YADARequest.PS_HARMONYMAP);
-  	    if(p != null)
+  	    if(yq.hasParam(YADARequest.PS_HARMONYMAP) && yq.getParam(YADARequest.PS_HARMONYMAP).size() > 0)
   	    {
+  	      YADAParam p = yq.getParam(YADARequest.PS_HARMONYMAP).get(0);
     	    hasMap.add(new JSONObject(p.getValue()));
   	    }
   	    else
@@ -374,26 +351,24 @@ public class QueryManager
 	 * source stored in the {@code yq} object.  If the protocol value in the query
 	 * is not SOAP or JDBC, the method exits silently
 	 * 
-	 * @param yq
-	 *          the query object containing the source string for setting the
+	 * @param yq the query object containing the source string for setting the
 	 *          connection
-	 * @throws YADAConnectionException
-	 *           when the connection to the source in the query cannot be set
+	 * @throws YADAConnectionException when the connection to the source in the query cannot be set
 	 */
 	private void storeConnection(YADAQuery yq) throws YADAConnectionException
 	{
-		String source = yq.getSource();
-		if (!this.connectionMap.containsKey(source))
+		String app = yq.getApp();
+		if (!this.connectionMap.containsKey(app))
 		{
 			yq.setConnection();
-			this.connectionMap.put(source, yq.getConnection());
+			this.connectionMap.put(app, yq.getConnection());
 		} 
 		else
 		{
 			if (yq.getProtocol().equals(Parser.JDBC))
-				yq.setConnection((Connection)this.connectionMap.get(source));
+				yq.setConnection((Connection)this.connectionMap.get(app));
 			else if (yq.getProtocol().equals(Parser.SOAP))
-				yq.setSOAPConnection((SOAPConnection)this.connectionMap.get(source));
+				yq.setSOAPConnection((SOAPConnection)this.connectionMap.get(app));
 		}
 	}
 
@@ -405,14 +380,13 @@ public class QueryManager
 	 * 
 	 * @param yq
 	 *          the query containing the statements to commit
-	 * @throws YADAConnectionException
-	 *           when the commit fails
+	 * @throws YADAConnectionException when the commit fails
 	 */
 	public void commit(YADAQuery yq) throws YADAConnectionException
 	{
 		try
 		{
-			if(this.requiredCommits.contains(yq.getSource()))
+			if(this.requiredCommits.contains(yq.getApp()))
 			{
 				Connection connection = (Connection)yq.getConnection();
 				if(connection.getHoldability() == ResultSet.HOLD_CURSORS_OVER_COMMIT)
@@ -421,24 +395,24 @@ public class QueryManager
 					int    count = yq.getResult().getTotalResultCount();
 					String rows  = count == 1 ? "row" : "rows"; 
 					String msg   = "\n------------------------------------------------------------\n";
-					msg         += "   Commit successful on connection to ["+yq.getSource()+"] ("+count+" "+rows+")\n";
+					msg         += "   Commit successful on connection to ["+yq.getApp()+"] ("+count+" "+rows+")\n";
 					msg         += "------------------------------------------------------------\n";
 					l.debug(msg);
 				}
 				else
 				{
-					deferCommit(yq.getSource());
+					deferCommit(yq.getApp());
 				}
 			}
 		} 
 		catch (SQLException e)
 		{
-			String msg = "Unable to commit transaction on ["+yq.getSource()+"].";
+			String msg = "Unable to commit transaction on ["+yq.getApp()+"].";
 			throw new YADAConnectionException(msg, e);
 		} 
 		catch (ClassCastException e)
 		{
-			l.info("Connection to ["+yq.getSource()+"] is not a JDBC connection (it's probably SOAP.) No commit was attempted.");
+			l.info("Connection to ["+yq.getApp()+"] is not a JDBC connection (it's probably SOAP.) No commit was attempted.");
 		}
 	}
 
@@ -446,8 +420,7 @@ public class QueryManager
 	 * Executes a commit on all connections created during processing of the
 	 * current request.
 	 * 
-	 * @throws YADAConnectionException
-	 *           when the commit fails
+	 * @throws YADAConnectionException when the commit fails
 	 */
 	public void commit() throws YADAConnectionException
 	{
@@ -490,13 +463,13 @@ public class QueryManager
 	/**
 	 * Adds {@code source} to the internal {@code #deferredCommits} list for execution of commit on the connection after
 	 * results are parsed.
-	 * @param source the jndi path of the source to commit later
+	 * @param app the name of the YADA app mapped to the datasource config
 	 * @since 4.2.0
 	 */
-	private void deferCommit(String source)
+	private void deferCommit(String app)
 	{
-		this.deferredCommits.add(source);
-		String msg = "Commit deferred on ["+source+"]. This is done, most likely, because the JDBC driver for this source does not support holdability.";
+		this.deferredCommits.add(app);
+		String msg = "Commit deferred on ["+app+"]. This is done, most likely, because the JDBC driver for this source does not support holdability.";
 		l.info(msg);
 	}
 
@@ -507,28 +480,27 @@ public class QueryManager
 	 * {@link java.sql.CallableStatement}s using the utility methods in
 	 * {@link com.novartis.opensource.yada.ConnectionFactory}
 	 * 
-	 * @throws YADAConnectionException
-	 *           when there is a problem closing any of the resources
+	 * @throws YADAConnectionException when there is a problem closing any of the resources
 	 * @see ConnectionFactory#releaseResources(ResultSet)
 	 * @see ConnectionFactory#releaseResources(java.sql.Statement)
 	 */
 	public void releaseResources() throws YADAConnectionException
 	{
-		for (String source : this.deferredCommits)
+		for (String app : this.deferredCommits)
 		{
 			try
 			{
-				Connection connection = (Connection)this.connectionMap.get(source);
+				Connection connection = (Connection)this.connectionMap.get(app);
 				connection.commit();
 				String msg = "\n------------------------------------------------------------\n";
-				msg += "   Commit successful on ["+source+"].\n";
+				msg += "   Commit successful on ["+app+"].\n";
 				msg += "------------------------------------------------------------\n";
 				l.info(msg);
 			}
 			catch (SQLException e)
 			{
 				String msg = "\n------------------------------------------------------------\n";
-				msg += "   Unable to commit transaction on ["+source+"].\n";
+				msg += "   Unable to commit transaction on ["+app+"].\n";
 				msg += "------------------------------------------------------------\n";
 				l.error(msg); //TODO should there be a rollback message here?
 			} 
@@ -596,11 +568,11 @@ public class QueryManager
 	 *          add the statement
 	 * @param code
 	 *          the SQL to map to the statement
-	 * @throws YADAConnectionException
-	 *           when the statement is not yet in the map, and the connection
+	 * @throws YADAConnectionException when the statement is not yet in the map, and the connection
 	 *           deliver it
 	 */
-	private void storePreparedStatement(YADAQuery yq, String code) throws YADAConnectionException
+	@SuppressWarnings("unused")
+  private void storePreparedStatement(YADAQuery yq, String code) throws YADAConnectionException
 	{
 			PreparedStatement p = this.qutils.getPreparedStatement(code,(Connection)yq.getConnection());
 			yq.addPstmt(p);
@@ -608,7 +580,7 @@ public class QueryManager
 	
 	/**
    * Adds the JDBC statement to the internal index at the specified position
-   * @param row the index of {@link YADAQuery#pstmt} at which to store the {@link PreparedStatement}
+   * @param row the index of {@link YADAQuery}{@code .pstmt} at which to store the {@link PreparedStatement}
    * @param yq the query containing the {@code code} and the index to which to
    *          add the statement
    * @param code the SQL to map to the statement
@@ -625,16 +597,12 @@ public class QueryManager
 	/**
 	 * Adds the JDBC statement to the internal index
 	 * 
-	 * @param yq
-	 *          the query containing the {@code code} and the index to which to
+	 * @param yq the query containing the {@code code} and the index to which to
 	 *          add the statement
-	 * @param p
-	 *          the statement for the data query, serving as a key for the count
+	 * @param p the statement for the data query, serving as a key for the count
 	 *          statement in the map
-	 * @param code
-	 *          the SQL to map to the statement
-	 * @throws YADAConnectionException
-	 *           when the statement is not yet in the map, and the connection
+	 * @param code the SQL to map to the statement
+	 * @throws YADAConnectionException when the statement is not yet in the map, and the connection
 	 *           deliver it
 	 */
 	private void storePreparedStatementForCount(YADAQuery yq,
@@ -688,28 +656,23 @@ public class QueryManager
 	 * Prepares the query for execution by retrieving the wrapped query code, amending
 	 * it if needed, as prescribed by request parameters, and links the query statement
 	 * with it's database connection.
+	 * @param yq the {@link YADAQuery} to prep
 	 * 
    * @since 7.0.0
-   * @throws YADAResourceException
-   *           when a query's source attribute can't be found in the application
+   * @throws YADAResourceException when a query's source attribute can't be found in the application
    *           context, or there is another problem with the context
-   * @throws YADAUnsupportedAdaptorException
-   *           when there is no adaptor available for the source or protocol or
+   * @throws YADAUnsupportedAdaptorException when there is no adaptor available for the source or protocol or
    *           the intended adaptor can't be instantiated
-   * @throws YADAConnectionException
-   *           when a connection to the source can't be opened
-   * @throws YADARequestException
-   *           when filters are included in the request config, but can't be
+   * @throws YADAConnectionException when a connection to the source can't be opened
+   * @throws YADARequestException when filters are included in the request config, but can't be
    *           converted into a JSONObject
-   * @throws YADAAdaptorException
-   *           when the query cannot be built by the adaptor
-   * @throws YADAParserException
-   *           when the query code cannot be parsed successfully
+   * @throws YADAAdaptorException when the query cannot be built by the adaptor
+   * @throws YADAParserException when the query code cannot be parsed successfully
    */
 	void prepQueryForExecution(YADAQuery yq) throws YADAResourceException, YADAUnsupportedAdaptorException, YADAConnectionException, YADARequestException, YADAAdaptorException, YADAParserException
 	{
 
-    String source        = yq.getSource();
+    String app           = yq.getApp();
     String conformedCode = yq.getConformedCode();
     String wrappedCode   = "";
     int    dataSize      = yq.getData().size() > 0 ? yq.getData().size() : 1;
@@ -734,14 +697,14 @@ public class QueryManager
           l.debug(msg);
           storeCallableStatement(yq, wrappedCode);
         }
-        this.requiredCommits.add(yq.getSource());
+        this.requiredCommits.add(yq.getApp());
       }
       else
       {
-        boolean    count     = Boolean.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_COUNT)[0]).booleanValue();
-        boolean    countOnly = Boolean.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_COUNTONLY)[0]).booleanValue();
-        int        pageStart = Integer.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_PAGESTART)[0]).intValue();
-        int        pageSize  = Integer.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_PAGESIZE)[0]).intValue();
+        boolean    count     = Boolean.parseBoolean(yq.getYADAQueryParamValue(YADARequest.PS_COUNT)[0]);
+        boolean    countOnly = Boolean.parseBoolean(yq.getYADAQueryParamValue(YADARequest.PS_COUNTONLY)[0]);
+        int        pageStart = Integer.parseInt(yq.getYADAQueryParamValue(YADARequest.PS_PAGESTART)[0]);
+        int        pageSize  = Integer.parseInt(yq.getYADAQueryParamValue(YADARequest.PS_PAGESIZE)[0]);
         if (pageSize == -1)
           pageSize = YADAUtils.ONE_BILLION;
         int        firstRow  = 1 + (pageStart * pageSize) - pageSize;
@@ -791,7 +754,7 @@ public class QueryManager
           else // INSERT, UPDATE, DELETE
           {
             wrappedCode = conformedCode;
-            this.requiredCommits.add(yq.getSource());
+            this.requiredCommits.add(yq.getApp());
             String msg  = "\n------------------------------------------------------------";
                    msg += "\n   INSERT/UPDATE/DELETE statement to execute:";
                    msg += "\n------------------------------------------------------------\n";
@@ -824,7 +787,8 @@ public class QueryManager
     {
       if(yq.getType().equals(Parser.SOAP))
       {
-        yq.setSource(source.replace(SOAPAdaptor.PROTOCOL_SOAP,SOAPAdaptor.PROTOCOL_HTTP));
+        // TODO this may have introduced a bug (10-SEP-16)
+        yq.setSource(yq.getSource().replace(SOAPAdaptor.PROTOCOL_SOAP,SOAPAdaptor.PROTOCOL_HTTP));
         for (int row = 0; row < dataSize; row++)
         {
           wrappedCode = ((SOAPAdaptor)yq.getAdaptor()).build(yq);
@@ -862,21 +826,15 @@ public class QueryManager
 
 	/**
 	 * @since 4.0.0
-	 * @throws YADAResourceException
-	 *           when a query's source attribute can't be found in the application
+	 * @throws YADAResourceException when a query's source attribute can't be found in the application
 	 *           context, or there is another problem with the context
-	 * @throws YADAUnsupportedAdaptorException
-	 *           when there is no adaptor available for the source or protocol or
+	 * @throws YADAUnsupportedAdaptorException when there is no adaptor available for the source or protocol or
 	 *           the intended adaptor can't be instantiated
-	 * @throws YADAConnectionException
-	 *           when a connection to the source can't be opened
-	 * @throws YADARequestException
-	 *           when filters are included in the request config, but can't be
+	 * @throws YADAConnectionException when a connection to the source can't be opened
+	 * @throws YADARequestException when filters are included in the request config, but can't be
 	 *           converted into a JSONObject
-	 * @throws YADAAdaptorException
-	 *           when the query cannot be built by the adaptor
-	 * @throws YADAParserException
-	 *           when the query code cannot be parsed successfully
+	 * @throws YADAAdaptorException when the query cannot be built by the adaptor
+	 * @throws YADAParserException when the query code cannot be parsed successfully
 	 */
 	private void prepQueriesForExecution() throws YADAResourceException, YADAUnsupportedAdaptorException, YADAConnectionException, YADARequestException, YADAAdaptorException, YADAParserException
 	{
@@ -892,13 +850,9 @@ public class QueryManager
 	 * @param jSONParams
 	 *          the request param containing the query information to process
 	 * @return array of {@link YADAQuery} objects corresponding to JSONParams entries
-	 * @throws YADAFinderException
-	 *           when a query in {@code jsonParams} can't be found in the YADA
-	 *           index
-	 * @throws YADAConnectionException
-	 *           when a connection to the YADA index can't be established
-	 * @throws YADAQueryConfigurationException
-	 *           the the YADA request is malformed
+	 * @throws YADAFinderException when a query in {@code jsonParams} can't be found in the YADA index
+	 * @throws YADAConnectionException when a connection to the YADA index can't be established
+	 * @throws YADAQueryConfigurationException when the YADA request is malformed
  	 * @throws YADAUnsupportedAdaptorException when the adaptor attached to the query object can't be found or instantiated
 	 * @throws YADAResourceException when the query {@code q} can't be found in the index
  
@@ -924,8 +878,7 @@ public class QueryManager
 	 * @param entry the {@link JSONParamsEntry} containing the values to store in the query
 	 * @return the augmented version of {@code yq}
 	 * @since 4.2.0
-	 * @throws YADAQueryConfigurationException
-	 *           the the YADA request is malformed
+	 * @throws YADAQueryConfigurationException when the YADA request is malformed
  	 * @throws YADAUnsupportedAdaptorException when the adaptor attached to the query object can't be found or instantiated
 	 * @throws YADAResourceException when the query {@code q} can't be found in the index
 	 * @throws YADAConnectionException when a connection pool or string cannot be established
@@ -946,12 +899,9 @@ public class QueryManager
 	 * @param q the name of the query to process
 	 * @return a {@link YADAQuery} object retrieved from the YADA index corresponding to {@code q}
 	 * 
-	 * @throws YADAFinderException
-	 *           when the query {@code q} can't be found in the YADA index
-	 * @throws YADAConnectionException
-	 *           when a connection to the YADA index can't be established
-	 * @throws YADAQueryConfigurationException
-	 *           the the YADA request is malformed
+	 * @throws YADAFinderException when the query {@code q} can't be found in the YADA index
+	 * @throws YADAConnectionException when a connection to the YADA index can't be established
+	 * @throws YADAQueryConfigurationException whenthe YADA request is malformed
 	 * @throws YADAUnsupportedAdaptorException when the adaptor attached to the query object can't be found or instantiated
 	 * @throws YADAResourceException when the query {@code q} can't be found in the index
 	 * @since 4.0.0
@@ -978,14 +928,9 @@ public class QueryManager
 	/**
 	 * Populates the data and parameter storage in the query object, using values passed in request object
 	 * @since 4.0.0
-	 * @param yq
-	 *          the query object to be processed
+	 * @param yq the query object to be processed
 	 * @return {@code yq}, now endowed with metadata
-	 * @throws YADAFinderException
-	 *           when the name of the query in {@code yq} can't be found in the
-	 *           YADA index
-	 * @throws YADAQueryConfigurationException
-	 *           the the YADA request is malformed
+	 * @throws YADAQueryConfigurationException when the YADA request is malformed
 	 * @throws YADAUnsupportedAdaptorException when the adaptor attached to the query object can't be found or instantiated
 	 * @throws YADAResourceException when the query {@code q} can't be found in the index
 	 * @throws YADAConnectionException when a connection pool or string cannot be established

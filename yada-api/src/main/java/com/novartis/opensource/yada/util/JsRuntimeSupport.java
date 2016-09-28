@@ -34,7 +34,13 @@ import org.mozilla.javascript.ScriptableObject;
  */
 public class JsRuntimeSupport extends ScriptableObject {
 
+    /**
+     * Serialization
+     */
     private static final long serialVersionUID = 1L;
+    /**
+     * For suppression of output
+     */
     private static final boolean silent = false;
 
     /**
@@ -43,7 +49,7 @@ public class JsRuntimeSupport extends ScriptableObject {
      * @param cx the current context
      * @param thisObj the current scope
      * @param args arguments to pass
-     * @param funObj 
+     * @param funObj the function to call
      */
     public static void print(Context cx, Scriptable thisObj, Object[] args, Function funObj) 
     {
@@ -55,7 +61,7 @@ public class JsRuntimeSupport extends ScriptableObject {
      * @param cx the current context
      * @param thisObj the current scope
      * @param args arguments to pass
-     * @param funObj
+     * @param funObj the function to call
      * @throws FileNotFoundException when the file can't be located
      * @throws IOException when there is a problem reading the file
      */
@@ -72,8 +78,8 @@ public class JsRuntimeSupport extends ScriptableObject {
      * Utility method to do the actual file I/O
      * @param cx current js context
      * @param url location of resource
-     * @throws FileNotFoundException 
-     * @throws IOException
+     * @throws FileNotFoundException if the resource at {@code url} can't be found
+     * @throws IOException if there is a problem reading the {@link java.io.InputStream}
      */
     private void processSource(Context cx, String url) throws FileNotFoundException, IOException 
     {

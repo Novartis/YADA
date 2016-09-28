@@ -24,7 +24,7 @@ public interface ContentPolicy extends SecurityPolicy {
   /**
    * An implementation of row-level security, this enables amendment of SQL query 
    * prior to execution, to restrict content dynamically per request.
-   * @throws YADASecurityException
+   * @throws YADASecurityException when the user is unauthorized or there is an error in policy processing
    */
   public void applyContentPolicy() throws YADASecurityException;
 

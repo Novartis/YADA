@@ -101,7 +101,7 @@ public class SOAPAdaptor extends Adaptor {
 	/**
 	 * Constant equal to: {@value}
 	 */
-	private static final String YADA_BIN            = "yada_bin";
+	private static final String YADA_BIN            = "yada.bin";
 	/**
 	 * Constant equal to: {@value}
 	 */
@@ -114,7 +114,7 @@ public class SOAPAdaptor extends Adaptor {
 	 * Constant equal to: {@value}
 	 */
 	private static final String CURL_EXEC           = "/curlerWS.sh";
-	//private static final String NTLM_ADAPTOR		= Finder.getEnv("yada_bin")+"curlerWS.sh";
+	//private static final String NTLM_ADAPTOR		= Finder.getEnv("yada.bin")+"curlerWS.sh";
 	/**
 	 * Soap endpoint username
 	 */

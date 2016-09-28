@@ -105,6 +105,29 @@ public class ConnectionFactory {
   private final static String YADA_PROPERTIES_PATH = "YADA.properties.path";
   
   /**
+   * Constant equal to {@value}. Used for retrieving config for specific YADA index.
+   * @since 8.3.0
+   */
+  private final static String YADA_PROP_NAME = "N";
+  
+  /**
+   * Constant equal to {@value}. Used for retrieving config for specific YADA index.
+   * @since 8.3.0
+   */
+  private final static String YADA_PROP_VALUE = "V";
+  
+  /**
+   * Constant equal to {@value}. Used for retrieving system properties
+   * @since 8.3.0
+   */
+  private final static String YADA_SYS_PROP_SQL = "select " 
+                              + "a.name "+YADA_PROP_NAME+", "
+                              + "a.value "+YADA_PROP_VALUE+" "
+                              + "from yada_prop a "
+                              + "where lower(a.target) = 'system'";
+  
+  
+  /**
    * Constant equal to {@value}. Default location for {@code YADA.properties} file, in {@code WEB-INF/classes}
    * @since 8.0.0
    */
@@ -178,8 +201,7 @@ public class ConnectionFactory {
    * endpoint.
    * 
    * @return a {@link SOAPConnection} object on which to submit a request
-   * @throws YADAConnectionException
-   *           when unable to obtain a connection
+   * @throws YADAConnectionException when unable to obtain a connection
    */
   public SOAPConnection getSOAPConnection()
       throws YADAConnectionException {
@@ -204,7 +226,7 @@ public class ConnectionFactory {
    * If the datasource has not yet been created, it will be.
    * 
    * @return a {@link Connection} object from the {@link DataSource} connection pool
-   * @throws YADAConnectionException
+   * @throws YADAConnectionException when the YADAIndex data source cannot provide a connection
    * @since 8.0.0
    */
   private Connection getYADAConnection() throws YADAConnectionException 
@@ -220,6 +242,7 @@ public class ConnectionFactory {
       HikariConfig config = new HikariConfig(path);
       yadaDs = new HikariDataSource(config);
       this.getDataSourceMap().put(YADA_APP, yadaDs);
+      this.loadSystemProperties();
     }
     try 
     {
@@ -234,9 +257,47 @@ public class ConnectionFactory {
   }
   
   /**
+   * Loads all the properties from the YADA Index where {@code target = 'system'} (case insensitive)
+   * @throws YADAConnectionException when the properties can not be retrieved from the YADA index
+   * @since 8.3.0
+   */
+  private void loadSystemProperties() throws YADAConnectionException 
+  {
+    try(Connection yadaConn  = this.getYADAConnection(); 
+        PreparedStatement pstmt = yadaConn.prepareStatement(YADA_SYS_PROP_SQL);)
+    {
+      try(ResultSet rs = pstmt.executeQuery();)
+      {
+        if(!rs.isBeforeFirst())
+        {
+          String msg = "There was an issue retrieving the property list";
+          throw new YADAConnectionException(msg);
+        }
+        while (rs.next())
+        {
+          String key = rs.getString(YADA_PROP_NAME);
+          String value = rs.getString(YADA_PROP_VALUE);
+          System.setProperty(key, value);
+        }
+      }
+      catch (SQLException e)
+      {
+        String msg = "The lookup query caused an error. This could be because the service is misconfigured.";
+        throw new YADAConnectionException(msg,e);
+      }
+    } 
+    catch (SQLException e)
+    {
+      String msg = "Unable to create or configure the PreparedStatement used to lookup the system properties in the YADA Index.  This could be a serious configuration issue.";
+      throw new YADAConnectionException(msg,e);
+    }
+    
+  }
+  
+  /**
    * Called from an initializer or static block, this method will retrieve the datasource configs from
    * the YADA index and store them in the {@link #dataSourceMap}.
-   * @throws YADAConnectionException
+   * @throws YADAConnectionException if the connection to YADA index is closed or otherwise problematic
    * @since 8.0.0 
    */
   public void createDataSources() throws YADAConnectionException 
@@ -255,7 +316,6 @@ public class ConnectionFactory {
       String msg = "Unable to create or configure the PreparedStatement used to lookup the datasource configs in the YADA Index.  This could be a serious configuration issue.";
       throw new YADAConnectionException(msg,e);
     }
-    int row = 0;
     try
     {
       rs = pstmt.executeQuery();
@@ -281,8 +341,6 @@ public class ConnectionFactory {
             this.createWsDataSource(conf);
           }
         }
-        
-        row++;
       }
     }
     catch (SQLException e)
@@ -377,8 +435,7 @@ public class ConnectionFactory {
    * 
    * @param app the name of the datasource
    * @return {@link Connection} object to facilitate query execution
-   * @throws YADAConnectionException
-   *           when the JNDI {@code source} is unrecognized or the database to
+   * @throws YADAConnectionException when the JNDI {@code source} is unrecognized or the database to
    *           which it refers is unreachable
    */
   public Connection getConnection(String app) throws YADAConnectionException 
@@ -452,6 +509,8 @@ public class ConnectionFactory {
     return connection;
   }
 
+  
+  
   /**
    * Retrieves the in-memory cache used to store requested {@link YADAQuery}
    * objects.
@@ -484,7 +543,7 @@ public class ConnectionFactory {
    * @since 8.0.0
    */
   public Map<String, String> getWsSourceMap() {
-    return wsSourceMap;
+    return this.wsSourceMap;
   }
 
   /**
@@ -494,10 +553,8 @@ public class ConnectionFactory {
    * {@link Connection}). IF the {@code Statement} can't be acquired, an attempt
    * is still made to close the {@code ResultSet}
    * 
-   * @param rs
-   *          the {@link ResultSet} recently iterated
-   * @throws YADAConnectionException
-   *           when {@code rs} can't be closed
+   * @param rs the {@link ResultSet} recently iterated
+   * @throws YADAConnectionException when {@code rs} can't be closed
    * @see com.novartis.opensource.yada.ConnectionFactory#releaseResources(Statement)
    */
   public static void releaseResources(ResultSet rs)
@@ -522,12 +579,10 @@ public class ConnectionFactory {
    * {@link Connection}. If the {@link Connection} can't be acquired, an attempt
    * is still made to close the {@link Statement}
    * 
-   * @param stmt
-   *          the {@link Statement} recently executed (
+   * @param stmt the {@link Statement} recently executed (
    *          {@link java.sql.PreparedStatement} or
    *          {@link java.sql.CallableStatement})
-   * @throws YADAConnectionException
-   *           when {@code stmt} can't be closed
+   * @throws YADAConnectionException when {@code stmt} can't be closed
    */
   public static void releaseResources(Statement stmt)
       throws YADAConnectionException {
@@ -549,10 +604,8 @@ public class ConnectionFactory {
    * Returns the {@link Connection}, specified by the parameter, to the
    * connection pool.
    * 
-   * @param conn
-   *          - The {@link Connection} intended to be returned to the pool.
-   * @throws YADAConnectionException
-   *           when {@code conn} can't be returned to the pool
+   * @param conn The {@link Connection} intended to be returned to the pool.
+   * @throws YADAConnectionException when {@code conn} can't be returned to the pool
    */
   public static void releaseResources(Connection conn)
       throws YADAConnectionException {
@@ -573,24 +626,22 @@ public class ConnectionFactory {
   /**
    * Closes the {@link SOAPConnection}
    * 
-   * @param conn
-   *          the {@link SOAPConnection} object to close
-   * @param source
-   *          the url string pointing to the soap endpoint
-   * @throws YADAConnectionException
-   *           when the connection closing operation fails
+   * @param conn the {@link SOAPConnection} object to close
+   * @param source the url string pointing to the soap endpoint
+   * @throws YADAConnectionException when the connection closing operation fails
    */
   public static void releaseResources(SOAPConnection conn, String source)
       throws YADAConnectionException {
     if (conn != null) {
-      try {
+      try 
+      {
         conn.close();
-      } catch (SOAPException e) {
+      } 
+      catch (SOAPException e) 
+      {
         String msg = "There was a problem closing the SOAPConnection. It may have already been closed.";
         throw new YADAConnectionException(msg, e);
-      } finally {
-        
-      }
+      } 
       l.debug("SOAPconnection to [" + source + "] closed successfully.");
     }
   }

@@ -190,7 +190,7 @@ To filter the visible queries in the queries list by any string in the `qname` o
 <img src="../resources/images/ui-filters.png" width="300" height="60"/>
 
 <a name="secwizard"></a>
-## Security Wizard
+## Iard
 As of version 7.1.0 there is a new wizard-like interface for securing data and query execution. As explained in the [Security Guide], protecting your data is acheived through four optional tiers of configuration:
 
 1. **URL Pattern Matching** (reject any query requested of the wrong url, host, path, etc)

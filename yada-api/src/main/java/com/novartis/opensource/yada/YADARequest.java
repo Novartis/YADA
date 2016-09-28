@@ -26,7 +26,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -1542,7 +1541,7 @@ public class YADARequest {
 	 */
 	
 	/**
-	 * Used internally by {@link Service#engage} methods to pin an 
+	 * Used internally by {@link Service}{@code .engage} methods to pin an 
 	 * argument list at a specific index in {@link #getArgLists()} to 
 	 * the plugin at that index in {@link #getPlugin()}.
 	 * 
@@ -1574,15 +1573,16 @@ public class YADARequest {
 	  // argument parameters later, e.g.,
 	  // q=YADA test SELECT&pl=com.novartis.opensource.yada.plugin.ScriptBypass&a=scriptPluginBypassTest.pl&c=false
 	  // 
+	  String[] lArgArr = argArr;
 	  if(getPluginArgs().size() > 0)
 	    getPluginArgs().set(0,new LinkedList<>(Arrays.asList(argArr[0].split(PARAM_DELIMITER))));
 	  else
 	  {
-	    if(argArr.length == 1)
-	      argArr = argArr[0].split(PARAM_DELIMITER);
-	    addPluginArgs(new LinkedList<>(Arrays.asList(argArr)));
+	    if(lArgArr.length == 1)
+	      lArgArr = lArgArr[0].split(PARAM_DELIMITER);
+	    addPluginArgs(new LinkedList<>(Arrays.asList(lArgArr)));
 	  }
-		l.debug(getFormattedDebugString("args", argArr.toString()));
+		l.debug(getFormattedDebugString("args", lArgArr.toString()));
 	}
 	
 	/**
@@ -2666,7 +2666,7 @@ public class YADARequest {
 	
 	
 	/**
-	 * Used internally by {@link Service#engage} methods.
+	 * Used internally by {@link Service}{@code .engage} methods.
 	 * @return the list containing the plugin args
    */
 	public List<String> getArgs() {
@@ -3104,7 +3104,7 @@ public class YADARequest {
   /**
    * @return the leftjoin specification
    * @since 6.2.0
-   * @see #setLeftjoin(String[])
+   * @see #setLeftJoin(String[])
    */
   public String getLeftJoin() {
     return this.leftJoin;

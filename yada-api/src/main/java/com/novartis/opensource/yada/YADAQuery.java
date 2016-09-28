@@ -21,6 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -43,7 +44,6 @@ import org.json.JSONObject;
 import com.novartis.opensource.yada.adaptor.Adaptor;
 import com.novartis.opensource.yada.adaptor.FileSystemAdaptor;
 import com.novartis.opensource.yada.adaptor.JDBCAdaptor;
-import com.novartis.opensource.yada.plugin.ContentPolicy;
 import com.novartis.opensource.yada.util.QueryUtils;
 
 /**
@@ -135,11 +135,17 @@ public class YADAQuery {
 	 * A list of columns referenced by the query that correspond to values in the {@link #data} maps
 	 */
 	private String[]   parameterizedColumns;
+	/**
+	 * The columns mapped to YADA markup
+	 */
 	private List<Column> parameterizedColumnList;
 	/**
 	 * A list of columns referenced by the query occur in SQL {@code IN} clauses
 	 */
 	private String[]   ins;
+	/**
+	 * The list of columns in sql {@code IN} expressions
+	 */
 	private List<Column> inList;
 	/**
 	 * A list of all columns referenced by the query
@@ -200,7 +206,7 @@ public class YADAQuery {
 	private List<Integer>           paramCount    = new ArrayList<>();
 	/**
 	 * The data types of query parameters in the code, corresponding to indices in {@link #data}.
-	 * Values can be {@link JDBCAdaptor#DATE}, {@link JDBCAdaptor#INTEGER}, {@link JDBCAdaptor#VARCHAR}, or {@link JDBCAdaptor#NUMBER}
+	 * Values can be {@link JDBCAdaptor}{@code .DATE}, {@link JDBCAdaptor}{@code .INTEGER}, {@link JDBCAdaptor}{@code .VARCHAR}, or {@link JDBCAdaptor}{@code .NUMBER}
 	 * @see JDBCAdaptor
 	 */
   private List<char[]>            dataTypes     = new ArrayList<>();
@@ -231,11 +237,11 @@ public class YADAQuery {
 	/**
 	 * The YADA request parameter names
 	 */
-	private Map<String,YADAParam>   keys          = new HashMap<>();
+	private Map<String,List<YADAParam>>   keys          = new HashMap<>();
 	/**
 	 * The non-overridable YADA request parameter keys
 	 */
-	private Map<String,YADAParam>   immutableKeys = new HashMap<>();
+	private Map<String,List<YADAParam>>   immutableKeys = new HashMap<>();
 	/**
    * The container of field names to support merged result sets
    * @since 6.1.0
@@ -274,6 +280,7 @@ public class YADAQuery {
 			YADAParam param = new YADAParam();
 			if(cachedParam.isDefault())
 			{
+			  param.setId(cachedParam.getId());
   			param.setName(cachedParam.getName());
   			param.setValue(cachedParam.getValue());
   			param.setTarget(cachedParam.getTarget());
@@ -531,12 +538,50 @@ public class YADAQuery {
 	public String[] getYADAQueryParamValue(String key) {
 		if(getParam(key) != null)
 		{
-			String[] values = new String[] { getParam(key).getValue() };
-			
-			if(values.length > 0)
-				return values;
+	    String[] values = new String[getParam(key).size()];
+	    int i=0;
+	    for(YADAParam param : getParam(key))
+	    {
+	      values[i++] = param.getValue();
+	    }
+	    if(values.length > 0)
+	      return values;
 		}
-		return null;
+		return null;		
+	}
+	
+	/**
+   * Returns an array containing the value associated to param with name {@code key}
+   * where target {@link YADAQuery#getQname} of {@code this} 
+   * @param key name of parameter whose value is sought
+   * @return an array containing the value associated to param with name {@code key} 
+   */
+  public String[] getYADAQueryParamValuesForTarget(String key) {
+    if(getParam(key) != null)
+    {
+      String[] values = new String[getParam(key).size()];
+      int i=0;
+      for(YADAParam param : getParam(key))
+      {
+        if(param.getTarget().equals(this.getQname()))
+          values[i++] = param.getValue();
+      }
+      if(values.length > 0)
+        return Arrays.copyOfRange(values,0,i);
+    }
+    return null;    
+  }
+	
+	/**
+	 * Tests value of parameter name
+	 * @param key the name of the param
+	 * @return {@code true} if {@code key} = {@link YADARequest#PL_PLUGIN} or {@link YADARequest#PS_PLUGIN}
+	 * @since 8.3.0
+	 */
+	private boolean isPluginParam(String key) {
+	  if(key.equals(YADARequest.PL_PLUGIN) || key.equals(YADARequest.PS_PLUGIN))
+	    return true;
+	  return false;
 	}
 	
 	/**
@@ -544,7 +589,7 @@ public class YADAQuery {
 	 * @param key the name of the desired param
 	 * @return the param object
 	 */
-	public YADAParam getParam(String key)
+	public List<YADAParam> getParam(String key)
 	{
 		return this.keys.get(key);
 	}
@@ -563,16 +608,29 @@ public class YADAQuery {
 	}
 	
 	/**
-	 * Iterates over {@link #yqParams} list to populate indices of {@link #keys} and {@link #immutableKeys}, for faster access to parameter values
+	 * Iterates over {@link #yqParams} list to populate indices of {@link #keys} 
+	 * and {@link #immutableKeys}, for faster access to parameter values
 	 */
 	private void setKeys() 
 	{
 		for(YADAParam param : this.yqParams)
 		{
-			String name = param.getName();
-			this.keys.put(name, param);
-			if(param.getRule() != 0)
-				this.immutableKeys.put(name, param);
+		  String key = param.getName();
+		  if(hasOverridableParam(key))
+		  {
+		    this.keys.get(key).add(param);
+	      if(param.getRule() != 0)
+	        this.immutableKeys.get(key).add(param);
+		  }
+		  else
+		  {
+		    List<YADAParam> list = new ArrayList<>();
+		    this.keys.put(key,list);
+		    this.immutableKeys.put(key,list);
+		    this.keys.get(key).add(param);
+	      if(param.getRule() != 0)
+	        this.immutableKeys.get(key).add(param);
+		  }
 		}
 	}
 	
@@ -582,12 +640,40 @@ public class YADAQuery {
 	 */
 	private void setKey(YADAParam param)
 	{
-		String name = param.getName();
-		if(!hasNonOverridableParam(name))
+		String key = param.getName();
+		List<YADAParam> list = null;
+		if(!hasParam(key))
+    {
+		  list = new ArrayList<>();
+		  list.add(param);
+      this.keys.put(key,list);
+      if(param.getRule() != 0)
+      {
+        if(!hasNonOverridableParam(key))
+        {
+          list = new ArrayList<>();
+          list.add(param);
+          this.immutableKeys.put(key,list);
+        }
+      }
+    }
+		else if(isPluginParam(key)) // if it's a plugin, just add it straight away
 		{
-			this.keys.put(name, param);
-			if(param.getRule() != 0)
-				this.immutableKeys.put(name, param);
+		  this.keys.get(key).add(param);
+      if(param.getRule() != 0)
+        this.immutableKeys.get(key).add(param);
+    }
+		else
+		{
+		  // if the param is not a plugin param, and it's 
+		  // overrideable, add it. If it is, itself, nonoverridable,
+		  // make a note of that too.
+	    if(!hasNonOverridableParam(key)) // this confirms no immutables (non-overrides)
+	    {
+		    this.keys.get(key).add(param);
+	      if(param.getRule() != 0)
+	        this.immutableKeys.get(key).add(param);
+	    }
 		}
 	}
 	
@@ -607,36 +693,62 @@ public class YADAQuery {
 	 * @param val value of parameter
 	 */
 	public void addParam(String key,String val) {
-		YADAParam param = new YADAParam(key,val,YADAParam.QUERY, YADAParam.OVERRIDEABLE);
+		YADAParam param = new YADAParam(key,val,this.getQname(), YADAParam.OVERRIDEABLE);
 		addParam(param);
 	}
 	
 	/**
-	 * Adds {@code param} to the internal list
+	 * Adds {@code param} to the internal list.  Allows multiple plugins.
 	 * @param param parameter object
 	 */
 	public void addParam(YADAParam param)
 	{
 		String key = param.getName();
-		if(hasNonOverridableParam(key)) 
+		if(isPluginParam(key))
 		{
-			l.warn("An attempt was made to override a non-overridable default parameter.  The original contract was honored.");
-		}
-		else if(hasParam(key))
-		{
-			replaceParam(param);
-			setKey(param);	
+		  List<YADAParam> lp = getYADAQueryParams();
+      String  value  = param.getValue();
+      String  target = param.getTarget();
+      int     rule   = param.getRule();
+      boolean add    = true;
+      for(YADAParam p : lp)
+      {
+        if(value.equals(p.getValue()) && target.equals(p.getTarget()) && rule == p.getRule())
+        {
+          add = false;
+          break;
+        }
+      }
+      if(add)
+      {
+        getYADAQueryParams().add(param);
+        setKey(param);
+      }
 		}
 		else
-		{
-			getYADAQueryParams().add(param);
-			setKey(param);
-		}
+    {
+		  
+	    if(hasNonOverridableParam(key)) 
+      {
+        l.debug("An attempt was made to override a non-overridable default parameter. The original contract was honored.");
+      }
+      else if(hasParam(key))
+      {
+        replaceParam(param);
+        setKey(param);  
+      }
+      else
+      {
+        getYADAQueryParams().add(param);
+        setKey(param);
+      }
+    }
+		
 	}
 	
 	/**
 	 * Adds the property to the {@link Set} of {@link #properties} 
-	 * @param prop
+	 * @param prop the {@link YADAProperty} object to add to this {@link YADAQuery} object
 	 * @since 7.1.0
 	 */
 	public void addProperty(YADAProperty prop)
@@ -793,7 +905,7 @@ public class YADAQuery {
 	 * @return boolean true if stored parameter is overridable by url params (rule=1), otherwise false
 	 */
 	public boolean hasOverridableParam(String key) {
-		return !hasNonOverridableParam(key);
+		return !hasNonOverridableParam(key) && this.keys.containsKey(key);
 	}
 	
 	/**
@@ -904,7 +1016,7 @@ public class YADAQuery {
 			{
 				try
 				{
-					Connection c = (Connection)this.getConnection();
+				  Connection c = (Connection)this.getConnection();
 					c.setAutoCommit(false);
 					try
 					{
@@ -921,7 +1033,6 @@ public class YADAQuery {
 					String msg = "Unable to configure connection for transaction.";
 					throw new YADAConnectionException(msg,e);
 				}
-				
 			}
 		}
 	}
@@ -1408,7 +1519,7 @@ public class YADAQuery {
    * @since 8.1.1
    */
   public int getAccessCount() {
-    return accessCount;
+    return this.accessCount;
   }
 
   /**

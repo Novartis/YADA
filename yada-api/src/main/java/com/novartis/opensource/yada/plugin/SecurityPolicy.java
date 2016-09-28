@@ -34,7 +34,7 @@ public interface SecurityPolicy {
    * Constant equal to {@value}.
    * Refers to a security query in the {@code YADA_A11N} table.
    * For the pre-process to approve running the original query, 
-   * the security query must >0 rows.
+   * the security query must &gt;0 rows.
    */
   public static final String WHITELIST = "whitelist";
   
@@ -53,14 +53,14 @@ public interface SecurityPolicy {
   public static final String EXECUTION_POLICY_CODE = "E";
   /**
    * 
-   * @throws YADASecurityException
+   * @throws YADASecurityException when the user is unauthorized or there is an error in policy processing
    */
   public void applyPolicy() throws YADASecurityException;
   
   /**
-   * @param securityPolicyCode 
-   * @return a {@link HashMap} containing a policy key and query value.  
-   * @throws YADASecurityException 
+   * @param securityPolicyCode the variety of security policy (currently always {@code E}
+   * @return a {@link java.util.HashMap} containing a policy key and query value.  
+   * @throws YADASecurityException when the policy can't be processed
    */
   public List<SecurityPolicyRecord> getSecurityPolicyRecords(String securityPolicyCode) throws YADASecurityException;
   

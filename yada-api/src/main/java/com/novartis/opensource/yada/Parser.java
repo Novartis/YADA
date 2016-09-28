@@ -24,7 +24,6 @@ import java.util.Map;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
-import net.sf.jsqlparser.expression.JdbcParameter;
 import net.sf.jsqlparser.expression.YADAMarkupParameter;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
@@ -385,8 +384,7 @@ public class Parser implements StatementVisitor {
    * 
    * @param code
    *          the YADA markup
-   * @throws YADAParserException
-   *           when the query fails to parse
+   * @throws YADAParserException when the query fails to parse
    * @since 7.1.0
    */
   public void parseDeparse(String code) throws YADAParserException {
@@ -411,8 +409,7 @@ public class Parser implements StatementVisitor {
    *          the statement to parse
    * @return a {@link java.util.Hashtable} containing 3 separate arrays of
    *         colums, plus the query type
-   * @throws YADAParserException
-   *           when an exception is encountered during the parsing operation
+   * @throws YADAParserException when an exception is encountered during the parsing operation
    * @deprecated as of 7.1.0
    */
   @Deprecated

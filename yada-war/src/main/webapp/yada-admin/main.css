@@ -24,7 +24,14 @@
 
 .version {
 	float: right;
-	padding-top: 9px;
+	margin: 3px;
+	padding-top: 12px;
+}
+
+.version img {
+	float: right;
+	margin-top: -12px;
+	margin-left: 5px;
 }
 
 /* 

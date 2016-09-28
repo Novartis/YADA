@@ -129,7 +129,7 @@
 **Default _(deprecated)_**: empty list  
 **Accepted Values _(deprecated)_**: comma-delimited list of strings  
 **Description _(deprecated)_**: **Deprecated**. When accompanied by a single `plugin` or `pl` parameter, used as the default argument list, per below.  
-A comma-separated list of values to be passed to the plugin designated in the `plugin` or `pl` parameter value. The plugin should be expecting these values as positional arguments, i.e.,`arg1,arg2,...argN`. When using script plugins, the first argument must contain the path to the registered script (relative to the `yada_bin` directory,) i.e., `myscript.pl,arg1,arg2,...argN`. See the [Plugin Guide] for more info.  
+A comma-separated list of values to be passed to the plugin designated in the `plugin` or `pl` parameter value. The plugin should be expecting these values as positional arguments, i.e.,`arg1,arg2,...argN`. When using script plugins, the first argument must contain the path to the registered script (relative to the `yada.bin` directory,) i.e., `myscript.pl,arg1,arg2,...argN`. See the [Plugin Guide] for more info.  
 
 <a name="bypassargs"></a>
 
@@ -140,7 +140,7 @@ A comma-separated list of values to be passed to the plugin designated in the `p
 **Required _(deprecated)_**: No  
 **Default _(deprecated)_**: empty list  
 **Accepted Values _(deprecated)_**: comma-delimited list of strings  
-**Description _(deprecated)_**: **Deprecated**.A comma-separated list of values to be passed to the plugin designated in the `plugin` or `pl` parameter value. The plugin should be expecting these values as positional arguments, i.e., `arg1,arg2,...argN`. When using script plugins, the first argument must contain the path to the registered script (relative to the `yada_bin` directory,) i.e., `myscript.pl,arg1,arg2,...argN`. See the [Plugin Guide] for more info.  
+**Description _(deprecated)_**: **Deprecated**.A comma-separated list of values to be passed to the plugin designated in the `plugin` or `pl` parameter value. The plugin should be expecting these values as positional arguments, i.e., `arg1,arg2,...argN`. When using script plugins, the first argument must contain the path to the registered script (relative to the `yada.bin` directory,) i.e., `myscript.pl,arg1,arg2,...argN`. See the [Plugin Guide] for more info.  
 
 <a name="colHead"></a>  
 
@@ -463,7 +463,7 @@ Custom delimiters are now supported, which automatically set the format to `deli
 **Required _(Deprecated)_**: No  
 **Default _(Deprecated)_**: empty list	  
 **Accepted Values _(Deprecated)_**: comma-delimited list of strings  
-**Description _(Deprecated)_**: **Deprecated**. A comma-separated list of values to be passed to the plugin designated in the `plugin` or `pl` parameter value. The plugin should be expecting these values as positional arguments, i.e., `arg1,arg2,...argN`. When using script plugins, the first argument must contain the path to the registered script (relative to the `yada_bin` directory,) i.e., `myscript.pl,arg1,arg2,...argN`. See the [Plugin Guide] for more info.  
+**Description _(Deprecated)_**: **Deprecated**. A comma-separated list of values to be passed to the plugin designated in the `plugin` or `pl` parameter value. The plugin should be expecting these values as positional arguments, i.e., `arg1,arg2,...argN`. When using script plugins, the first argument must contain the path to the registered script (relative to the `yada.bin` directory,) i.e., `myscript.pl,arg1,arg2,...argN`. See the [Plugin Guide] for more info.  
 
 <a name="preargs"></a>  
 
@@ -474,7 +474,7 @@ Custom delimiters are now supported, which automatically set the format to `deli
 **Required _(Deprecated)_**: No  
 **Default _(Deprecated)_**: empty list	  
 **Accepted Values _(Deprecated)_**: comma-delimited list of strings  
-**Description _(Deprecated)_**: A comma-separated list of values to be passed to the plugin designated in the `plugin` or `pl` parameter value. The plugin should be expecting these values as positional arguments, i.e., `arg1,arg2,...argN`. When using script plugins, the first argument must contain the path to the registered script (relative to the `yada_bin` directory,) i.e., `myscript.pl,arg1,arg2,...argN`. See the [Plugin Guide] for more info.  
+**Description _(Deprecated)_**: A comma-separated list of values to be passed to the plugin designated in the `plugin` or `pl` parameter value. The plugin should be expecting these values as positional arguments, i.e., `arg1,arg2,...argN`. When using script plugins, the first argument must contain the path to the registered script (relative to the `yada.bin` directory,) i.e., `myscript.pl,arg1,arg2,...argN`. See the [Plugin Guide] for more info.  
 
 <a name="pretty"></a>  
 

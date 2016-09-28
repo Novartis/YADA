@@ -45,9 +45,18 @@ import org.mozilla.javascript.ScriptableObject;
  */
 public class Harmonizer 
 {
+  /**
+   * Rhino factory
+   */
   private ScriptEngineManager factory;
+  /**
+   * Rhino engine
+   */
   @SuppressWarnings("unused")
   private ScriptEngine engine;
+  /**
+   * Scope
+   */
   private ScriptableObject global;
   
   /**

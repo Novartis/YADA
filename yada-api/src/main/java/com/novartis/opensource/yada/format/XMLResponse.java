@@ -129,18 +129,19 @@ public class XMLResponse extends AbstractResponse {
 	/**
 	 * Objects {@link DocumentFragment} from {@link Converter} and appends it to 
 	 * the response.
-	 * @throws YADAQueryConfigurationException 
+	 * @throws YADAQueryConfigurationException when the {@link Converter} spec in the request is malformed 
 	 * @see com.novartis.opensource.yada.format.AbstractResponse#append(java.lang.Object)
 	 */
 	@Override
-	public Response append(Object o) throws YADAResponseException, YADAConverterException, YADAQueryConfigurationException {
+	public Response append(Object o) throws YADAResponseException, YADAConverterException, YADAQueryConfigurationException
+	{
 		//TODO handle harmonyMap.  
 		try
 		{
 			Converter converter = getConverter(this.yqr);
 			if(getHarmonyMap() != null)
 				converter.setHarmonyMap(getHarmonyMap());
-			boolean count = Boolean.valueOf(this.yqr.getYADAQueryParamValue(YADARequest.PS_COUNT)).booleanValue();
+			boolean count = Boolean.parseBoolean(this.yqr.getYADAQueryParamValue(YADARequest.PS_COUNT));
 			DocumentFragment rows  = (DocumentFragment)	converter.convert(o);
 			Element resultSet = null;
 			if(hasMultipleResults())

@@ -20,10 +20,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
-import javax.naming.InitialContext;
-import javax.naming.NameClassPair;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
+//import javax.naming.InitialContext;
+//import javax.naming.NameClassPair;
+//import javax.naming.NamingEnumeration;
+//import javax.naming.NamingException;
+
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
@@ -93,7 +94,8 @@ public class Finder
 	 * Constant equal to: {@value}
 	 * @deprecated since 8.0.0
 	 */
-	@Deprecated
+	@SuppressWarnings("unused")
+  @Deprecated
 	private final static String YADA_VERSION     = "VER";
 	/**
    * Constant equal to: {@value}
@@ -156,21 +158,41 @@ public class Finder
    */
 	private final static String SQL_STATS_WCOUNT = "update yada_query set access_count = ?,last_access = ? where qname = ?";
 	/**
-	 * Constant equal to: {@code select a.sql "+YADA_QUERY+", b.source "+YADA_SOURCE+", nvl(b.version,'na') "+YADA_VERSION+", nvl(c.target,'na') "+YADA_PARAMTARGET+", nvl(c.name,'na') "+YADA_PARAMNAME+", nvl(c.value,'na') "+YADA_PARAMVAL+", c.rule "+YADA_PARAMRULE+" from yada_query a join yada_query_conf b on a.app = b.app left join yada_param c on (a.app = c.target or a.name = c.target) where a.name = ? order by c.target}
+	 * Constant equal to: {@code "select "
+                                + "a.query "       +YADA_QUERY+", "
+                                + "b.app "         +YADA_APP+", "
+                                + "b.source "      +YADA_SOURCE+", "
+                                + "b.conf "        +YADA_CONF+", "
+                                + "c.id "          +YADA_PARAMID+", "
+                                + "c.target "      +YADA_PARAMTARGET+", " 
+                                + "c.name "        +YADA_PARAMNAME+", "
+                                + "c.value "       +YADA_PARAMVAL+", "
+                                + "c.rule "        +YADA_PARAMRULE+", "
+                                + "d.target "      +YADA_PROPTARGET+", "
+                                + "d.name "        +YADA_PROPNAME+", "
+                                + "d.value "       +YADA_PROPVALUE+", "
+                                + "a.access_count "+YADA_ACCESS_COUNT+" "
+                                + "from yada_query a "
+                                + "join yada_query_conf b on (a.app = b.app) "
+                                + "left join yada_param c on (a.app = c.target or a.qname = c.target) "
+                                + "left join yada_prop d on (a.app = d.target or a.qname = d.target or c.target||'-'||c.id = d.target) "
+                                + "where b.active = 1 "
+                                + "and a.qname = ? "
+                                + "order by c.target"}
 	 */
 	private final static String YADA_PKG_SQL   = "select "
-																							+ "a.query "+YADA_QUERY+", "
-																							+ "b.app "+YADA_APP+", "
-																							+ "b.source "+YADA_SOURCE+", "
-																							+ "b.conf "+YADA_CONF+", "
-																							+ "c.id "+YADA_PARAMID+", "
-																							+ "c.target "+YADA_PARAMTARGET+", " 
-																							+ "c.name "+YADA_PARAMNAME+", "
-																							+ "c.value "+YADA_PARAMVAL+", "
-																							+ "c.rule "+YADA_PARAMRULE+", "
-																							+ "d.target "+YADA_PROPTARGET+", "
-																							+ "d.name "+YADA_PROPNAME+", "
-																							+ "d.value "+YADA_PROPVALUE+", "
+																							+ "a.query "       +YADA_QUERY+", "
+																							+ "b.app "         +YADA_APP+", "
+																							+ "b.source "      +YADA_SOURCE+", "
+																							+ "b.conf "        +YADA_CONF+", "
+																							+ "c.id "          +YADA_PARAMID+", "
+																							+ "c.target "      +YADA_PARAMTARGET+", " 
+																							+ "c.name "        +YADA_PARAMNAME+", "
+																							+ "c.value "       +YADA_PARAMVAL+", "
+																							+ "c.rule "        +YADA_PARAMRULE+", "
+																							+ "d.target "      +YADA_PROPTARGET+", "
+																							+ "d.name "        +YADA_PROPNAME+", "
+																							+ "d.value "       +YADA_PROPVALUE+", "
 																							+ "a.access_count "+YADA_ACCESS_COUNT+" "
 																							+ "from yada_query a "
 																							+ "join yada_query_conf b on (a.app = b.app) "
@@ -192,47 +214,19 @@ public class Finder
 	
 	
 	/**
-	 * Retreives the environment variables mapped to the application context using JNDI, for example, {@code "io/in"}, or {@code "yada_bin"}.  
-	 * If {@code jndiPath} is not found in the application context, an ottempt is made to find a system property with the same name. 
-	 * @param jndiPath a string registered in the application context, or system property
-	 * @return {@link String} value of variable mapped to JNDI parameter string
-	 * @throws YADAResourceException when the JNDI string is not found in the application context or system properties
+	 * Retrieves the system property loaded at startup.  This method was refactored in version 8.3.0  
+	 *  
+	 * @param property a string registered in the application context, or system property
+	 * @return {@link String} value of the system property
+	 * @throws YADAResourceException when the property is null or empty
 	 */
-	public static String getEnv(String jndiPath) throws YADAResourceException
+	public static String getEnv(String property) throws YADAResourceException
 	{
-		InitialContext ictx;
-		String result = "";
-		try 
+		String result = System.getProperty(property);
+		if(result == null || "".equals(result))
 		{
-			ictx = new javax.naming.InitialContext();
-			javax.naming.Context env = (javax.naming.Context)ictx.lookup(JNDI_PREFIX);
-			try
-			{
-				NamingEnumeration<NameClassPair> list = ictx.list(JNDI_PREFIX);
-				l.debug("JNDI Environment:");
-				while (list.hasMore())
-				{
-					NameClassPair nc = list.next();
-					l.debug("    ["+nc+"]");
-				}
-			}
-			catch (Exception e)
-			{
-				l.debug("An exception was thrown while attempting to list contexts. The context implementation might not support it.  This is a non-fatal error");
-			}
-			result = (String) env.lookup(jndiPath);
-		} 
-		catch (NamingException e) 
-		{
-			
-			String msg = "There was a problem locating the resource or variable identified by the supplied JNDI path ("+jndiPath+") in the initial context...trying system properties.";
-			l.warn(msg);
-			result = System.getProperty(jndiPath);
-			if(result == null)
-			{
-				msg = "The property [" + jndiPath + "] was not found.";
-				throw new YADAResourceException(msg,e);
-			}
+			String msg = "The property [" + property + "] was not found.";
+			throw new YADAResourceException(msg);
 		} 
 		return result;
 	}
@@ -253,7 +247,7 @@ public class Finder
 	 * @return the {@link YADAQuery} retrieved from the distributed index
 	 * @throws YADAFinderException if the query {@code q} can't be found in the YADA index.  Check your spelling and case.
 	 * @throws YADAConnectionException if an error occurs when attempting to query the YADA Index.  This could be the result of a configuration issue.
-	 * @throws YADAQueryConfigurationException 
+	 * @throws YADAQueryConfigurationException when default parameters are mis-configured
 	 * @see #getQuery(String)
 	 */
 	public YADAQuery getQueryFromIndex(String q) throws YADAConnectionException, YADAFinderException, YADAQueryConfigurationException
@@ -263,50 +257,51 @@ public class Finder
 		try
 		{
 			
-			Connection        conn  = com.novartis.opensource.yada.ConnectionFactory.getConnectionFactory().getConnection(com.novartis.opensource.yada.ConnectionFactory.YADA_APP);
-			PreparedStatement pstmt;
-			try
+			
+			
+			try(Connection        conn  = com.novartis.opensource.yada.ConnectionFactory.getConnectionFactory().getConnection(com.novartis.opensource.yada.ConnectionFactory.YADA_APP);
+			    PreparedStatement pstmt = conn.prepareStatement(YADA_PKG_SQL);)
 			{
-				pstmt = conn.prepareStatement(YADA_PKG_SQL);
 				pstmt.setString(1,q);
+				int row = 0;
+	      
+	      try
+	      {
+	        rs = pstmt.executeQuery();
+	        if(!rs.isBeforeFirst())
+	        {
+	          String msg = "The requested query ["+q+"] does not exist.";
+	          throw new YADAFinderException(msg);
+	        }
+	        while (rs.next())
+	        {
+	          if (row == 0)
+	          {
+	            yq.setVersion("");
+	            yq.setCoreCode(rs.getString(YADA_QUERY));
+	            yq.setSource(rs.getString(YADA_SOURCE));
+	            yq.setQname(q);
+	            yq.setApp(rs.getString(YADA_APP));
+	            yq.setAccessCount(rs.getInt(YADA_ACCESS_COUNT));
+	          }
+	          setDefaultParam(yq,rs);
+	          setProperty(yq,rs);
+	          row++;
+	        }
+	      } 
+	      catch (SQLException e)
+	      {
+	        String msg = "The lookup query caused an error. This could be because the query name ("+q+") was mistyped or doesn't exist in the YADA Index";
+	        throw new YADAFinderException(msg,e);
+	      }
+	      l.debug("Query package: "+ yq.toString());
 			} 
 			catch (SQLException e)
 			{
 				String msg = "Unable to create or configure the PreparedStatement used to lookup the requested query in the YADA Index.  This could be a serious configuration issue.";
 				throw new YADAConnectionException(msg,e);
 			}
-			int row = 0;
 			
-			try
-			{
-				rs = pstmt.executeQuery();
-				if(!rs.isBeforeFirst())
-				{
-					String msg = "The requested query ["+q+"] does not exist.";
-					throw new YADAFinderException(msg);
-				}
-				while (rs.next())
-				{
-					if (row == 0)
-					{
-					  yq.setVersion("");
-						yq.setCoreCode(rs.getString(YADA_QUERY));
-						yq.setSource(rs.getString(YADA_SOURCE));
-						yq.setQname(q);
-						yq.setApp(rs.getString(YADA_APP));
-						yq.setAccessCount(rs.getInt(YADA_ACCESS_COUNT));
-					}
-					setDefaultParam(yq,rs);
-					setProperty(yq,rs);
-					row++;
-				}
-			} 
-			catch (SQLException e)
-			{
-				String msg = "The lookup query caused an error. This could be because the query name ("+q+") was mistyped or doesn't exist in the YADA Index";
-				throw new YADAFinderException(msg,e);
-			}
-			l.debug("Query package: "+ yq.toString());
 		}
 		finally
 		{
@@ -373,36 +368,33 @@ public class Finder
   			l.debug("YADAQuery ["+qname+"] stored in cache.");
   		}
   	
-  		if(yq != null)
+		  yq.setAccessCount(yq.getAccessCount() + 1);
+  		final int accessCount = yq.getAccessCount();
+  		if(updateStats)
   		{
-  		  yq.setAccessCount(yq.getAccessCount() + 1);
-    		final int accessCount = yq.getAccessCount();
-    		if(updateStats)
-    		{
-    			// log usage of query 
-    			(new Thread() {
-    				
-    				@Override
-    				public void run() {
-    					try
-    					{
-    						updateQueryStatistics(qname,accessCount);
-    					} 
-    					catch (YADAConnectionException e)
-    					{
-    						l.error(e.getMessage(),e);
-    					} 
-    					catch (YADAFinderException e)
-    					{
-    						l.error(e.getMessage(),e);
-    					} 
-    					finally
-    					{
-    						//TODO what happens in finally block?
-    					}
-    				}
-    			}).start();
-    		}
+  			// log usage of query 
+  			(new Thread() {
+  				
+  				@Override
+  				public void run() {
+  					try
+  					{
+  						updateQueryStatistics(qname,accessCount);
+  					} 
+  					catch (YADAConnectionException e)
+  					{
+  						l.error(e.getMessage(),e);
+  					} 
+  					catch (YADAFinderException e)
+  					{
+  						l.error(e.getMessage(),e);
+  					} 
+  					finally
+  					{
+  						//TODO what happens in finally block?
+  					}
+  				}
+  			}).start();
   		}
 		}
 				
@@ -414,6 +406,7 @@ public class Finder
 	 * @param yq the {@link YADAQuery} to which to add the parameter defined in {@code rs} 
 	 * @param rs the data containing the parameter, as retrieved from the YADA Index
 	 * @throws YADAFinderException when {@code rs} can't be processed
+	 * @throws YADAQueryConfigurationException when default parameters are malformed
 	 */
 	@SuppressWarnings("static-method")
 	private void setDefaultParam(YADAQuery yq, ResultSet rs) throws YADAFinderException, YADAQueryConfigurationException
@@ -422,6 +415,7 @@ public class Finder
 		try
 		{
 			String name = rs.getString(YADA_PARAMNAME);
+			
 			if(!( name == null || name.equals(NOT_APPLICABLE)))
 			{	
 				String target = rs.getString(YADA_PARAMTARGET) != null ? rs.getString(YADA_PARAMTARGET) : NOT_APPLICABLE;
@@ -475,6 +469,7 @@ public class Finder
    * A utility method called in a separate thread by {@link Finder#getQuery(String)} to increment a query-access counter in the YADA Index.
    * 
    * @param qname the name of the query just requested
+	 * @param accessCount the number of times a query has been access, derived from the cache  
    * @throws YADAConnectionException when the YADA Index can't be accessed
    * @throws YADAFinderException when {@code qname} can't be found in the YADA Index.
    * @see Finder#getQuery(String)

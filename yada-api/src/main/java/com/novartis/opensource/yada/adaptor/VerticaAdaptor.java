@@ -19,7 +19,9 @@ import org.apache.log4j.Logger;
 import com.novartis.opensource.yada.YADARequest;
 
 /**
- * For connecting to Vertica databases via JDBC. See {@link "https://my.vertica.com/docs/CE/6.0.1/HTML/index.htm#1395.htm"} for configuration info.
+ * For connecting to Vertica databases via JDBC. 
+ * See <a href="https://my.vertica.com/docs/CE/6.0.1/HTML/index.htm#1395.htm">https://my.vertica.com/docs/CE/6.0.1/HTML/index.htm#1395.htm</a> 
+ * for configuration info.
  * 
  * @author David Varon
  * @since 4.1.0

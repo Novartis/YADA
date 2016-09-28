@@ -117,10 +117,8 @@ public class ResultSetResultDelimitedConverter extends AbstractConverter {
    * of {@link List} objects containing values and stored in the current
    * {@link YADAQueryResult#getConvertedResults()} structure.
    * 
-   * @param rs
-   *          the result set to convert
-   * @throws SQLException
-   *           when {@link ResultSet} or {@link ResultSetMetaData} iteration
+   * @param rs the result set to convert
+   * @throws SQLException when {@link ResultSet} or {@link ResultSetMetaData} iteration
    *           fails
    */
   protected void getDelimitedRows(ResultSet rs) throws SQLException {

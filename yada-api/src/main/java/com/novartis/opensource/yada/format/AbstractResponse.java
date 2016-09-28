@@ -127,7 +127,7 @@ public abstract class AbstractResponse implements Response
 
 	/**
 	 * Default implementation just returns itself.
-	 * @throws YADAQueryConfigurationException 
+	 * @throws YADAQueryConfigurationException when the {@link Response} spec in the request is malformed
 	 * @see com.novartis.opensource.yada.format.Response#compose(com.novartis.opensource.yada.YADAQueryResult[])
 	 */
 	@Override
@@ -173,7 +173,7 @@ public abstract class AbstractResponse implements Response
 
 	/**
 	 * Default implementation just returns itself.
-	 * @throws YADAQueryConfigurationException 
+	 * @throws YADAQueryConfigurationException when the {@link Response} spec in the request is malformed
 	 * @see com.novartis.opensource.yada.format.Response#append(java.lang.Object)
 	 */
 	@Override
@@ -201,7 +201,7 @@ public abstract class AbstractResponse implements Response
 	 * @return the appropriate Converter object
 	 * @throws YADARequestException when the default converter cannot be instantiated
 	 * @throws YADAConverterException when result reformatting fails
-	 * @throws YADAQueryConfigurationException 
+	 * @throws YADAQueryConfigurationException when the {@link Response} spec in the request is malformed
 	 */
 	protected Converter getConverter(YADAQueryResult yqr) throws YADARequestException, YADAConverterException, YADAQueryConfigurationException
 	{
@@ -251,7 +251,7 @@ public abstract class AbstractResponse implements Response
 	 * @return the default Converter
 	 * @throws YADARequestException when the default converter cannot be instantiated
 	 * @throws YADAConverterException when result reformatting fails
-	 * @throws YADAQueryConfigurationException 
+	 * @throws YADAQueryConfigurationException when the {@link Response} spec in the request is malformed
 	 */
 	protected Converter getDefaultConverter(YADAQueryResult yqr) throws YADARequestException, YADAConverterException, YADAQueryConfigurationException
 	{

@@ -84,7 +84,10 @@ public class JSONParams extends LinkedHashMap<String, JSONParamsEntry> {
 	 * <p>Alternatively, if {@code jp} contains {@link String} representations of {@link JSONObject}s, 
 	 * a new {@link JSONArray} will be instantiated and populated with the objects.</p>
 	 * 
-	 * <p>Currently, only JSON syntax checking is performed, but no YADA syntax validation against the <a href="">JSONParams specification</a> is performed.</p> 
+	 * <p>Currently, only JSON syntax checking is performed, 
+	 * but no YADA syntax validation against the 
+	 * <a href="https://github.com/Novartis/YADA/blob/master/src/site/markdown/jsonparams.md">JSONParams specification</a> 
+	 * is performed.</p> 
 	 * 
 	 * This is the constructor called by {@link Service#handleRequest(javax.servlet.http.HttpServletRequest)} when encountering a JSONParams url parameter.
 	 * @since 4.0.0

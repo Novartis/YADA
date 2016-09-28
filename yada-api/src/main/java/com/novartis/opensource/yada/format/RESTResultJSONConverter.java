@@ -63,7 +63,7 @@ public class RESTResultJSONConverter extends AbstractConverter
 	
 	/**
 	 * Wraps the result of the REST request in a json object
-	 * @throws YADAConverterException 
+	 * @throws YADAConverterException when conversion fails
 	 * @see com.novartis.opensource.yada.format.AbstractConverter#convert(java.lang.Object)
 	 */
 	@Override

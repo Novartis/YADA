@@ -28,7 +28,6 @@ define(
 
     function queryTable()
     {
-
       this.app = "";
       this.qname = '';
       this.comments = '';
@@ -41,20 +40,34 @@ define(
       this.refresh = function(e,d) {
         this.app = d.app;
         $('#app-selection').show().find('h1').text(d.app)
-        $('nav.main-menu li').removeClass('disabled');
+        if(this.select('comments-panel').is(':not(:visible)'))
+          $('#headingOne').click();
+      };
+      
+      this.refreshHeader = function(e,d) {
         
-        $('#new-query,#migration').attr('data-toggle','modal');
-        $('#new-query').attr('data-target','#query-editor-container');
-        $('#migration').attr('data-target','#migration-target-selector');
-        
-        //this.trigger('app-requested',{app:d.app});
+        this.trigger(this.attr['mainmenu'],'enable-app-mgr.ya.menu',{});
+        this.trigger(this.attr['mainmenu'],'enable-new-query.ya.menu',{});
+        if($('.dataTables_empty').length == 0) // no row indicator is not present
+        {
+          this.trigger(this.attr['mainmenu'],'enable-toggle-view.ya.menu',{fn:$.proxy(this.toggleView,this)});
+          this.trigger(this.attr['mainmenu'],'enable-backup.ya.menu',{fn:$.proxy(this.backup,this)});
+          this.trigger(this.attr['mainmenu'],'enable-migration.ya.menu',{});    
+        }
+        else
+        {
+          this.trigger(this.attr['mainmenu'],'disable-toggle-view.ya.menu',{fn:$.proxy(this.toggleView,this)});
+          this.trigger(this.attr['mainmenu'],'disable-backup.ya.menu',{fn:$.proxy(this.backup,this)});
+          this.trigger(this.attr['mainmenu'],'disable-migration.ya.menu',{});
+        }
       };
             
       this.enrich = function()
       { // triggered at init
         var self = this;
-        $('#app,#toggle-view,#new-query').removeClass('disabled');
+        
         $('#app-selection').removeClass('hidden');
+        
         this.select('query-table').dataTable({
           autoWidth: false,
           ajax: {
@@ -64,8 +77,6 @@ define(
             {
               var app = self.select('query-table').data('app');
               return $.extend({}, d, {
-//                qname: self.attr.q_queries, // "YADA queries",
-//                params: app,
                 j:JSON.stringify([{qname:self.attr.q_queries,DATA:[{APP:app}]}]),
                 pz: "-1"
               });
@@ -182,8 +193,6 @@ define(
         var sourceParams = $.ajax({
           type: 'POST',
           data: {
-            //q: this.attr.q_params, // 'YADA select default params for app',
-            //p: this.app,
             j:JSON.stringify([{qname:this.attr.q_params,DATA:[{APP:this.app}]}]),
             pz: -1,
             c: false
@@ -210,8 +219,6 @@ define(
         var protectors = $.ajax({
           type: 'POST',
           data: {
-            //q: self.attr.q_protectors, // 'YADA select protectors for target',
-            //p: self.qname,
             j:JSON.stringify([{qname:self.attr.q_protectors,DATA:[{TARGET:self.qname}]}]),
             pz: -1,
             c: false
@@ -273,9 +280,17 @@ define(
       };
       
       this.destroy = function(e,d) {
-        $('nav.main-menu li').addClass('disabled');
-        $('#new-query,#migration').removeAttr('data-toggle');
-        $('#new-query,#migration').removeAttr('data-target');
+//        $('nav.main-menu li').addClass('disabled');
+//        $('#new-query,#migration').removeAttr('data-toggle');
+//        $('#new-query,#migration').removeAttr('data-target');
+//        
+        
+        this.trigger(this.attr.mainmenu,'disable-app-mgr.ya.menu',{});
+        this.trigger(this.attr.mainmenu,'disable-new-query.ya.menu',{});
+        this.trigger(this.attr.mainmenu,'disable-toggle-view.ya.menu',{});
+        this.trigger(this.attr.mainmenu,'disable-backup.ya.menu',{});
+        this.trigger(this.attr.mainmenu,'disable-migration.ya.menu',{});
+        
         $('#app-selection').hide();
         if ($.fn.DataTable.isDataTable(this.attr.params))
         {
@@ -301,14 +316,15 @@ define(
       this.editQuery = function(e, d)
       {
         this.edit = 'update';
-        var self = this, target = $(e.target), table = this.select('query-table').DataTable();
+        var self  = this, target = $(e.target), 
+            table = this.select('query-table').DataTable();
         
         // get the row
         if (e.target.nodeName == 'PRE' || e.target.nodeName == 'SPAN')
         {
           target = target.parent();
         }
-        var row = table.row(target.closest('tr')).index()
+        var row  = table.row(target.closest('tr')).index()
         var cell = table.cell(row, 2);
 
         // store the data
@@ -326,7 +342,7 @@ define(
         this.select('panel').show();
         this.select('query-comments').val(this.comments);
         this.securityOptions = this.select('security-options').prop('outerHTML');
-        this.policyGroup = this.select('policy-group').prop('outerHTML');
+        this.policyGroup     = this.select('policy-group').prop('outerHTML');
 
         this.select('container').modal('show');
 
@@ -335,15 +351,25 @@ define(
         var params = _.filter(this.select('nest').data('defaultParams'), {
           TARGET: self.qname
         });
+        
         // fetch the execution policy queries now (early)
-        $.when(this.getProtectors()).then(function(a){
-          self.policyPopulateSecurityPanel(params);
-          self.trigger('#default-params', 'show-params', {
-            tr: $tr,
-            qname: self.qname,
-            params: params
-          });
-        });
+        $.when(this.getProtectors()).then(
+            function(a){ // success
+              self.policyPopulateSecurityPanel(params);
+              self.trigger('#default-params', 'show-params', {
+                tr: $tr,
+                qname: self.qname,
+                params: params
+              });
+            },
+            function(a){ // fail
+              $('.policy-extension-checkboxes').hide();
+              $(document).trigger('save-error', {
+                'msg': 'Session Timeout. Please login again.',
+                'error': a,
+                'selector': self.attr['container-body']
+              });
+            });
       };
 
       this.renderEditor = function(e, d)
@@ -432,6 +458,8 @@ define(
           this.select('panel').show();
           this.select('container-title').text('Edit query');
         }
+        if(this.select('comments-panel').is(':not(:visible)'))
+          $('#headingOne').click();
       };
 
       this.clearQuery = function(e, d)
@@ -444,7 +472,10 @@ define(
           this.query = '';
           this.select('qname').val('');
           this.select('query-comments').val('');
-
+          
+          if(this.policyGroup == '')
+            this.policyGroup = this.select('policy-group').prop('outerHTML');
+          
           $('#query-editor').empty();
           this.select('policy-group').remove();
           if (this.select('policy-group').length == 0)
@@ -497,6 +528,17 @@ define(
           else
             $('.fa-save').trigger('click');
         }
+        
+        // TODO security safety net see code below 
+        /*
+        $('.policy-plugin').each(function(i,n) {
+          if($(n).val().length > 0)
+          {
+            $(n).closest('.policy-group').find('.policy-action').val('save').change();
+            return;
+          }
+        });
+        */
 
         // save changes
         $.ajax({
@@ -633,7 +675,6 @@ define(
           ]
         }
         ];
-        // j = [{qname:'YADA new query',DATA:[editData]}];
 
         if (inclParam)
         {
@@ -649,7 +690,6 @@ define(
             qname: self.attr.q_new_param,
             DATA: jParams
           });
-          // j.push({qname:'YADA insert default param',DATA:jParams});
         }
 
         // save changes
@@ -746,7 +786,7 @@ define(
 
       this.error = function(e, d)
       {
-        var msg = 'There was a problem saving your query.';
+        var msg = d.msg || 'There was a problem saving your query.';
         var details = '';
         this.edit = '';
 
@@ -817,14 +857,13 @@ define(
 
       this.backup = function(e, d)
       {
+        var self = this;
         var data = $('#query-table').DataTable().data();
         var len = data.length;
-        var queries = _.values(data).slice(0, len); // TODO might have to
-        // transform date
-        var params = this.select('nest').data('defaultParams');
-        // var jp = [{"qname":"YADA new query","DATA":queries}];
+        var queries = _.values(data).slice(0, len); // TODO might have to transform date
+        var params = self.select('nest').data('defaultParams');
         var jp = [ {
-          "qname": this.attr.q_new_query,
+          "qname": self.attr.q_new_query,
           "DATA": queries
         }
         ];
@@ -834,7 +873,6 @@ define(
             "qname": this.attr.q_new_param,
             "DATA": params
           });
-          // jp.push({"qname":"YADA insert default param","DATA":params});
         }
         var json = JSON.stringify(jp);
         var blob = new Blob([ json
@@ -845,7 +883,7 @@ define(
 
         var a = document.createElement('a');
         a.id = "backup-link";
-        a.download = "YADA_" + this.app + "_backup.json";
+        a.download = "YADA_" + self.app + "_backup.json";
         a.href = url;
         a.textContent = " ";
         document.getElementsByClassName('nest')[0].appendChild(a);
@@ -856,8 +894,6 @@ define(
         });
         a.dispatchEvent(evt);
       };
-      
-      
       // Security to dos:
 
       //TODO Security wizard documentation
@@ -975,7 +1011,9 @@ define(
           var id      = $polGrp.find(this.attr['policy-id']).val();
           var target  = this.select('qname').val();
           var name    = 'pl';
-          var val     = $polGrp.find(this.attr['policy-plugin']).val() + "," + $argstr.text();
+          var comma   = $polGrp.find(this.attr['policy-plugin']).val() != "" ? $polGrp.find(this.attr['policy-plugin']).val() + "," : "";
+          var val     = comma + $argstr.text();
+          
           var rule    = 1;
           var params  = {ID:id,TARGET:target,NAME:name,VALUE:val,RULE:rule};
           var qaction = 'insert';
@@ -1001,7 +1039,7 @@ define(
             qaction = 'update';
           }
           
-          // jsonparams (jp) data object to insert or update the parameter
+          // jsonparams (jp) data object to insert or update the parameter (q_new_param, q_update_param)
           j.push({qname:'YADA '+qaction+' default param',DATA:[params]});
           
           if(qaction == 'insert')
@@ -1219,7 +1257,7 @@ define(
          }).length > 0)
           self.select('secure-app-ckbx').prop('checked', 'checked');
         else
-          self.select('secure-ckbx').removeProp('checked');
+          self.select('secure-app-ckbx').removeProp('checked');
         
         // secure query ckbx
         if(_.filter(properties,{
@@ -1228,14 +1266,13 @@ define(
           VALUE:'true'
         }).length > 0)
         {
-          self.select('secure-ckbx').prop('checked', 'checked');//.addClass('disabled');
+          self.select('secure-ckbx').prop('checked', 'checked');
         }
         else
           self.select('secure-ckbx').removeProp('checked');
         
         if(params.length > 0)
         {
-
           // iter over qname params
           _.each(params, function(param)
           {
@@ -1352,8 +1389,6 @@ define(
                 self.policyUpdateArgString(argStr);
                 plugIndex = plugIndex + 1;
               }
-               
-              
             })
           }); 
         }
@@ -1386,56 +1421,57 @@ define(
       }
 
       this.defaultAttrs({
-        'q_queries': 'YADA queries',
-        'q_unique': 'YADA check uniqueness',
-        'q_params': 'YADA select default params for app',
-        'q_props': 'YADA select props like target',
-        'q_protectors': 'YADA select protectors for target',
-        'q_new_query': 'YADA new query',
-        'q_new_param': 'YADA insert default param',
-        'q_new_prop': 'YADA insert prop',
-        'q_new_protector': 'YADA insert protector for target',
+        'q_queries'         : 'YADA queries',
+        'q_unique'          : 'YADA check uniqueness',
+        'q_params'          : 'YADA select default params for app',
+        'q_props'           : 'YADA select props like target',
+        'q_protectors'      : 'YADA select protectors for target',
+        'q_new_query'       : 'YADA new query',
+        'q_new_param'       : 'YADA insert default param',
+        'q_new_prop'        : 'YADA insert prop',
+        'q_new_protector'   : 'YADA insert protector for target',
         'q_update_protector': 'YADA update protector for target',
-        'q_update_query': 'YADA update query',
-        'q_delete_query': 'YADA delete query',
-        'q_delete_param': 'YADA delete default param',
-        'q_delete_prop' : 'YADA delete prop',
+        'q_update_query'    : 'YADA update query',
+        'q_delete_query'    : 'YADA delete query',
+        'q_delete_param'    : 'YADA delete default param',
+        'q_delete_prop'     : 'YADA delete prop',
         'q_delete_protector': 'YADA delete protector for target',
-        'policy-plugin' : '.policy-plugin',
-        'policy-id'     : '.policy-id',
-        'policy-type': '.policy-type',
-        'policy-action': '.policy-action',
-        'policy-protector': '.policy-protector',
-        'policy-protector-type':'.policy-protector-type',
+        'policy-plugin'     : '.policy-plugin',
+        'policy-id'         : '.policy-id',
+        'policy-type'       : '.policy-type',
+        'policy-action'     : '.policy-action',
+        'policy-protector'  : '.policy-protector',
+        'policy-protector-type' :'.policy-protector-type',
         'policy-protector-group':'.policy-protector-group',
-        'arg-string': '.arg-string',
-        'policy-arg': '.policy-arg',
-        'policy-group': '.policy-group',
-        'remove-policy': '.remove-policy',
-        'security-panel': '#collapseTwo .panel-body',
-        'security-options': '.security-options',
-        'secure-ckbx': '#secure-query-ckbx',
-        'secure-app-ckbx' : '#secure-app-ckbx',
+        'arg-string'          : '.arg-string',
+        'policy-arg'          : '.policy-arg',
+        'policy-group'        : '.policy-group',
+        'remove-policy'       : '.remove-policy',
+        'comments-panel'      : '#collapseOne .panel-body',
+        'security-panel'      : '#collapseTwo .panel-body',
+        'security-options'    : '.security-options',
+        'secure-ckbx'         : '#secure-query-ckbx',
+        'secure-app-ckbx'     : '#secure-app-ckbx',
         'secure-app-ckbx-lbl' : 'label[for="secure-app-ckbx"]',
-        'params': '#default-params',
-        'params-wrapper': '#default-params_wrapper',
-        'nest': '.nest',
-        'new-query': '#new-query',
-        'toggle-view': '#toggle-view',
-        'backup': '#backup',
-        'button': '.btn',
-        'has-alert': '.has-alert',
-        'alert': '.alert',
-        'cancel-button': '.btn-call-to-action',
-        'button-save': '#query-editor-container .btn-primary',
-        'button-delete': '#query-editor-container .btn-danger',
-        'button-cancel': '#query-editor-container .btn-call-to-action',
-        'button-copy': '#query-editor-container #button-copy',
-        'button-rename': '#query-editor-container #button-rename',
-        'panel': '.panel:gt(0)',
-        'container': '#query-editor-container',
-        'container-title': '#query-editor-container .modal-title',
-        'container-body': '#query-editor-container .modal-body',
+        'params'              : '#default-params',
+        'params-wrapper'      : '#default-params_wrapper',
+        'nest'          : '.nest',
+        'new-query'     : '#new-query',
+        'toggle-view'   : '#toggle-view',
+        'backup'        : '#backup',
+        'button'        : '.btn',
+        'has-alert'     : '.has-alert',
+        'alert'         : '.alert',
+        'cancel-button' : '.btn-call-to-action',
+        'button-save'   : '#query-editor-container .btn-primary',
+        'button-delete' : '#query-editor-container .btn-danger',
+        'button-cancel' : '#query-editor-container .btn-call-to-action',
+        'button-copy'   : '#query-editor-container #button-copy',
+        'button-rename' : '#query-editor-container #button-rename',
+        'panel'         : '.panel:gt(0)',
+        'container'         : '#query-editor-container',
+        'container-title'   : '#query-editor-container .modal-title',
+        'container-body'    : '#query-editor-container .modal-body',
         'query-table'       : '#query-table',
         'query-table-body'  : '#query-table tbody',
         'qname'             : '#query-name',
@@ -1453,7 +1489,8 @@ define(
         'error-details'     : '#error-details',
         'clipboard-editor'  : '#query-code-copy',
         'code'              : '#query-editor textarea',
-        'tooltip'           : '#query-editor-container [data-toggle="tooltip"]'
+        'tooltip'           : '#query-editor-container [data-toggle="tooltip"]',
+        'mainmenu'         : 'nav.main-menu'
       });
 
       this.after('initialize', function()
@@ -1480,9 +1517,8 @@ define(
         this.on('save-success', this.saveSuccess);
         this.on('shown.bs.modal', this.addQuery);
         this.on('xhr.dt', this.getAdditionalAttributes);
+        this.on('draw.dt',this.refreshHeader);
         this.on('click', {
-          'backup': this.backup,
-          'toggle-view': this.toggleView,
           'query-table-body': this.editQuery,
           'button-save': this.saveQuery,
           'button-delete': this.deleteQuery,

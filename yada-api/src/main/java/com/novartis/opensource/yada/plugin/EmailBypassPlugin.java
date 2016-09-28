@@ -35,7 +35,8 @@ public class EmailBypassPlugin extends AbstractBypass {
 	private static Logger l = Logger.getLogger(EmailBypassPlugin.class);
 	
 	/**
-	 * Extracts parameters from {@link YADARequest#getMail()} spec and invokes {@link MailUtils#sendMessage(Session, String, String, String, String, String)}
+	 * Extracts parameters from {@link YADARequest#getMail()} spec and 
+	 * invokes {@link MailUtils#sendMessage(Session, String, String, String, String, String)}
 	 * @see com.novartis.opensource.yada.plugin.Bypass#engage(com.novartis.opensource.yada.YADARequest)
 	 */
 	@Override
@@ -46,7 +47,7 @@ public class EmailBypassPlugin extends AbstractBypass {
 			JSONObject json    = new JSONObject(yadaReq.getMail());
 			String     from    = json.getString("from");
 			String     to      = json.getString("to");
-			String     cc      = json.getString("cc");
+			String     cc      = json.optString("cc");
 			String     subject = json.getString("subject");
 			String 	   content = json.getString("content");
 			

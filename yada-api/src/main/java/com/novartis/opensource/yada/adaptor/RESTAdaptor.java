@@ -126,7 +126,7 @@ public class RESTAdaptor extends Adaptor {
 				if(this.hasProxy())
 				{
 					String[] proxyStr = this.proxy.split(":");
-					Proxy    proxySvr = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyStr[0], Integer.valueOf(proxyStr[1]).intValue()));
+					Proxy    proxySvr = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyStr[0], Integer.parseInt(proxyStr[1])));
 					conn = url.openConnection(proxySvr);
 				}
 				else

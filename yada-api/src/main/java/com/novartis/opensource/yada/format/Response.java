@@ -38,7 +38,7 @@ public interface Response {
 	 * @return this Response object
 	 * @throws YADAResponseException when response composition fails
 	 * @throws YADAConverterException when result reformatting fails
-	 * @throws YADAQueryConfigurationException 
+	 * @throws YADAQueryConfigurationException when the {@link Response} spec in the request is malformed
 	 * @see com.novartis.opensource.yada.format.JSONResponse
 	 */
 	public Response compose(YADAQueryResult[] yadaQueryResults) throws YADAResponseException, YADAConverterException, YADAQueryConfigurationException;
@@ -72,7 +72,7 @@ public interface Response {
 	 * @return the Response object
 	 * @throws YADAResponseException when response composition fails
 	 * @throws YADAConverterException when result reformatting fails
-	 * @throws YADAQueryConfigurationException 
+	 * @throws YADAQueryConfigurationException when the {@link Response} spec in the request is malformed
 	 */
 	public Response append(Object o) throws YADAResponseException, YADAConverterException, YADAQueryConfigurationException;
 	/**

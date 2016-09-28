@@ -107,6 +107,7 @@ define(
 				      login.attachTo('#login');
 				  }
 				});
+				
 				appMgr.attachTo('#app-mgr');
 				migration.attachTo('.nest');
 			});

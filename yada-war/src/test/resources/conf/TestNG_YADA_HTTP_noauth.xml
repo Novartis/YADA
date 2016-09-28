@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- <suite name="Suite" parallel="methods" thread-count="20" data-provider-thread-count="20" > -->
+
 <suite name="http-noauth-suite" parallel="false" preserve-order="true">
 	<parameter name="properties" value="${test.run.properties}"/>
   <test enabled="true" name="HTTP_yada_host">
@@ -13,5 +13,16 @@
   		<class name="com.novartis.opensource.yada.test.ServiceTest"/>
   	</classes>
   </test>
-  
+  <test enabled="false" name="ChromeTest">
+    <parameter name="browser" value="chrome"/>
+    <classes>
+      <class name="com.novartis.opensource.yada.test.YADAAdminTest"/>
+    </classes>
+  </test>
+  <test enabled="false" name="FirefoxTest">
+    <parameter name="browser" value="firefox"/>
+    <classes>
+      <class name="com.novartis.opensource.yada.test.YADAAdminTest"/>
+    </classes>
+  </test>
 </suite> <!-- Suite -->

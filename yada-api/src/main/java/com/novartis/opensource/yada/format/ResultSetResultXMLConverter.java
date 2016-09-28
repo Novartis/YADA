@@ -87,7 +87,7 @@ public class ResultSetResultXMLConverter extends AbstractConverter {
   /**
    * Constructor with {@link YADAQueryResult}
    * @param yqr the container for result processing artifacts
-   * @throws YADAConverterException 
+   * @throws YADAConverterException when conversion fails internally
    */
   public ResultSetResultXMLConverter(YADAQueryResult yqr) throws YADAConverterException {
     this();

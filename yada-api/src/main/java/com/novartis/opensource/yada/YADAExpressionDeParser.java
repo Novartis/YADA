@@ -90,7 +90,8 @@ public class YADAExpressionDeParser extends
 	 * A flag for managing query deparsing state
 	 * @deprecated as of 7.1.0
 	 */
-	@Deprecated
+	@SuppressWarnings("unused")
+  @Deprecated
   private boolean               inExpression      = false;
 	/**
    * A flag for managing query deparsing state

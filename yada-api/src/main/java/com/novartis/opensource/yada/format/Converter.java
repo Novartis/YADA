@@ -36,7 +36,7 @@ public interface Converter {
 	
 	/**
 	 * A utility class enabling remapping of result content
-	 * @sirce 6.1.0
+	 * @since 6.1.0
 	 */
 	Harmonizer harmonizer = null;
 	

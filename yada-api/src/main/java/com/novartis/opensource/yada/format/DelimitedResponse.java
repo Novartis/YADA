@@ -18,7 +18,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import com.novartis.opensource.yada.YADAQueryConfigurationException;
@@ -34,10 +33,6 @@ import com.novartis.opensource.yada.YADARequestException;
  */
 public class DelimitedResponse extends AbstractResponse {
 
-	/**
-	 * Local logger handle
-	 */
-	private static Logger l = Logger.getLogger(DelimitedResponse.class);
 	/**
 	 * Instance variable containing the result to be returned by this class's {@link #toString()} method
 	 */
@@ -59,7 +54,7 @@ public class DelimitedResponse extends AbstractResponse {
 	
 	/**
 	 * Skeletal override of method, calls {@link #append(Object)}
-	 * @throws YADAQueryConfigurationException 
+	 * @throws YADAQueryConfigurationException when the {@link Response} spec in the request is malformed
 	 * @see com.novartis.opensource.yada.format.AbstractResponse#compose(com.novartis.opensource.yada.YADAQueryResult[])
 	 */
 	@SuppressWarnings("unchecked")
@@ -168,7 +163,7 @@ public class DelimitedResponse extends AbstractResponse {
 
 	/**
 	 * Appends a converted string containing the contents of {@code o} to the {@link YADAQueryResult#getConvertedResults()} {@link List}
-	 * @throws YADAQueryConfigurationException 
+	 * @throws YADAQueryConfigurationException when the {@link Response} spec in the request is malformed
 	 * @see com.novartis.opensource.yada.format.AbstractResponse#append(java.lang.Object)
 	 */
 	@Override

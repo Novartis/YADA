@@ -62,14 +62,13 @@
 
 	<nav class="navbar navbar-default main-menu" role="navigation">
 		<ul class="nav navbar-nav">
-<!-- 			<li id="app" class=""><a href="#" data-toggle="modal" data-target="#app-mgr">App Manager</a></li> -->
-      <li id="app" class=""><a href="#">App Manager</a></li>
-			<li id="new-query" class=""><a href="#">New Query</a></li>
-			<li id="toggle-view" class=""><a href="#">Toggle View</a></li>
-			<li id="backup" class=""><a href="#">Backup App</a>
-			<li id="migration" class=""><a href="#">Migrate</a></li>
+      <li id="app" class=""><a>App Manager</a></li>
+			<li id="new-query" class=""><a>New Query</a></li>
+			<li id="toggle-view" class=""><a>Toggle View</a></li>
+			<li id="backup" class=""><a>Backup App</a>
+			<li id="migration" class=""><a>Migrate</a></li>
 		</ul>
-		<span class="version">v${display.version}</span>
+		<span class="version">v${display.version}<img src="blox250.png" width="45" height="45"/></span>
 	</nav>
 	<div class="col-lg-12 col-md-12 col-sm-12 nest">
 	
@@ -100,7 +99,7 @@
   </div> <!-- nest -->	
 	
 	<!--  /.modal -->
-	<div id="login" class="modal fade">
+	<div id="login" class="modal fade" data-backdrop="static">
     <div class="modal-dialog modal-sm">
       <div class="modal-content">
         <div class="modal-header">
@@ -128,7 +127,7 @@
             </div>
             <div class="row">
             <div class="col-sm-3">
-              <button type="button" id="login-btn" class="btn pull-right">Login</button>
+              <button type="button" id="login-btn" class="btn pull-right" disabled>Login</button>
             </div>
             </div>
           </form>
@@ -137,27 +136,9 @@
     </div>  
   </div>
 	
-	<!--  /.modal -->
-	<div id="app-selector" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-sm">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"
-						aria-hidden="true">&times;</button>
-					<h4 class="modal-title">Choose an application</h4>
-				</div>
-				<div class="modal-body">
-					<form>
-						<label>Search for an app:<input class="app-selector"
-							placeholder="Search..." /></label>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
 	
 	<!-- /.modal -->
-	<div id="qname-copy" class="modal fade" tabindex="-1">
+	<div id="qname-copy" class="modal fade" tabindex="-1" data-backdrop="static">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -185,7 +166,7 @@
 	</div>
 	
 	<!-- /.modal -->
-	<div id="migration-target-selector" class="modal fade" tabindex="-1">
+	<div id="migration-target-selector" class="modal fade" tabindex="-1" data-backdrop="static">
 		<div class="modal-dialog modal-sm">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -204,8 +185,7 @@
 	</div>
 	
 	<!-- /.modal -->
-	<div id="query-editor-container" class="modal fade" tabindex="-1"
-		data-backdrop="static">
+	<div id="query-editor-container" class="modal fade" tabindex="-1" data-backdrop="static">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -259,7 +239,7 @@
 								<div id="collapseTwo" class="panel-collapse collapse"
 									role="tabpanel" aria-labelledby="headingTwo">
 									<div class="panel-body container-fluid">
-										<div class="row">
+										<div class="row policy-extension-checkboxes">
 											<div class="col-md-4">
 												<label for="secure-query-ckbx">Mark this query as secure </label><input
 													id="secure-query-ckbx" type="checkbox" value="yes" />
@@ -356,13 +336,10 @@
 					</form>
 				</div>
 				<div class="modal-footer">
-					<!-- <span id="query-editor-msg" style="float:left">If no code, or the wrong code, appears, just click inside the editor.</span> -->
 					<button type="button" id="button-delete" class="btn btn-danger">Delete</button>
 					<button type="button" id="button-copy" class="btn btn-default">Copy</button>
 					<button type="button" id="button-rename" class="btn btn-default">Rename</button>
-					<button type="button" id="button-cancel"
-						class="btn btn-call-to-action" data-dismiss="modal">Cancel</button>
-				  <!-- <button type="button" id="button-save-and-close" class="btn btn-default bg-success">Save & Close</button> -->
+					<button type="button" id="button-cancel" class="btn btn-call-to-action" data-dismiss="modal">Cancel</button>
 					<button type="button" id="button-save" class="btn btn-primary">Save</button>
 				</div>
 			</div>

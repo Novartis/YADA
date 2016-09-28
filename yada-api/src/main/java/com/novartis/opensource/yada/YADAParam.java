@@ -235,12 +235,14 @@ public class YADAParam
 				+"\",\"isDefault\":\""+String.valueOf(isDefault())+"\"}";
 	}
 
+	
+	
   /**
    * Standard accessor for variable.
    * @return the id
    */
   public int getId() {
-    return id;
+    return this.id;
   }
 
   /**

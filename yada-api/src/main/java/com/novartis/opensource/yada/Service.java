@@ -22,8 +22,6 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItem;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,6 +37,7 @@ import org.json.JSONObject;
 
 import com.novartis.opensource.yada.adaptor.YADAAdaptorException;
 import com.novartis.opensource.yada.adaptor.YADAAdaptorExecutionException;
+import com.novartis.opensource.yada.format.Converter;
 import com.novartis.opensource.yada.format.DelimitedResponse;
 import com.novartis.opensource.yada.format.Response;
 import com.novartis.opensource.yada.format.YADAConverterException;
@@ -108,7 +106,6 @@ public class Service {
 	 * stores the request, and then calls {@link #handleRequest(String, Map)}
 	 * @param request the servlet request object handed off from the servlet container
 	 * @param parameterString the resource path from the url
-	 * @throws YADARequestException when there is an issue setting parameters in the configuration
 	 */
 	public void handleRequest(HttpServletRequest request, String parameterString)
 	{
@@ -133,7 +130,6 @@ public class Service {
 	 * Stores the {@code request} in the {@link YADARequest} object and calls {@link #handleRequest(String, Map)}.
 	 * @since 4.0.0
 	 * @param request the servlet request created by the servlet container 
-	 * @throws YADARequestException when a request parameter is malformed
 	 */
 	@SuppressWarnings("unchecked")
   public void handleRequest(HttpServletRequest request)
@@ -150,7 +146,6 @@ public class Service {
 	 * The meaty method for parsing the request parameters into {@link YADARequest}.
 	 * @param referer the url of the referring page
 	 * @param paraMap the parameter map provided by the servlet request
-	 * @throws YADARequestException when a request parameter is malformed
 	 */
 	@SuppressWarnings("deprecation")
 	public void handleRequest(String referer, Map<String,String[]> paraMap) 
@@ -1002,10 +997,10 @@ public class Service {
 	private void engageBypass(YADAQuery yq) throws YADAPluginException
 	{
 		YADAQueryResult yqr = null;
-		if(yq.hasParam(YADARequest.PS_PLUGIN)
-				&& yq.getParam(YADARequest.PS_PLUGIN).getTarget().equals(yq.getQname()))
+		if(yq.hasParam(YADARequest.PS_PLUGIN))
+//				&& yq.getParam(YADARequest.PS_PLUGIN).getTarget().equals(yq.getQname()))
 		{
-			String[] plugins  = yq.getYADAQueryParamValue(YADARequest.PS_PLUGIN);
+			String[] plugins  = yq.getYADAQueryParamValuesForTarget(YADARequest.PS_PLUGIN);
 			if (null != plugins && plugins.length > 0)
 			{
 			  for (int i=0; i < plugins.length; i++)
@@ -1067,7 +1062,7 @@ public class Service {
 								}
 								else
 								{
-									l.warn("Could not find an BYPASS plugin with the classname ["+plugin+"]");
+									l.debug("Could not find an BYPASS plugin with the classname ["+plugin+"]");
 								}
 							}
 						}
@@ -1090,10 +1085,10 @@ public class Service {
 	 */
 	private void engagePreprocess(YADAQuery yq) throws YADAPluginException
 	{
-		if(yq.hasParam(YADARequest.PS_PLUGIN) 
-				&& yq.getParam(YADARequest.PS_PLUGIN).getTarget().equals(yq.getQname()))
+		if(yq.hasParam(YADARequest.PS_PLUGIN))
+//				&& yq.getParam(YADARequest.PS_PLUGIN).getTarget().equals(yq.getQname()))
 		{
-			String[] plugins  = yq.getYADAQueryParamValue(YADARequest.PS_PLUGIN);
+			String[] plugins  = yq.getYADAQueryParamValuesForTarget(YADARequest.PS_PLUGIN);
 			if ( null != plugins && plugins.length > 0)
 			{
 			  for (int pluginIndex=0; pluginIndex < plugins.length; pluginIndex++)
@@ -1155,7 +1150,7 @@ public class Service {
 							}
 							else
 							{
-								l.warn("Could not find a PREPROCESS plugin with the classname ["+plugin+"]");
+								l.debug("Could not find a PREPROCESS plugin with the classname ["+plugin+"]");
 							}
 						}
 						catch(ClassNotFoundException e)
@@ -1166,6 +1161,14 @@ public class Service {
 					}
 				}
 			}
+			else
+	    {
+	      if(yq.isProtected())
+	      {
+	        String msg = "Unauthorized";
+	        throw new YADASecurityException(msg);
+	      }
+	    }
 		}
 		else
 		{
@@ -1185,10 +1188,10 @@ public class Service {
 	@SuppressWarnings("static-method")
 	private void engagePostprocess(YADAQuery yq) throws YADAPluginException
 	{
-		if(yq.hasParam(YADARequest.PS_PLUGIN)
-				&& yq.getParam(YADARequest.PS_PLUGIN).getTarget().equals(yq.getQname()))
+		if(yq.hasParam(YADARequest.PS_PLUGIN))
+//				&& yq.getParam(YADARequest.PS_PLUGIN).getTarget().equals(yq.getQname()))
 		{
-			String[] plugins  = yq.getYADAQueryParamValue(YADARequest.PS_PLUGIN);
+			String[] plugins  = yq.getYADAQueryParamValuesForTarget(YADARequest.PS_PLUGIN);
 			if ( null != plugins && plugins.length > 0 )
 			{
 			  for (int i=0; i < plugins.length; i++)
@@ -1244,7 +1247,7 @@ public class Service {
 							}
 							else
 							{
-								l.warn("Could not find a POSTPROCESS plugin with the classname ["+plugin+"]");
+								l.debug("Could not find a POSTPROCESS plugin with the classname ["+plugin+"]");
 							}
 						}
 						catch(ClassNotFoundException e)
@@ -1313,7 +1316,7 @@ public class Service {
 							}
 							else
 							{
-								l.warn("Could not find a BYPASS plugin with the classname ["+plugin+"]");
+								l.debug("Could not find a BYPASS plugin with the classname ["+plugin+"]");
 							}
 						}
 					}
@@ -1426,7 +1429,7 @@ public class Service {
 						}
 						else
 						{
-							l.warn("Could not find a PREPROCESS plugin with the classname ["+plugin+"]");
+							l.debug("Could not find a PREPROCESS plugin with the classname ["+plugin+"]");
 						}
 					}
 					catch(ClassNotFoundException e)
@@ -1492,7 +1495,7 @@ public class Service {
 						}
 						else
 						{
-							l.warn("Could not find a POSTPROCESS plugin with the classname ["+plugin+"]");
+							l.debug("Could not find a POSTPROCESS plugin with the classname ["+plugin+"]");
 						}
 					}
 					catch(ClassNotFoundException e)
@@ -1527,7 +1530,7 @@ public class Service {
 	/**
 	 * Takes the old-style argument parameters and appends them to the {@link YADARequest#PS_PLUGIN} parameter.
 	 * The new config is then handled downstream during normal plugin parameter processing
-	 * @param paraMap the {@link Map} passed in the {@link HttpRequest}
+	 * @param paraMap the {@link Map} passed in the {@link javax.servlet.http.HttpServletRequest}
 	 * @param constant the {@link YADARequest} argument constant
 	 */
 	private void setDeprecatedPlugin(Map<String, String[]> paraMap, String constant)

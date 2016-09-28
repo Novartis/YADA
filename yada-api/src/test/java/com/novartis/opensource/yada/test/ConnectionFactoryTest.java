@@ -16,24 +16,15 @@ package com.novartis.opensource.yada.test;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.sql.Connection;
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.config.CacheConfiguration;
 
-import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Parameters;
@@ -68,27 +59,11 @@ public class ConnectionFactoryTest {
 	public void init(String properties) {
 		try 
 		{
+		  
+		  
 			// load properties
 			setProps(properties);
 			
-      InitialContext ic = new InitialContext();
-      try
-      {
-	      ic.createSubcontext("java:comp");
-	      ic.createSubcontext("java:comp/env");
-	      ic.createSubcontext("java:comp/env/jdbc");
-	      ic.createSubcontext("java:comp/env/adaptor");
-	      ic.createSubcontext("java:comp/env/io");
-	      ic.bind("java:comp/env/adaptor/"+getProps().get("YADA.index.driverClassName"), getProps().get("YADA.index.adaptor"));
-	      ic.bind("java:comp/env/yada_bin", getProps().get("YADA.bin"));
-	      ic.bind("java:comp/env/io/in", getProps().get("YADA.io.in"));
-	      ic.bind("java:comp/env/io/out", getProps().get("YADA.io.out"));
-	      ic.bind("java:comp/env/yada_version", getProps().get("YADA.version"));
-      }
-      catch(NamingException e)
-      {
-      	e.printStackTrace();
-      }
       // Init cache
       String file = "ehcache.xml";
       try

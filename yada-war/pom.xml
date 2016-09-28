@@ -4,13 +4,13 @@
   <parent>
     <groupId>com.novartis.opensource</groupId>
     <artifactId>YADA</artifactId>
-    <version>8.2.2-SNAPSHOT</version>
+    <version>8.3.0-SNAPSHOT</version>
   </parent>
   <groupId>com.novartis.opensource</groupId>
   <artifactId>yada-war</artifactId>
-  <version>8.2.2-SNAPSHOT</version>
+  <version>8.3.0-SNAPSHOT</version>
   <name>yada-war</name>
-  <url>http://opensource.nibr.com/yada/yada-war</url>
+  <url>http://github.com/Novartis/YADA</url>
   <packaging>war</packaging>
   <distributionManagement>
     <site>
@@ -364,9 +364,6 @@
         <configuration>
           <useSystemClassLoader>false</useSystemClassLoader>
           <systemPropertyVariables>
-            <java.naming.factory.initial>org.apache.naming.java.javaURLContextFactory</java.naming.factory.initial>
-            <java.naming.factory.url.pkgs>org.apache.catalina.util.naming</java.naming.factory.url.pkgs>
-            <java.naming.provider.url>org.apache.naming</java.naming.provider.url>
           </systemPropertyVariables>
           <additionalClasspathElements>
             <additionalClasspathElement>${test.run.properties}</additionalClasspathElement>
@@ -468,14 +465,14 @@
         <configuration>
           <skip>${skip.deploy.war}</skip>
           <container>
-            <containerId>tomcat7x</containerId>
+            <containerId>tomcat8x</containerId>
             <home>${YADA.local.tomcat.home}</home>
           </container>
           <configuration>
             <type>standalone</type>
             <properties>
               <cargo.jvmargs>
-                -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000
+                -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=48111
                 -Xnoagent
                 -Djava.compiler=NONE
                 -Dsecurity.token=YADAYADA
@@ -548,6 +545,29 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>com.mycila</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>2.11</version>
+        <configuration>
+          <header>${main.basedir}/src/main/resources/license.txt</header>
+          <useDefaultExcludes>true</useDefaultExcludes>
+          <properties>
+            <year>${project.inceptionYear}</year>
+          </properties>
+          <excludes>
+            <!-- excluded due to requirement for line feed at end of license -->
+            <exclude>**</exclude>
+          </excludes>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <reporting>
@@ -589,11 +609,11 @@
       <artifactId>testng</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
+    <!-- <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>catalina</artifactId>
       <scope>test</scope>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
@@ -638,12 +658,12 @@
       <artifactId>sqlite-jdbc</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
+    <!-- <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-dbcp</artifactId>
       <version>7.0.47</version>
       <scope>provided</scope>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
@@ -653,6 +673,24 @@
       <groupId>com.novartis.opensource</groupId>
       <artifactId>jsqlparser</artifactId>
       <version>0.9.6.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <version>3.0.0-beta3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-chrome-driver</artifactId>
+      <version>3.0.0-beta2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-firefox-driver</artifactId>
+      <version>3.0.0-beta2</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

@@ -134,9 +134,37 @@ define(
 	  	  $.ajax({
           data: {
             q: self.attr.q_select_apps,
-            s: 'APP'
+            s: 'a.app'
           },
-          success: function(data) { self.trigger('populate-request.ya.app-mgr',{data:data}) }
+          success: function(data) { self.trigger('populate-request.ya.app-mgr',{data:data}) },
+          error: function(d) {
+            var msg = 'Session Timeout. Please login again.';
+            var details = '';
+            d['selector'] = '#app-mgr';
+            if (d.responseJSON.Exception != undefined && d.responseJSON.StackTrace != undefined)
+            {
+              details = '<div id="error-details">';
+              if (d.responseJSON.Exception != undefined)
+                details += "<br/>Exception:" + d.responseJSON.Exception;
+              if (d.responseJSON.StackTrace != undefined)
+              {
+                for (var i = 0; i < 5; i++)
+                {
+                  details += "<br/>" + d.responseJSON.StackTrace[i];
+                }
+                details += "<br/>...";
+              }
+              details += '</div>';
+            }
+            else if (typeof d == 'string')
+            {
+              msg += ' ' + d;
+            }
+            var html = '<div class="alert alert-danger" role="alert">';
+            html += '<strong>Uh Oh!</strong> ' + msg + '</div>';
+            $(html).prependTo(d.selector);
+            $(details).appendTo('.alert').hide();
+          }
         });
 	  	};
 	  	
@@ -151,32 +179,30 @@ define(
 	  	  {
           app = 'new';
           code   = panel.find('#app-code-'+app).val();
-          name   = panel.find('#app-name-'+app).val();
-          desc   = panel.find('#app-desc-'+app).val();
-          conf   = panel.find('#app-conf-'+app).val();
-          active = panel.find('#app-active-'+app).is(':checked') ? 1 : 0;
           q   = 'q_insert_app';
 	  	  }
 	  	  else
 	  	  {
 	  	    app    = appObj.APP;
 	  	    code   = app;
-	  	    name   = panel.find('#app-name-'+app).val();
-          desc   = panel.find('#app-desc-'+app).val();
-          conf   = panel.find('#app-conf-'+app).val();
-          active = panel.find('#app-active-'+app).is(':checked') ? 1 : 0;
 	  	  }
-	  	  var progress = $('<div class="progress progress-striped active col-lg-11 col-md-11 col-sm-10">'+
+	  	  name   = panel.find('#app-name-'+app).val();
+        desc   = panel.find('#app-desc-'+app).val();
+        conf   = panel.find('#app-conf-'+app).val();
+        active = panel.find('#app-active-'+app).is(':checked') ? 1 : 0;
+	  	  
+        var progress = $('<div class="progress progress-striped active col-lg-11 col-md-11 col-sm-10">'+
               '<div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 0%">'+
             '<span class="sr-only">100% Complete</span>'+
           '</div>'+
         '</div>');
-	  	  progress.insertBefore('#app-submit-'+app);
-	  	  var start = parseInt(new Date().getTime()/1000)
-	  	  setInterval(function() {
-	  	    var now = parseInt(new Date().getTime()/1000);
-	  	    $('.progress-bar').css('width',((now-start)/300)*100 + '%');
-	  	  },3000)
+        progress.insertBefore('#app-submit-'+app);
+        var start = parseInt(new Date().getTime()/1000)
+        setInterval(function() {
+          var now = parseInt(new Date().getTime()/1000);
+          $('.progress-bar').css('width',((now-start)/300)*100 + '%');
+        },3000)
+	  	  
         var j = [{qname:self.attr[q],DATA:[{APP:code,NAME:name,DESCR:desc,CONF:conf,ACTIVE:active}]}];
 	  	  if(app == 'new')
 	  	    j.push({qname:self.attr.q_insert_admin,DATA:[{APP:code,UID:$(self.attr.nest).data('uid')}]});
@@ -191,21 +217,27 @@ define(
 	  	      {
 	  	        var html = self.getAppTemplate(code);
 	  	        var current, last;
-	  	        var panels = $('.panel-title');
+	  	        var panels = $('#app-mgr .panel-title:gt(0)');
 	  	        for(var i=0; i < panels.length; i++)
 	  	        {
 	  	          var current = $(panels[i]);
 	  	          var next    = $(panels[i+1]);
+	  	          var obj = {APP:code,NAME:name,DESCR:desc,CONF:conf,ACTIVE:active};
+	  	          var $html = $(html) 
 	  	          if(current.text() < code && next.text() > code)
 	  	          {
-	  	            var obj = {APP:code,NAME:name,DESCR:desc,CONF:conf,ACTIVE:active};
-	  	            var $html = $(html) 
 	  	            $html.insertAfter(current.closest('.panel'));
 	  	            $html.find('.panel-collapse').data('app-data',obj);
 	  	            break;
 	  	          }
-	  	          $('#app-new').collapse('hide');
+	  	          else if(current.text() > code)
+	  	          {
+	  	            $html.insertBefore(current.closest('.panel'));
+	  	            $html.find('.panel-collapse').data('app-data',obj);
+                  break;
+	  	          }
 	  	        };
+	  	        $('#app-new').collapse('hide');
 	  	        panel.find('#app-code-'+app).val('');
 	            panel.find('#app-name-'+app).val('');
 	            panel.find('#app-desc-'+app).val('');

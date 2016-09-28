@@ -41,7 +41,7 @@ public interface TokenValidator {
   
   /**
    * No arg mutator for variable, gets FQCN from args or properties 
-   * @throws YADASecurityException 
+   * @throws YADASecurityException when there is an issue setting the token
    * @since 7.0.0
    */
   public void setToken() throws YADASecurityException;

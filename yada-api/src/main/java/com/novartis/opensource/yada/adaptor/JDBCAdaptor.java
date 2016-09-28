@@ -369,8 +369,8 @@ public abstract class JDBCAdaptor extends Adaptor{
 	public void execute(YADAQuery yq) throws YADAAdaptorExecutionException
 	{	
 		l.debug("Executing query ["+yq.getQname()+"]");
-		boolean     count       = Boolean.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_COUNT)[0]).booleanValue();
-		boolean     countOnly   = Boolean.valueOf(yq.getYADAQueryParamValue(YADARequest.PS_COUNTONLY)[0]).booleanValue();
+		boolean     count       = Boolean.parseBoolean(yq.getYADAQueryParamValue(YADARequest.PS_COUNT)[0]);
+		boolean     countOnly   = Boolean.parseBoolean(yq.getYADAQueryParamValue(YADARequest.PS_COUNTONLY)[0]);
 		int         countResult = -1;
 		int         dataSize    = yq.getData().size() > 0 ? yq.getData().size() : 1; 
 		for(int row=0;row<dataSize;row++)

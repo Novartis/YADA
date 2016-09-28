@@ -26,7 +26,7 @@ package com.novartis.opensource.yada.plugin;
 public class YADASecurityException extends YADAPluginException {
 
   /**
-   * 
+   * Serialization
    */
   private static final long serialVersionUID = 5226150837033317104L;
 
@@ -37,22 +37,22 @@ public class YADASecurityException extends YADAPluginException {
   }
 
   /**
-   * @param message
+   * @param message message the message to report using {@link #getMessage()}
    */
   public YADASecurityException(String message) {
     super(message);
   }
 
   /**
-   * @param cause
+   * @param cause the {@link Throwable} that led to this exception
    */
   public YADASecurityException(Throwable cause) {
     super(cause);
   }
 
   /**
-   * @param message
-   * @param cause
+   * @param message message the message to report using {@link #getMessage()}
+   * @param cause the {@link Throwable} that led to this exception 
    */
   public YADASecurityException(String message, Throwable cause) {
     super(message, cause);

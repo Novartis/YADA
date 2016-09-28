@@ -50,7 +50,7 @@ public class XmlUtils {
 		}
 		
 		/**
-		 * Transforms {@code xml} into a simple list of elements, using {@code $YADA_HOME/util/elementlist.xsl}
+		 * Transforms {@code xml} into a simple list of elements, using {@code yada.util/elementlist.xsl}
 		 * @param xml xml string from which to extract element names
 		 * @return a list of elements
 		 */
@@ -64,7 +64,7 @@ public class XmlUtils {
 			// 2. Use the TransformerFactory to process the stylesheet Source and generate a Transformer.
 			Transformer transformer;
 			try {
-				transformer = tFactory.newTransformer(new javax.xml.transform.stream.StreamSource(System.getenv("YADA_HOME")+"/util/elementlist.xsl"));
+				transformer = tFactory.newTransformer(new javax.xml.transform.stream.StreamSource(System.getenv("yada.util")+"/elementlist.xsl"));
 				// 3. Use the Transformer to transform an XML Source and send the output to a Result object.
 				transformer.transform
 			    	(new StreamSource(new StringReader(xml)), 

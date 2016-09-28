@@ -132,14 +132,14 @@ public class FileUtils {
 	}
 	
 	/**
-	 * Returns the path relative to {@code app_home}
-	 * @param path the {@code app_home} subdirectory path
-	 * @return the path from {@code app_home}
-	 * @throws YADAResourceException when the path to {@code app_home} cannot be found
+	 * Returns the path relative to {@code app.home}
+	 * @param path the {@code app.home} subdirectory path
+	 * @return the path from {@code app.home}
+	 * @throws YADAResourceException when the path to {@code app.home} cannot be found
 	 */
 	public static String getRelativePath(String path) throws YADAResourceException
 	{
-		String appHome  = Finder.getEnv("app_home");
+		String appHome  = Finder.getEnv("app.home");
 		return path.substring(appHome.length());
 	}
 	

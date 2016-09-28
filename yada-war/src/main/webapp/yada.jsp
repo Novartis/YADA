@@ -13,8 +13,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
---%>
-<%@page language="java" import="com.novartis.opensource.yada.*,java.io.*,java.util.*,java.util.regex.*,
+--%><%@page language="java" trimDirectiveWhitespaces="true" import="com.novartis.opensource.yada.*,java.io.*,java.util.*,java.util.regex.*,
                                      org.json.JSONObject,
  																		 org.apache.commons.fileupload.*,
  																		 org.apache.commons.fileupload.servlet.*,

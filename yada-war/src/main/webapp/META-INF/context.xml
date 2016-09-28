@@ -11,22 +11,6 @@
 	language governing permissions and limitations under the License. -->
 <!-- The contents of this file will be loaded for each web application -->
 <Context>
-	<Environment name="yada_version"                      override="false" type="java.lang.String" value="${display.version}" />
-    <Environment name="app_home"                          override="false" type="java.lang.String" value="${app.home}" />
-	<Environment name="yada_home"                         override="false" type="java.lang.String" value="${app.home}/tomcat/webapps/ROOT" />
-	<Environment name="yada_bin"                          override="false" type="java.lang.String" value="${app.home}/bin/" />
-	<Environment name="yada_util"                         override="false" type="java.lang.String" value="${app.home}/tomcat/webapps/ROOT/util/" />
-	<Environment name="io/out"                            override="false" type="java.lang.String" value="${out.base}" />
-	<Environment name="io/in"                             override="false" type="java.lang.String" value="${in.base}" />
-	<Environment name="adaptor/org.sqlite.JDBC"           override="false" type="java.lang.String" value="com.novartis.opensource.yada.adaptor.SQLiteAdaptor" />
-	<Environment name="adaptor/oracle.jdbc.OracleDriver"  override="false" type="java.lang.String" value="com.novartis.opensource.yada.adaptor.OracleAdaptor" />
-	<Environment name="adaptor/com.mysql.jdbc.Driver"     override="false" type="java.lang.String" value="com.novartis.opensource.yada.adaptor.MySQLAdaptor" />
-    <Environment name="adaptor/org.postgresql.Driver" 	  override="false" type="java.lang.String" value="com.novartis.opensource.yada.adaptor.PostgreSQLAdaptor" />
-	<Environment name="adaptor/com.vertica.jdbc.Driver"   override="false" type="java.lang.String" value="com.novartis.opensource.yada.adaptor.VerticaAdaptor" />
-	<Environment name="adaptor/SOAP" 					  override="false" type="java.lang.String" value="com.novartis.opensource.yada.adaptor.SoapAdaptor" />
-	<Environment name="adaptor/com.microsoft.sqlserver.jdbc.SQLServerDriver" override="false" type="java.lang.String" value="com.novartis.opensource.yada.adaptor.SQLServerAdaptor" />
-
-		
 	<!-- Mail resource -->
 	<Resource name="mail/Session" auth="Container" type="javax.mail.Session"
 		mail.smtp.host="localhost" mail.debug="true" />

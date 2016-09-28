@@ -65,8 +65,10 @@ public class CountResponse extends AbstractResponse
 				if(lYqr.getCountResults() != null && lYqr.getCountResults().size() > 0)
 				{
 					for(int i=0;i<lYqr.getCountResults().size();i++)
-					{
-						this.result += Integer.valueOf((Integer)lYqr.getCountResult(i));
+					{ 
+					  int res = this.result.intValue();
+					  res += ((Integer)lYqr.getCountResult(i)).intValue();
+						this.result = Integer.valueOf(res);
 					}
 				}
 			}
