@@ -169,7 +169,8 @@ Maybe you have to provide a RESTful interface to an existing application, and ne
 * _Coming Later_: Scala?
 * _Coming Later_: Standalone java application
 * _Coming Later_: Spark-based result post-processor
-* 
+
+
 <a name="arch"></a>
 # Architecture
 
