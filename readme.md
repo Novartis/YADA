@@ -3,7 +3,7 @@ Skip to the [Quickstart/Deployment Guide]
 # Why YADA? 
 
 <div style="float:right;margin-top:-43px;">
-    <img src="../resources/images/blox250.png"/>
+    <img src="src/site/resources/images/blox250.png"/>
 </div>  
 
 **YADA** is like a [_Universal Remote Control_](https://en.wikipedia.org/wiki/Universal_remote) for data.
@@ -155,7 +155,7 @@ Maybe you have to provide a RESTful interface to an existing application, and ne
 * Processes file uploads
 * Compatible with any client that speaks HTTP (e.g., web browser, python, curl, javascript, spotfire, curl, web service, mobile app, etc)
 * Flexible Java® and Script plugin API to preprocess request parameters, post-process results, or override normal processing altogether
-* EhCache query-index caching
+* [EhCache](http://www.ehcache.org/) query-index caching
 * Security (via Cookie forwarding and/or Default Plugins)
 * Support for Oracle®, MySQL®, Vertica®, PostgreSQL®, SQLite®
 * Tomcat 8 and JDK 1.8-compatible (YADA 8)
@@ -177,14 +177,14 @@ Maybe you have to provide a RESTful interface to an existing application, and ne
 A quick overview of the architecture
 ## Generic
 About as basic as it can be...
-![generic architecture](../resources/images/generic-arch.png "Generic Architecture")
+![generic architecture](src/site/resources/images/generic-arch.png "Generic Architecture")
 
 
 ## Specific
 ...and a little bit more specific:
 > Note the image indicates Tomcat 6. It should be Tomcat **7**
 
-![specific architecture](../resources/images/specific-arch.png "Specific Architecture")
+![specific architecture](src/site/resources/images/specific-arch.png "Specific Architecture")
 
 <a name="history"></a>
 # History
@@ -235,7 +235,7 @@ For detailed information about plugin use and development, see the [Plugin Use a
 
 The plugin API is versatile.  Plugins can be written in java, or in any scripting language supported on the YADA server.  Plugins can be applied at the request level, affecting the entire request, or it's output, or at the query level, affecting just a single query in a request.  The conceptual, or implementation hierarchy of the plugin API (not to be confused with the actual package hierarchy) is reflected in the diagram below, from two different perspectives.
 
-![Plugin Concept](../resources/images/plugin-concept.png "Plugin Concept")
+![Plugin Concept](src/site/resources/images/plugin-concept.png "Plugin Concept")
 
 ## Plugin Types
 ### Pre-Processors
