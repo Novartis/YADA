@@ -17,10 +17,10 @@ Skip to the [Security Wizard] section if that's what you need.
 
 ## Where is yada-admin?
 
-YADA ships with a webapp called **yada-admin**. It should be accessible after install at your `YADA context/yada-admin` url.  For example, if you installed the quickstart app version 6.0.0 on your localhost in a default tomcat config (port 8080,) the yada-admin app would be accessible at
+YADA ships with a webapp called **yada-admin**. It should be accessible after install at your `YADA context/yada-admin` url.  For example, if you installed the quickstart app version 8.3.0 on your localhost in a default tomcat config (port 8888,) the yada-admin app would be accessible at
 
 ```
-http://localhost:8080/YADA-Quickstart-6.0.0/yada-admin
+http://localhost:8888/YADA-Quickstart-8.3.0/yada-admin
 ```
 ## Logging in
 * Use user `test`, and password `testt` to poke around in the quickstart config.  
@@ -190,7 +190,7 @@ To filter the visible queries in the queries list by any string in the `qname` o
 <img src="../resources/images/ui-filters.png" width="300" height="60"/>
 
 <a name="secwizard"></a>
-## Iard
+## Security Wizard
 As of version 7.1.0 there is a new wizard-like interface for securing data and query execution. As explained in the [Security Guide], protecting your data is acheived through four optional tiers of configuration:
 
 1. **URL Pattern Matching** (reject any query requested of the wrong url, host, path, etc)
