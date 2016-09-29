@@ -3,7 +3,7 @@ Skip to the [Quickstart/Deployment Guide]
 # Why YADA? 
 
 <div style="float:right;margin-top:-43px;">
-    <img src="src/site/resources/images/blox250.png"/>
+    <img src="images/blox250.png"/>
 </div>  
 
 **YADA** is like a [_Universal Remote Control_](https://en.wikipedia.org/wiki/Universal_remote) for data.
@@ -145,8 +145,8 @@ Maybe you have to provide a RESTful interface to an existing application, and ne
 * Data vendor- and technology-agnostic
 * Accesses any JDBC, SOAP, or REST, and some Filesystem datasources 
 * Delivers data as JSON (default), XML, or CSV, TSV, Pipe, or custom-delimited, natively, and in any other format via custom Response and Converter classes, or Plugins
-* 4-tier security model including url and token validation, query-execution authorization, and dynamic-predicate-based, pre-execution, row-level filtering
-* Dynamic datasource configuration (*no-bounce mounts!*) and container-independent connection pooling using [HikariCP](https://github.com/brettwooldridge/HikariCP)
+* 4-layer security model including url and token validation, query-execution authorization, and dynamic-predicate-based, pre-execution, row-level filtering
+* Dynamic datasource configuration
 * Executes multiple queries in a single HTTP request
 * On-the-fly inner and outer joins across disparate data sources
 * Ad hoc Harmonization (i.e., single http request to multiple data sources with harmonized results)
@@ -155,25 +155,35 @@ Maybe you have to provide a RESTful interface to an existing application, and ne
 * Processes file uploads
 * Compatible with any client that speaks HTTP (e.g., web browser, python, curl, javascript, spotfire, curl, web service, mobile app, etc)
 * Flexible Java® and Script plugin API to preprocess request parameters, post-process results, or override normal processing altogether
-* [EhCache](http://www.ehcache.org/) query-index caching
+* EhCache query-index caching
 * Security (via Cookie forwarding and/or Default Plugins)
 * Support for Oracle®, MySQL®, Vertica®, PostgreSQL®, SQLite®
-* Tomcat 7 and JDK 1.7-compatible (YADA 6)
-
+* Tomcat 8 and JDK 1.8-compatible (YADA 8)
+* _Coming Later_: ElasticSearch® support
+* _Coming Later_: ElasticSearch®-based result and aggregate-result caching
+* _Coming Later_: Dynamic memory management and caching to facilitate large-scale request queuing and high volume result transformation in high frequency environments
+* _Coming Later_: SQL DDL
+* _Coming Later_: MongoDB® and other NoSQL support
+* _Coming Later_: SQL Server® support
+* _Coming Later_: Node.js® port (maybe?)
+* _Coming Later_: Scala?
+* _Coming Later_: Standalone java application
+* _Coming Later_: Spark-based result post-processor
+* 
 <a name="arch"></a>
 # Architecture
 
 A quick overview of the architecture
 ## Generic
 About as basic as it can be...
-![generic architecture](src/site/resources/images/generic-arch.png "Generic Architecture")
+![generic architecture](images/generic-arch.png "Generic Architecture")
 
 
 ## Specific
 ...and a little bit more specific:
 > Note the image indicates Tomcat 6. It should be Tomcat **7**
 
-![specific architecture](src/site/resources/images/specific-arch.png "Specific Architecture")
+![specific architecture](images/specific-arch.png "Specific Architecture")
 
 <a name="history"></a>
 # History
@@ -209,12 +219,11 @@ YADA ships with scripts for using, as the YADA Index:
 * SQLite®
 * Oracle®
 
-The index is ultimately vendor-agnostic. Currently other supported data sources currently include 
+Soon the index will be stored in ElasticSearch®, but ultimately, it is vendor-agnostic. Other supported data sources currently include 
 
 * Vertica® 
 * SOAP
 * REST
-* Unix filesystems
 
 MongoDB®, SQL Server®, and other datasource compatibility will be added soon.
 
@@ -225,7 +234,7 @@ For detailed information about plugin use and development, see the [Plugin Use a
 
 The plugin API is versatile.  Plugins can be written in java, or in any scripting language supported on the YADA server.  Plugins can be applied at the request level, affecting the entire request, or it's output, or at the query level, affecting just a single query in a request.  The conceptual, or implementation hierarchy of the plugin API (not to be confused with the actual package hierarchy) is reflected in the diagram below, from two different perspectives.
 
-![Plugin Concept](src/site/resources/images/plugin-concept.png "Plugin Concept")
+![Plugin Concept](images/plugin-concept.png "Plugin Concept")
 
 ## Plugin Types
 ### Pre-Processors
@@ -249,8 +258,11 @@ Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 
 <a name="issues"></a>
-## Known Issues
-See the [Github Issues List](https://github.com/Novartis/YADA/issues)
+## Known Issues (last updated 25-OCT-2015)
+
+* Date and time value syntax, just like in the real world, are database-vendor specific. Use vendor-specific literals and functions.  Check the test queries for guidance.
+* Speaking of dates and times, right now the TestNG tests which validate date and time values pass only on machines in the "America/NewYork" timezone. This is likely because the insert statements used to put the test data into the test table is not specific.   
+* There are two drivers for SQL Server®.  The one I picked has problems, and I haven't made time to work with the other.
  
 [Other Documentation]: #other
 [Getting into the YADA Mindset]: #mindset
