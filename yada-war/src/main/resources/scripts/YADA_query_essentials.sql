@@ -135,7 +135,7 @@ INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA queries','YADA vi
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA queries-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA queries','protected','true');
 
-INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA check uniqueness','select count(qname) as count from yada_query where qname = ?v','YADABOT','YADA');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA check uniqueness','select count(qname) as "count" from yada_query where qname = ?v','YADABOT','YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA check uniqueness','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=uid:getLoggedUser()');
 INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA check uniqueness','YADA view protector','E','whitelist');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA check uniqueness-1','protected','true');
