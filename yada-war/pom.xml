@@ -96,6 +96,7 @@
       <id>test-oracle</id>
       <properties>
         <skip.oracle.test>false</skip.oracle.test>
+        <display.version>${project.version}</display.version>
         <test.run.properties>/conf/TestNG_YADA_Oracle_HTTP_noauth.properties</test.run.properties>
         <YADA.index.url>${YADA.oracle.index.url}</YADA.index.url>
         <YADA.index.username>${YADA.oracle.index.username}</YADA.index.username>
