@@ -852,12 +852,12 @@
       		<scope>test</scope> 
       	</dependency> -->
     <!-- You'll need to install this jar manually in your maven repo -->
-    <dependency>
+    <!-- <dependency>
       <groupId>com.vertica</groupId>
       <artifactId>vertica-jdbc</artifactId>
       <version>7.1.1-1</version>
       <scope>test</scope>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
@@ -871,12 +871,13 @@
       <scope>test</scope>
     </dependency>
     <!-- restore for oracle 11g -->
-    <dependency>
+    <!-- You may need to install this jar manually in your maven repo -->
+    <!-- <dependency>
       <groupId>com.oracle</groupId>
       <artifactId>ojdbc6</artifactId>
       <version>11.2.0.3</version>
       <scope>test</scope>
-    </dependency>
+    </dependency> -->
     <!-- omit for oracle 11g -->
     <!-- You may need to install this jar manually in your maven repo -->
     <!-- <dependency> 
