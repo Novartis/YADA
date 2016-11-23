@@ -642,17 +642,18 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>postgresql</groupId>
+      <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>9.2-1002.jdbc4</version>
+      <version>9.4-1203-jdbc41</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
+    <!-- You'll need to install this jar manually in your maven repo -->
+    <!-- <dependency>
       <groupId>com.oracle</groupId>
       <artifactId>ojdbc6</artifactId>
       <version>11.2.0.3</version>
       <scope>test</scope>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>org.xerial</groupId>
       <artifactId>sqlite-jdbc</artifactId>
