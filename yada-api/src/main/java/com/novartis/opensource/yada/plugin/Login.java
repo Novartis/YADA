@@ -34,7 +34,7 @@ import com.novartis.opensource.yada.YADARequest;
  * <p>When the {@link #engage(YADAQuery)} method is executed, it will examine the payload and if valid,
  * store it in the {@link HttpSession}.</p>
  *   
- * @author varonda1
+ * @author David Varon
  * @since 8.1.0
  */
 public class Login extends AbstractPostprocessor implements Preprocess{

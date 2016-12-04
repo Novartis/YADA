@@ -4,11 +4,11 @@
   <parent>
     <groupId>com.novartis.opensource</groupId>
     <artifactId>YADA</artifactId>
-    <version>8.3.1-SNAPSHOT</version>
+    <version>8.4.0-SNAPSHOT</version>
   </parent>
   <groupId>com.novartis.opensource</groupId>
   <artifactId>yada-war</artifactId>
-  <version>8.3.1-SNAPSHOT</version>
+  <version>8.4.0-SNAPSHOT</version>
   <name>yada-war</name>
   <url>http://github.com/Novartis/YADA</url>
   <packaging>war</packaging>
@@ -25,6 +25,7 @@
     <skip.oracle.test>true</skip.oracle.test>
     <skip.mysql.test>true</skip.mysql.test>
     <skip.pgsql.test>true</skip.pgsql.test>
+    <skip.hsqldb.test>true</skip.hsqldb.test>
     <skip.deploy.war>true</skip.deploy.war>
     <skip.proxy.test>true</skip.proxy.test>
     <skip.noproxy.test>true</skip.noproxy.test>
@@ -32,6 +33,103 @@
     <main.basedir>${project.parent.basedir}</main.basedir>
   </properties>
   <profiles>
+    <profile>
+      <id>test-hsqldb</id>
+      <properties>
+        <skip.hsqldb.test>false</skip.hsqldb.test>
+        <test.run.properties>/conf/TestNG_YADA_HSQLdb_HTTP_noauth.properties</test.run.properties>
+        <YADA.index.url>${YADA.hsqldb.index.url}</YADA.index.url>
+        <YADA.index.username>${YADA.hsqldb.index.username}</YADA.index.username>
+        <YADA.index.password>${YADA.hsqldb.index.password}</YADA.index.password>
+        <YADA.index.autoCommit>false</YADA.index.autoCommit>
+        <YADA.index.driverClassName>${YADA.hsqldb.index.driverClassName}</YADA.index.driverClassName>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-antrun-plugin</artifactId>
+		        <version>1.6</version>
+		        <executions>
+		          <execution>
+		            <id>start-hsqldb-server</id>
+		            <phase>pre-integration-test</phase>
+		            <goals>
+		              <goal>run</goal>
+		            </goals>
+		            <configuration>
+		              <target>
+		                <property name="compile_classpath" refid="maven.compile.classpath"/>
+		                <java classpath="${compile_classpath}" classname="org.hsqldb.Server">
+		                  <arg value="-database.0"/>
+		                  <arg value="file:${project.basedir}/src/main/webapp/YADADB"/>
+		                  <arg value="-dbname.0"/>
+		                  <arg value="YADADB"/>
+		                </java>
+		              </target>
+		            </configuration>
+		          </execution>
+		          <execution>
+		            <id>stub-assembly</id>
+		            <phase />
+		          </execution>
+		          <execution>
+		            <id>html-it</id>
+		            <phase />
+		          </execution>
+		          <execution>
+		            <id>copy-to-quickstart</id>
+		            <phase />
+		          </execution>
+		        </executions>
+		      </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>2.1.1</version>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+            <executions>
+              <execution>
+                <id>war-hsqldb</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>war</goal>
+                </goals>
+                <configuration>
+                  <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+                  <archive>
+                    <addMavenDescriptor>false</addMavenDescriptor>
+                  </archive>
+                  <filters>
+                    <filter>${basedir}/src/test/resources/conf/TestNG_YADA_HSQLdb_HTTP_noauth.properties</filter>
+                  </filters>
+                  <webResources>
+                    <resource>
+                      <directory>${basedir}/src/main/webapp/META-INF</directory>
+                      <targetPath>META-INF</targetPath>
+                      <filtering>true</filtering>
+                      <includes>
+                        <include>context.xml</include>
+                      </includes>
+                    </resource>
+                    <resource>
+                      <directory>${basedir}/src/main/webapp/yada-admin</directory>
+                      <targetPath>yada-admin</targetPath>
+                      <filtering>true</filtering>
+                      <includes>
+                        <include>index.html</include>
+                      </includes>
+                    </resource>
+                  </webResources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <profile>
       <id>test-pgsql</id>
       <properties>
@@ -334,7 +432,7 @@
         <filtering>true</filtering>
         <targetPath>conf</targetPath>
       </testResource>
-      <!-- <testResource> <directory>${basedir}/src/test/resources/test</directory> 
+      <!-- <testResource> <directory>${basedir}/src/test/resources/test</directory>
         <filtering>false</filtering> <targetPath>test</targetPath> </testResource> -->
       <testResource>
         <directory>${basedir}/src/test/resources</directory>
@@ -384,6 +482,17 @@
             <id>default-test</id>
             <configuration>
               <skip>true</skip>
+            </configuration>
+          </execution>
+          <execution>
+            <id>test-war-hsqldb-config</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>integration-test</goal>
+            </goals>
+            <configuration>
+              <skipTests>${skip.hsqldb.test}</skipTests>
+              <reportNameSuffix>hsqldb</reportNameSuffix>
             </configuration>
           </execution>
           <execution>
@@ -460,6 +569,25 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <id>stub-assembly</id>
+            <phase />
+          </execution>
+          <execution>
+            <id>html-it</id>
+            <phase />
+          </execution>
+          <execution>
+            <id>copy-to-quickstart</id>
+            <phase />
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.cargo</groupId>
         <artifactId>cargo-maven2-plugin</artifactId>
         <version>1.4.16</version>
@@ -492,25 +620,7 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.6</version>
-        <executions>
-          <execution>
-            <id>stub-assembly</id>
-            <phase />
-          </execution>
-          <execution>
-          	<id>html-it</id>
-          	<phase />
-          </execution>
-          <execution>
-						<id>copy-to-quickstart</id>
-						<phase />
-				  </execution>
-        </executions>
-      </plugin>
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
@@ -669,8 +779,13 @@
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
-      <version>2.3.3</version>
+      <version>2.3.4</version>
     </dependency>
+    <dependency>
+	    <groupId>org.hsqldb</groupId>
+	    <artifactId>sqltool</artifactId>
+	    <version>2.3.4</version>
+		</dependency>   
     <dependency>
       <groupId>com.novartis.opensource</groupId>
       <artifactId>jsqlparser</artifactId>

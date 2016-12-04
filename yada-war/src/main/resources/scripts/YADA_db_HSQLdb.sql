@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS YADA_UG
 DELETE from YADA_QUERY_CONF where app = 'YADA' and source = 'java:comp/env/jdbc/yada';
 INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADA','java:comp/env/jdbc/yada',null);
 INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADATEST','java:comp/env/jdbc/yada',
-'jdbcUrl=jdbc:postgresql://localhost/yada
+'jdbcUrl=${YADA.hsqldb.index.url}
 username=yada
 password=yada
 autoCommit=false
@@ -101,7 +101,7 @@ idleTimeout=600000
 maxLifetime=1800000
 minimumIdle=5
 maximumPoolSize=100
-driverClassName=org.postgresql.Driver');
+driverClassName=${YADA.hsqldb.index.driverClassName}');
 INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('QGO',null,'http://www.ebi.ac.uk/QuickGO/GTerm?');
 INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADAFSIN',null,'file:///io/in');
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA default','select ''YADA is alive''','YADABOT','YADA');

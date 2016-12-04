@@ -88,7 +88,8 @@ CREATE TABLE IF NOT EXISTS YADA_UG
 -- INSERT YADA INDEX QUERY CONF
 DELETE from YADA_QUERY_CONF where app = 'YADA' and source = 'java:comp/env/jdbc/yada';
 INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADA','java:comp/env/jdbc/yada',null);
-INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADATEST','java:comp/env/jdbc/yada','jdbcUrl=jdbc:sqlite:${YADA.local.sqlite.home}/YADA.db
+INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADATEST','java:comp/env/jdbc/yada',
+'jdbcUrl=jdbc:sqlite:${YADA.local.sqlite.home}/YADA.db
 username=yada
 password=yada
 autoCommit=false

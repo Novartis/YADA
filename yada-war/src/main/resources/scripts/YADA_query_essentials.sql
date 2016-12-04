@@ -14,6 +14,7 @@ INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/oracle.jdbc.
 INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/com.mysql.jdbc.Driver','com.novartis.opensource.yada.adaptor.MySQLAdaptor');
 INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/org.postgresql.Driver','com.novartis.opensource.yada.adaptor.PostgreSQLAdaptor');
 INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/com.vertica.jdbc.Driver','com.novartis.opensource.yada.adaptor.VerticaAdaptor');
+INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/org.hsqldb.jdbc.JDBCDriver','com.novartis.opensource.yada.adaptor.HSQLdbAdaptor');
 
 INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/SOAP','com.novartis.opensource.yada.adaptor.SoapAdaptor');
 INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/com.microsoft.sqlserver.jdbc.SQLServerDriver','com.novartis.opensource.yada.adaptor.SQLServerAdaptor');

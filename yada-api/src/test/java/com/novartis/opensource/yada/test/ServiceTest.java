@@ -1319,7 +1319,7 @@ public class ServiceTest
     if (req.getFormat().equals(YADARequest.FORMAT_CSV))
     {
       logStringResult(result); 
-      Pattern rx = Pattern.compile("^(\"([A-Z,]+)\"),(\"([0-9]+)\")?,(\"([0-9.]+)\")?,?(\"(201[3-5]-0[0-9]-[0-9]{2}(\\s00:00:00)?|1362373200|1396584000)\")?,?(\"(201[3-5]-0[0-9]-[0-9]{2} ([0-9]{2}:){2}[0-9]{2}|1441500273000)(\\.0)?\")?$");
+      Pattern rx = Pattern.compile("^(\"([A-Z,]+)\"),(\"([0-9]+)\")?,(\"([0-9.]+)\")?,?(\"(201[3-5]-0[0-9]-[0-9]{2}(\\s00:00:00)?|1362373200|1396584000)\")?,?(\"(201[3-5]-0[0-9]-[0-9]{2} ([0-9]{2}:){2}[0-9]{2}|1441500273000)(\\.0+)?\")?$");
       // count columns
       // check for correct values in mapped columns
       
@@ -1384,7 +1384,7 @@ public class ServiceTest
     else if(req.getFormat().equals(YADARequest.FORMAT_HTML))
     {
       logMarkupResult(result);
-      Pattern rx = Pattern.compile("^<tr>(<td>([A-Z,]+)</td>)(<td>([0-9]+)?</td>)(<td>([0-9.]+)?</td>)(<td>(201[3-5]-0[0-9]-[0-9]{2}(\\s00:00:00)?|1362373200|1396584000)?</td>)?(<td>((201[3-5]-0[0-9]-[0-9]{2} ([0-9]{2}:){2}[0-9]{2}|1441500273000)(\\.0)?)?</td>)?</tr>$");
+      Pattern rx = Pattern.compile("^<tr>(<td>([A-Z,]+)</td>)(<td>([0-9]+)?</td>)(<td>([0-9.]+)?</td>)(<td>(201[3-5]-0[0-9]-[0-9]{2}(\\s00:00:00)?|1362373200|1396584000)?</td>)?(<td>((201[3-5]-0[0-9]-[0-9]{2} ([0-9]{2}:){2}[0-9]{2}|1441500273000)(\\.0+)?)?</td>)?</tr>$");
       Pattern end = Pattern.compile("^</tbody>|</table>|</body>|</html>$");
       try(BufferedReader br = new BufferedReader(new StringReader(result)))
       {

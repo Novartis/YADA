@@ -49,7 +49,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 /**
  * Automated tests for yada-admin webapp
  * 
- * @author varonda1
+ * @author David Varon
  * @since 8.3.0
  */
 public class YADAAdminTest {

@@ -18,7 +18,7 @@
 package com.novartis.opensource.yada;
 
 /**
- * @author varonda1
+ * @author David Varon
  * @since 7.1.0
  */
 public class YADAProperty {

@@ -121,6 +121,11 @@ public abstract class JDBCAdaptor extends Adaptor{
 	 */
 	protected static final String COMMA             = ",";
 	/**
+   * Constant equal to: {@value}
+   * @since 8.4.0
+   */
+  protected static final String QUOTE             = "\"";
+	/**
 	 * Constant equal to: {@value}
 	 */
 	protected static final String SQL_NULL          = "NULL";
