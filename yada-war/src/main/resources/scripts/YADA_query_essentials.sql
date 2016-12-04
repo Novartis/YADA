@@ -127,6 +127,12 @@ INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA update app','YADA
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA update app-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA update app','protected','true');
 
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA close pool','select app "APP" from yada_query_conf where app=?v', 'YADABOT', 'YADA');
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA close pool','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=uid:getLoggedUser()');
+INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA close pool','YADA view protector','E','whitelist');
+INSERT into YADA_PROP (target,name,value) VALUES ('YADA close pool-1','protected','true');
+INSERT into YADA_PROP (target,name,value) VALUES ('YADA close pool','protected','true');
+
 -- It is not currently possible to delete an app except through direct db access.  Apps can be disabled in the ui which makes their queries unretrievable
 
 -- query dml
@@ -235,6 +241,7 @@ INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('2','YADA update quer
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('3','YADA update query','cv',1,'RESTResultJSONConverter');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('4','YADA update query','cq',1,'true');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('5','YADA update query','c',1,'false');
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('2','YADA close pool','pl',1,'PoolCloser');
 
 -- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('2','YADA insert prop','pl',1,'CachedQueryUpdater');
 -- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('3','YADA insert prop','cv',1,'RESTResultJSONConverter');

@@ -427,6 +427,20 @@ public class ConnectionFactory {
       }
     }
   }
+  
+  /**
+   * Close a connection pool
+   * @param app the name of the datasource
+   * @return the name of the connection pool that was closed
+   * @since 8.4.0
+   */
+  public String closePool(String app)
+  {
+    HikariDataSource ds = this.getDataSourceMap().get(app); 
+    String pool = ds.getPoolName();
+    ds.close();
+    return pool;
+  }
 
   /**
    * Returns a JDBC connection from the datasource identified by {@code app}. <strong>Updated</strong>

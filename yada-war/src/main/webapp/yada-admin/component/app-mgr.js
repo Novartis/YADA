@@ -41,8 +41,8 @@ define(
                     '<input type="text" id="app-code-'+app+'" class="form-control"/>'+
                   '</div>'+
                   '<div class="form-group col-lg-1 col-md-1 col-sm-3">'+
-                    '<label for="app-active-'+app+'">Active</label>'+
-                    '<input type="checkbox" id="app-active-'+app+'" class="form-control" value="1"/>'+
+                    '<label for="app-active-'+app+'" data-toggle="tooltip" title="Will save automatically">Active</label>'+
+                    '<input type="checkbox" id="app-active-'+app+'" class="form-control app-active" value="1" data-toggle="tooltip" title="Will save automatically"/>'+
                   '</div>'+
                   '<div class="form-group col-lg-3 col-md-3 col-sm-6">'+
                     '<label for="app-name-'+app+'">Name</label>'+
@@ -90,6 +90,9 @@ define(
             $('#app-'+appObj.APP).data('app-data',appObj);
           }
         }
+        $(function () {
+          $('[data-toggle="tooltip"]').tooltip();
+        })
       };
       
       this.expressValues = function(e,d) {
@@ -136,7 +139,9 @@ define(
             q: self.attr.q_select_apps,
             s: 'a.app'
           },
-          success: function(data) { self.trigger('populate-request.ya.app-mgr',{data:data}) },
+          success: function(data) { 
+            self.trigger('populate-request.ya.app-mgr',{data:data}) 
+          },
           error: function(d) {
             var msg = 'Session Timeout. Please login again.';
             var details = '';
@@ -268,17 +273,44 @@ define(
         this.trigger('view.ya.query-table',{app:app});
 	  	};
 	  	
+	  	this.toggleActive = function(e,d) {
+	  	  var self = this;
+	  	  var $cbox = $(e.target);
+	  	  var $panel = $cbox.closest('.panel'); 
+	  	  var app = $panel.find('.panel-collapse').data('app-data').APP
+	  	  if(!$cbox.is(':checked'))
+	  	  {
+	  	    var j = [{qname:self.attr.q_close_pool,DATA:[{APP:app}]}];
+  	  	  $.ajax({
+  	  	    type: 'POST',
+  	  	    dataType: 'text',
+  	  	    data: { j:JSON.stringify(j) },
+  	  	    success: function(resp) { 
+  	  	      console.log(resp); 
+  	  	      $panel.find('.app-save').trigger('click');
+  	  	    },
+  	  	    error: function(xhr,status,error) {}
+  	  	  });
+	  	  }
+	  	  else
+	  	  {
+	  	    $panel.find('.app-save').trigger('click');
+	  	  }
+	  	};
+	  	
 	  	this.defaultAttrs({
 	  	  'q_select_apps' : 'YADA select apps',
 	  	  'q_insert_app'  : 'YADA new app',
 	  	  'q_update_app'  : 'YADA update app',
 	  	  'q_delete_app'  : 'YADA delete app',
 	  	  'q_insert_admin': 'YADA new app admin',
+	  	  'q_close_pool'  : 'YADA close pool',
 	  	  'accordion'     : '#app-accordion',
 	  	  'save'          : '.app-save',
 	  	  'btn-qname'     : '.btn-qname',
 	  	  'query-table'   : '#query-table',
-	  	  'nest'          : '.nest'
+	  	  'nest'          : '.nest',
+	  	  'app-active'    : 'input.app-active'
  	  	});
 	      
       this.after('initialize', function () {
@@ -290,6 +322,9 @@ define(
       	  'save':this.saveApp,
       	  'btn-qname':this.goToQueries
       	});
+      	this.on('change',{
+      	  'app-active':this.toggleActive
+      	})
       	// TODO remove the init-request trigger once login is finished
       	//this.trigger(this.$node,'init-request.ya.app-mgr',{});
       });
