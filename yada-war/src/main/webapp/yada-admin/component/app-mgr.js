@@ -124,7 +124,7 @@ define(
 	  	  $('#app-desc-new').attr('placeholder','Describe the data source here...');
 	  	  $('#app-conf-new').val('#This is real example code.\n'+
 	  	      '#see https://github.com/brettwooldridge/HikariCP for documentation\n'+
-	  	      'jdbcUrl=e.g., jdbc:sqlite:/apps/yada/tomcat/webapps/ROOT/YADA.db\n'+
+	  	      'jdbcUrl=e.g., jdbc:hsqldb:hsql://localhost/YADADB\n'+
 	  	      'username=<replace>\n'+
 	  	      'password=<replace>\n'+
 	  	      'autoCommit=false\n'+
@@ -133,7 +133,7 @@ define(
 	  	      'maxLifetime=1800000\n'+
 	  	      'minimumIdle=5\n'+
 	  	      'maximumPoolSize=100\n'+
-	  	      'driverClassName=e.g., org.sqlite.JDBC');
+	  	      'driverClassName=e.g., org.hsqldb.jdbc.JDBCDriver');
 	  	  $.ajax({
           data: {
             q: self.attr.q_select_apps,

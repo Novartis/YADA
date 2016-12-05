@@ -58,7 +58,7 @@ Refer to the appropriate section below, either [I downloaded the jar file](#tocW
 
 If you cloned from github, skip to the next section.
 
-The downloadable jar is a java installer built using the popular open source [IzPack](http://izpack.org/) solution. In the current release, the installer will drop the [Tomcat 8.x](https://tomcat.apache.org/download-80.cgi) servlet container into a default or custom location, drop the warfile into `webapps`, inflate it, reconfigure it, along with a SQLite-based YADA index, for your environment, and recompress it. The installer will then drop `README.html` into the install directory which contains instructions for install validation and login.
+The downloadable jar is a java installer built using the popular open source [IzPack](http://izpack.org/) solution. In the current release, the installer will drop the [Tomcat 8.x](https://tomcat.apache.org/download-80.cgi) servlet container into a default or custom location, drop the warfile into `webapps`, inflate it, reconfigure it, along with a [HyperSQL]®-based YADA index, for your environment, and recompress it. The installer will then drop `README.html` into the install directory which contains instructions for install validation and login.
 
 More specifically, the installer deploys the following:
 
@@ -78,9 +78,9 @@ util\
 
 Inside `apache-tomcat-<version>` you'll find `YADA-Quickstart-<version>.war` and a like-name directory.
 
-The installer also puts the [Hypersql®] and [SQLite®] JDBC jars in `apache-tomcat-<version>/lib`.
+The installer also puts the [HyperSQL]® and [SQLite]® JDBC jars in `apache-tomcat-<version>/lib`.
 
-The Quickstart war uses a local [SQLite®] file for the YADA index. This is not likely to be your final implementation–nor should it–however, it is possible to use it to perform sanity checks and more extensive automated testing. This file is located in the `webapps` directory.
+The Quickstart war uses a local [HyperSQL]® file for the YADA index. This is not likely to be your final implementation–nor should it–however, it is possible to use it to perform sanity checks and more extensive automated testing. This file is located in the `webapps` directory.
 
 In addition to conforming the YADA index to your environment, the `YADA.properties` file, which contains the YADA index configuration is also conformed, and located in `webapps/YADA-Quickstart-<version>/WEB-INF/classes`.
 
@@ -181,11 +181,9 @@ Some networks use proxy servers and others require the passing of credentials. I
 <a name="tocYADAIndex"></a>
 ###  The YADA Index database  
 
-The [YADA-Quickstart] default settings include a [SQLite®] pre-populated implementation of the YADA Index. If you want to use a different database engine, namely [MySQL®], [PostgreSQL®], or [Oracle®], you must have an instance of your desired engine at the ready, and run the appropriate database script. 
+The [YADA-Quickstart] default settings include a [HyperSQL]® pre-populated implementation of the YADA Index. If you want to use a different database engine, namely [MySQL]®, [PostgreSQL]®, or [Oracle]®, you must have an instance of your desired engine at the ready, and run the appropriate database script. 
 
-> NOTE: An imminent future version of YADA will prefer [ElasticSearch®] for the YADA Index.
-
-Whether you cloned the YADA-Quickstart on github or downloaded the war file, you may want to view the database configuration scripts for Oracle®, MySQL®, and PostgreSQL®, and SQLite®, as well as scripts for inserting the essential queries to enable YADA to work, and queries to run the TestNG tests.  These scripts are in the main [YADA](https://github.com/Novartis/YADA) repo in the following directory:
+Whether you cloned the YADA-Quickstart on github or downloaded the war file, you may want to view the database configuration scripts for Oracle®, MySQL®, and PostgreSQL®, HyperSQL® and SQLite®, as well as scripts for inserting the essential queries to enable YADA to work, and queries to run the TestNG tests.  These scripts are in the main [YADA](https://github.com/Novartis/YADA) repo in the following directory:
 
 ```
 YADA
@@ -200,6 +198,7 @@ YADA
                        |
                        +-- scripts
                             |
+                            +-- YADA_db_HSQLdb.sql
                             +-- YADA_db_MySQL.sql
                             +-- YADA_db_Oracle.sql
                             +-- YADA_db_PostgreSQL.sql
@@ -209,7 +208,7 @@ YADA
                             +-- YADA_db_uni_<old>_to_<new>.sql
 ```
 
-The default SQLite® db is found in YADA-Quickstart here:
+The default HyperSQL® db is found in YADA-Quickstart here:
 
 ```
 YADA-Quickstart
@@ -220,7 +219,9 @@ YADA-Quickstart
             |
             +-- resources
                  |
-                 +-- YADA.db
+                 +-- db
+                      |
+                      +--YADADB
 ```
 In addition to the vendor-specific configuration script, one must run `YADA_query_essentials.sql` as well. `YADA_query_tests.sql` need only be executed if it is intended to run the TestNG tests.
 
@@ -641,7 +642,7 @@ YADA.pass=${env.YADA_PASS}    # the proxy password if proxy authentication is re
 YADA.proxy=${env.YADA_PROXY}  # the proxy host:port, if necessary (usu only for testing)
 ```
 
-In `src/main/resources/local/build.properties`, the default values specific to the local SQLite® implementation of YADA Index. This is not a secured system.  When a more robust database solution is implemented that requires authentication, the property values below should replace the defaults.
+In `src/main/resources/local/build.properties`, the default values specific to the local HyperSQL® implementation of YADA Index. This is not a secured system.  When a more robust database solution is implemented that requires authentication, the property values below should replace the defaults.
 
 The environment variable substitutions are provided already in `src/main/resources/dev/build.properties` (see below.) 
 
@@ -833,16 +834,16 @@ mvn verify -P dev,war-deploy
 [YADA]: URL
 [YADA-Quickstart]: https://github.com/Novartis/YADA/releases/latest
 [pom.xml]: https://github.com/Novartis/YADA-Quickstart/blob/master/pom.xml
-[SQLite®]: https://www.sqlite.org/
-[MySQL®]: http://dev.mysql.com/
-[PostgreSQL®]: http://www.postgresql.org/
-[Oracle®]: http://www.oracle.com/index.html
+[SQLite]: https://www.sqlite.org/
+[MySQL]: http://dev.mysql.com/
+[PostgreSQL]: http://www.postgresql.org/
+[Oracle]: http://www.oracle.com/index.html
 [maven]: https://maven.apache.org/
 [maven war plugin]: https://maven.apache.org/plugins/maven-war-plugin/
 [overlay]: https://maven.apache.org/plugins/maven-war-plugin/overlays.html
 [sparse checkout]: http://schacon.github.io/git/git-read-tree.html#_sparse_checkout
 [tutorial]: http://jasonkarns.com/blog/subdirectory-checkouts-with-git-sparse-checkout/
 [eclipse]: http://eclipse.org
-[ElasticSearch®]: https://www.elastic.co/products/elasticsearch
+[ElasticSearch]: https://www.elastic.co/products/elasticsearch
 [psi-probe]: https://github.com/psi-probe/psi-probe
-[Hypersql®]: http://hsqldb.org/
+[Hypersql]: http://hsqldb.org/

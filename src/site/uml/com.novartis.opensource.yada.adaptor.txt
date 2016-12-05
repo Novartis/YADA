@@ -27,12 +27,14 @@ class MySQLAdaptor
 class OracleAdaptor
 class PostgreSQLAdaptor
 class SQLiteAdaptor
+class HSQLdbAdaptor
 class SQLServerAdaptor
 class VerticaAdaptor
 JDBCAdaptor <|-- MySQLAdaptor
 JDBCAdaptor <|-- OracleAdaptor
 JDBCAdaptor <|-- PostgreSQLAdaptor
 JDBCAdaptor <|-- SQLiteAdaptor
+JDBCAdaptor <|-- HSQLdbAdaptor
 JDBCAdaptor <|-- SQLServerAdaptor
 JDBCAdaptor <|-- VerticaAdaptor
 

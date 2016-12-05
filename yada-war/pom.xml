@@ -60,6 +60,7 @@
 		            <configuration>
 		              <target>
 		                <property name="compile_classpath" refid="maven.compile.classpath"/>
+		                <!-- command-line: java org.hsqldb.Server -database.0 file:${project.basedir}/src/main/webapp/YADADB -dbname.0 YADADB -->
 		                <java classpath="${compile_classpath}" classname="org.hsqldb.Server">
 		                  <arg value="-database.0"/>
 		                  <arg value="file:${project.basedir}/src/main/webapp/YADADB"/>

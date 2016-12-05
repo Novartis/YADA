@@ -39,9 +39,7 @@ public class HSQLdbAdaptor extends JDBCAdaptor {
   }
 
   /**
-   * Returns a StringBuffer with core sql + filters, wrapped in an outer sql COUNT(*) query.  
-   * This is typically used in pagination scenarios to return the total number of records 
-   * returnable by a query when only a subset are requested by the application.
+   * HyperSQL® requires the <code>COUNT</code> keyword to be quoted: <code>"COUNT"</code>
    * 
    * @param core the SQL to wrap in an outer count(*) query
    * @param filters a JSON object containing the WHERE criteria

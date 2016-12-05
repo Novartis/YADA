@@ -157,7 +157,7 @@ Maybe you have to provide a RESTful interface to an existing application, and ne
 * Flexible Java® and Script plugin API to preprocess request parameters, post-process results, or override normal processing altogether
 * [EhCache](http://www.ehcache.org/) query-index caching
 * Security (via Cookie forwarding and/or Default Plugins)
-* Support for Oracle®, MySQL®, Vertica®, PostgreSQL®, SQLite®
+* Support for Oracle®, MySQL®, Vertica®, PostgreSQL®, HyperSQL®, SQLite®
 * Tomcat 8 and JDK 1.8-compatible (YADA 8)
 * _Coming Later_: ElasticSearch® support
 * _Coming Later_: ElasticSearch®-based result and aggregate-result caching
@@ -217,6 +217,7 @@ YADA ships with scripts for using, as the YADA Index:
 
 * MySQL®
 * PostgreSQL® 
+* HyperSQL®
 * SQLite®
 * Oracle®
 

@@ -1,6 +1,11 @@
 -- List of Essential Queries
 
-DELETE from YADA_QUERY where app = 'YADA' and qname not like 'YADA test%' and qname not like '%secured%' and qname not like '%YSEC%' and qname not in ('YADA yada','YADA user is authorized','YADA sql tester','YADA select nextval','YADA select multiple nextvals');
+DELETE from YADA_QUERY
+  where app = 'YADA'
+  and qname not like 'YADA test%'
+  and qname not like '%secured%'
+  and qname not like '%YSEC%'
+  and qname not in ('YADA default','YADA yada','YADA user is authorized','YADA sql tester','YADA select nextval','YADA select multiple nextvals');
 
 -- properties
 INSERT INTO YADA_PROP (target,name,value) VALUES ('system','yada.version','${display.version}');
@@ -21,7 +26,7 @@ INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/com.microsof
 INSERT INTO YADA_PROP (target,name,value) VALUES ('system','login','default');
 
 -- sanity check
-INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA default','select ''YADA is alive''','YADABOT','YADA');
+--INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA default','select ''YADA is alive''','YADABOT','YADA');
 -- parameter dml
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA select default params','SELECT id as "ID", target as "TARGET", name as "NAME", value as "VALUE", rule as "RULE" FROM YADA_PARAM where target in (?v) and target not in (''YADA apps'',''YADA queries'',''YADA new query'',''YADA delete query'',''YADA insert usage log'',''YADA update query'')','YADABOT','YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select default params','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=app:getValue(TARGET) uid:getLoggedUser()');
@@ -252,3 +257,4 @@ INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('2','YADA close pool'
 
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('2','YADA select apps','pz',1,'-1');
 
+COMMIT;

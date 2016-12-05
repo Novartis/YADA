@@ -26,6 +26,7 @@ Definition: Validation of execution of features in a variety of contexts includi
     * Oracle®
     * PostgreSQL®
     * SQLite®
+    * HyperSQL®
 * Use of YADA Java® and Web API
 * Create, Read, Update, Delete (CRUD) queries for all supported data types: 
     * Character `?v`
