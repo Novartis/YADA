@@ -100,6 +100,37 @@ Some conventions apply:
 * The `Description` is useful for others, or to remind you in 4 years why you configured the source in the first place.
 * The `Configuration` field is where, for **JDBC**, all your connection pool properties should be entered. Defaults settings are preconfigured, except where the value *<replace>* is present. Also, a link to [HikariCP](https://github.com/brettwooldridge/HikariCP) documentation is provided in a comment in this field. **JDBC** configurations are converted to Java [Properties](https://docs.oracle.com/javase/7/docs/api/java/util/Properties.html) objects at runtime, so the syntax of the `Configuration` field must conform to that specification. Simply put, properties are `key=value` pairs separated by line feeds (newlines). `value` may contain `=` (equals sign) characters, spaces, etc. Be careful not to include trailing spaces in `value` strings unintentionally. Again, see the [HikariCP](https://github.com/brettwooldridge/HikariCP) docs for details on all acceptable `key=value` options, as well as how to include custom-driver-only properties.
 
+Below are example `jdbcUrl` settings and `driverClassName` configs for currently supported database engines. You will need to use hostname, path, and schema values that are specific to your machine. Remember, also, as the [tomcat documentation](https://tomcat.apache.org/tomcat-8.0-doc/jndi-datasource-examples-howto.html) recommends, your jdbc jars should reside in your `$TOMCAT_HOME/lib` directory.
+
+```bash
+### REMEMBER the 'jdbcUrl' settings here are just examples. 
+### The 'driverClassName' settings should be valid anywhere, 
+### unless the db vendor has changed the class name since this doc was written.
+# Oracle
+jdbcUrl=jdbc:oracle:thin:@hostname:1561/YADA
+driverClassName=oracle.jdbc.OracleDriver
+
+# PostgreSQL
+jdbcUrl=jdbc:postgresql://localhost/yada
+driverClassName=org.postgresql.Driver
+
+# MySQL
+jdbcUrl=jdbc:mysql://localhost/YADA
+driverClassName=com.mysql.jdbc.Driver
+
+# SQLite
+jdbcUrl=jdbc:sqlite:/apps/yada/db/YADA.db
+driverClassName=org.sqlite.JDBC
+
+# HyperSQL 
+jdbcUrl=jdbc:hsqldb:file:/apps/yada/db/YADADB
+driverClassName=org.hsqldb.jdbc.JDBCDriver
+
+# Vertica
+jdbcUrl=jdbc:vertica://hostname:5433/yada
+driverClassName=com.vertica.jdbc.Driver
+```
+
 For **REST**, **SOAP**, and **Filesystem** datasources, simply put the appropriate URL in this field. See the examples below.
 
 Also, don't forget to make the app "Active" if desired, and click "Save".
