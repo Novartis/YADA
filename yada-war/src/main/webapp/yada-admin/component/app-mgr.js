@@ -21,9 +21,9 @@ define(
   ],
   function (flight,$,queryTable) {
 	'use strict';
-    
+
 	  return flight.component(appMgr);
-	  
+
 	  function appMgr() {
 		  $('nav.main-menu li').addClass('disabled');
 	    this.getAppTemplate = function(app) {
@@ -70,10 +70,10 @@ define(
         '</div>';
 	  	  return html;
 	  	};
-	  	
+
 	  	this.populate = function(e,d) {
         for(var i in d.data.RESULTSET.ROWS) {
-          
+
           var appObj = d.data.RESULTSET.ROWS[i];
           if(!/BSRRSW/.test(appObj.APP))
           {
@@ -86,7 +86,7 @@ define(
               $('#app-submit-'+appObj.APP).remove();
               $('#app-'+appObj.APP).find('input,textarea').attr('disabled','disabled');
             }
-            
+
             $('#app-'+appObj.APP).data('app-data',appObj);
           }
         }
@@ -94,7 +94,7 @@ define(
           $('[data-toggle="tooltip"]').tooltip();
         })
       };
-      
+
       this.expressValues = function(e,d) {
         var panel  = $(e.target);
         var appObj = panel.data('app-data');
@@ -113,7 +113,7 @@ define(
         }
 
       };
-      
+
 	  	this.show = function(e,d) {
 	  	  var self = this;
 	  	  this.$node.removeClass('hidden');
@@ -139,8 +139,8 @@ define(
             q: self.attr.q_select_apps,
             s: 'a.app'
           },
-          success: function(data) { 
-            self.trigger('populate-request.ya.app-mgr',{data:data}) 
+          success: function(data) {
+            self.trigger('populate-request.ya.app-mgr',{data:data})
           },
           error: function(d) {
             var msg = 'Session Timeout. Please login again.';
@@ -172,7 +172,7 @@ define(
           }
         });
 	  	};
-	  	
+
 	  	this.saveApp = function(e,d) {
 	  	  e.preventDefault();
 	  	  var self   = this;
@@ -195,7 +195,7 @@ define(
         desc   = panel.find('#app-desc-'+app).val();
         conf   = panel.find('#app-conf-'+app).val();
         active = panel.find('#app-active-'+app).is(':checked') ? 1 : 0;
-	  	  
+
         var progress = $('<div class="progress progress-striped active col-lg-11 col-md-11 col-sm-10">'+
               '<div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 0%">'+
             '<span class="sr-only">100% Complete</span>'+
@@ -207,18 +207,18 @@ define(
           var now = parseInt(new Date().getTime()/1000);
           $('.progress-bar').css('width',((now-start)/300)*100 + '%');
         },3000)
-	  	  
+
         var j = [{qname:self.attr[q],DATA:[{APP:code,NAME:name,DESCR:desc,CONF:conf,ACTIVE:active}]}];
 	  	  if(app == 'new')
 	  	    j.push({qname:self.attr.q_insert_admin,DATA:[{APP:code,UID:$(self.attr.nest).data('uid')}]});
-	  	  
+
 	  	  $.ajax({
 	  	    type:'POST',
 	  	    data:{
 	  	      j : JSON.stringify(j)
 	  	    },
 	  	    success: function(resp) {
-	  	      if(app == 'new') 
+	  	      if(app == 'new')
 	  	      {
 	  	        var html = self.getAppTemplate(code);
 	  	        var current, last;
@@ -228,7 +228,7 @@ define(
 	  	          var current = $(panels[i]);
 	  	          var next    = $(panels[i+1]);
 	  	          var obj = {APP:code,NAME:name,DESCR:desc,CONF:conf,ACTIVE:active};
-	  	          var $html = $(html) 
+	  	          var $html = $(html)
 	  	          if(current.text() < code && next.text() > code)
 	  	          {
 	  	            $html.insertAfter(current.closest('.panel'));
@@ -262,7 +262,7 @@ define(
 	  	    }
 	  	  });
 	  	};
-	  	
+
 	  	this.goToQueries = function(e,d) {
 	  	  var app = $(e.target).closest('.panel').find('.panel-collapse').data('app-data').APP
 	  	  $(this.attr['query-table']).data('app',app);
@@ -272,32 +272,36 @@ define(
         queryTable.attachTo(document);
         this.trigger('view.ya.query-table',{app:app});
 	  	};
-	  	
+
 	  	this.toggleActive = function(e,d) {
 	  	  var self = this;
 	  	  var $cbox = $(e.target);
-	  	  var $panel = $cbox.closest('.panel'); 
-	  	  var app = $panel.find('.panel-collapse').data('app-data').APP
-	  	  if(!$cbox.is(':checked'))
-	  	  {
-	  	    var j = [{qname:self.attr.q_close_pool,DATA:[{APP:app}]}];
-  	  	  $.ajax({
-  	  	    type: 'POST',
-  	  	    dataType: 'text',
-  	  	    data: { j:JSON.stringify(j) },
-  	  	    success: function(resp) { 
-  	  	      console.log(resp); 
-  	  	      $panel.find('.app-save').trigger('click');
-  	  	    },
-  	  	    error: function(xhr,status,error) {}
-  	  	  });
-	  	  }
-	  	  else
-	  	  {
-	  	    $panel.find('.app-save').trigger('click');
-	  	  }
+	  	  var $panel = $cbox.closest('.panel');
+        var appData =  $panel.find('.panel-collapse').data('app-data')
+	  	  var app = !!appData ? appData.APP : $('#app-code-new').val();
+        if(d.el.id != 'app-active-new')
+        {
+  	  	  if(!$cbox.is(':checked'))
+  	  	  {
+  	  	    var j = [{qname:self.attr.q_close_pool,DATA:[{APP:app}]}];
+    	  	  $.ajax({
+    	  	    type: 'POST',
+    	  	    dataType: 'text',
+    	  	    data: { j:JSON.stringify(j) },
+    	  	    success: function(resp) {
+    	  	      console.log(resp);
+    	  	      $panel.find('.app-save').trigger('click');
+    	  	    },
+    	  	    error: function(xhr,status,error) {}
+    	  	  });
+  	  	  }
+  	  	  else
+  	  	  {
+  	  	    $panel.find('.app-save').trigger('click');
+  	  	  }
+        }
 	  	};
-	  	
+
 	  	this.defaultAttrs({
 	  	  'q_select_apps' : 'YADA select apps',
 	  	  'q_insert_app'  : 'YADA new app',
@@ -312,7 +316,7 @@ define(
 	  	  'nest'          : '.nest',
 	  	  'app-active'    : 'input.app-active'
  	  	});
-	      
+
       this.after('initialize', function () {
 
       	this.on('init-request.ya.app-mgr',this.show);

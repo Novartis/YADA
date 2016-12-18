@@ -1,4 +1,4 @@
---﻿CREATE USER yada PASSWORD 'yada';
+--﻿CREATE USER YADA PASSWORD 'yada' ADMIN;
 
 --CREATE DATABASE YADA OWNER=yada;
 
@@ -91,10 +91,11 @@ CREATE TABLE IF NOT EXISTS YADA_UG
 -- INSERT YADA INDEX QUERY CONF
 DELETE from YADA_QUERY_CONF where app = 'YADA' and source = 'java:comp/env/jdbc/yada';
 INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADA','java:comp/env/jdbc/yada',null);
--- YADATEST is probably only necessary for automated testing.  
+-- YADATEST is probably only necessary for automated testing.
 -- In the YADA-Quickstart config, the variables aren't replaced
 INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADATEST','java:comp/env/jdbc/yada',
 'jdbcUrl=${YADA.hsqldb.index.url}
+driverClassName=${YADA.hsqldb.index.driverClassName}
 username=yada
 password=yada
 autoCommit=false
@@ -102,8 +103,7 @@ connectionTimeout=300000
 idleTimeout=600000
 maxLifetime=1800000
 minimumIdle=5
-maximumPoolSize=100
-driverClassName=${YADA.hsqldb.index.driverClassName}');
+maximumPoolSize=100');
 INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('QGO',null,'http://www.ebi.ac.uk/QuickGO/GTerm?');
 INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADAFSIN',null,'file:///io/in');
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA default','select ''YADA is alive'' from YADA_PROP','YADABOT','YADA');
