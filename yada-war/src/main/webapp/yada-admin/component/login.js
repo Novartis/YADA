@@ -20,11 +20,11 @@ define(
   ],
   function (flight,$) {
 	'use strict';
-    
+
 	  return flight.component(login);
-	  
+
 	  function login() {
-		  
+
 	  	this.enrich = function() {
 	  	  this.trigger('nav.mainmenu','disable-app-mgr.ya.header',{});
 	  	  this.trigger('nav.mainmenu','disable-new-query.ya.header',{});
@@ -34,16 +34,16 @@ define(
 //	  	  $('nav.main-menu li').addClass('disabled');
 //        $('#new-query,#migration').removeAttr('data-toggle');
 //        $('#new-query,#migration').removeAttr('data-target');
-	  	}; 
-	  	
+	  	};
+
 	  	this.acceptCredentials = function(uid) {
 	  	  // set user, role in scope
 	  	  // trigger app-mgr
 	  	  this.closeDialog();
-	  	  $(this.attr.nest).data('uid',uid);
+	  	  $(this.attr.nest).data('userid',uid);
 	  	  this.trigger(this.attr['app-mgr'],'init-request.ya.app-mgr',{});
 	  	};
-	  	
+
 	  	this.checkCredentials = function(e,d) {
 	  	  var self = this;
 	  	  var valid = false;
@@ -57,20 +57,20 @@ define(
 	  	      p:[uid,pw].join(',')
 	  	    },
 	  	    success: function(resp) {
-	  	      var o = resp.RESULTSET.ROWS[0]; 
+	  	      var o = resp.RESULTSET.ROWS[0];
 	  	      if(o.AUTH == true)
 	  	        self.acceptCredentials(o.USER);
 	  	    }
 	  	  });
 	  	  // in success handler:
-	  	    
+
 	  	};
-	  	
+
 	  	this.closeDialog = function() {
         this.select('input').val('');
 	  	  this.select('close').click();
       };
-	    
+
 	  	this.defaultAttrs({
 	  	  'button': '#login-btn',
 	  	  'close' : '.close',
@@ -81,7 +81,7 @@ define(
 	  	  'logpw' : '#login-pw',
 	  	  'nest'  : '.nest'
 	  	});
-	  	
+
       this.after('initialize', function () {
         this.on('click',{
           'button':this.checkCredentials

@@ -1,16 +1,17 @@
 -- List of Essential Queries
 
--- Delete possibly pre-existing PARAMs for Yada Queries that we are going to reset
+-- Delete possibly pre-existing PARAMs for YADA Queries that we are going to reset
 DELETE from YADA_PARAM WHERE target in (
-  SELECT distinct qname from YADA_QUERY   where app = 'YADA'
+  SELECT distinct qname from YADA_QUERY
+    where app = 'YADA'
     and qname not like 'YADA test%'
     and qname not like '%secured%'
     and qname not like '%YSEC%'
     and qname not in ('YADA default','YADA yada','YADA user is authorized','YADA sql tester','YADA select nextval','YADA select multiple nextvals')
   );
 
-
-  
+-- Delete possibly pre-existing PROPS for YADA Queries that we are going to reset
+DELETE from YADA_PROP;
 
 -- Delete possibly pre-existing YADA Queries that we are going to 'reset'
 DELETE from YADA_QUERY
@@ -33,7 +34,6 @@ INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/com.mysql.jd
 INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/org.postgresql.Driver','com.novartis.opensource.yada.adaptor.PostgreSQLAdaptor');
 INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/com.vertica.jdbc.Driver','com.novartis.opensource.yada.adaptor.VerticaAdaptor');
 INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/org.hsqldb.jdbc.JDBCDriver','com.novartis.opensource.yada.adaptor.HSQLdbAdaptor');
-
 INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/SOAP','com.novartis.opensource.yada.adaptor.SoapAdaptor');
 INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/com.microsoft.sqlserver.jdbc.SQLServerDriver','com.novartis.opensource.yada.adaptor.SQLServerAdaptor');
 INSERT INTO YADA_PROP (target,name,value) VALUES ('system','login','default');
@@ -118,8 +118,8 @@ INSERT into YADA_PROP (target,name,value) VALUES ('YADA delete prop for target',
 
 -- app dml
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA select apps','select a.app "APP", a.name "NAME", a.descr "DESCR", CASE WHEN b.role = ''ADMIN'' THEN a.conf ELSE ''UNAUTHORIZED'' END "CONF", a.active "ACTIVE" from yada_query_conf a join yada_ug b on a.app = b.app where a.app != ''YADA''','YADABOT', 'YADA');
-INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pl',1,'Gatekeeper,execution.policy=void,content.policy.predicate=uid=getQLoggedUser()');
--- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=userid:getLoggedUser()');
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pl',1,'Gatekeeper,execution.policy=void,content.policy.predicate=userid=getQLoggedUser()');
+--INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=userid:getLoggedUser()');
 INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA select apps','YADA view protector','E','whitelist');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA select apps-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA select apps','protected','true');
@@ -235,14 +235,14 @@ INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA select prop va
 -- login query and defaut plugin
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA check credentials','select a.app "APP", a.userid "USERID", a.role "ROLE" from yada_ug a join yada_user b on a.userid = b.userid where b.userid=?v and b.pw=?v','YADABOT','YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA check credentials','pl',1,'Login');
--- 'YADA select apps' requires content policy to filter for uid in YADA_UG - user must be mapped to app in yada_ug table
--- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pl',1,'Gatekeeper,execution.policy=void,content.policy.predicate=uid=getLoggedUser()');
--- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=userid:getLoggedUser()');
+-- 'YADA select apps' requires content policy to filter for userid in YADA_UG - user must be mapped to app in yada_ug table
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pl',1,'Gatekeeper,execution.policy=void,content.policy.predicate=userid=getLoggedUser()');
+--INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=userid:getLoggedUser()');
 
 -- baseline sec
 -- ADMIN role has full crud for APP
 -- USER role can has read-only for APP (eventually USER should have full crud for his/her authored queries)
--- YADA uid has full crud for all APPs
+-- YADA userid has full crud for all APPs
 INSERT INTO YADA_USER (USERID,PW) VALUES ('YADA','yada');
 INSERT INTO YADA_USER (USERID,PW) VALUES ('YADAUSER','yada');
 INSERT INTO YADA_USER (USERID,PW) VALUES ('test','testt');
@@ -260,14 +260,12 @@ INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('3','YADA update quer
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('4','YADA update query','cq',1,'true');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('5','YADA update query','c',1,'false');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('2','YADA close pool','pl',1,'PoolCloser');
-
--- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('2','YADA insert prop','pl',1,'CachedQueryUpdater');
--- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('3','YADA insert prop','cv',1,'RESTResultJSONConverter');
--- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('2','YADA delete prop','pl',1,'CachedQueryUpdater');
--- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('3','YADA delete prop','cv',1,'RESTResultJSONConverter');
--- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('4','YADA delete prop','cq',1,'true');
--- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('5','YADA delete prop','c',1,'false');
-
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('2','YADA insert prop','pl',1,'CachedQueryUpdater');
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('3','YADA insert prop','cv',1,'RESTResultJSONConverter');
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('2','YADA delete prop','pl',1,'CachedQueryUpdater');
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('3','YADA delete prop','cv',1,'RESTResultJSONConverter');
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('4','YADA delete prop','cq',1,'true');
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('5','YADA delete prop','c',1,'false');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('2','YADA select apps','pz',1,'-1');
 
 COMMIT;

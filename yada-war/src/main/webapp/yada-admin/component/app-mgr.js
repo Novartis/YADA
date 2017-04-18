@@ -210,7 +210,7 @@ define(
 
         var j = [{qname:self.attr[q],DATA:[{APP:code,NAME:name,DESCR:desc,CONF:conf,ACTIVE:active}]}];
 	  	  if(app == 'new')
-	  	    j.push({qname:self.attr.q_insert_admin,DATA:[{APP:code,UID:$(self.attr.nest).data('uid')}]});
+	  	    j.push({qname:self.attr.q_insert_admin,DATA:[{APP:code,USERID:$(self.attr.nest).data('userid')}]});
 
 	  	  $.ajax({
 	  	    type:'POST',

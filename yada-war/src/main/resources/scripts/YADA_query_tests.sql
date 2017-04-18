@@ -9,6 +9,18 @@ DELETE from YADA_A11N where target like 'YADA test sec%';
 DELETE from YADA_QUERY where app = 'YADAFSIN' and qname like 'YADAFSIN test%';
 DELETE from YADA_QUERY where qname = 'QGO search';
 
+INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADATEST','java:comp/env/jdbc/yada',
+'jdbcUrl=jdbc:postgresql://localhost/yada
+username=yada
+password=yada
+autoCommit=false
+connectionTimeout=300000
+idleTimeout=600000
+maxLifetime=1800000
+minimumIdle=5
+maximumPoolSize=100
+driverClassName=org.postgresql.Driver');
+
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test validate preproc','select app APP from yada_query_conf','YADABOT','YADA');
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test','select qname,app from yada_query','YADABOT','YADA');
 
@@ -216,21 +228,21 @@ INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA test sec multi pa
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec multi params multi polcol indexes-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec multi params multi polcol indexes','protected','true');
 
-INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec multi params multi polcol use token','select * from yada_test where col1=?v and col2=?i','YADABOT','YADA');                   -- multiparams 
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec multi params multi polcol use token','select * from yada_test where col1=?v and col2=?i','YADABOT','YADA');                   -- multiparams
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec multi params multi polcol use token protector','select * from yada_test where col1=?v and token=?v','YADABOT','YADA'); -- one polcol + token
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA test sec multi params multi polcol use token','pl',1,'Gatekeeper,content.policy=void,execution.policy.indices=0 2');
 INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA test sec multi params multi polcol use token','YADA test sec multi params multi polcol use token protector','E','whitelist');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec multi params multi polcol use token-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec multi params multi polcol use token','protected','true');
 
-INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec multi params multi polcol use token indexes','select * from yada_test where col1=?v and col2=?i','YADABOT','YADA');            -- multiparams 
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec multi params multi polcol use token indexes','select * from yada_test where col1=?v and col2=?i','YADABOT','YADA');            -- multiparams
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec multi params multi polcol use token indexes protector','select * from yada_test where col1=?v and token=?v','YADABOT','YADA'); -- one polcol + token
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA test sec multi params multi polcol use token indexes','pl',1,'Gatekeeper,content.policy=void,execution.policy.indexes=0 2');
 INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA test sec multi params multi polcol use token indexes','YADA test sec multi params multi polcol use token indexes protector','E','whitelist');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec multi params multi polcol use token indexes-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec multi params multi polcol use token indexes','protected','true');
 
-INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec multi params multi polcol use token indexes injection syntax','select * from yada_test where col1=?v and col2=?i','YADABOT','YADA');            -- multiparams 
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec multi params multi polcol use token indexes injection syntax','select * from yada_test where col1=?v and col2=?i','YADABOT','YADA');            -- multiparams
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec multi params multi polcol use token indexes protector','select * from yada_test where col1=?v and token=?v','YADABOT','YADA'); -- one polcol + token
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA test sec multi params multi polcol use token indexes injection syntax','pl',1,'Gatekeeper,content.policy=void,execution.policy.indexes=0 1:getToken()');
 INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA test sec multi params multi polcol use token indexes injection syntax','YADA test sec multi params multi polcol use token indexes protector','E','whitelist');
@@ -302,7 +314,7 @@ INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA test sec multi pa
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec multi params multi polcol jp-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec multi params multi polcol jp','protected','true');
 
-INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec multi params multi polcol use token jp','select * from yada_test where col1=?v and col2=?i','YADABOT','YADA');                   -- multiparams 
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec multi params multi polcol use token jp','select * from yada_test where col1=?v and col2=?i','YADABOT','YADA');                   -- multiparams
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec multi params multi polcol use token jp protector','select * from yada_test where col1=?v and token=?v','YADABOT','YADA'); -- one polcol + token
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA test sec multi params multi polcol use token jp','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=COL1 TOKEN:getToken()');
 INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA test sec multi params multi polcol use token jp','YADA test sec multi params multi polcol use token jp protector','E','whitelist');
@@ -353,14 +365,14 @@ INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA test sec multi pa
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec multi params multi polcol uni-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec multi params multi polcol uni','protected','true');
 
-INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec multi params multi polcol use token uni','select * from yada_test where col1=?v and col2=?i','YADABOT','YADA');                   -- multiparams 
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec multi params multi polcol use token uni','select * from yada_test where col1=?v and col2=?i','YADABOT','YADA');                   -- multiparams
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec multi params multi polcol use token uni protector','select * from yada_test where col1=?v and token=?v','YADABOT','YADA'); -- one polcol + token
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA test sec multi params multi polcol use token uni','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=COL1 TOKEN:getToken(),execution.policy.indices=0 2');
 INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA test sec multi params multi polcol use token uni','YADA test sec multi params multi polcol use token uni protector','E','whitelist');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec multi params multi polcol use token uni-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec multi params multi polcol use token uni','protected','true');
 
-INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec multi params multi polcol use token uni injection syntax','select * from yada_test where col1=?v and col2=?i','YADABOT','YADA');                   -- multiparams 
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec multi params multi polcol use token uni injection syntax','select * from yada_test where col1=?v and col2=?i','YADABOT','YADA');                   -- multiparams
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec multi params multi polcol use token uni protector','select * from yada_test where col1=?v and token=?v','YADABOT','YADA'); -- one polcol + token
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA test sec multi params multi polcol use token uni injection syntax','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=COL1 TOKEN:getToken(),execution.policy.indices=0 1:getToken()');
 INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA test sec multi params multi polcol use token uni injection syntax','YADA test sec multi params multi polcol use token uni protector','E','whitelist');
@@ -369,46 +381,46 @@ INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec multi params mu
 
 -- security content policy
 
-INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token','select * from yada_test','YADABOT','YADA');   
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token','select * from yada_test','YADABOT','YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA test sec get token','pl',1,'Gatekeeper,execution.policy=void,content.policy.predicate=token=getQToken()');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec get token-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec get token-1','protected','true');
 
-INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token twice','select * from yada_test','YADABOT','YADA');   
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token twice','select * from yada_test','YADABOT','YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA test sec get token twice','pl',1,'Gatekeeper,execution.policy=void,content.policy.predicate=token=getQToken() and token=getQToken()');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec get token twice-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec get token twice','protected','true');
 
-INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token twice with spaces','select * from yada_test','YADABOT','YADA');   
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token twice with spaces','select * from yada_test','YADABOT','YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA test sec get token twice with spaces','pl',1,'Gatekeeper,execution.policy=void,content.policy.predicate=token = getQToken() and token = getQToken()');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec get token twice with spaces-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec get token twice with spaces','protected','true');
 
-INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token plus params','select * from yada_test where col1=?v','YADABOT','YADA');   
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token plus params','select * from yada_test where col1=?v','YADABOT','YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA test sec get token plus params','pl',1,'Gatekeeper,execution.policy=void,content.policy.predicate=token=getQToken()');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec get token plus params-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec get token plus params','protected','true');
 
-INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token twice plus params','select * from yada_test where col1=?v','YADABOT','YADA');   
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token twice plus params','select * from yada_test where col1=?v','YADABOT','YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA test sec get token twice plus params','pl',1,'Gatekeeper,execution.policy=void,content.policy.predicate=token=getQToken() and token=getQToken()');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec get token twice plus params-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec get token twice plus params','protected','true');
 
-INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token twice with spaces plus params','select * from yada_test where col1=?v','YADABOT','YADA');   
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token twice with spaces plus params','select * from yada_test where col1=?v','YADABOT','YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA test sec get token twice with spaces plus params','pl',1,'Gatekeeper,execution.policy=void,content.policy.predicate=token = getQToken()');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec get token twice with spaces plus params-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec get token twice with spaces plus params','protected','true');
 
-INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token plus params with group by','select * from yada_test where col1=?v group by col1, col2, col3, col4, col5, token','YADABOT','YADA');   
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token plus params with group by','select * from yada_test where col1=?v group by col1, col2, col3, col4, col5, token','YADABOT','YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA test sec get token plus params with group by','pl',1,'Gatekeeper,execution.policy=void,content.policy.predicate=token=getQToken()');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec get token plus params with group by-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec get token plus params with group by','protected','true');
 
-INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token plus params with group by order by','select * from yada_test where col1=?v group by col1, col2, col3, col4, col5, token order by col1, col2','YADABOT','YADA');   
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test sec get token plus params with group by order by','select * from yada_test where col1=?v group by col1, col2, col3, col4, col5, token order by col1, col2','YADABOT','YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA test sec get token plus params with group by order by','pl',1,'Gatekeeper,execution.policy=void,content.policy.predicate=token=getQToken()');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec get token plus params with group by order by-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA test sec get token plus params with group by order by','protected','true');
 
 -- security api
-INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADATEST test sec app property','select * from yada_test','YADABOT','YADATEST');   
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADATEST test sec app property','select * from yada_test','YADABOT','YADATEST');
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADATEST test sec query property','select * from yada_test','YADABOT','YADATEST');
