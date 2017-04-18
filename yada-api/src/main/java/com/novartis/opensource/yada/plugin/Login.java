@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 /**
- * 
+ *
  */
 package com.novartis.opensource.yada.plugin;
 
@@ -29,11 +29,11 @@ import com.novartis.opensource.yada.YADARequest;
 /**
  * This plugin is both a {@link Preprocess} and {@link Postprocess} plugin.
  * When set as a default on the {@code YADA check credentials} query, the preprocessor will set itself
- * as a postprocessor on the {@link YADARequest}. 
- * 
+ * as a postprocessor on the {@link YADARequest}.
+ *
  * <p>When the {@link #engage(YADAQuery)} method is executed, it will examine the payload and if valid,
  * store it in the {@link HttpSession}.</p>
- *   
+ *
  * @author David Varon
  * @since 8.1.0
  */
@@ -44,17 +44,17 @@ public class Login extends AbstractPostprocessor implements Preprocess{
    * @throws YADASecurityException if the passed credentials are invalid
    */
   @Override
-  public String engage(YADARequest yadaReq, String result) throws YADASecurityException { 
+  public String engage(YADARequest yadaReq, String result) throws YADASecurityException {
     String uid = "";
     if(result != null && !"".equals(result))
     {
       JSONObject j = new JSONObject(result);
-      JSONObject r = j.getJSONObject("RESULTSET"); 
-      
+      JSONObject r = j.getJSONObject("RESULTSET");
+
       if(r.getInt("records") > 0)
       {
         JSONArray a = r.getJSONArray("ROWS");
-        uid = a.getJSONObject(0).getString("UID");
+        uid = a.getJSONObject(0).getString("USERID");
         yadaReq.getRequest().getSession().setAttribute("YADA.user.privs", a);
       }
       else
