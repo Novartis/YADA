@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 /**
- * 
+ *
  */
 package com.novartis.opensource.yada.plugin;
 
@@ -48,98 +48,98 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
    * @since 7.0.0
    */
   protected static final String AUTH_PATH_RX = "auth.path.rx";
-  
+
   /**
    * Constant equal to {@value}
    * @since 7.0.0
    */
   protected static final String AUTH_TOKEN = "auth.token";
-  
+
   /**
    * Constant equal to {@value}
    * @since 7.0.0
    */
   protected static final String TOKEN_VALIDATOR = "token.validator";
-  
+
   /**
    * Constant equal to {@value}
    * @since 7.0.0
    */
   protected static final String CONTENT_POLICY = "content.policy";
-  
+
   /**
    * Constant equal to {@value}
    * @since 7.0.0
    */
   protected static final String EXECUTION_POLICY = "execution.policy";
-  
+
   /**
    * Constant equal to {@value}
    * @since 7.0.0
-   */  
+   */
   protected static final String EXECUTION_POLICY_INTERFACE = "ExecutionPolicy";
-  
+
   /**
    * Constant equal to {@value}
    * @since 7.0.0
    */
   protected static final String CONTENT_POLICY_INTERFACE   = "ContentPolicy";
-  
+
   /**
    * Constant equal to {@value}
    * @since 7.0.0
    */
   protected static final String VOID   = "void";
-  
+
   /**
    * Constant equal to {@value}.
    * The query executed to evaluate authorization.
    */
-  protected static final String YADA_A11N_QUERY = 
+  protected static final String YADA_A11N_QUERY =
       "SELECT DISTINCT a.target, a.policy, a.type, a.qname "
       + "FROM YADA_A11N a " // join YADA_QUERY b on  (a.target = b.qname OR a.target = b.app) "
       + "WHERE a.target = ?";
-    
+
   /**
    * Constant equal to {@value}
    * @since 7.0.0
    */
   private static final String PLUGIN_PKG = "com.novartis.opensource.yada.plugin.";
-  
+
   /**
-   * The {@link YADARequest} object processed by the plugin 
+   * The {@link YADARequest} object processed by the plugin
    */
   private YADARequest yadaReq;
-  
+
   /**
    * The {@link YADAQuery} object processed by the plugin
    */
   private YADAQuery yq;
-  
+
   /**
    * The authentication token, e.g., user id
    * @since 7.0.0
    */
   private Object token = null;
-  
+
   /**
    * The {@link TokenValidator}
-   * @since 7.0.0 
+   * @since 7.0.0
    */
   private TokenValidator tokenValidator;
-  
+
   /**
    * The {@link SecurityPolicy}
-   * @since 7.0.0 
+   * @since 7.0.0
    */
-  private SecurityPolicy securityPolicy;  
-  
+  private SecurityPolicy securityPolicy;
+
   /**
    * The {@code args} {@link List} from {@link YADARequest#getArgs}
    * @since 7.0.0
    */
   private List<String> args;
-  
+
   /**
    * The {@code preArgs} {@link List} from {@link YADARequest#getPreArgs}
    * @since 7.0.0
@@ -147,9 +147,9 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
    */
   @Deprecated
   private List<String> preargs;
-  
+
 	/**
-	 * Base implementation, calls {@link #setYADARequest(YADARequest)}, 
+	 * Base implementation, calls {@link #setYADARequest(YADARequest)},
 	 * {@link #setArgs(List)}, {@link #setPreargs(List)}
 	 * and returns {@link #getYADARequest()}
 	 * @see com.novartis.opensource.yada.plugin.Preprocess#engage(com.novartis.opensource.yada.YADARequest)
@@ -167,7 +167,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
       if(args != null && args.length > 0)
         setPreargs(Arrays.asList(args));
 	  }
-	  
+
 		return getYADARequest();
 	}
 
@@ -208,35 +208,35 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
 	{
 	  // default impl here looks for arg/prearg
 	  validateURL();
-	  
-	  // will use argument to inject, if present, or return gracefully 
-	  setTokenValidator(); 
+
+	  // will use argument to inject, if present, or return gracefully
+	  setTokenValidator();
 	  // default impl does nothing
 	  validateToken();
-	  
+
 	  // will use argument to inject, if present, or use current class,
 	  // if interface is implemented, or return gracefully
 	  setSecurityPolicy(EXECUTION_POLICY);
 	  SecurityPolicy policy = getSecurityPolicy();
 	  if(policy != null)
 	    ((ExecutionPolicy)policy).applyExecutionPolicy();
-	  
+
     // will use argument to inject, if present, or use current class,
     // if interface is implemented, or return gracefully
 	  setSecurityPolicy(CONTENT_POLICY);
 	  policy = getSecurityPolicy();
     if(policy != null)
       ((ContentPolicy)policy).applyContentPolicy();
-    
+
 	}
-	
+
 	/**
 	  * Throws an exception if the URL returned by {@code req.getRequestURL()} is unauthenticated.
 	  * @throws YADASecurityException if a non-authenticated URL is requested
 	  * @since 7.0.0
 	  */
 	@Override
-	public void validateURL() throws YADASecurityException 
+	public void validateURL() throws YADASecurityException
 	{
 	  String pathRx = getArgumentValue(AUTH_PATH_RX);
 	  if(pathRx != null && pathRx.length() > 0)
@@ -248,7 +248,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
 	    }
 	  }
 	}
-	
+
 	/**
    * Default implementation calls {@link TokenValidator#validateToken()} via injection
    * @since 7.0.0
@@ -258,18 +258,18 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   {
     // nothing to do
   }
-  
+
   /**
-   * Returns the value of {@code key} from {@link #args} 
+   * Returns the value of {@code key} from {@link #args}
    * or {@link #preargs} or from {@link System#getProperty(String)}
    * @param key the name of the argument for which the value is desired
    * @return the value mapped to {@code key} or an empty {@link String}
    * @since 7.0.0
    */
-  protected String getArgumentValue(String key) 
+  protected String getArgumentValue(String key)
   {
     String val = "";
-    
+
     if(this.args == null || this.args.size() == 0)
     {
       if(this.preargs == null || this.preargs.size() == 0)
@@ -287,11 +287,11 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
     }
     return val;
   }
-  
-  
+
+
 	/**
    * Retrieves the value part of an argument passed as a name=value pair
-   * 
+   *
    * @param list the argument parameter list to review
    * @param key the name in the argument name=value pair to retrieve
    * @return the value mapped to {@code key} or {@code null}
@@ -310,7 +310,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
     }
     return null;
   }
-	
+
 	/**
 	 * Standard mutator for variable
 	 * @param yadaReq the currently executing {@link YADARequest}
@@ -318,7 +318,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
 	public void setYADARequest(YADARequest yadaReq) {
 	  this.yadaReq = yadaReq;
 	}
-	
+
   /**
    * Standard accessor for variable
    * @return the {@link YADARequest} being executed
@@ -326,7 +326,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   public YADARequest getYADARequest() {
     return this.yadaReq;
   }
-  
+
 	/**
 	 * Standard mutator for variable
 	 * @param yq the {@link YADAQuery} to which this preprocessor is attached
@@ -334,7 +334,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
 	public void setYADAQuery(YADAQuery yq) {
     this.yq = yq;
   }
-	
+
   /**
    * Standard accessor for variable
    * @return the {@link YADAQuery} to which this preprocessor is attached
@@ -342,17 +342,17 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   public YADAQuery getYADAQuery() {
     return this.yq;
   }
-  
+
   /**
    * Default implementation intended for override
    * @since 7.0.0
    */
   @Override
-  public void setToken() 
+  public void setToken()
   {
     // nothing to do
   }
-  
+
   /**
    * Standard mutator for variable
    * @param token the value of the authentication token
@@ -363,7 +363,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   {
     this.token = token;
   }
-  
+
   /**
    * Standard accessor for variable
    * @return the value of the validated {@code NIBR521} header
@@ -371,53 +371,53 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
    * @since 7.0.0
    */
   @Override
-  public Object getToken() throws YADASecurityException 
+  public Object getToken() throws YADASecurityException
   {
     return this.token;
   }
-  
+
   @Override
   public String getHeader(String header)
   {
     return getYADARequest().getRequest().getHeader(header);
   }
-  
-  @Override 
+
+  @Override
   public Object getSessionAttribute(String attribute)
   {
     return getYADARequest().getRequest().getSession().getAttribute(attribute);
   }
-  
+
   /**
    * Convenience method to get the user id value for security policy application
    * @return a json string containing the {@code UID} value stored in the {@code YADA.user.privs} session attribute
    */
   public String getLoggedUser()
   {
-    return ((JSONArray)getSessionAttribute("YADA.user.privs")).getJSONObject(0).getString("UID");
+    return ((JSONArray)getSessionAttribute("YADA.user.privs")).getJSONObject(0).getString("USERID");
   }
-  
+
   @Override
   public String getValue(String key)
   {
     return getYADAQuery().getDataRow(0).get(key)[0];
   }
-  
+
   @Override
   public String getValue(int index)
   {
     return getYADAQuery().getDataRow(0).get("YADA_"+index)[0];
   }
-  
+
   @Override
   public String getCookie(String cookie)
   {
     Cookie[] cookies = getYADARequest().getRequest().getCookies();
-    if (cookies != null) 
+    if (cookies != null)
     {
-      for (Cookie c : cookies) 
+      for (Cookie c : cookies)
       {
-        if (c.getName().equals(cookie)) 
+        if (c.getName().equals(cookie))
         {
           return c.getValue();
         }
@@ -426,7 +426,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
     return null;
   }
   /**
-   * No arg mutator for variable, gets FQCN from args or properties 
+   * No arg mutator for variable, gets FQCN from args or properties
    * @throws YADASecurityException when the validator can't be loaded
    * @since 7.0.0
    */
@@ -436,13 +436,13 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
     {
       Class<?> clazz = null;
       String name = "";
-      try 
+      try
       {
         name = getArgumentValue(TOKEN_VALIDATOR);
         if(name.length() == 0) return;
         clazz = Class.forName(name);
-      } 
-      catch (ClassNotFoundException e) 
+      }
+      catch (ClassNotFoundException e)
       {
         try
         {
@@ -455,18 +455,18 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
           throw new YADASecurityException(msg,e1);
         }
       }
-      
-      try 
+
+      try
       {
         setTokenValidator((TokenValidator)clazz.newInstance());
-      } 
+      }
       catch (InstantiationException | IllegalAccessException e) {
         String msg = "Could not instantiate the specified TokenValidator class: " + name;
         throw new YADASecurityException(msg,e);
       }
     }
   }
-  
+
   /**
    * Standard mutator for variable
    * @param tokenValidator the {@link TokenValidator} instance
@@ -476,17 +476,17 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   {
     this.tokenValidator = tokenValidator;
   }
-  
+
   /**
    * Standard accessor for variable
    * @return the {@link TokenValidator} instance
    * @since 7.0.0
    */
-  public TokenValidator getTokenValidator() 
+  public TokenValidator getTokenValidator()
   {
     return this.tokenValidator;
   }
-  
+
   /**
    * Default implementation of {@link SecurityPolicy#applyPolicy()}, intended for override
    * @throws YADASecurityException when the user is unauthorized or there is an error in policy processing
@@ -497,7 +497,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   {
     // nothing to do
   }
-  
+
   /**
    * Default implementation of {@link SecurityPolicy#applyPolicy()}, intended for override
    * @throws YADASecurityException when the user is unauthorized or there is an error in policy processing
@@ -508,7 +508,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   {
     // nothing to do
   }
-  
+
   /**
    * Default implementation of does nothing, intended for override
    * @throws YADASecurityException when the user is unauthorized or there is an error in policy processing
@@ -519,7 +519,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   {
     // nothing to do
   }
- 
+
   /**
    * Default implementation of does nothing, intended for override
    * @throws YADASecurityException when the user is unauthorized or there is an error in policy processing
@@ -530,7 +530,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   {
     // nothing to do
   }
-  
+
   /**
    * @return the args
    * @since 7.0.0
@@ -543,11 +543,11 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
    * @param args the args to set
    * @since 7.0.0
    */
-  public void setArgs(List<String> args) 
+  public void setArgs(List<String> args)
   {
     this.args = args;
   }
-  
+
   /**
    * @return the preargs
    * @since 7.0.0
@@ -562,7 +562,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
    * @deprecated as of 7.1.0
    */
   @Deprecated
-  public void setPreargs(List<String> preargs) 
+  public void setPreargs(List<String> preargs)
   {
     this.preargs = preargs;
   }
@@ -570,7 +570,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   /**
    * @return the securityPolicy
    */
-  public SecurityPolicy getSecurityPolicy() 
+  public SecurityPolicy getSecurityPolicy()
   {
     return this.securityPolicy;
   }
@@ -578,13 +578,13 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   /**
    * @param securityPolicy the securityPolicy to set
    */
-  public void setSecurityPolicy(SecurityPolicy securityPolicy) 
+  public void setSecurityPolicy(SecurityPolicy securityPolicy)
   {
     this.securityPolicy = securityPolicy;
   }
-  
+
   /**
-   * No arg mutator for variable, gets FQCN from args or properties 
+   * No arg mutator for variable, gets FQCN from args or properties
    * @param policyType either {@link #CONTENT_POLICY} or {@link #EXECUTION_POLICY}
    * @throws YADASecurityException when the policy can't be loaded
    * @since 7.0.0
@@ -595,22 +595,22 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
     {
       Class<?> clazz = null;
       String name = "";
-      try 
+      try
       {
         // this is where the default query param implementation meets execution.
-        // the value of the 'execution.policy' or 'content.policy' argument is the 
+        // the value of the 'execution.policy' or 'content.policy' argument is the
         // implementing class name
         name = getArgumentValue(policyType);
-        if(name != null && name.equals(VOID)) 
+        if(name != null && name.equals(VOID))
         {
-          return; 
+          return;
         }
         else if(name == null || name.length() == 0)
         {
           try
           {
             String   iface  = policyType.equals(EXECUTION_POLICY) ? EXECUTION_POLICY_INTERFACE : CONTENT_POLICY_INTERFACE;
-            Class<?> plugin = Class.forName(PLUGIN_PKG+iface); 
+            Class<?> plugin = Class.forName(PLUGIN_PKG+iface);
             if(plugin.isAssignableFrom(getClass()))
               setSecurityPolicy(this);
           }
@@ -621,8 +621,8 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
           return;
         }
         clazz = Class.forName(name);
-      } 
-      catch (ClassNotFoundException e) 
+      }
+      catch (ClassNotFoundException e)
       {
         try
         {
@@ -635,93 +635,93 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
           throw new YADASecurityException(msg,e1);
         }
       }
-      
-      try 
+
+      try
       {
         setSecurityPolicy((SecurityPolicy)clazz.newInstance());
-      } 
+      }
       catch (InstantiationException | IllegalAccessException e) {
         String msg = "Could not instantiate the specified SecurityPolicy class: " + name;
         throw new YADASecurityException(msg,e);
       }
     }
   }
-  
+
   /**
-   * Returns {@code true} if the security target is 
-   * associated to a {@link #BLACKLIST} policy type in the 
+   * Returns {@code true} if the security target is
+   * associated to a {@link #BLACKLIST} policy type in the
    * {@code YADA_A11N} table
-   * 
+   *
    * @param type
    *          the value of the {@code TYPE} field in the
    *          {@code YADA_A11N} table
    * @return {@code true} if {@code TYPE} is {@link #BLACKLIST}
    */
   @Override
-  public boolean isBlacklist(String type) 
+  public boolean isBlacklist(String type)
   {
     return BLACKLIST.equals(type);
   }
-  
+
   /**
-   * Returns {@code true} if the security target is 
-   * associated to a {@link #WHITELIST} policy type in the 
+   * Returns {@code true} if the security target is
+   * associated to a {@link #WHITELIST} policy type in the
    * {@code YADA_A11N} table
-   * 
+   *
    * @param type
    *          the value of the {@code TYPE} field in the
    *          {@code YADA_A11N} table
    * @return {@code true} if {@code TYPE} is {@link #WHITELIST}
    */
   @Override
-  public boolean isWhitelist(String type) 
+  public boolean isWhitelist(String type)
   {
     return WHITELIST.equals(type);
   }
-  
+
   /**
    * Retrieves the row from {@code YADA_A11N} for the desired query.
    * @param securityPolicyCode the policy code {@code E}
    * @return a {@link HashMap} contaning the security config for the {@code qname}
    * @throws YADASecurityException when the security query can't be retrieved
-   */  
+   */
   @Override
-  public List<SecurityPolicyRecord> getSecurityPolicyRecords(String securityPolicyCode) throws YADASecurityException 
+  public List<SecurityPolicyRecord> getSecurityPolicyRecords(String securityPolicyCode) throws YADASecurityException
   {
     List<SecurityPolicyRecord> policy = new ArrayList<>();
 
     // get the security params associated to the query
     String qname = getYADAQuery().getQname();
-    try (ResultSet rs = YADAUtils.executePreparedStatement(YADA_A11N_QUERY, new Object[] { qname });) 
+    try (ResultSet rs = YADAUtils.executePreparedStatement(YADA_A11N_QUERY, new Object[] { qname });)
     {
       while (rs.next()) {
         String tgt        = rs.getString(1); // YADA_A11N.TARGET  (this is in the query paramaters, no need to pass)
         String policyCode = rs.getString(2); // YADA_A11N.POLICY  (this is in the method parameters, no need to pass`)
         String type       = rs.getString(3); // YADA_A11N.TYPE
         String a11nQname  = rs.getString(4); // YADA_A11N.QNAME (a query name)
-        
-        if (qname.equals(tgt) && policyCode.equals(securityPolicyCode)) 
+
+        if (qname.equals(tgt) && policyCode.equals(securityPolicyCode))
         {
           policy.add(new SecurityPolicyRecord(tgt,policyCode,type,a11nQname));
         }
       }
       ConnectionFactory.releaseResources(rs);
-    } 
-    catch (SQLException | YADAConnectionException | YADASQLException e) 
+    }
+    catch (SQLException | YADAConnectionException | YADASQLException e)
     {
       String msg = "Unauthorized. Could not obtain security query. This could be a temporary problem.";
       throw new YADASecurityException(msg, e);
-    } 
-    
+    }
+
     if (policy.size() == 0)
     {
       String msg = "Unauthorized. A security check was configured by has no policy associated to it.";
       throw new YADASecurityException(msg);
     }
-    
+
     return policy;
   }
-  
+
   /**
    * Sets the current security policy to {@code null}.
    * @since 7.0.0
