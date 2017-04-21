@@ -133,7 +133,7 @@ else
 	{
 		result = service.execute();
 		String fmt    = service.getYADARequest().getFormat();
-		//TODO confirm response content type defaults to json even though the call below follows
+		// TODO confirm response content type defaults to json even though the call below follows
 		// the call to execute
 		boolean exception = result.matches(EXCEPTION);
 		if (YADARequest.FORMAT_JSON.equals(fmt)

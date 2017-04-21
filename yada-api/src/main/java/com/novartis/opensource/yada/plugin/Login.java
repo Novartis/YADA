@@ -18,7 +18,6 @@
 package com.novartis.opensource.yada.plugin;
 
 import javax.servlet.http.HttpSession;
-import javax.tools.JavaCompiler;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

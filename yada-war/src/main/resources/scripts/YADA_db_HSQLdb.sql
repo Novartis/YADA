@@ -1,4 +1,4 @@
---﻿CREATE USER "yada" PASSWORD "yada" ADMIN;
+--﻿CREATE USER "yada" PASSWORD "yada" ADMIN
 --CREATE SCHEMA YADA AUTHORIZATION DBA
 --ALTER USER "yada" SET INITIAL SCHEMA "YADA"
 --CONNECT USER "yada" PASSWORD "yada"
@@ -90,8 +90,8 @@ INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADA','java:comp/env/jdbc
 -- YADATEST is probably only necessary for automated testing.
 -- In the YADA-Quickstart config, the variables aren't replaced
 INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADATEST','java:comp/env/jdbc/yada',
-'jdbcUrl=${YADA.hsqldb.index.url}
-driverClassName=${YADA.hsqldb.index.driverClassName}
+'jdbcUrl=jdbc:hsqldb:hsql://localhost/yada
+driverClassName=org.hsqldb.jdbc.JDBCDriver
 username=yada
 password=yada
 autoCommit=false

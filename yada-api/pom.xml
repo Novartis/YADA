@@ -6,9 +6,7 @@
     <artifactId>YADA</artifactId>
     <version>8.4.2-SNAPSHOT</version>
   </parent>
-  <groupId>com.novartis.opensource</groupId>
   <artifactId>yada-api</artifactId>
-  <version>8.4.2-SNAPSHOT</version>
   <name>yada-api</name>
   <url>http://github.com/Novartis/YADA</url>
   <distributionManagement>
@@ -977,7 +975,6 @@
     <dependency>
       <groupId>nl.javadude.assumeng</groupId>
       <artifactId>assumeng</artifactId>
-      <version>1.2.4</version>
       <scope>test</scope>
     </dependency>
     <!-- unused -->

@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
 import com.novartis.opensource.yada.ConnectionFactory;
@@ -123,15 +124,24 @@ public class RESTAdaptor extends Adaptor {
 			try {
 				URL           url  = new URL(urlStr);
 				URLConnection conn = null;
+				
 				if(this.hasProxy())
 				{
 					String[] proxyStr = this.proxy.split(":");
-					Proxy    proxySvr = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyStr[0], Integer.parseInt(proxyStr[1])));
+					Proxy    proxySvr = new Proxy(Proxy.Type.HTTP, 
+												  new InetSocketAddress(proxyStr[0], Integer.parseInt(proxyStr[1])));
 					conn = url.openConnection(proxySvr);
 				}
 				else
 				{
 					conn = url.openConnection();
+				}
+				
+				if (url.getUserInfo() != null) 
+				{
+					// TODO issue with '@' sign in pw, must decode first
+				    String basicAuth = "Basic " + new String(new Base64().encode(url.getUserInfo().getBytes()));
+				    conn.setRequestProperty("Authorization", basicAuth);
 				}
 				
 				if(yq.getCookies() != null && yq.getCookies().size() > 0)

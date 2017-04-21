@@ -304,7 +304,6 @@ public class ServiceTest
    * @throws IOException if the {@link InputStream} used for reading test files
    *         can't be closed
    */
-  @SuppressWarnings("resource")
   public String[] loadResource(String path) throws URISyntaxException, IOException
   {
     Scanner scanner = null;

@@ -252,7 +252,6 @@ public class Gatekeeper extends AbstractPreprocessor {
       // policy has params and req has compatible params
       if(policyHasParams && !reqHasJSONParams)
       {
-        @SuppressWarnings("null")
         String[]      polCols = policyIndices.split("\\s");
         StringBuilder polVals = new StringBuilder();
 
@@ -336,7 +335,6 @@ public class Gatekeeper extends AbstractPreprocessor {
         // 1. get JSONParams from query (params)
         LinkedHashMap<String, String[]> dataRow = getYADAQuery().getDataRow(0);
         // 2. add user column if necessary
-        @SuppressWarnings("null")
         String[] polCols = policyColumns.split("\\s");
         for(String colspec : polCols)
         {
