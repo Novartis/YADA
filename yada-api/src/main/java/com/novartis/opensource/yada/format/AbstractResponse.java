@@ -222,7 +222,7 @@ public abstract class AbstractResponse implements Response
 			} 
 			catch (Exception e)
 			{
-				l.warn("The specified class ["+converterClass+"] could not be instantiated.  Trying FQCN."); 
+				l.warn("The specified class ["+converterClass+"], as provided, could not be instantiated.  Trying FQCN."); 
 				try
 				{
 				  converterClass = FORMAT_PKG+converterClass;
@@ -233,7 +233,7 @@ public abstract class AbstractResponse implements Response
 				}
 				catch(Exception e1)
 				{
-					l.warn("The specified class ["+converterClass+"] could not be instantiated.  Trying default classes.",e1);
+					l.warn("The specified class ["+converterClass+"], as provided, could not be instantiated.  Trying default classes.",e1);
 					converter = getDefaultConverter(yqr);
 				}
 			} 

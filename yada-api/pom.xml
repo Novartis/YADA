@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.novartis.opensource</groupId>
     <artifactId>YADA</artifactId>
-    <version>8.4.2-SNAPSHOT</version>
+    <version>8.5.0-SNAPSHOT</version>
   </parent>
   <artifactId>yada-api</artifactId>
   <name>yada-api</name>
@@ -405,11 +405,11 @@
     <profile>
       <id>test-proxy</id>
       <properties>
-        <YADA.index.url>${YADA.pgsql.index.url}</YADA.index.url>
-        <YADA.index.username>${YADA.pgsql.index.username}</YADA.index.username>
+        <YADA.index.url>${YADA.hsqldb.index.url}</YADA.index.url>
+        <YADA.index.username>${YADA.hsqldb.index.username}</YADA.index.username>
         <YADA.index.password>${YADA.pgsql.index.password}</YADA.index.password>
         <YADA.index.autoCommit>false</YADA.index.autoCommit>
-        <YADA.index.driverClassName>${YADA.pgsql.index.driverClassName}</YADA.index.driverClassName>
+        <YADA.index.driverClassName>${YADA.hsqldb.index.driverClassName}</YADA.index.driverClassName>
       </properties>
       <build>
         <plugins>
@@ -463,11 +463,11 @@
     <profile>
       <id>test-noproxy</id>
       <properties>
-        <YADA.index.url>${YADA.pgsql.index.url}</YADA.index.url>
-        <YADA.index.username>${YADA.pgsql.index.username}</YADA.index.username>
-        <YADA.index.password>${YADA.pgsql.index.password}</YADA.index.password>
+        <YADA.index.url>${YADA.hsqldb.index.url}</YADA.index.url>
+        <YADA.index.username>${YADA.hsqldb.index.username}</YADA.index.username>
+        <YADA.index.password>${YADA.hsqldb.index.password}</YADA.index.password>
         <YADA.index.autoCommit>false</YADA.index.autoCommit>
-        <YADA.index.driverClassName>${YADA.pgsql.index.driverClassName}</YADA.index.driverClassName>
+        <YADA.index.driverClassName>${YADA.hsqldb.index.driverClassName}</YADA.index.driverClassName>
       </properties>
       <build>
         <plugins>
@@ -521,11 +521,11 @@
     <profile>
       <id>test-fs</id>
       <properties>
-        <YADA.index.url>${YADA.pgsql.index.url}</YADA.index.url>
-        <YADA.index.username>${YADA.pgsql.index.username}</YADA.index.username>
-        <YADA.index.password>${YADA.pgsql.index.password}</YADA.index.password>
+        <YADA.index.url>${YADA.hsqldb.index.url}</YADA.index.url>
+        <YADA.index.username>${YADA.hsqldb.index.username}</YADA.index.username>
+        <YADA.index.password>${YADA.hsqldb.index.password}</YADA.index.password>
         <YADA.index.autoCommit>false</YADA.index.autoCommit>
-        <YADA.index.driverClassName>${YADA.pgsql.index.driverClassName}</YADA.index.driverClassName>
+        <YADA.index.driverClassName>${YADA.hsqldb.index.driverClassName}</YADA.index.driverClassName>
       </properties>
       <build>
         <plugins>

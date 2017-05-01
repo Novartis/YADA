@@ -17,12 +17,15 @@ package com.novartis.opensource.yada.adaptor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpCookie;
+import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -30,6 +33,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import com.novartis.opensource.yada.ConnectionFactory;
 import com.novartis.opensource.yada.YADAQuery;
@@ -59,9 +63,31 @@ public class RESTAdaptor extends Adaptor {
 	protected final static Pattern PARAM_URL_RX    = Pattern.compile(".+"+PARAM_SYMBOL_RX+".*");
 	
 	/**
+	 * Constant equal to: {@value}
+	 * {@link JSONParams} key for delivery of {@code HTTP POST, PUT, PATCH} body content
+	 * @since 8.5.0
+	 */
+	private final static String YADA_PAYLOAD       = "YADA_PAYLOAD";
+	
+	/**
+	 * Constant equal to: {@value}
+	 * Workaround for requests using {@code HTTP PATCH}
+	 * @since 8.5.0
+	 */
+	private final static String X_HTTP_METHOD_OVERRIDE = "X-HTTP-Method-Override";
+	
+	/**
 	 * Variable to hold the proxy server string if necessary
 	 */
 	private String proxy = null;
+	
+	/**
+	 * Variable denoting the HTTP method
+	 * @since 8.5.0
+	 */
+	private String method = YADARequest.METHOD_GET;
+	
+
 	/**
 	 * Default constructor
 	 */
@@ -77,6 +103,11 @@ public class RESTAdaptor extends Adaptor {
 	public RESTAdaptor(YADARequest yadaReq)
 	{
 		super(yadaReq);
+		if(yadaReq.getMethod() != null && !yadaReq.getMethod().equals(YADARequest.METHOD_GET))
+		{
+			this.method = yadaReq.getMethod();
+		}
+		
 		if(yadaReq.getProxy() != null && !yadaReq.getProxy().equals(""))
 		{
 			this.proxy = yadaReq.getProxy();
@@ -102,14 +133,35 @@ public class RESTAdaptor extends Adaptor {
 	@Override
 	public void execute(YADAQuery yq) throws YADAAdaptorExecutionException
 	{
+		boolean isPostPutPatch = this.method.equals(YADARequest.METHOD_POST) 
+																|| this.method.equals(YADARequest.METHOD_PUT)
+																|| this.method.equals(YADARequest.METHOD_PATCH);
 		resetCountParameter(yq);
 		int rows = yq.getData().size() > 0 ? yq.getData().size() : 1;
+		/*
+		 * Remember:
+		 * A row is an set of YADA URL parameter values, e.g.,
+		 * 
+		 *  x,y,z in this:      
+		 *    ...yada/q/queryname/p/x,y,z
+		 *  so 1 row
+		 *    
+		 *  or each of {col1:x,col2:y,col3:z} and {col1:a,col2:b,col3:c} in this:
+		 *    ...j=[{qname:queryname,DATA:[{col1:x,col2:y,col3:z},{col1:a,col2:b,col3:c}]}]
+		 *  so 2 rows
+		 */
 		for(int row=0;row<rows;row++)
 		{
 			String result = "";
+			
+			// creates result array and assigns it
 			yq.setResult();
 			YADAQueryResult yqr    = yq.getResult();
+			
+			
 			String          urlStr = yq.getUrl(row);
+			
+			
 			for (int i=0;i<yq.getParamCount(row);i++)
 			{
 				Matcher m = PARAM_URL_RX.matcher(urlStr);
@@ -118,12 +170,14 @@ public class RESTAdaptor extends Adaptor {
 					String param = yq.getVals(row).get(i);
 					urlStr = urlStr.replaceFirst(PARAM_SYMBOL_RX,m.group(1)+param);
 				}
-			}
+			}			
 			
 			l.debug("REST url w/params: ["+urlStr+"]");
-			try {
+			try 
+			{
 				URL           url  = new URL(urlStr);
 				URLConnection conn = null;
+				
 				
 				if(this.hasProxy())
 				{
@@ -137,13 +191,15 @@ public class RESTAdaptor extends Adaptor {
 					conn = url.openConnection();
 				}
 				
+				// basic auth
 				if (url.getUserInfo() != null) 
 				{
-					// TODO issue with '@' sign in pw, must decode first
-				    String basicAuth = "Basic " + new String(new Base64().encode(url.getUserInfo().getBytes()));
-				    conn.setRequestProperty("Authorization", basicAuth);
+					//TODO issue with '@' sign in pw, must decode first
+				  String basicAuth = "Basic " + new String(new Base64().encode(url.getUserInfo().getBytes()));
+				  conn.setRequestProperty("Authorization", basicAuth);
 				}
 				
+				// cookies
 				if(yq.getCookies() != null && yq.getCookies().size() > 0)
 				{
 				  String cookieStr = "";
@@ -154,12 +210,51 @@ public class RESTAdaptor extends Adaptor {
 				  conn.setRequestProperty("Cookie", cookieStr);
 				}
 				
+				if(yq.getHttpHeaders() != null && yq.getHttpHeaders().length() > 0)
+				{
+					l.debug("Processing custom headers...");
+					@SuppressWarnings("unchecked")
+					Iterator<String> keys = yq.getHttpHeaders().keys();
+					while(keys.hasNext())
+					{
+						String name = keys.next(); 
+						String value = yq.getHttpHeaders().getString(name);
+						l.debug("Custom header: "+name+" : "+value);
+						conn.setRequestProperty(name, value);
+						if(name.equals(X_HTTP_METHOD_OVERRIDE) && value.equals(YADARequest.METHOD_PATCH))
+						{
+							l.debug("Resetting method to ["+YADARequest.METHOD_POST+"]");
+							this.method = YADARequest.METHOD_POST;
+						}
+					}
+				}
+			
+				
+				HttpURLConnection hConn = (HttpURLConnection)conn;
+				if(!this.method.equals(YADARequest.METHOD_GET))
+				{										
+					hConn.setRequestMethod(this.method);					
+					if(isPostPutPatch)
+					{
+						//TODO make YADA_PAYLOAD case-insensitive and create an alias for it, e.g., ypl
+						// NOTE: YADA_PAYLOAD is a COLUMN NAME found in a JSONParams DATA object.  It 
+						//       is not a YADA param
+						String payload = yq.getDataRow(row).get(YADA_PAYLOAD)[0]; 
+						hConn.setDoOutput(true);
+						OutputStreamWriter writer;
+						writer = new OutputStreamWriter(conn.getOutputStream());				
+						writer.write(payload.toString());
+				    writer.flush();
+					}
+				}
+				
+				// debug
 				Map<String, List<String>> map = conn.getHeaderFields();
 				for (Map.Entry<String, List<String>> entry : map.entrySet()) {
 					l.debug("Key : " + entry.getKey() + " ,Value : " + entry.getValue());
 				}
 				
-				try(BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream())))
+				try(BufferedReader in = new BufferedReader(new InputStreamReader(hConn.getInputStream())))
 				{
 				  String 		   inputLine;
 				  while ((inputLine = in.readLine()) != null)

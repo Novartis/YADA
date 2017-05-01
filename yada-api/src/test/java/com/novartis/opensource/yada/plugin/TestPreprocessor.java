@@ -31,8 +31,8 @@ import com.novartis.opensource.yada.YADARequest;
 public class TestPreprocessor extends AbstractPreprocessor
 {
 	/**
-   * Local logger handle
-   */
+     * Local logger handle
+     */
 	private static Logger l = Logger.getLogger(TestPreprocessor.class);
 
 	/**
@@ -45,7 +45,7 @@ public class TestPreprocessor extends AbstractPreprocessor
 	@Override
 	public YADARequest engage(YADARequest yadaReq) throws YADAPluginException
 	{
-	  // store the original qname
+	    // store the original qname
 		String      qname    = yadaReq.getQname();
 		// create a new request object
 		YADARequest lyadaReq = new YADARequest();

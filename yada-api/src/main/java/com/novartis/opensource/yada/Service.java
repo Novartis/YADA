@@ -136,8 +136,6 @@ public class Service {
 	{
 		l.debug("Request query string is ["+request.getQueryString()+"]");
 		getYADARequest().setRequest(request);
-		// there's an 'unchecked' warning on the 'getParameterMap' call which will be resolved
-		// by upgrading to Tomcat7/Servlet 3.0.
 		handleRequest(request.getHeader("referer"), request.getParameterMap());
 	}
 	
@@ -259,6 +257,14 @@ public class Service {
   		if (paraMap.get(YADARequest.PS_HARMONYMAP) != null)
   		{
   			getYADARequest().setHarmonyMap(paraMap.get(YADARequest.PS_HARMONYMAP));
+  		}
+  		if (paraMap.get(YADARequest.PL_HTTPHEADERS) != null)
+  		{
+  			getYADARequest().setHTTPHeaders(paraMap.get(YADARequest.PL_HTTPHEADERS));
+  		}
+  		if (paraMap.get(YADARequest.PS_HTTPHEADERS) != null)
+  		{
+  			getYADARequest().setHTTPHeaders(paraMap.get(YADARequest.PS_HTTPHEADERS));
   		}
   		if (paraMap.get(YADARequest.PL_JSONPARAMS) != null)
   		{
@@ -925,14 +931,14 @@ public class Service {
 			} 
 			catch (Exception e)
 			{
-				l.warn("The specified class ["+responseClass+"] could not be instantiated.  Trying FQCN."); 
+				l.warn("The specified class ["+responseClass+"], as provided, could not be instantiated.  Trying FQCN."); 
 				try
 				{
 					response = (Response) Class.forName(FORMAT_PKG+responseClass).newInstance();
 				}
 				catch(Exception e1)
 				{
-					l.warn("The specified class ["+responseClass+"] could not be instantiated.  Trying default classes.");
+					l.warn("The specified class ["+responseClass+"], as provided, could not be instantiated.  Trying default classes.");
 					//TODO send messages like this back to the client, in the default response to indicate what happened with more specificity
 					response = getDefaultResponse(format);
 				}

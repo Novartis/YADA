@@ -32,7 +32,7 @@ public class HSQLdbAdaptor extends JDBCAdaptor {
   }
 
   /**
-   * @param yadaReq
+   * @param yadaReq the {@link YADARequest} object containing the request data and config
    */
   public HSQLdbAdaptor(YADARequest yadaReq) {
     super(yadaReq);

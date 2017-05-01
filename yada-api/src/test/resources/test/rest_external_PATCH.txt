@@ -1,0 +1,5 @@
+j=[{"qname":"RESTTEST PATCH",DATA:[{"YADA_PAYLOAD":"body=yadayada"}]}]&H={"X-HTTP-Method-Override":"PATCH"}
+j=[{"qname":"RESTTEST PATCH with param",DATA:[{"YADA_1":"1","YADA_PAYLOAD":"body=yadayada"}]}]&H={"X-HTTP-Method-Override":"PATCH"}
+
+JSONParams=[{qname:"RESTTEST PATCH",DATA:[{"YADA_PAYLOAD":"body=yadayada"}]}]&HTTPHeaders={"X-HTTP-Method-Override":"PATCH"}
+JSONParams=[{qname:"RESTTEST PATCH with param",DATA:[{"YADA_1":"1","YADA_PAYLOAD":"body=yadayada"}]}]&HTTPHeaders={"X-HTTP-Method-Override":"PATCH"}

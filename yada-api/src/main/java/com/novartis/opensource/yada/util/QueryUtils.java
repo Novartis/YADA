@@ -158,7 +158,7 @@ public class QueryUtils
 	 * A constant equal to: {@value}
 	 * @since PROVISIONAL
 	 */
-	public final static String RX_FILE_URI = "^([^<]+)((<{1,2})(.+))*$";
+	public final static String RX_FILE_URI = "^([^&lt;]+)((&lt;{1,2})(.+))*$";
 	/**
 	 * A constant equal to: {@value}
 	 * @since PROVISIONAL
@@ -168,12 +168,12 @@ public class QueryUtils
 	 * A constant equal to: {@value}
 	 * @since PROVISIONAL
 	 */
-	public static final String WRITE = "<";
+	public static final String WRITE = "&lt;";
 	/**
 	 * A constant equal to: {@value}
 	 * @since PROVISIONAL
 	 */
-	public static final String APPEND = "<<";
+	public static final String APPEND = "&lt;&lt;";
 	/**
 	 * A constant equal to: {@value}
 	 */
@@ -307,6 +307,7 @@ public class QueryUtils
 	 * @throws YADAUnsupportedAdaptorException when the adaptor class mapped to {@code source} can't be found
 	 * @throws YADAConnectionException if a new datasource connection pool cannot be established or stored
 	 */
+	@SuppressWarnings("unchecked")
 	public Class<Adaptor> getAdaptorClass(String app) throws YADAResourceException, YADAUnsupportedAdaptorException, YADAConnectionException
 	{
 	  String driverName = "";

@@ -128,6 +128,11 @@ public class YADAQuery {
 	 */
 	private List<HttpCookie>                      cookies  = new ArrayList<>();
 	/**
+	 * The headers
+	 * @since 8.5.0
+	 */
+	private JSONObject                            httpHeaders = new JSONObject();
+	/**
 	 * A list containing maps, one for each query execution, of data key/value pairs, supporting arrays of values
 	 */
 	private List<LinkedHashMap<String,String[]>>  data     = new ArrayList<>();
@@ -776,6 +781,16 @@ public class YADAQuery {
     this.cookies.add(cookie);
   }
   
+  /**
+   * Adds the HTTP header name and value to the {@link #httpHeaders} {@link JSONObject} 
+   * @param name the header name
+   * @param value the header value
+   * @since 8.5.0
+   */
+  public void addHttpHeader(String name, String value) {  	
+  	this.httpHeaders.put(name, value);
+  }
+  
 	/**
 	 * Stores the request-level (global) parameters in the {@link YADAQuery} object for easier downstream utilization. 
 	 * This method is distinct from {@link #addYADAQueryParams(List)} in that it will not replace a parameter value
@@ -1115,7 +1130,13 @@ public class YADAQuery {
 	 * @since 5.1.0
 	 */
 	public List<HttpCookie> getCookies() { return this.cookies; }
-	  
+	/**
+	 * Standard accessor for variable
+	 * @return the list of {@code name/value} pair arrays stored in the query
+	 * @since 8.5.0
+	 */
+	public JSONObject getHttpHeaders() { return this.httpHeaders; }
+	
 	/**
 	 * @return the appropriate connection object, based on {@link #getProtocol()}
 	 */

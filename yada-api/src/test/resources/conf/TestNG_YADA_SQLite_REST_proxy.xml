@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- <suite name="Suite" parallel="methods" thread-count="20" data-provider-thread-count="20" > -->
 <suite name="rest-suite">
-	<parameter name="properties" value="/conf/TestNG_YADA_SQLite.properties"/>
+	<parameter name="properties" value="/conf/TestNG_YADA_HSQLdb.properties"/>
   <test enabled="true" name="API-REST" preserve-order="true">
   	<groups>
   		<run>

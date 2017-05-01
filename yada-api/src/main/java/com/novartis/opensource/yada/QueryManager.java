@@ -942,18 +942,32 @@ public class QueryManager
 	    index = ArrayUtils.indexOf(getJsonParams().getKeys(), yq.getQname());
 		yq.addRequestParams(this.yadaReq.getRequestParamsForQueries(),index);
 		yq.setAdaptorClass(this.qutils.getAdaptorClass(yq.getApp()));
-		if(RESTAdaptor.class.equals(yq.getAdaptorClass()) && this.yadaReq.hasCookies())
-    {
-      for(String cookieName : this.yadaReq.getCookies())
-      {
-        for(Cookie cookie : this.yadaReq.getRequest().getCookies())
-        {
-          if(cookie.getName().equals(cookieName))
-          {
-            yq.addCookie(cookieName, Base64.encodeBase64String(Base64.decodeBase64(cookie.getValue().getBytes())));
-          }
-        }
-      }
+		if(RESTAdaptor.class.equals(yq.getAdaptorClass()))
+		{
+			if(this.yadaReq.hasCookies())
+			{
+	      for(String cookieName : this.yadaReq.getCookies())
+	      {
+	        for(Cookie cookie : this.yadaReq.getRequest().getCookies())
+	        {
+	          if(cookie.getName().equals(cookieName))
+	          {
+	            yq.addCookie(cookieName, Base64.encodeBase64String(Base64.decodeBase64(cookie.getValue().getBytes())));
+	          }
+	        }
+	      }
+			}
+			if(this.yadaReq.hasHttpHeaders())
+			{
+				JSONObject httpHeaders = this.yadaReq.getHttpHeaders(); 
+				@SuppressWarnings("unchecked")
+				Iterator<String> keys = httpHeaders.keys();
+				while(keys.hasNext())
+				{
+					String name = keys.next(); 
+					yq.addHttpHeader(name, httpHeaders.getString(name));
+				}
+			}
     }
 		
 		//TODO handle missing params exceptions here, throw YADARequestException

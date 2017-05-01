@@ -420,26 +420,70 @@ public class ServiceTest
     logQuery(query);
     YADARequest yadaReq = new YADARequest();
     yadaReq.setUpdateStats(new String[] { "false" });
-    String[] array = query.split(AMP);
-    Map<String, String[]> paraMap = new HashMap<>();
-    for (String param : array)
+    StringBuilder b = new StringBuilder();
+    boolean inQuotes = false;
+    List<String> names  = new ArrayList<>();
+    List<String> values = new ArrayList<>();
+    for(char c : query.toCharArray())
     {
-      String[] pair = param.split(EQUAL);
-      String[] vals = paraMap.get(pair[0]);
+    	switch(c) {
+    		case '&':
+    			if(inQuotes)
+    			{
+    				b.append(c);
+    			}
+    			else
+    			{
+    				values.add(b.toString());
+    				b = new StringBuilder();
+    			}
+    			break;
+    		case '=':
+    			if(inQuotes)
+    			{
+    				b.append(c);
+    			}
+    			else
+    			{
+    				names.add(b.toString());
+    				b = new StringBuilder();
+    			}
+    			break;
+    		case '\"':
+    			inQuotes = !inQuotes;
+    		default:
+    			b.append(c);
+    	}
+    }
+    values.add(b.toString()); // the last one
+    
+    //String[] array = query.split(AMP);
+    Map<String, String[]> paraMap = new HashMap<>();
+    int i = 0;
+    for (String param : names)
+    {
+//      String[] pair = param.split(EQUAL);
+      String[] vals = paraMap.get(param);
       if(vals == null)
       {
-        paraMap.put(pair[0], new String[] {pair[1]});
+        paraMap.put(param, new String[] { values.get(i) });
       }
       else
       {
-        paraMap.put(pair[0],(String[])ArrayUtils.add(vals, pair[1]));
+        paraMap.put(param, (String[])ArrayUtils.add(vals, values.get(i)));
       }
+      i++;
     }
+    
+    
     for (String key : paraMap.keySet())
     {
       String[] val = paraMap.get(key);//null;
       if (key.equals(YADARequest.PL_JSONPARAMS) || key.equals(YADARequest.PS_JSONPARAMS) && val != null)
-        yadaReq.setJsonParams(new JSONParams(new JSONArray(val[0])));
+      {
+      	System.out.println(val[0]);
+      	yadaReq.setJsonParams(new JSONParams(new JSONArray(val[0])));
+      }
       else
       {
         try
@@ -982,6 +1026,86 @@ public class ServiceTest
   {
     Service svc = prepareTest(query);
     Assert.assertTrue(validateThirdPartyJSONResult(svc.execute()) ,  "Data invalid for query: "+query);
+  }
+  
+  /**
+   * Tests execution of a REST query using YADA as a proxy, and using HTTP POST
+   * 
+   * @param query the query to execute
+   * @throws YADAQueryConfigurationException when request creation fails
+   * @throws JSONException when the result does not conform
+   * @throws YADAResponseException when the test result is invalid
+   * @throws YADAExecutionException when the test execution fails
+   */
+  @Test(enabled = true, dataProvider = "QueryTests", groups = { "api","noproxy" })
+  @QueryFile(list = {})
+  public void testRESTExternalPOST(String query) throws YADAResponseException, YADAQueryConfigurationException, YADAExecutionException
+  {
+    Service svc = prepareTest(query);
+    YADARequest yadaReq = svc.getYADARequest();
+    yadaReq.setMethod(new String[] {YADARequest.METHOD_POST});
+    String result = svc.execute();
+    Assert.assertTrue(validateThirdPartyJSONResult(result) ,  "Data invalid for query: "+query);
+  }
+  
+  /**
+   * Tests execution of a REST query using YADA as a proxy, and using HTTP PUT
+   * 
+   * @param query the query to execute
+   * @throws YADAQueryConfigurationException when request creation fails
+   * @throws JSONException when the result does not conform
+   * @throws YADAResponseException when the test result is invalid
+   * @throws YADAExecutionException when the test execution fails
+   */
+  @Test(enabled = true, dataProvider = "QueryTests", groups = { "api","noproxy" })
+  @QueryFile(list = {})
+  public void testRESTExternalPUT(String query) throws YADAResponseException, YADAQueryConfigurationException, YADAExecutionException
+  {
+    Service svc = prepareTest(query);
+    YADARequest yadaReq = svc.getYADARequest();
+    yadaReq.setMethod(new String[] {YADARequest.METHOD_PUT});
+    String result = svc.execute();
+    Assert.assertTrue(validateThirdPartyJSONResult(result) ,  "Data invalid for query: "+query);
+  }
+  
+  /**
+   * Tests execution of a REST query using YADA as a proxy, and using HTTP PATCH
+   * 
+   * @param query the query to execute
+   * @throws YADAQueryConfigurationException when request creation fails
+   * @throws JSONException when the result does not conform
+   * @throws YADAResponseException when the test result is invalid
+   * @throws YADAExecutionException when the test execution fails
+   */
+  @Test(enabled = true, dataProvider = "QueryTests", groups = { "api","noproxy" })
+  @QueryFile(list = {})
+  public void testRESTExternalPATCH(String query) throws YADAResponseException, YADAQueryConfigurationException, YADAExecutionException
+  {
+    Service svc = prepareTest(query);
+    YADARequest yadaReq = svc.getYADARequest();
+    yadaReq.setMethod(new String[] {YADARequest.METHOD_PATCH});
+    String result = svc.execute();
+    Assert.assertTrue(validateThirdPartyJSONResult(result) ,  "Data invalid for query: "+query);
+  }
+  
+  /**
+   * Tests execution of a REST query using YADA as a proxy, and using HTTP DELETE
+   * 
+   * @param query the query to execute
+   * @throws YADAQueryConfigurationException when request creation fails
+   * @throws JSONException when the result does not conform
+   * @throws YADAResponseException when the test result is invalid
+   * @throws YADAExecutionException when the test execution fails
+   */
+  @Test(enabled = true, dataProvider = "QueryTests", groups = { "api","noproxy" })
+  @QueryFile(list = {})
+  public void testRESTExternalDELETE(String query) throws YADAResponseException, YADAQueryConfigurationException, YADAExecutionException
+  {
+    Service svc = prepareTest(query);
+    YADARequest yadaReq = svc.getYADARequest();
+    yadaReq.setMethod(new String[] {YADARequest.METHOD_DELETE});
+    String result = svc.execute();
+    Assert.assertTrue(validateThirdPartyJSONResult(result) ,  "Data invalid for query: "+query);
   }
 
   /**
@@ -1833,7 +1957,17 @@ public class ServiceTest
     else if (res.has(RESULTSET))
     {
       if(res.getJSONObject(RESULTSET).has(ROWS))
-        return validateJSONData(res.getJSONObject(RESULTSET).getJSONArray(ROWS).getJSONObject(0));
+      {
+      	try
+      	{
+      		return validateJSONData(res.getJSONObject(RESULTSET).getJSONArray(ROWS).getJSONObject(0));
+      	}
+      	catch(JSONException e)
+      	{
+      		throw new YADAResponseException("Test produced results that do not contain valid JSON objects in ROWS.  Try using validateThirdPartyJSONResult.");
+      	}
+      }
+       
       return res.getJSONObject(RESULTSET).getInt("total") > 0;
     }
     else

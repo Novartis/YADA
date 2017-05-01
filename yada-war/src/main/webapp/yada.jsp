@@ -136,6 +136,13 @@ else
 		// TODO confirm response content type defaults to json even though the call below follows
 		// the call to execute
 		boolean exception = result.matches(EXCEPTION);
+		if (service.getYADARequest().getExport())
+    {
+      response.setStatus(HttpServletResponse.SC_CREATED);
+      response.addHeader("Location", result);
+      response.setContentType("text/plain");
+      fmt = YADARequest.FORMAT_PLAINTEXT;
+    }
 		if (YADARequest.FORMAT_JSON.equals(fmt)
 				|| exception)
 		{

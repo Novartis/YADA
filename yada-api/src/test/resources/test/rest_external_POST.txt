@@ -1,0 +1,3 @@
+j=[{"qname":"RESTTEST POST",DATA:[{"YADA_PAYLOAD":"title=foo&body=bar&userId=1"}]}]
+
+JSONParams=[{"qname":"RESTTEST POST",DATA:[{"YADA_PAYLOAD":"title=foo&body=bar&userId=1"}]}]

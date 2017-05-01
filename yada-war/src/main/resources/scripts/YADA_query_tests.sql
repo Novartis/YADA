@@ -8,6 +8,7 @@ DELETE from YADA_PROP where target like 'YADA test sec%';
 DELETE from YADA_A11N where target like 'YADA test sec%';
 DELETE from YADA_QUERY where app = 'YADAFSIN' and qname like 'YADAFSIN test%';
 DELETE from YADA_QUERY where qname = 'QGO search';
+DELETE from YADA_QUERY where app = 'RESTTEST';
 
 INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADATEST','java:comp/env/jdbc/yada',
 'jdbcUrl=jdbc:postgresql://localhost/yada
@@ -20,6 +21,19 @@ maxLifetime=1800000
 minimumIdle=5
 maximumPoolSize=100
 driverClassName=org.postgresql.Driver');
+
+INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('RESTTEST','','http://jsonplaceholder.typicode.com');
+INSERT into YADA_UG (app,userid,role) VALUES ('RESTTEST','YADA','ADMIN');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('RESTTEST GET','/posts/1','YADABOT','RESTTEST');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('RESTTEST OPTIONS','/','YADABOT','RESTTEST');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('RESTTEST POST','/posts','YADABOT','RESTTEST');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('RESTTEST PUT','/posts/1','YADABOT','RESTTEST');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('RESTTEST PATCH','/posts/1','YADABOT','RESTTEST');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('RESTTEST DELETE','/posts/1','YADABOT','RESTTEST');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('RESTTEST GET with param','/posts/?v','YADABOT','RESTTEST');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('RESTTEST PUT with param','/posts/?v','YADABOT','RESTTEST');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('RESTTEST PATCH with param','/posts/?v','YADABOT','RESTTEST');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('RESTTEST DELETE with param','/posts/?v','YADABOT','RESTTEST');
 
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test validate preproc','select app APP from yada_query_conf','YADABOT','YADA');
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA test','select qname,app from yada_query','YADABOT','YADA');

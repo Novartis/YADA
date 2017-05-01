@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.novartis.opensource</groupId>
     <artifactId>YADA</artifactId>
-    <version>8.4.2-SNAPSHOT</version>
+    <version>8.5.0-SNAPSHOT</version>
   </parent>
   <artifactId>yada-war</artifactId>
   <name>yada-war</name>
@@ -56,7 +56,7 @@
 		              <goal>run</goal>
 		            </goals>
 		            <configuration>
-		              <target>
+		              <target unless="skip.db.launch">
 		                <property name="compile_classpath" refid="maven.compile.classpath" />
 		                <!-- command-line: java org.hsqldb.Server -database.0 file:${project.basedir}/src/main/webapp/YADADB -dbname.0 YADADB -->
 		                <java classpath="${compile_classpath}" classname="org.hsqldb.Server">
@@ -375,24 +375,24 @@
       <id>test-proxy</id>
       <properties>
         <skip.proxy.test>false</skip.proxy.test>
-        <test.properties>${basedir}/src/test/resources/conf/TestNG_YADA_SQLite_HTTP_noauth.properties</test.properties>
-        <YADA.index.url>${YADA.pgsql.index.url}</YADA.index.url>
-        <YADA.index.username>${YADA.pgsql.index.username}</YADA.index.username>
-        <YADA.index.password>${YADA.pgsql.index.password}</YADA.index.password>
+        <test.properties>${basedir}/src/test/resources/conf/TestNG_YADA_HSQLDB_HTTP_noauth.properties</test.properties>
+        <YADA.index.url>${YADA.hsqldb.index.url}</YADA.index.url>
+        <YADA.index.username>${YADA.hsqldb.index.username}</YADA.index.username>
+        <YADA.index.password>${YADA.hsqldb.index.password}</YADA.index.password>
         <YADA.index.autoCommit>false</YADA.index.autoCommit>
-        <YADA.index.driverClassName>${YADA.pgsql.index.driverClassName}</YADA.index.driverClassName>
+        <YADA.index.driverClassName>${YADA.hsqldb.index.driverClassName}</YADA.index.driverClassName>
       </properties>
     </profile>
     <profile>
       <id>test-noproxy</id>
       <properties>
         <skip.noproxy.test>false</skip.noproxy.test>
-        <test.properties>${basedir}/src/test/resources/conf/TestNG_YADA_SQLite_HTTP_noauth.properties</test.properties>
-        <YADA.index.url>${YADA.pgsql.index.url}</YADA.index.url>
-        <YADA.index.username>${YADA.pgsql.index.username}</YADA.index.username>
-        <YADA.index.password>${YADA.pgsql.index.password}</YADA.index.password>
+        <test.properties>${basedir}/src/test/resources/conf/TestNG_YADA_HSQLDB_HTTP_noauth.properties</test.properties>
+        <YADA.index.url>${YADA.hsqldb.index.url}</YADA.index.url>
+        <YADA.index.username>${YADA.hsqldb.index.username}</YADA.index.username>
+        <YADA.index.password>${YADA.hsqldb.index.password}</YADA.index.password>
         <YADA.index.autoCommit>false</YADA.index.autoCommit>
-        <YADA.index.driverClassName>${YADA.pgsql.index.driverClassName}</YADA.index.driverClassName>
+        <YADA.index.driverClassName>${YADA.hsqldb.index.driverClassName}</YADA.index.driverClassName>
       </properties>
     </profile>
     <profile>

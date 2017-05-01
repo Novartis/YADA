@@ -200,7 +200,11 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
 	}
 
 	/**
-	 * Convenience method with calls {@link #validateURL()}, {@link #validateToken()}, {@link #applyExecutionPolicy()}, and {@link #applyContentPolicy()}
+	 * Convenience method with calls 
+	 * {@link #validateURL()}, 
+	 * {@link #validateToken()}, 
+	 * {@link #applyExecutionPolicy()}, 
+	 * and {@link #applyContentPolicy()}
 	 * @since 7.0.0
 	 */
 	@Override
@@ -227,7 +231,6 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
 	  policy = getSecurityPolicy();
     if(policy != null)
       ((ContentPolicy)policy).applyContentPolicy();
-
 	}
 
 	/**

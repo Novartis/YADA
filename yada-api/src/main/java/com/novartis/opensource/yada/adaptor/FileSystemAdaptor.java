@@ -50,11 +50,11 @@ public class FileSystemAdaptor extends Adaptor
 	/**
    * Constant equal to: {@value}
    */
-	protected final static String  PARAM_SYMBOL_RX = "([\\/=:<])(\\?[idvn])";
+	protected final static String  PARAM_SYMBOL_RX = "([\\/=:&lt;])(\\?[idvn])";
 	/**
    * Constant equal to: {@value}
    */
-	protected final static String  NON_READ_SFX_RX = "<{1,2}.*";
+	protected final static String  NON_READ_SFX_RX = "&lt;{1,2}.*";
 	/**
    * Constant equal to: {@code ".+"+PARAM_SYMBOL_RX+".*"}
    */

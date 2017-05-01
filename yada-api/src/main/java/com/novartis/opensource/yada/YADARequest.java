@@ -20,12 +20,15 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -65,10 +68,52 @@ public class YADARequest {
 	// constants
 	/**
 	 * A constant equal to: {@value}. This is the default value for the {@code method} or {@code m} parameter.
-	 * @deprecated as of 4.0.0
+	 * This value is the default method for both.
+	 * Also Used for HTTP {@value} in [@link RESTAdaptor}
 	 */
-	@Deprecated
-	public static final String METHOD_GET 				= "get";
+	public static final String METHOD_GET 				= "GET";
+	/**
+	 * A constant equal to: {@value}. This is the default value for the {@code method} or {@code m} parameter.
+	 * Used for HTTP {@value} in [@link RESTAdaptor}
+	 * @since 8.5.0
+	 */
+	public static final String METHOD_POST 				= "POST";
+	/**
+	 * A constant equal to: {@value}. This is the default value for the {@code method} or {@code m} parameter.
+	 * Used for HTTP {@value} in [@link RESTAdaptor}
+	 * @since 8.5.0
+	 */
+	public static final String METHOD_PUT 				= "PUT";
+	/**
+	 * A constant equal to: {@value}. This is the default value for the {@code method} or {@code m} parameter.
+	 * Used for HTTP {@value} in [@link RESTAdaptor}
+	 * @since 8.5.0
+	 */
+	public static final String METHOD_PATCH				= "PATCH";
+	/**
+	 * A constant equal to: {@value}. This is the default value for the {@code method} or {@code m} parameter.
+	 * Used for HTTP {@value} in [@link RESTAdaptor}
+	 * @since 8.5.0
+	 */
+	public static final String METHOD_DELETE 			= "DELETE";
+	/**
+	 * A constant equal to: {@value}. This is the default value for the {@code method} or {@code m} parameter.
+	 * Used for HTTP {@value} in [@link RESTAdaptor}
+	 * @since 8.5.0
+	 */
+	public static final String METHOD_OPTONS 			= "OPTIONS";
+	/**
+	 * A constant equal to: {@value}. This is the default value for the {@code method} or {@code m} parameter.
+	 * Used for HTTP {@value} in [@link RESTAdaptor}
+	 * @since 8.5.0
+	 */
+	public static final String METHOD_HEAD 				= "HEAD";
+	/**
+	 * A constant equal to: {@value}. This is the default value for the {@code method} or {@code m} parameter.
+	 * Used for HTTP {@value} in [@link RESTAdaptor}
+	 * @since 8.5.0
+	 */
+	public static final String METHOD_TRACE 			= "TRACE";
 	/**
 	 * A constant equal to: {@value}. This value is still necessary for backward compatiblity when expecting
 	 * an update query to return an integer result, rather than a JSON object.
@@ -94,6 +139,11 @@ public class YADARequest {
 	 * A constant equal to: {@value}.  This is the default value of the {@code format} or {@code f} parameter.
 	 */
 	public static final String FORMAT_JSON 				= "json";
+	/**
+	 * A constant equal to: {@value}
+	 * @since 8.5.0
+	 */
+	public static final String FORMAT_PLAINTEXT  	= "text";
 	/**
 	 * A constant equal to: {@value}
 	 */
@@ -247,7 +297,10 @@ public class YADARequest {
 	 * A constant equal to: {@code com.novartis.opensource.yada.plugin.ScriptBypass}
 	 */
 	public static final String SCRIPT_BYPASS        = ScriptBypass.class.getName();
-	
+  /**
+   * A constant equal to {@value} for handling param value syntax
+   */
+	private static final String RX_NOTJSON = "^[^{].+$";
 	
 	// PL = Param Long
 	// PS = Param Short
@@ -352,6 +405,11 @@ public class YADARequest {
   public static final String PS_LEFTJOIN    = "lj";
   /**
    * A constant equal to: {@value}
+   * @since 8.5.0
+   */
+  public static final String PS_HTTPHEADERS = "H";
+  /**
+   * A constant equal to: {@value}
    * This is a global parameter.
    * The default value associated to this parameter is {@code null}
    * @since 4.0.0 (Short param aliases were first added in 4.0.0)
@@ -362,9 +420,8 @@ public class YADARequest {
 	 * This is a global parameter.
 	 * The default value associated to this parameter is {@link YADARequest#METHOD_GET}
 	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
-	 * @deprecated as of 4.0.0
+	 * No longer deprecated (4.0.0) as of 8.5.0
 	 */
-	@Deprecated
 	public static final String PS_METHOD      = "m";
 	/**
 	 * A constant equal to: {@value}
@@ -578,6 +635,10 @@ public class YADARequest {
 	/**
 	 * A constant equal to: {@value}
 	 */
+	public static final String PL_HTTPHEADERS = "HTTPHeaders";
+	/**
+	 * A constant equal to: {@value}
+	 */
 	public static final String PL_JSONPARAMS  = "JSONParams";
 	/**
    * A constant equal to: {@value}
@@ -603,9 +664,8 @@ public class YADARequest {
 	 * A constant equal to: {@value}
 	 * This is a global parameter.
 	 * The default value associated to this parameter is {@link YADARequest#METHOD_GET}
-	 * @deprecated as of 4.0.0
+	 * No longer deprecated (4.0.0) as of 8.5.0
 	 */
-	@Deprecated
 	public static final String PL_METHOD      = "method";
 	/**
 	 * A constant equal to: {@value}.  Use {@link YADARequest#PL_BYPASSARGS} instead.
@@ -768,6 +828,7 @@ public class YADARequest {
 		map.put(PS_FILTERS,PL_FILTERS);
 		map.put(PS_FORMAT,PL_FORMAT);
 		map.put(PS_HARMONYMAP,PL_HARMONYMAP);
+		map.put(PS_HTTPHEADERS,PL_HTTPHEADERS);
 		map.put(PS_JSONPARAMS,PL_JSONPARAMS);
 		map.put(PS_JOIN, PL_JOIN);
 		map.put(PS_LEFTJOIN, PL_LEFTJOIN);
@@ -808,6 +869,7 @@ public class YADARequest {
 		map.put(PL_FILTERS,PL_FILTERS);
 		map.put(PL_FORMAT,PL_FORMAT);
 		map.put(PL_HARMONYMAP,PL_HARMONYMAP);
+		map.put(PL_HTTPHEADERS,PL_HTTPHEADERS);
 		map.put(PL_JSONPARAMS,PL_JSONPARAMS);
 		map.put(PL_JOIN, PL_JOIN);
     map.put(PL_LEFTJOIN, PL_LEFTJOIN);
@@ -886,6 +948,11 @@ public class YADARequest {
 	 */
 	private JSONArray harmonyMap;
 	/**
+	 * parsed HTTPHeaders string 
+	 * @since 8.5.0
+	 */
+	private JSONObject httpHeaders;
+	/**
 	 * Flag indicating something about labels.
 	 * @since PROVISIONAL
 	 */
@@ -896,9 +963,8 @@ public class YADARequest {
 	private String     mail;
 	/**
 	 * YADA execution method. Defaults to {@link #METHOD_GET}
-	 * @deprecated as of 4.0.0
+	 * @since 1.0.0, deprecated in v4.0.0, un-deprecated in 8.5.0 to support different HTTP methods for {@link RESTAdaptor}
 	 */
-	@Deprecated
 	private String     method 	 	  = METHOD_GET;
 	/**
 	 * Number of rows to return.  Defaults to {@link #DEFAULT_PAGE_SIZE}
@@ -1842,6 +1908,60 @@ public class YADARequest {
 		  }
 		}
 	}
+	
+	/**
+	 * Array mutator for variable, preferred for compatibility with {@link javax.servlet.http.HttpServletRequest#getParameterMap()}
+	 * Converts parameter string into {@link JSONObject}
+	 * @param httpHeaders the {@link String} array originating in the {@link HttpServletRequest}
+	 * @throws YADARequestException when the header string is malformed
+	 * @since 8.5.0
+	 */
+	public void setHTTPHeaders(String[] httpHeaders) throws YADARequestException {
+		String  hdrStr  = httpHeaders[0];
+		Matcher m1      = Pattern.compile(RX_NOTJSON).matcher(hdrStr);
+		Map<String,String> headers = new HashMap<String,String>();
+		
+		// api circumvents http request so check for null
+		if(null != getRequest())
+		{	@SuppressWarnings("unchecked")
+		Enumeration<String> hdrNames = getRequest().getHeaderNames();
+			while(hdrNames.hasMoreElements())
+			{
+				String name = hdrNames.nextElement(); 
+				headers.put(name, getRequest().getHeader(name));
+			}
+		}
+		
+		if (m1.matches()) // it's a list of header names
+		{
+			String[] hdrList = hdrStr.split(",");
+			this.httpHeaders = new JSONObject();
+			for(String name : hdrList)
+			{
+				this.httpHeaders.put(name, headers.get(name));
+			}
+		}
+		else // it's a json array
+		{			
+			try
+			{
+				this.httpHeaders = new JSONObject(hdrStr);
+				JSONArray names = this.httpHeaders.names();
+				JSONArray vals = this.httpHeaders.toJSONArray(names);
+				for(int i=0;i<vals.length();i++)
+				{
+					if(vals.optBoolean(i))
+						this.httpHeaders.put(names.getString(i),vals.getString(i));
+				}
+			}
+			catch(JSONException e)
+			{
+				String msg = "The HTTPHeaders specification is not valid JSON:\n\n"+httpHeaders[0];
+				throw new YADARequestException(msg,e); 
+		  }			
+		}
+		
+	}
 
 	/**
 	 * Standard mutator for variable
@@ -2715,6 +2835,7 @@ public class YADARequest {
   public List<String> getCookies() {
     return this.cookies;
   }
+  
 	
 	/**
 	 * Standard accessor for variable
@@ -2814,6 +2935,14 @@ public class YADARequest {
 		return this.delimiter;
 	}
 	
+	/**
+	 * Returns the {@code HTTPHeaders} or {@code H} parameter value as a {@link JSONObject}
+	 * @return a {@link JSONObject} built from the value of the {@code HTTPHeaders} or {@code H} parameter value
+	 * @since 8.5.0
+	 */
+	public JSONObject getHttpHeaders() {
+		return this.httpHeaders;
+	}
 	/**
 	 * Returns the {@code harmonyMap} or {@code h} parameter value as a {@link JSONObject}
 	 * @return a {@link JSONArray} built from the value of the {@code harmonyMap} or {@code h} parameter value
@@ -3243,6 +3372,19 @@ public class YADARequest {
 	 */
 	public boolean hasCookies() {
 	  if(null == this.getCookies() || this.getCookies().size() == 0)
+	  {
+	    return false;
+	  }
+	  return true;
+	}
+	
+	/**
+	 * Returns {@code true} if {@link #httpHeaders} contains a header array entry, otherwise {@code false}
+	 * @return {@code true} if {@link #httpHeaders} contains a header array entry, otherwise {@code false}
+	 * @since 8.5.0
+	 */
+	public boolean hasHttpHeaders() {
+	  if(null == this.getHttpHeaders() || this.getHttpHeaders().length() == 0)
 	  {
 	    return false;
 	  }

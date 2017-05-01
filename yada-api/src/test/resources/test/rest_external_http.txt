@@ -1,7 +1,0 @@
-q=QGO search&p=GO:0005515
-q=QGO search&p=GO:0005515&r=RESTPassThruResponse
-q=QGO search&p=GO:0005515&r=com.novartis.opensource.yada.format.RESTPassThruResponse
-
-qname=QGO search&params=GO:0005515
-qname=QGO search&params=GO:0005515&response=RESTPassThruResponse
-qname=QGO search&params=GO:0005515&response=com.novartis.opensource.yada.format.RESTPassThruResponse

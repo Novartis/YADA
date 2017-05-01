@@ -1,0 +1,5 @@
+j=[{"qname":"RESTTEST DELETE",DATA:[{"YADA_PAYLOAD":""}]}]
+j=[{"qname":"RESTTEST DELETE with param",DATA:[{"YADA_1":"1","YADA_PAYLOAD":""}]}]
+
+JSONParams=[{"qname":"RESTTEST DELETE",DATA:[{"YADA_PAYLOAD":""}]}]
+JSONParams=[{"qname":"RESTTEST DELETE with param",DATA:[{"YADA_1":"1","YADA_PAYLOAD":""}]}]
