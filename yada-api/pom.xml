@@ -583,7 +583,7 @@
     </filters>
     <resources>
       <resource>
-        <directory>../yada-war/src/main/resources/scripts</directory>
+        <directory>${project.parent.basedir}/yada-war/src/main/resources/scripts</directory>
         <filtering>true</filtering>
         <includes>
           <include>dbLoad.sh</include>

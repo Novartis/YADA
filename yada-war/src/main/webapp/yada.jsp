@@ -44,14 +44,14 @@ final String HTTP_SC_NOT_IMPLEMENTED = "Not Implemented";
 final String HTTP_SC_FORBIDDEN       = "Forbidden";
 final String HTTP_SC_INTERNAL_SERVER_ERROR = "Internal Server Error";
 
-final Hashtable<Integer,String> statusText = new Hashtable();
+final Hashtable<Integer,String> statusText = new Hashtable<>();
 statusText.put(new Integer(HttpServletResponse.SC_NOT_FOUND),HTTP_SC_NOT_FOUND);
 statusText.put(new Integer(HttpServletResponse.SC_BAD_REQUEST),HTTP_SC_BAD_REQUEST);
 statusText.put(new Integer(HttpServletResponse.SC_NOT_IMPLEMENTED),HTTP_SC_NOT_IMPLEMENTED);
 statusText.put(new Integer(HttpServletResponse.SC_FORBIDDEN),HTTP_SC_FORBIDDEN);
 statusText.put(new Integer(HttpServletResponse.SC_INTERNAL_SERVER_ERROR),HTTP_SC_INTERNAL_SERVER_ERROR);
 
-final Hashtable<String,Integer> statusCodes = new Hashtable();
+final Hashtable<String,Integer> statusCodes = new Hashtable<>();
 // FinderExcepion 404
 statusCodes.put(FINDER_EXCEPTION, HttpServletResponse.SC_NOT_FOUND);
 // QueryConfigurationException, RequestException 403
