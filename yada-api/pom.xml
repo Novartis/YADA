@@ -27,6 +27,7 @@
     <skip.noproxy.test>true</skip.noproxy.test>
     <skip.fs.test>true</skip.fs.test>
     <main.basedir>${project.parent.basedir}</main.basedir>
+    <yada.war.scriptdir>../yada-war/src/main/resources/scripts</yada.war.scriptdir>
   </properties>
   <profiles>
     <profile>
@@ -50,6 +51,7 @@
               <arguments>
                 <argument>${project.build.testOutputDirectory}/dbLoad.sh</argument>
                 <argument>HSQLdb</argument>
+                <argument>${dbload.backup}</argument>
               </arguments>
             </configuration>
             <executions>
@@ -583,7 +585,7 @@
     </filters>
     <resources>
       <resource>
-        <directory>${project.parent.basedir}/yada-war/src/main/resources/scripts</directory>
+        <directory>${yada.war.scriptdir}</directory>
         <filtering>true</filtering>
         <includes>
           <include>dbLoad.sh</include>
@@ -919,13 +921,13 @@
       <artifactId>dbcp</artifactId>
       <scope>provided</scope>
     </dependency> -->
-    
+
     <!-- You'll need to install this jar manually in your maven repo -->
-    <!-- <dependency> 
-    		<groupId>com.microsoft.sqlserver</groupId> 
-    		<artifactId>sqljdbc4</artifactId> 
-      		<version>4.0</version> 
-      		<scope>test</scope> 
+    <!-- <dependency>
+    		<groupId>com.microsoft.sqlserver</groupId>
+    		<artifactId>sqljdbc4</artifactId>
+      		<version>4.0</version>
+      		<scope>test</scope>
       	</dependency> -->
     <!-- You'll need to install this jar manually in your maven repo -->
     <!-- <dependency>
@@ -956,11 +958,11 @@
     </dependency> -->
     <!-- omit for oracle 11g -->
     <!-- You may need to install this jar manually in your maven repo -->
-    <!-- <dependency> 
-    		<groupId>com.oracle</groupId> 
-    		<artifactId>ojdbc14</artifactId> 
-      		<version>10.2.0.4.0</version> 
-      		<scope>test</scope> 
+    <!-- <dependency>
+    		<groupId>com.oracle</groupId>
+    		<artifactId>ojdbc14</artifactId>
+      		<version>10.2.0.4.0</version>
+      		<scope>test</scope>
       	</dependency> -->
     <dependency>
       <groupId>org.testng</groupId>
@@ -978,29 +980,29 @@
       <scope>test</scope>
     </dependency>
     <!-- unused -->
-    <!-- <dependency> <groupId>javax.xml.stream</groupId> <artifactId>stax-api</artifactId> 
+    <!-- <dependency> <groupId>javax.xml.stream</groupId> <artifactId>stax-api</artifactId>
       <version>1.0-2</version> </dependency> -->
-    <!-- <dependency> <groupId>org.pojava</groupId> <artifactId>persistence</artifactId> 
+    <!-- <dependency> <groupId>org.pojava</groupId> <artifactId>persistence</artifactId>
       <version>3.0.0</version> </dependency> -->
-    <!-- <dependency> <groupId>commons-beanutils</groupId> <artifactId>commons-beanutils</artifactId> 
+    <!-- <dependency> <groupId>commons-beanutils</groupId> <artifactId>commons-beanutils</artifactId>
       <version>1.8.3</version> </dependency> -->
-    <!-- <dependency> <groupId>org.apache.commons</groupId> <artifactId>commons-compress</artifactId> 
+    <!-- <dependency> <groupId>org.apache.commons</groupId> <artifactId>commons-compress</artifactId>
       <version>1.4.1</version> </dependency> -->
-    <!-- <dependency> <groupId>commons-httpclient</groupId> <artifactId>commons-httpclient</artifactId> 
+    <!-- <dependency> <groupId>commons-httpclient</groupId> <artifactId>commons-httpclient</artifactId>
       <version>3.1</version> </dependency> -->
-    <!-- <dependency> <groupId>commons-io</groupId> <artifactId>commons-io</artifactId> 
+    <!-- <dependency> <groupId>commons-io</groupId> <artifactId>commons-io</artifactId>
       <version>2.4</version> </dependency> -->
-    <!-- <dependency> <groupId>dom4j</groupId> <artifactId>dom4j</artifactId> 
+    <!-- <dependency> <groupId>dom4j</groupId> <artifactId>dom4j</artifactId>
       <version>1.6.1</version> </dependency> -->
-    <!-- <dependency> <groupId>xalan</groupId> <artifactId>xalan</artifactId> 
+    <!-- <dependency> <groupId>xalan</groupId> <artifactId>xalan</artifactId>
       <version>2.7.1</version> </dependency> -->
-    <!-- <dependency> <groupId>xalan</groupId> <artifactId>serializer</artifactId> 
+    <!-- <dependency> <groupId>xalan</groupId> <artifactId>serializer</artifactId>
       <version>2.7.1</version> </dependency> -->
-    <!-- <dependency> <groupId>xerces</groupId> <artifactId>xercesImpl</artifactId> 
+    <!-- <dependency> <groupId>xerces</groupId> <artifactId>xercesImpl</artifactId>
       <version>2.11.0</version> </dependency> -->
-    <!-- <dependency> <groupId>org.apache.xmlbeans</groupId> <artifactId>xmlbeans</artifactId> 
+    <!-- <dependency> <groupId>org.apache.xmlbeans</groupId> <artifactId>xmlbeans</artifactId>
       <version>2.3.0</version> </dependency> -->
-    <!-- <dependency> <groupId>org.apache.xmlgraphics</groupId> <artifactId>xmlgraphics-commons</artifactId> 
+    <!-- <dependency> <groupId>org.apache.xmlgraphics</groupId> <artifactId>xmlgraphics-commons</artifactId>
       <version>1.4</version> </dependency> -->
     <dependency>
       <groupId>org.tuckey</groupId>
@@ -1063,4 +1065,3 @@
     </dependency>
   </dependencies>
 </project>
-	
