@@ -2,7 +2,7 @@
 
 <div style="float:right;margin-top:-43px;">
     <img src="../resources/images/blox250.png"/>
-</div> 
+</div>
 
 
 ## Table of Contents
@@ -27,11 +27,13 @@
 - [filters]  
 - [format]  
 - [harmonyMap]  
+- [httpHeaders]
 - [join]
 - [JSONParams]  
 - [leftJoin]
 - [labels] *(provisional)*
 - [mail]  
+- [method]
 - [pagesize]  
 - [pagestart]  
 - [params]  
@@ -61,6 +63,8 @@
 - [cookies]
 - [count]
 - [countOnly]
+- [method]
+- [httpHeaders]
 - [JSONParams]
 - [params]
 - [paramset] *(provisional)*
@@ -110,7 +114,6 @@
 
 - [args]
 - [bypassargs]
-- [method]
 - [overargs]
 - [parallel]
 - [plugintype]
@@ -238,7 +241,7 @@ A comma-separated list of values to be passed to the plugin designated in the `p
 **Required**: No  
 **Default**: `false`  
 **Accepted Values**: `true`, `false`  
-**Decription**: When `true`, outputs the result as a file in `/files/out/<user>/<YYYYHHMMhhmmss>.<ext>` and returns the URL in the response. This is intended to be used in javascript applications with ajax calls, having success handlers that proceed to retrieve exported files using `window.location.href`  
+**Decription**: When `true`, outputs the result as a file in `/files/out/<user>/<YYYYHHMMhhmmss>.<ext>` and returns the URL in the response with an `HTTP 201` response code and the URL in the `Location` header. This was created to be used in javascript applications with ajax calls, having success handlers that proceed to retrieve exported files using `window.location.href`.  There are likely other uses as well.  
 
 <a name="exportlimit"></a>  
 
@@ -282,8 +285,28 @@ Custom delimiters are now supported, which automatically set the format to `deli
 **Alias**: `h`  
 **Required**: No  
 **Default**: null  
-**Accepted Values**: JSON string conforming to [Harmonizer Specification]  
-**Description**: A JSON string pairing source-result field names or paths to response field names or paths. See [Harmonizer Specification]  
+**Accepted Values**: JSON string conforming to [Harmonizer Specification]    
+**Description**: A JSON string pairing source-result field names or paths to response field names or paths. **NOTE** See [Harmonizer Specification]  
+
+<a name="httpHeaders"></a>  
+
+----
+
+**Name**: `httpHeaders`  
+**Alias**: `H`   
+**Required**: No  
+**Default**: null  
+**Accepted Values**: JSON string or comma-separated list of values  
+**Description**: `httpHeaders` can be included in three formats, each of which results in the setting of designated HTTP headers in requests constructed and executed by the `com.novartis.opensource.yada.adaptor.RESTAdaptor`.  The three options are:
+1. A comma-separated list of header names:  
+  This will result in the inclusion of designated headers and their values from the original YADA request.
+2. A JSON string representing a single JSON object in which keys are header names and values are header values:
+  This will result in the inclusion of designated headers and values in the subsequent REST request.
+3. A JSON string representing a single JSON object in which keys are header names and values are boolean `true`:  
+  This will result in the inclusion of designated headers and corresponding values from the original YADA request in the subsequent REST request.  
+  **NOTE:** Methods 2 and 3 above may be combined. For example an JSON string could contain both a custom header key:value pair as well as a boolean key:true pass-thru. E.g.,  
+
+   ```H={"Content-Type":"application/json","X-Authorized-User":"true"}```
 
 <a name="join"></a>  
 
@@ -311,7 +334,7 @@ Custom delimiters are now supported, which automatically set the format to `deli
 **Description**: See [JSONParams Specification]  
 
 <a name="labels"></a>  
-	   
+
 ----
 
 **Name**: `labels`  
@@ -348,12 +371,22 @@ Custom delimiters are now supported, which automatically set the format to `deli
 
 ----
 
-**Name _(deprecated)_**: `method`  
-**Alias _(deprecated)_**: `m`  
-**Required _(deprecated)_**: No  
-**Default _(deprecated)_**: `get`	  
-**Accepted Values _(deprecated)_**: `get`, `update`, `upload`  
-**Description _(deprecated)_**: **Deprecated**. `method` is now auto-detected.  Identifies for the `com.novartis.opensource.yada.Service` object which JDBC method to execute. `get`, the default, performs a `SELECT`. `update` performs any SQL data change action (i.e., `update`, `delete`, `insert`, transactionally or not, using JDBC). `upload` is explicit to file uploads from a ui to the server. `REST` and `SOAP` play by different rules.  
+**Name**: `method`  
+**Alias_**: `m`  
+**Required**: No  
+**Default**: `GET`	  
+**Accepted Values**: `GET`,`POST`,`PUT`,`PATH`,`DELETE`,`OPTIONS`,`HEAD`,`update`,`upload`  
+**Description**: `method` is used by the `com.novartis.opensource.yada.adaptor.RESTAdaptor` to execute the designated HTTP method at the endpoint.  
+
+For example, if a REST API is accessed through YADA, YADA is effectively a proxy. If the REST endpoint's API requires a `POST` to create a resource, then setting `method=POST`, `m=POST`,  is what enables YADA to forward the request to the endpoint with the proper method. Similary if the endpoint requires a `PUT` to modify a resource, use `method=PUT` or `m=PUT`.
+
+Note that `POST`, `PUT`, and `PATCH` each expect or require HTTP request body content. To include this content in the YADA request one is required to use [JSONParams] with a `YADA_PAYLOAD` key in each object in the `DATA` array of each query object.  See the [JSONParams Specification] for more information.
+
+Often, use of a REST endpoint requires custom headers as well, for example, one must freqeuntly include `Content-Type: application/json`.  For more information about this aspect of REST processing, see [httpHeaders].
+
+Note: `method` was originally created to distinguish between requests to retrieve data from requests to insert, update, or delete it, as well as from multipart form file uploads. Then it was deprecated for a few versions. The original documentation follows in italics. This still applies to non-REST requests.  
+
+_Identifies for the `com.novartis.opensource.yada.Service` object which JDBC method to execute. `get`, the default, performs a `SELECT`. `update` performs any SQL data change action (i.e., `update`, `delete`, `insert`, transactionally or not, using JDBC). `upload` is explicit to file uploads from a ui to the server. `REST` and `SOAP` play by different rules._
 
 <a name="overargs"></a>  
 
@@ -597,7 +630,7 @@ Custom delimiters are now supported, which automatically set the format to `deli
 **Accepted Values**: any String  
 **Description**:   
 
-  
+
 
 ----
 
@@ -629,11 +662,13 @@ Custom delimiters are now supported, which automatically set the format to `deli
 [filters]: #filters
 [format]: #format
 [harmonyMap]: #harmonyMap
+[httpHeaders]: #httpHeaders
 [join]: #join
 [JSONParams]: #JSONParams
 [labels]: #labels
 [leftJoin]: #leftJoin
 [mail]: #mail
+[method]: #method
 [pagesize]: #pagesize
 [pagestart]: #pagestart
 [parallel]: #parallel

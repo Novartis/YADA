@@ -3,13 +3,13 @@
 
 <div style="float:right;margin-top:-43px;">
     <img src="../resources/images/blox250.png"/>
-</div> 
+</div>
 
 
 
 If you know your way around a computer, like a developer or data expert, this is a good place to be. If you need a bit more help, like a spreadsheet jockey or designer, use the [Beginners' Guide/FAQ]
 
-1. [Using YADA] 
+1. [Using YADA]
 2. [YADA Markup]
 3. [Defintions](#defs)
 4. [The YADA "Service"](#svc)
@@ -62,24 +62,24 @@ Most users coming to this page just want data, and probably want it from an exis
 
 From the linux command-line, or any system call, a user can request any data simply using a known query, with standard parameters.  For example, the following query will return the Oracle® SYSDATE of the YADA server in a standard YADA JSON string.
 
-```bash
+```bash  
 curl "http://example.com/yada.jsp?qname=YADA+default"
- 
+
 # returns
 # {"RESULTSET":{"total": 1,"ROWS": [{"RNUM": "1","SYSDATE": "2014-10-27 17:34:43.0"}],"qname": "YADA default","page": "1","records": 1}}
- 
+
 # short params names are available to:
 # curl "http://example.com/yada.jsp?q=YADA+default"
 ```
 
 The JSON params version of the above query is
 
-```bash
+```bash  
 curl "http://example.com/yada.jsp?JSONParams=[{qname:YADA default,DATA:[{}]}]"
- 
+
 # returns
 # {"RESULTSET": {"total": 1,"ROWS": [{"RNUM": "1","SYSDATE": "2014-10-27 17:34:43.0"}],"qname": "YADA default","page": "1","records": 1}}
- 
+
 # using short param names:
 # curl "http://example.com/yada.jsp?j=[{qname:YADA default,DATA:[{}]}]"
 ```
@@ -98,15 +98,15 @@ All YADA queries with value parameters require YADA markup, whether they are pro
 ### Positional Parameters
 
 YADA supports positional parameters for all supported protocols: JDBC, REST, SOAP, and FILE.  Given that you're reading this, you probably understand what positional parameters are and how to use them, so we won't go into too much detail.  
-Say you want to get a users id number from your database using first and last name as search criteria.  You could write the following query: 
+Say you want to get a users id number from your database using first and last name as search criteria.  You could write the following query:
 
-```sql
+```sql  
 SELECT ID FROM MY_TABLE WHERE FIRST_NAME = 'Joe' AND LAST_NAME = 'Cool';
 ```
 
 This will return Joe Cool's id number.  But what if you want to enable users of a webapp to search using their own names?  You have to write the query so the values 'Joe' and 'Cool' can be substituted with a user's own criteria.  The way to do this is to parametirize the query.  The standard syntax for a query parameter is a question mark: ? .  See YADA Markup at the bottom of this subsection for how to markup this query with a datatype indicator, to make it YADA compatible.
 
-```sql
+```sql  
 SELECT ID FROM MY_TABLE WHERE FIRST_NAME = ? AND LAST_NAME = ?;
 ```
 
@@ -114,7 +114,7 @@ Internally, when a parameterized query is processed, it is typically embedded in
 
 When YADA [standard parameters] are in use, positional parameters correspond to the order in which they are conveyed in the request url, for example:
 
-```
+```  
 # parameter 1: Joe
 # parameter 2: Cool
 # Request:
@@ -135,7 +135,7 @@ http://example.com/yada.jsp?JSONparams=[{qname:my named query,DATA[{LAST_NAME:Co
 ### YADA Markup
 
 As noted above, all YADA queries require parameter symbols (?) to be accompanied by YADA markup datatype indicators.  Thus the example query above should be written as follows:
-```sql
+```sql  
 SELECT ID FROM MY_TABLE WHERE FIRST_NAME = ?v AND LAST_NAME = ?v;
 ```
 
@@ -160,7 +160,7 @@ Virtually any SQL statement is supported by YADA.  Again, if the statement is no
 
 An example:
 
-```sql
+```sql  
 select * mytable where col1 = ?v where col2 = ?i
 ```
 
@@ -174,19 +174,19 @@ curl "http://example.com/yada.jsp?qname=EXMPL+example&params=abc,123"
 
 REST queries behave like proxied queries to third party services.  In fact, if you're writing a javascript application, YADA is a great single-origin-policy workaround. Even if this isn't an issue, YADA enables the aggregation of multiple queries in a single http request, even from multiple sources, and the stacking or harmonization of results. REST queries look just like any other YADA query when being called.  Here's an example of a EBI QuickGO query:
 
-```
+```  
 http://example.com/yada.jsp?q=QGO%20search&params=0005515
 ```
 
 Here's an example from TODO example:
 
-```
+```  
 http://example.com/yada.jsp?example
 ```
 
 These are the results of the example query, below.  Note, by default, results are wrapped in the standard YADA JSON object structure:
 
-```
+```  
 {"RESULTSET": {"ROWS": [
 ```
 
@@ -198,7 +198,7 @@ http://example.com/yada.jsp?q=N&p=&r=RESTPassThruResponse
 
 And the result:
 
-```
+```  
 { ... }
 ```
 

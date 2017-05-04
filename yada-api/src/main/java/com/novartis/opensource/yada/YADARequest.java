@@ -1919,16 +1919,16 @@ public class YADARequest {
 	public void setHTTPHeaders(String[] httpHeaders) throws YADARequestException {
 		String  hdrStr  = httpHeaders[0];
 		Matcher m1      = Pattern.compile(RX_NOTJSON).matcher(hdrStr);
-		Map<String,String> headers = new HashMap<String,String>();
+		Map<String,String> reqHeaders = new HashMap<String,String>();
 		
 		// api circumvents http request so check for null
 		if(null != getRequest())
 		{	@SuppressWarnings("unchecked")
-		Enumeration<String> hdrNames = getRequest().getHeaderNames();
+		  Enumeration<String> hdrNames = getRequest().getHeaderNames();
 			while(hdrNames.hasMoreElements())
 			{
 				String name = hdrNames.nextElement(); 
-				headers.put(name, getRequest().getHeader(name));
+				reqHeaders.put(name, getRequest().getHeader(name));
 			}
 		}
 		
@@ -1938,10 +1938,10 @@ public class YADARequest {
 			this.httpHeaders = new JSONObject();
 			for(String name : hdrList)
 			{
-				this.httpHeaders.put(name, headers.get(name));
+				this.httpHeaders.put(name, reqHeaders.get(name));
 			}
 		}
-		else // it's a json array
+		else // it's a json object
 		{			
 			try
 			{
@@ -1951,7 +1951,10 @@ public class YADARequest {
 				for(int i=0;i<vals.length();i++)
 				{
 					if(vals.optBoolean(i))
-						this.httpHeaders.put(names.getString(i),vals.getString(i));
+					{
+						String name = names.getString(i);
+						this.httpHeaders.put(name,reqHeaders.get(name));
+					}
 				}
 			}
 			catch(JSONException e)
