@@ -17,6 +17,7 @@
     </site>
   </distributionManagement>
   <properties>
+    <display.version>${project.version}</display.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <skip.sqlite.test>true</skip.sqlite.test>
     <skip.oracle.test>true</skip.oracle.test>
@@ -129,6 +130,7 @@
 		          <arguments>
 		            <argument>${project.build.testOutputDirectory}/dbLoad.sh</argument>
 		            <argument>PostgreSQL</argument>
+                <argument>${dbload.backup}</argument>
 		          </arguments>
 		        </configuration>
 		        <executions>
@@ -264,6 +266,7 @@
               <arguments>
                 <argument>${project.build.testOutputDirectory}/dbLoad.sh</argument>
                 <argument>MySQL</argument>
+                <argument>${dbload.backup}</argument>
               </arguments>
             </configuration>
             <executions>
@@ -345,6 +348,7 @@
               <arguments>
                 <argument>${project.build.testOutputDirectory}/dbLoad.sh</argument>
                 <argument>SQLite</argument>
+                <argument>${dbload.backup}</argument>
               </arguments>
             </configuration>
             <executions>

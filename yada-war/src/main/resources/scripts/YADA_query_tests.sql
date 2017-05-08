@@ -14,7 +14,7 @@ INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADATEST','java:comp/env/
 'jdbcUrl=jdbc:postgresql://localhost/yada
 username=yada
 password=yada
-autoCommit=false
+autoCommit=true
 connectionTimeout=300000
 idleTimeout=600000
 maxLifetime=1800000

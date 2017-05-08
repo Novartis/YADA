@@ -1,9 +1,13 @@
 ﻿--CREATE USER yada PASSWORD 'yada';
+--ALTER USER yada SET SEARCH_PATH to yada;
 --CREATE DATABASE yada OWNER=yada;
---CREATE SCHEMA yada AUTHORIZATION yada;
 --GRANT ALL PRIVILEGES ON DATABASE yada TO yada WITH GRANT OPTION;
 --GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA yada TO yada;
---connect yada yada
+--\connect yada yada
+--CREATE SCHEMA yada AUTHORIZATION yada;
+
+
+
 
 DROP TABLE IF EXISTS YADA_QUERY;
 CREATE TABLE IF NOT EXISTS YADA_QUERY
@@ -89,17 +93,17 @@ CREATE TABLE IF NOT EXISTS YADA_UG
 -- INSERT YADA INDEX QUERY CONF
 DELETE from YADA_QUERY_CONF where app = 'YADA' and source = 'java:comp/env/jdbc/yada';
 INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADA','java:comp/env/jdbc/yada',null);
--- INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADATEST','java:comp/env/jdbc/yada',
--- 'jdbcUrl=jdbc:postgresql://localhost/yada
--- username=yada
--- password=yada
--- autoCommit=false
--- connectionTimeout=300000
--- idleTimeout=600000
--- maxLifetime=1800000
--- minimumIdle=5
--- maximumPoolSize=100
--- driverClassName=org.postgresql.Driver');
+INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADATEST','java:comp/env/jdbc/yada',
+'jdbcUrl=jdbc:postgresql://localhost/yada
+username=yada
+password=yada
+autoCommit=false
+connectionTimeout=300000
+idleTimeout=600000
+maxLifetime=1800000
+minimumIdle=5
+maximumPoolSize=100
+driverClassName=org.postgresql.Driver');
 INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('QGO',null,'http://www.ebi.ac.uk/QuickGO/GTerm?');
 INSERT into YADA_QUERY_CONF (APP,SOURCE,CONF) values ('YADAFSIN',null,'file:///io/in');
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA default','select ''YADA is alive''','YADABOT','YADA');
