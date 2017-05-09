@@ -155,25 +155,25 @@ public class QueryUtils
 	 */
 	public static final String RX_DELETE = "^DELETE.*";
 	/**
-	 * A constant equal to: {@value}
+	 * A constant equal to: {@code ^([^&lt;]+)((&lt;{1,2})(.+))*$ }
 	 * @since PROVISIONAL
 	 */
-	public final static String RX_FILE_URI = "^([^&lt;]+)((&lt;{1,2})(.+))*$";
+	public final static String RX_FILE_URI = "^([^<]+)((<{1,2})(.+))*$";
 	/**
 	 * A constant equal to: {@value}
 	 * @since PROVISIONAL
 	 */
 	public static final String READ = "";
 	/**
-	 * A constant equal to: {@value}
+	 * A constant equal to: {@code &lt;}
 	 * @since PROVISIONAL
 	 */
-	public static final String WRITE = "&lt;";
+	public static final String WRITE = "<";
 	/**
-	 * A constant equal to: {@value}
+	 * A constant equal to: {@code &lt;&lt;}
 	 * @since PROVISIONAL
 	 */
-	public static final String APPEND = "&lt;&lt;";
+	public static final String APPEND = "<<";
 	/**
 	 * A constant equal to: {@value}
 	 */

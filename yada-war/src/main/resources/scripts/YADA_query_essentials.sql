@@ -252,6 +252,7 @@ INSERT into YADA_UG (app,userid,role) VALUES ('YADA','YADAUSER','USER');
 INSERT into YADA_UG (app,userid,role) VALUES ('YADAFSIN','test','ADMIN');
 INSERT into YADA_UG (app,userid,role) VALUES ('QGO','test','USER');
 INSERT into YADA_UG (app,userid,role) VALUES ('YADATEST','test','ADMIN');
+INSERT into YADA_UG (app,userid,role) VALUES ('RESTTEST','test','ADMIN');
 
 
 -- configuration

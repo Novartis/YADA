@@ -48,13 +48,13 @@ public class FileSystemAdaptor extends Adaptor
 	 */
 	private   final static String  PROTOCOL        = "file://";
 	/**
-   * Constant equal to: {@value}
+   * Constant equal to: {@code ([\\/=:&lt;])(\\?[idvn])}
    */
-	protected final static String  PARAM_SYMBOL_RX = "([\\/=:&lt;])(\\?[idvn])";
+	protected final static String  PARAM_SYMBOL_RX = "([\\/=:<])(\\?[idvn])";
 	/**
-   * Constant equal to: {@value}
+   * Constant equal to: {@code &lt;{1,2}.*}
    */
-	protected final static String  NON_READ_SFX_RX = "&lt;{1,2}.*";
+	protected final static String  NON_READ_SFX_RX = "<{1,2}.*";
 	/**
    * Constant equal to: {@code ".+"+PARAM_SYMBOL_RX+".*"}
    */
