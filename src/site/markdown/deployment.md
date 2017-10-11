@@ -664,6 +664,10 @@ YADA.index.password=${env.YADA_INDEX_PASSWORD}
 
 The `build.properties` file is well-documented. Please refer to it for required and optional property settings, necessary for building.
 
+The file is present in `yada-api/src/main/resources/conf/build.properties` and  `yada-war/src/main/resources/conf/build.properties`
+The yada-api `build.properties` must be adjusted for the Test suite to pass.
+The yada-war `build.properties` will define resources for the war you may wish to deploy
+
 <a name="tocProfiles"></a>
 ####  Build Profiles
 
