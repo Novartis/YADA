@@ -227,6 +227,62 @@ In addition to the vendor-specific configuration script, one must run `YADA_quer
 
 The `...db_uni_<old>_to_<new>.sql` scripts are for upgrades to existing dbs only.
 
+#### Creating your own HyperSQL db, an example
+
+If you recompile YADA from a fresh git clone, the test-suite will likely not find a working Yada index at first.
+The steps below illustrate how to create your own.
+
+You need the HSQLdb jars (inc. itsql SqlTool jar), which a Maven compilation of Yada would actually place in your local maven repository, so we will assume you will find them there, but your actual path will be a little different.
+Also, we'll use `%USERPROFILE%/.m2/repository` to point to your Maven repository. That is a Windows path. A Unix path for it is probably `%HOME/.m2/repository`.
+We will assume also that you are storing your Yada index as HSQL file in `C:\yadainx\YADAdb.*`
+
+This command will start a HSQLdb server, creating the `YADAdb.*` files if needed:
+``java --cp %USERPROFILE%/.m2/repository/org/hsqldb/2.3.4/hsqldb-2.3.4.jar org.hsqldb.server.Server --database.0 file:C:/yadainxYADAdb --dbname.0 yada``
+In this command the `--dbaname.0` must be `yada` because the test-suite expects to find your yada index at the URL `jdbc:hsqldb:hsql:/localhost/yada`; the --database.0 points to a file location of your choice.
+
+
+To configure the Yada index for the Test Suite, you will need to run a series of SQL statements with the SqlTool of HSQL. To use this SqlTool, you ought to create a sqltool.rc file, which provides connection details.
+Create a file `%USERPROFILE%/sqltool.rc` (Unix: `$HOME/sqltool.rc`)
+```
+urlid yada
+url jdbc:hsqldb:hsql://localhost/yada
+username SA
+password
+```
+It is recommended to keep this file readable only by you.
+
+Also prepare the SQL file by concatenating the 3 SQL files from `yada-war/src/main/resources//scripts`: YADA_db_HSQLdb.sql, YADA_query_essentials.sql YADA_query_tests.sql. The first few lines of the resulting file must be as below (probably just uncomment what is at the top of the file):
+```
+CREATE USER "yada" PASSWORD "yada" ADMIN;
+CREATE SCHEMA YADA AUTHORIZATION DBA;
+ALTER USER "yada" SET INITIAL SCHEMA "YADA";
+CONNECT USER "yada" PASSWORD "yada";
+```
+
+and following these 4 lines must be the first `DROP TABLE IF EXISTS...` statement.
+At the end of the file, make sure a "COMMIT;" statement is issued.
+```
+-- at the end:
+COMMIT;
+```
+
+You are now ready to run the index (if the HSQLDb Server is running):
+
+
+```
+(Windows)
+java -cp %USERPROFILE%/.m2/repository/org/hsqldb/sqltool/2.3.4/sqltool-2.3.4.jar;%USERPROFILE%/.m2/repository/org/hsqldb/hsqldb/2.3.4/hsqldb-2.3.4.jar  org.hsqldb.cmdline.SqlTool  yada c:\temp\YADAdb-boot.sql
+
+(Unix)
+java -cp $HOME/.m2/repository/org/hsqldb/sqltool/2.3.4/sqltool-2.3.4.jar:$HOME/.m2/repository/org/hsqldb/hsqldb/2.3.4/hsqldb-2.3.4.jar  org.hsqldb.cmdline.SqlTool  yada $HOME/tmp/YADAdb-boot.sql
+```
+
+At this stage, the Yada Test Suite should be able to run, as long as you have the HSQL server running.
+It is perhaps a good idea to destroy the sqltool.rc file created earlier.
+Please remember to have the HSQL server running when running the Test Suite.
+
+
+
 <a name="tocAutomation"></a>
 ###  Automation  
 
