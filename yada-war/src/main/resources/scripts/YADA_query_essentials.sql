@@ -71,6 +71,12 @@ INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA delete default pa
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA delete default param-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA delete default param','protected','true');
 
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA delete default params for target','delete from YADA_PARAM where target = ?v','YADABOT','YADA');
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA delete default params for target','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=userid:getLoggedUser()');
+INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA delete default params for target','YADA crud protector','E','whitelist');
+INSERT into YADA_PROP (target,name,value) VALUES ('YADA delete default params for target-1','protected','true');
+INSERT into YADA_PROP (target,name,value) VALUES ('YADA delete default params for target','protected','true');
+
 -- property dml
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA select props for target','select target as "TARGET", name as "NAME", value as "VALUE" from yada_prop where target = ?v', 'YADABOT', 'YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select props for target','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=app:getValue(TARGET) userid:getLoggedUser()');
@@ -132,7 +138,7 @@ INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA new app','YADA ne
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA new app-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA new app','protected','true');
 
-INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA new app admin','insert into yada_ug (app,userid,role) values (?v,?v,''ADMIN'')', 'YADABOT', 'YADA');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA new app admin','insert into yada_ug (app,userid,role) select a.app, u.userid, ''ADMIN'' from yada_query_conf a, yada_user u WHERE a.app = ?v and u.userid = ?v and (a.app, u.userid) not in (select app,userid from yada_ug)', 'YADABOT', 'YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA new app admin','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=userid:getLoggedUser()');
 INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA new app admin','YADA new app protector','E','whitelist');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA new app admin-1','protected','true');
