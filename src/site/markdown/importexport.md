@@ -11,20 +11,20 @@ The script requires only basic Python libraries and was developed and tested wit
 
 To extract the queries of your favorite app (ARLX) into the filesystem you would:
 
-python yadainx-exp.py --yada http://leroych2:lerpasswd220@yada-dev.na.novartis.net:8000/yada.jsp --apps ARLX --out arlx.queries.json
+``python yadainx-exp.py --yada http://leroych2:lerpasswd220@yada-dev.na.novartis.net:8000/yada.jsp --apps ARLX --out arlx.queries.json``
 
 
 To also extract the connection details for your app, use the --defn option. This will mask the password, although you can use the --unmask option to prevent masking the password.
 
-python yadainx-exp.py --yada http://leroych2:lerpasswd220@yada-dev.na.novartis.net:8000/yada.jsp --apps ARLX --out arlx.defn+queries.json --defn
+``python yadainx-exp.py --yada http://leroych2:lerpasswd220@yada-dev.na.novartis.net:8000/yada.jsp --apps ARLX --out arlx.defn+queries.json --defn``
 
 Instead of passing the username/password for your YadaAdmin credentials, in the yada URL, you can use the --user and --password options.
 
-python yadainx-exp.py --yada http://yada-dev.na.novartis.net:8000/yada.jsp --user leroych2 --password lerpasswd220 --apps ARLX --out arlx.queries.json
+``python yadainx-exp.py --yada http://yada-dev.na.novartis.net:8000/yada.jsp --user leroych2 --password lerpasswd220 --apps ARLX --out arlx.queries.json``
 
 
 To transform your "portable file" into a file easily compared in Source Control, you would load the portable file and saved it with the --scm option
-python yadainx-exp.py --load arlx.queries.json --scm arlx.queries.scm.json --out /dev/null 
+``python yadainx-exp.py --load arlx.queries.json --scm arlx.queries.scm.json --out /dev/null ``
 (the /dev/null output is to avoid getting the loaded file in the console)
 (please note that the SCM file does not contain the connection details)
 
@@ -34,11 +34,11 @@ The import process deletes all queries it imporst first and recreates them from 
 Use the --sync option to update the queries pre-existing in the target environment (so as not lose the access-counts etc)
 The --sync option does not delete queries in the target environment that are not found in the source.
 
-python yadainx.exp.py --load arlx.defn+queries.json --defn --yimport http://leroych2:tstpasswd220@yada-test.na.novartis.net:8088/yada.jsp --sync
+``python yadainx.exp.py --load arlx.defn+queries.json --defn --yimport http://leroych2:tstpasswd220@yada-test.na.novartis.net:8088/yada.jsp --sync``
 
 One can also do a brutal:
 
-python yadainx.exp.py --yada http://leroych2@lerpasswd220@yada-dev.na.novartis.net:8000/yada.jsp --defn --yimport http://leroych2:lerpassword220@yada-test.na.novartis.net:8088/yada.jsp --apps arlx --sync
+```python yadainx.exp.py --yada http://leroych2@lerpasswd220@yada-dev.na.novartis.net:8000/yada.jsp --defn --yimport http://leroych2:lerpassword220@yada-test.na.novartis.net:8088/yada.jsp --apps arlx --sync```
 
 Please note that the --apps options can use several application tag, and are case-sensitive.
 
@@ -46,7 +46,7 @@ Please note that the --apps options can use several application tag, and are cas
 
 
 The tool will present some information on its options:
-
+```
 usage: yadainx-exp.py [-h] [--yada [YADA]] [--yimport [YIMPORT]]
                       [--user [USER]] [--password [PASSWORD]] [--load [LOAD]]
                       [--apps [APPS [APPS ...]]] [--out [OUT]]
@@ -96,7 +96,7 @@ optional arguments:
   --src7                the source Yada system is on Yada-7
   --sync                query the target system before feeding it, so as to do
                         updates and no do deletes/inserts of all queries
-
+```
 
 
 
