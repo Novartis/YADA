@@ -106,5 +106,15 @@ Please be careful with the import step, obviously.
 
 
 
+Note that, you can chain this with a call to aws s3 cp (copy), for example
+
+``  uuk=$(head -11 /dev/urandom | base32 -w 0 | cut -b 20-40) ; mkdir /tmp/x$uuk ; chmod 700 /tmp/x$uuk ; python yadainx-exp.py --yada http://yada.na.novartis.net/yada.jsp --apps ARLX --out /tmp/x$uuk/ARLX.json && aws s3 cp /tmp/x$uuk/def.json s3://us-east-1/spiffybucket/ ; rm -rf /tmp/x$uuk  ``  will extract the definition of app ARLX into a temporary file (in a temporary /tmp subdirectory), then pass it to S3 for storage.
+
+and 
+
+``  uuk=$(head -11 /dev/urandom | base32 -w 0 | cut -b 20-40) ; mkdir /tmp/x$uuk ; chmod 700 /tmp/x$uuk ; aws cp s3 s3://us-east-1/spiffybucket/ARLX.json /tmp/x$uuk/ && python yadainx-exp.py --yimport http://yada.na.novartis.net.yada.jsp --load /tmp/x$uuk/ARLX.json ; rm -rf /tmp/x$uuk `` will retrieve the ARLX.json file from S3, into a temporary file (of temporary subdirectory of /tmp) then load it into the live yada environmet.
+
+
+(the command ``head -11 /dev/urandom | base32 -w 0 | cut -b 20-40`` generates a 20 character string randomly from the base32 alphabet (``A-Z, 2,3,4,6,8 and perhaps =``) ).
 
 
