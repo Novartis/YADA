@@ -19,17 +19,17 @@ define(
 	'autocomplete'
   ],
   function (flight,$,autocomplete ) {
-	  
+
 	  'use strict';
 	  return flight.component(queryParamList);
-	  
+
 	  //TODO parameter number value validation (is a number, is an integer)
 	  //TODO parameter styling
-	  
-	  
-	  
+
+
+
 	  function queryParamList() {
-	  	
+
 	  	// parameter dropdown
 	  	this.yadaParams = [
 		  	{value:'a',data:{longname:"a (args)",tooltip:"A comma-separated list of arguments expected by the plugin. For script plugins, the script name should be first."}},
@@ -50,6 +50,7 @@ define(
 		  	//{value:'labels',data:{longname:"labels",tooltip:''}},
 		  	//{value:'mail',data:{longname:"mail"}},
 		  	{value:'h',data:{longname:"h (harmonyMap)",tooltip:'A JSON string pairing source-result field names or paths to response field names or paths.'}},
+        {value:'H',data:{longname:"H (httpHeaders)",tooltip:'A comma-separated list of header names OR a JSON String with header name keys and String or boolean values.'}},
 		  	//{value:'o',data:{longname:"o (overArgs)",tooltip:''}},
 		  	{value:'pg',data:{longname:"pg/ps (page/pagestart)",tooltip:'When pagination is in use, use this parameter to set the default first page, if > 1 (default)'}},
 		  	{value:'path',data:{longname:"path",tooltip:''}},
@@ -70,16 +71,16 @@ define(
 		  	{value:'u',data:{longname:"u (user)",tooltip:'The user id, useful when such information is not trasmitted automatically in the request.'}},
 		  	{value:'vl',data:{longname:"vl (viewlimit)",tooltip:'Integer defining the maximum number of results to return even in pagination use-cases. The view limit effectively caps the secondary "count" query. This is useful when count queries run on very large datasets, causing latency.'}}
 	  	];
-	  	
+
 	  	this.paramControls = {
-  			'a':function(node,context) { 
+  			'a':function(node,context) {
   				context.setPlaceholder(
-  						context.getParamValueNode(node), 
+  						context.getParamValueNode(node),
   						'Comma-separated list...');
   			}, // placeholders
-  	  	'b':function(node,context) { 
+  	  	'b':function(node,context) {
   				context.setPlaceholder(
-  						context.getParamValueNode(node), 
+  						context.getParamValueNode(node),
   						'Comma-separated list...');
   			}, // placeholders
   	  	'c':function(node,context) {
@@ -91,113 +92,113 @@ define(
   	  	'co':function(node,context) {
   	  		context.setBoolean(context.getParamValueNode(node),"true");
   	  	}, // bool
-  	  	'cv':function(node,context) { 
+  	  	'cv':function(node,context) {
   				context.setPlaceholder(
-  						context.getParamValueNode(node), 
+  						context.getParamValueNode(node),
   						'Class name or FQCN...');
-  			}, // placeholders 
+  			}, // placeholders
   	  	//'colhead':function() { }, // tf
   	  	//'compact':function() { }, // tf
-  	  	'd':function(node,context) { 
+  	  	'd':function(node,context) {
   				context.setPlaceholder(
-  						context.getParamValueNode(node), 
+  						context.getParamValueNode(node),
   						'Character or string...');
   			}, // placeholders
   	  	'e':function(node,context) {
   	  		context.setBoolean(context.getParamValueNode(node),"true");
   	  	}, // bool
-  	  	'el':function(node,context) { 
+  	  	'el':function(node,context) {
   				context.setPlaceholder(
-  						context.getParamValueNode(node), 
+  						context.getParamValueNode(node),
   						'Number...');
   			}, // validate number
   	  	'fi':function() { }, // textarea
-  	  	'f':function(node,context) { 
+  	  	'f':function(node,context) {
   				context.setPlaceholder(
-  						context.getParamValueNode(node), 
+  						context.getParamValueNode(node),
   						'csv,tsv,xml,pipe,etc');
-  			}, // placeholders 
+  			}, // placeholders
   	  	//'j':function() { },
   	  	//'labels':function() { }, // ??
   	  	//'mail':function() { }, // ??
   	  	//'h':function() { },
   	  	//'o':function() { },
-  	  	'pg':function(node,context) { 
+  	  	'pg':function(node,context) {
   				context.setPlaceholder(
-  						context.getParamValueNode(node), 
+  						context.getParamValueNode(node),
   						'Number...');
   			}, // validate number
   	  	//'path':function() { }, // ??
-  	  	'pz':function(node,context) { 
+  	  	'pz':function(node,context) {
   				context.setPlaceholder(
-  						context.getParamValueNode(node), 
+  						context.getParamValueNode(node),
   						'Number...');
   			}, // validate number
   	  	//'p':function() { },
   	  	//'ps':function() { },
-  	  	'pl':function(node,context) { 
+  	  	'pl':function(node,context) {
   				context.setPlaceholder(
-  						context.getParamValueNode(node), 
+  						context.getParamValueNode(node),
   						'Script name, Class name, or FQCN...');
   			}, // placeholders
-  	  	'pa':function(node,context) { 
+  	  	'pa':function(node,context) {
   				context.setPlaceholder(
-  						context.getParamValueNode(node), 
+  						context.getParamValueNode(node),
   						'Comma-separated list...');
   			}, // placeholders
-  	  	'pr':function(node,context) { 
+  	  	'pr':function(node,context) {
   				context.setPlaceholder(
-  						context.getParamValueNode(node), 
+  						context.getParamValueNode(node),
   						'Comma-separated list...');
   			}, // placeholders
   	  	'py':function(node,context) {
   	  		context.setBoolean(context.getParamValueNode(node),"true");
   	  	}, // bool
   	  	//'pc':function() { },
-  	  	'px':function(node,context) { 
+  	  	'px':function(node,context) {
   				context.setPlaceholder(
-  						context.getParamValueNode(node), 
+  						context.getParamValueNode(node),
   						'hostname:port...');
   			}, // placeholders
   	  	//'q':function() { },
-  	  	'rd':function(node,context) { 
+  	  	'rd':function(node,context) {
   				context.setPlaceholder(
-  						context.getParamValueNode(node), 
+  						context.getParamValueNode(node),
   						'Character or string...');
   			}, // placeholders
-  	  	'r':function(node,context) { 
+  	  	'r':function(node,context) {
   				context.setPlaceholder(
-  						context.getParamValueNode(node), 
+  						context.getParamValueNode(node),
   						'Class name or FQCN...');
   			}, // placeholders
-  	  	's':function(node,context) { 
+  	  	's':function(node,context) {
   				context.setPlaceholder(
-  						context.getParamValueNode(node), 
+  						context.getParamValueNode(node),
   						'Column name...');
   			}, // placeholders
   	  	'so':function(node,context) {
   	  		context.setSortOrder(context.getParamValueNode(node),"desc");
   	  	}, // asc/desc
-  	  	'u':function(node,context) { 
+  	  	'u':function(node,context) {
   				context.setPlaceholder(
-  						context.getParamValueNode(node), 
+  						context.getParamValueNode(node),
   						'User id...');
   			}, // placeholders
-  	  	'vl':function(node,context) { 
+  	  	'vl':function(node,context) {
   				context.setPlaceholder(
-  						context.getParamValueNode(node), 
+  						context.getParamValueNode(node),
   						'Number...');
   			} // validate number
 	  	};
-	  	
+
 	  	this.getParamValueNode = function(node) {
 	  		return $(node).closest('tr').find('input[id^="value-"]');
 	  	};
-	  	
+
 	  	this.setPlaceholder = function(elem,value) {
 	  		elem.attr('placeholder',value);
 	  	};
-	  	
+
 	  	this.setBoolean = function(elem,defalt) {
 	  		var val = elem.val();
 	  		if(val == "") val = defalt;
@@ -215,7 +216,7 @@ define(
 	  		elem.parent().append(html);
 	  		elem.remove();
 	  	};
-	        	
+
 	  	this.showParams = function(e,d) {
 	  		var self = this;
 	  		var $table = $('#default-params');
@@ -226,7 +227,7 @@ define(
   			}
 	  		if($.fn.DataTable.isDataTable( '#default-params' ))
 	  		{
-	  			var table = $table.DataTable(); 
+	  			var table = $table.DataTable();
 	  			table.clear();
 	  			table.rows.add(params);
 	  			table.draw();
@@ -248,7 +249,7 @@ define(
 									var elem = '<input type="text" id="'+id+'" value="'+data+'"/>';
 									return elem;
 								}
-							},          
+							},
 		  			  {
 		  			  	targets:2,
 		  			  	render:function(data,type,row,meta) {
@@ -292,7 +293,7 @@ define(
 		  		});
 	  		}
 	  	};
-	  	
+
 	  	this.enrich = function(e,d) {
 	  		var self = this;
 	  		var $input = $('#query-name');
@@ -302,7 +303,7 @@ define(
 	      	$nameAc.autocomplete({
 	        	lookup:self.yadaParams,
 	        	formatResult: function(suggestion,currentValue){
-	        		// without calling the builtin formatResult the dropdown loses the 
+	        		// without calling the builtin formatResult the dropdown loses the
 	        		// default formatting with <strong> tags around the search term
 	        		return $.Autocomplete.formatResult({value:suggestion.data.longname},currentValue);
 	        	},
@@ -329,7 +330,7 @@ define(
 	  			$(table.rows().nodes()[data.length - 1]).data('status','new');
 	  		}
 	  	};
-	  	
+
 	  	this.saveParam = function(e,d) {
 	  	  e.preventDefault();
 	  		var self = this,
@@ -342,7 +343,7 @@ define(
 	  		id       = data.ID,
 	  		name     = $tr.find('input[id^="name-"]').val(),
 	  		rule     = $tr.find('input[name^="rule-"]:checked').val(),
-	  		radio    = $tr.find('input[type="radio"][name^="value-"]'), 
+	  		radio    = $tr.find('input[type="radio"][name^="value-"]'),
 	  		val      = '';
 	  		if(radio.length > 0)
 	  			val = radio.filter(':checked').val();
@@ -365,7 +366,7 @@ define(
   	  		});
 	  		}
 	  	};
-	  	
+
 	  	this.removeParam = function(e,d) {
 	  	  e.preventDefault();
 	  		var self = this,
@@ -390,40 +391,40 @@ define(
   	  	  			self.addParam();
   	  	  		self.trigger('update-security-panel',{});
   	  			}
-  	  			
+
   	  		});
 	  		}
 	  	};
-	  	
-	  	
-	  	
+
+
+
 	  	this.addParam = function(e,d) {
 	  		var self = this;
 	  		var $table = $('#default-params');
-	  		var table  = $.fn.DataTable.isDataTable( '#default-params' ) ? $table.DataTable() : null; 
+	  		var table  = $.fn.DataTable.isDataTable( '#default-params' ) ? $table.DataTable() : null;
 	  		var name = '', value = '', rule = 1, id = 1, idCol;
 	  		if(d !== undefined)
 	  	  {
-	  		  name = d.NAME||''; 
+	  		  name = d.NAME||'';
 	  		  value = d.VALUE||'';
 	  		  rule = d.RULE||1;
 	  		  var idCol = table !== null ? table.column('ID:name') : null;
 	  		  id = d.ID || (idCol !== null && idCol.length > 0) ? idCol.data().sort().reverse()[0] + 1 : 1;
 	  	  }
-	  		
+
 	  		var params = {TARGET:$('#query-name').val(),NAME:name,VALUE:value,RULE:rule,ID:id};
-	  		
+
 	  		table.row.add(params).draw();
 	  		var lastIndex = table.data().length - 1;
 	  		$(table.rows().nodes()[lastIndex]).data('status','new');
 	  	};
-	  	
+
 	  	this.defaultAttrs({
 	  		paramSave:   '.fa-save',
 	  		paramRemove: '.fa-remove',
 	  		paramAdd:    '.fa-plus'
 	  	});
-	  	
+
 	    this.after('initialize', function () {
 	      this.on('add-param',this.addParam)
 	     	this.on('show-params',this.showParams);
@@ -431,8 +432,8 @@ define(
 	     	this.on('click',{
 	     		paramSave: this.saveParam,
 	     		paramRemove: this.removeParam,
-	     		paramAdd: this.addParam	
-	     			
+	     		paramAdd: this.addParam
+
 	     	});
 	    });
 	  }
