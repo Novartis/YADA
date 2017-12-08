@@ -33,7 +33,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 import com.novartis.opensource.yada.ConnectionFactory;
 import com.novartis.opensource.yada.YADAQuery;
