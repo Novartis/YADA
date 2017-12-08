@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 define(
-	
+
 	function(require) {
 
 		return { initialize: initialize };
@@ -29,31 +29,33 @@ define(
 			         'component/app-mgr',
 			         'component/migration',
 			         'component/query-params'
-			         ], 
-			         
+			         ],
+
 		  function ($, domReady, bootstrap, header, login, appMgr, /*qtable, appSelector,*/ migration, params) {
-				
+
 				// set ajax defaults
-				var appContext = (this.context() != "ROOT" ? this.context() + '/': '');
-				var defaultUrl = '/' + appContext + 'yada.jsp';
+				var appContext = '';
+				if(!/^(\/|ROOT)$/.test(this.context()))
+					appContext = [,this.context(),,].join("/")); //wrap context with slashes
+				var defaultUrl = appContext + 'yada.jsp';
 				$.ajaxSetup({
 					url: defaultUrl,
 		      type: 'GET',
 		      dataType: 'json'
 				});
-				
-			    
+
+
 		    $.fn.when = function( events, eventData ) {
-		        
+
 		        events = events.split( /\s/g ); // parse list of events
-		        
+
 		        var deferreds = [], // array of deferreds
 		            iElem, // each $node
 		            lengthElem = this.length, // length of $nodes array
 		            iEvent, // each event
 		            lengthEvent = events.length, // length of events array
 		            elem; // each elemment
-		        
+
 		        for( iElem = 0; iElem < lengthElem; iElem++ ) { // for each $node
 		            elem = $( this[ iElem ] );
 		            for ( iEvent = 0; iEvent < lengthEvent; iEvent++ ) { // for each event
@@ -88,7 +90,7 @@ define(
 				            .css({
 				                "position": "absolute",
 				                "background-color": "#ffff99",
-				                "opacity": ".9"   
+				                "opacity": ".9"
 				            })
 				            .fadeOut(1500);
 				    });
@@ -107,7 +109,7 @@ define(
 				      login.attachTo('#login');
 				  }
 				});
-				
+
 				appMgr.attachTo('#app-mgr');
 				migration.attachTo('.nest');
 			});
