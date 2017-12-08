@@ -17,11 +17,11 @@ require.config({
 		baseUrl: '',
     paths: {
     	bootstrap:    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min",
-    	datatables:   "http://cdn.datatables.net/1.10.7/js/jquery.dataTables.min",
-    	domReady:     "http://cdnjs.cloudflare.com/ajax/libs/require-domReady/2.0.1/domReady.min",
+    	datatables:   "https://cdn.datatables.net/1.10.7/js/jquery.dataTables.min",
+    	domReady:     "https://cdnjs.cloudflare.com/ajax/libs/require-domReady/2.0.1/domReady.min",
     	flight:       "https://cdnjs.cloudflare.com/ajax/libs/flight/1.1.4/flight.min",
-    	jquery:       "http://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min",
-    	lodash:		    "http://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.9.0/lodash.min",
+    	jquery:       "https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min",
+    	lodash:		    "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.9.0/lodash.min",
     	autocomplete: "https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.2.21/jquery.autocomplete",
     	Clipboard:    "https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard",
     	mergely:      "lib/mergely/mergely.min",
@@ -30,24 +30,24 @@ require.config({
     map : {
     	'mergely' : { 'jQuery':'jquery'},
     },
-    shim: { 	
+    shim: {
     	bootstrap: { deps : ["jquery"] },
     	flight:    { deps : ["jquery"], exports: 'flight'},
     	autocomplete:   { deps : ["jquery"], exports: 'autocomplete'},
-    	codemirror: { exports: 'CodeMirror'},    	
-    	mergely:   { deps : ["codemirror","jQuery"], exports: 'mergely' },    	
+    	codemirror: { exports: 'CodeMirror'},
+    	mergely:   { deps : ["codemirror","jQuery"], exports: 'mergely' },
     },
     packages: [{
       name: "codemirror",
       location: "lib/codemirror",
       main: "lib/codemirror"
   }]
-    
-    
+
+
 });
 
 require(
-[	  
+[
 
 ],
 function() {
