@@ -391,7 +391,6 @@ define(
   	  	  			self.addParam();
   	  	  		self.trigger('update-security-panel',{});
   	  			}
-
   	  		});
 	  		}
 	  	};
