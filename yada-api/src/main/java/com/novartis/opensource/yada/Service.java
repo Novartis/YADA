@@ -671,8 +671,6 @@ public class Service {
 			l.error(e.getMessage(),e);
 			result = error(e.getMessage(),e);
 		}
- 
-		
 		return result;
 	}
 
