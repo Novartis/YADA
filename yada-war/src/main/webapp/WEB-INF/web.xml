@@ -38,10 +38,9 @@
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 
-	<!-- <filter> <filter-name>CORS</filter-name> <filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class> 
-		</filter> <filter-mapping> <filter-name>CORS</filter-name> <url-pattern>/*</url-pattern> 
+	<!-- <filter> <filter-name>CORS</filter-name> <filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>
+		</filter> <filter-mapping> <filter-name>CORS</filter-name> <url-pattern>/*</url-pattern>
 		</filter-mapping> -->
-	<!-- 
 	<filter>
 		<filter-name>CorsFilter</filter-name>
 		<filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
@@ -74,7 +73,6 @@
 		<filter-name>CorsFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-  -->
 
 	<servlet>
 		<servlet-name>YADA-init</servlet-name>
