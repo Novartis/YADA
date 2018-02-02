@@ -34,15 +34,15 @@ define(
 		  function ($, domReady, bootstrap, header, login, appMgr, /*qtable, appSelector,*/ migration, params) {
 
 				// set ajax defaults
-				var appContext = '';
-				if(!/^(\/|ROOT)$/.test(this.context()))
-					appContext = [,this.context(),,].join("/")); //wrap context with slashes
-				var defaultUrl = appContext + 'yada.jsp';
+				var appContext = (this.context() != "ROOT" ? this.context() + '/': '');
+        var baseUrl = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
+				var defaultUrl = '/' + appContext + 'yada.jsp';
 				$.ajaxSetup({
-					url: defaultUrl,
-		      type: 'GET',
-		      dataType: 'json'
-				});
+					url: baseUrl + defaultUrl,
+          type: 'GET',
+          dataType: 'json'
+        });
+
 
 
 		    $.fn.when = function( events, eventData ) {
