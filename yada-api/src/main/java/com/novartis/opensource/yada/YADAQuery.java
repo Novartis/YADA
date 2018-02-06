@@ -590,6 +590,18 @@ public class YADAQuery {
 	}
 	
 	/**
+	 * Tests value of parameter name
+	 * @param key the name of the param
+	 * @return {@code true} if {@code key} = {@link YADARequest#PS_ARGLIST}
+	 * @since 8.5.0
+	 */
+	private boolean isArgumentParam(String key) {
+	  if(key.equals(YADARequest.PS_ARGLIST))
+	    return true;
+	  return false;
+	}
+	
+	/**
 	 * Returns the {@link YADAParam} with name = {@code key}
 	 * @param key the name of the desired param
 	 * @return the param object
@@ -709,7 +721,7 @@ public class YADAQuery {
 	public void addParam(YADAParam param)
 	{
 		String key = param.getName();
-		if(isPluginParam(key))
+		if(isPluginParam(key) || isArgumentParam(key))
 		{
 		  List<YADAParam> lp = getYADAQueryParams();
       String  value  = param.getValue();
