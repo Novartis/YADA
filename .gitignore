@@ -11,3 +11,4 @@ target
 /build
 Release*
 **/yadaMvnTestNG.sh
+YADA.db
