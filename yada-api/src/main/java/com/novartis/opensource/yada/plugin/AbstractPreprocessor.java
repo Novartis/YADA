@@ -182,7 +182,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
 	{
 	  setYADARequest(yadaReq);
 	  setYADAQuery(yq);
-	  String[] args = getYADAQuery().getYADAQueryParamValuesForTarget(YADARequest.PS_ARGLIST, this.getClass().getName());
+	  String[] args = getYADAQuery().getYADAQueryParamValuesForTarget(YADARequest.PS_ARGLIST, this.getClass().getSimpleName());
     if(args != null && args.length > 0)
       setArgs(Arrays.asList(args[0].split(",")));
 	  else
