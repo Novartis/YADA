@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.xml.soap.SOAPConnection;
@@ -541,16 +542,27 @@ public class YADAQuery {
 	 * @return an array containing the value associated to param with name {@code key} 
 	 */
 	public String[] getYADAQueryParamValue(String key) {
+		List<String> valuesList = new ArrayList<>();
 		if(getParam(key) != null)
 		{
-	    String[] values = new String[getParam(key).size()];
-	    int i=0;
+	    //String[] values = new String[getParam(key).size()];
+	    //int i=0;
 	    for(YADAParam param : getParam(key))
 	    {
-	      values[i++] = param.getValue();
+	      //values[i++] = param.getValue();
+	    	//TODO 'id' is used as "rank" or order of execution.  This is bad.  
+      	// Need a sequence field in the model, or a ui gadget (dnd) to change the 
+      	// order (it can only be done in the db directly now). If the same 'id'
+      	// field is reused, it should be renamed to 'seq','ord','rank' etc.
+      	valuesList.add(param.getId(),param.getValue());
 	    }
-	    if(values.length > 0)
-	      return values;
+	    //if(values.length > 0)
+	      //return values;
+	    if(valuesList.size() > 0)
+      {
+      	valuesList.removeIf(Objects::isNull);
+      	return valuesList.toArray(new String[valuesList.size()]);
+      }
 		}
 		return null;		
 	}
@@ -562,17 +574,31 @@ public class YADAQuery {
    * @return an array containing the value associated to param with name {@code key} 
    */
   public String[] getYADAQueryParamValuesForTarget(String key) {
+  	List<String> valuesList = new ArrayList<>();
     if(getParam(key) != null)
     {
-      String[] values = new String[getParam(key).size()];
-      int i=0;
+      //String[] values = new String[getParam(key).size()];
+      //int i=0;
       for(YADAParam param : getParam(key))
       {
         if(param.getTarget().equals(this.getQname()))
-          values[i++] = param.getValue();
+        {
+        	//TODO 'id' is used as "rank" or order of execution.  This is bad.  
+        	// Need a sequence field in the model, or a ui gadget (dnd) to change the 
+        	// order (it can only be done in the db directly now). If the same 'id'
+        	// field is reused, it should be renamed to 'seq','ord','rank' etc.
+        	valuesList.add(param.getId(),param.getValue());
+        	//i++;
+//        	values[i++] = param.getValue();
+        }
       }
-      if(values.length > 0)
-        return Arrays.copyOfRange(values,0,i);
+      //if(values.length > 0)
+      	//return Arrays.copyOfRange(values,0,i);
+      if(valuesList.size() > 0)
+      {
+      	valuesList.removeIf(Objects::isNull);        
+      	return valuesList.toArray(new String[valuesList.size()]);
+      }
     }
     return null;    
   }
@@ -586,17 +612,31 @@ public class YADAQuery {
    * @since 8.5.0
    */
   public String[] getYADAQueryParamValuesForTarget(String key, String target) {
+  	List<String> valuesList = new ArrayList<>();
     if(getParam(key) != null)
     {
-      String[] values = new String[getParam(key).size()];
-      int i=0;
+      //String[] values = new String[getParam(key).size()];
+      //int i=0;
       for(YADAParam param : getParam(key))
       {
         if(param.getTarget().equals(target))
-          values[i++] = param.getValue();
+        {
+        	//TODO 'id' is used as "rank" or order of execution.  This is bad.  
+        	// Need a sequence field in the model, or a ui gadget (dnd) to change the 
+        	// order (it can only be done in the db directly now). If the same 'id'
+        	// field is reused, it should be renamed to 'seq','ord','rank' etc.
+        	valuesList.add(param.getId(),param.getValue());
+        	//values[i++] = param.getValue();
+        }
+          
       }
-      if(values.length > 0)
-        return Arrays.copyOfRange(values,0,i);
+      //if(values.length > 0)
+        //return Arrays.copyOfRange(values,0,i);
+      if(valuesList.size() > 0)
+      {
+      	valuesList.removeIf(Objects::isNull);       
+      	return valuesList.toArray(new String[valuesList.size()]);
+      }
     }
     return null;    
   }
