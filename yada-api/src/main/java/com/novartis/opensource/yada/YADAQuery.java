@@ -745,7 +745,7 @@ public class YADAQuery {
 	public void addParam(YADAParam param)
 	{
 		String key = param.getName();
-		if(isPluginParam(key))// || isArgumentParam(key))
+		if(isPluginParam(key) || isArgumentParam(key))
 		{
 		  List<YADAParam> lp = getYADAQueryParams();
       String  value  = param.getValue();
