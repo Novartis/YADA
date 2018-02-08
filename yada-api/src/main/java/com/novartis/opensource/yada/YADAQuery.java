@@ -541,28 +541,22 @@ public class YADAQuery {
 	 * @param key name of parameter whose value is sought
 	 * @return an array containing the value associated to param with name {@code key} 
 	 */
-	public String[] getYADAQueryParamValue(String key) {
-		List<String> valuesList = new ArrayList<>(1000);
+	public String[] getYADAQueryParamValue(String key) {	
+		boolean hasVal = false;
 		if(getParam(key) != null)
 		{
-	    //String[] values = new String[getParam(key).size()];
-	    //int i=0;
+	    String[] values = new String[1000];
 	    for(YADAParam param : getParam(key))
 	    {
-	      //values[i++] = param.getValue();
+	      values[param.getId()] = param.getValue();
+	      hasVal = true;
 	    	//TODO 'id' is used as "rank" or order of execution.  This is bad.  
       	// Need a sequence field in the model, or a ui gadget (dnd) to change the 
       	// order (it can only be done in the db directly now). If the same 'id'
-      	// field is reused, it should be renamed to 'seq','ord','rank' etc.
-      	valuesList.add(param.getId(),param.getValue());
+      	// field is reused, it should be renamed to 'seq','ord','rank' etc.      	
 	    }
-	    //if(values.length > 0)
-	      //return values;
-	    if(valuesList.size() > 0)
-      {
-      	valuesList.removeIf(Objects::isNull);
-      	return valuesList.toArray(new String[valuesList.size()]);
-      }
+	    if(hasVal)
+	      return Arrays.stream(values).filter(Objects::nonNull).toArray(String[]::new);	    
 		}
 		return null;		
 	}
@@ -574,31 +568,25 @@ public class YADAQuery {
    * @return an array containing the value associated to param with name {@code key} 
    */
   public String[] getYADAQueryParamValuesForTarget(String key) {
-  	List<String> valuesList = new ArrayList<>(1000);
+  	boolean hasVal = false;
     if(getParam(key) != null)
     {
-      //String[] values = new String[getParam(key).size()];
-      //int i=0;
+      String[] values = new String[1000];
       for(YADAParam param : getParam(key))
       {
         if(param.getTarget().equals(this.getQname()))
         {
+        	values[param.getId()] = param.getValue();
+        	hasVal = true;
         	//TODO 'id' is used as "rank" or order of execution.  This is bad.  
         	// Need a sequence field in the model, or a ui gadget (dnd) to change the 
         	// order (it can only be done in the db directly now). If the same 'id'
         	// field is reused, it should be renamed to 'seq','ord','rank' etc.
-        	valuesList.add(param.getId(),param.getValue());
-        	//i++;
-//        	values[i++] = param.getValue();
+        	
         }
       }
-      //if(values.length > 0)
-      	//return Arrays.copyOfRange(values,0,i);
-      if(valuesList.size() > 0)
-      {
-      	valuesList.removeIf(Objects::isNull);        
-      	return valuesList.toArray(new String[valuesList.size()]);
-      }
+      if(hasVal)
+	      return Arrays.stream(values).filter(Objects::nonNull).toArray(String[]::new);	    
     }
     return null;    
   }
@@ -612,11 +600,10 @@ public class YADAQuery {
    * @since 8.5.0
    */
   public String[] getYADAQueryParamValuesForTarget(String key, String target) {
-  	List<String> valuesList = new ArrayList<>();
+  	boolean hasVal = false;
     if(getParam(key) != null)
     {
-      //String[] values = new String[getParam(key).size()];
-      //int i=0;
+      String[] values = new String[1000];
       for(YADAParam param : getParam(key))
       {
         if(param.getTarget().equals(target))
@@ -624,19 +611,14 @@ public class YADAQuery {
         	//TODO 'id' is used as "rank" or order of execution.  This is bad.  
         	// Need a sequence field in the model, or a ui gadget (dnd) to change the 
         	// order (it can only be done in the db directly now). If the same 'id'
-        	// field is reused, it should be renamed to 'seq','ord','rank' etc.
-        	valuesList.add(param.getId(),param.getValue());
-        	//values[i++] = param.getValue();
+        	// field is reused, it should be renamed to 'seq','ord','rank' etc.        	
+        	values[param.getId()] = param.getValue();
+        	hasVal = true;
         }
           
       }
-      //if(values.length > 0)
-        //return Arrays.copyOfRange(values,0,i);
-      if(valuesList.size() > 0)
-      {
-      	valuesList.removeIf(Objects::isNull);       
-      	return valuesList.toArray(new String[valuesList.size()]);
-      }
+      if(hasVal)
+	      return Arrays.stream(values).filter(Objects::nonNull).toArray(String[]::new);	    
     }
     return null;    
   }
