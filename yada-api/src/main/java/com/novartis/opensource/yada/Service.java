@@ -1019,7 +1019,7 @@ public class Service {
             args   = plugin.substring(firstCommaIndex+1);
             plugin = plugin.substring(0, firstCommaIndex);
             // add a query parameter for the arg list
-            yp = new YADAParam(YADARequest.PS_ARGLIST, args, yq.getQname(), YADAParam.NONOVERRIDEABLE, true); 
+            yp = new YADAParam(YADARequest.PS_ARGLIST, args, plugin, YADAParam.NONOVERRIDEABLE, true); 
             yq.addParam(yp);
           }
 					l.debug("possible bypass plugin is["+plugin+"]");
@@ -1211,7 +1211,7 @@ public class Service {
             args   = plugin.substring(firstCommaIndex+1);
             plugin = plugin.substring(0, firstCommaIndex);
             // add a query parameter for the arg list
-            yp = new YADAParam(YADARequest.PS_ARGLIST, args, yq.getQname(), YADAParam.NONOVERRIDEABLE, true); 
+            yp = new YADAParam(YADARequest.PS_ARGLIST, args, plugin, YADAParam.NONOVERRIDEABLE, true); 
             yq.addParam(yp);
           }
 					l.debug("possible postprocess plugin is["+plugin+"]");
