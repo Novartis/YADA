@@ -576,6 +576,30 @@ public class YADAQuery {
     }
     return null;    
   }
+  
+  /**
+   * Returns an array containing the value associated to param with name {@code key}
+   * where target is arbitrary, usually a qname or plugin name 
+   * @param key name of parameter whose value is sought
+   * @param target name of target for param value, usually a qname or plugin name
+   * @return an array containing the value associated to param with name {@code key} and target {@code target}
+   * @since 8.5.0
+   */
+  public String[] getYADAQueryParamValuesForTarget(String key, String target) {
+    if(getParam(key) != null)
+    {
+      String[] values = new String[getParam(key).size()];
+      int i=0;
+      for(YADAParam param : getParam(key))
+      {
+        if(param.getTarget().equals(target))
+          values[i++] = param.getValue();
+      }
+      if(values.length > 0)
+        return Arrays.copyOfRange(values,0,i);
+    }
+    return null;    
+  }
 	
 	/**
 	 * Tests value of parameter name
@@ -721,7 +745,7 @@ public class YADAQuery {
 	public void addParam(YADAParam param)
 	{
 		String key = param.getName();
-		if(isPluginParam(key) || isArgumentParam(key))
+		if(isPluginParam(key))// || isArgumentParam(key))
 		{
 		  List<YADAParam> lp = getYADAQueryParams();
       String  value  = param.getValue();
