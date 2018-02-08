@@ -527,7 +527,7 @@ public class YADAQuery {
 	 * @since 7.1.4
 	 */
 	public List<YADAParam> getYADAQueryParamsForKey(String key) {
-	  List<YADAParam> paramList = new ArrayList<>();
+	  List<YADAParam> paramList = new ArrayList<>(1000);
 	  for(YADAParam yp : this.yqParams)
 	  {
 	    if(yp.getName().equals(key))
@@ -542,7 +542,7 @@ public class YADAQuery {
 	 * @return an array containing the value associated to param with name {@code key} 
 	 */
 	public String[] getYADAQueryParamValue(String key) {
-		List<String> valuesList = new ArrayList<>();
+		List<String> valuesList = new ArrayList<>(1000);
 		if(getParam(key) != null)
 		{
 	    //String[] values = new String[getParam(key).size()];
@@ -574,7 +574,7 @@ public class YADAQuery {
    * @return an array containing the value associated to param with name {@code key} 
    */
   public String[] getYADAQueryParamValuesForTarget(String key) {
-  	List<String> valuesList = new ArrayList<>();
+  	List<String> valuesList = new ArrayList<>(1000);
     if(getParam(key) != null)
     {
       //String[] values = new String[getParam(key).size()];
