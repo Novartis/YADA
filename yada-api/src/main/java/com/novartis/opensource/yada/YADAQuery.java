@@ -710,7 +710,7 @@ public class YADAQuery {
 		  list = new ArrayList<>();
 		  list.add(param);
       this.keys.put(key,list);
-      if(param.getRule() != 0)
+      if(param.getRule() != YADAParam.OVERRIDEABLE)
       {
         if(!hasNonOverridableParam(key))
         {
@@ -723,9 +723,15 @@ public class YADAQuery {
 		else if(isPluginParam(key)) // if it's a plugin, just add it straight away
 		{
 		  this.keys.get(key).add(param);
-      if(param.getRule() != 0)
+      if(param.getRule() != YADAParam.OVERRIDEABLE)
         this.immutableKeys.get(key).add(param);
     }
+		else if(isArgumentParam(key))
+		{
+			this.keys.get(key).add(param);
+			if(param.getRule() != YADAParam.OVERRIDEABLE)
+				this.immutableKeys.get(key).add(param);
+		}
 		else
 		{
 		  // if the param is not a plugin param, and it's 
@@ -734,7 +740,7 @@ public class YADAQuery {
 	    if(!hasNonOverridableParam(key)) // this confirms no immutables (non-overrides)
 	    {
 		    this.keys.get(key).add(param);
-	      if(param.getRule() != 0)
+	      if(param.getRule() != YADAParam.OVERRIDEABLE)
 	        this.immutableKeys.get(key).add(param);
 	    }
 		}
