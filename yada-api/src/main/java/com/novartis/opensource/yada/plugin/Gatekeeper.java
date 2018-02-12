@@ -420,7 +420,7 @@ public class Gatekeeper extends AbstractPreprocessor {
     // TODO make it impossible to reset args and preargs dynamically if pl class implements SecurityPolicy
     //   this will close an attack vector
 
-    String SPACE            = " ";
+    String SPACE                = " ";
     StringBuilder contentPolicy = new StringBuilder();
     Pattern       rxInjection   = Pattern.compile(RX_COL_INJECTION);
     String        rawPolicy     = getArgumentValue(CONTENT_POLICY_PREDICATE);

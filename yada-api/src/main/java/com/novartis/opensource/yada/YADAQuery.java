@@ -812,7 +812,6 @@ public class YADAQuery {
         setKey(param);
       }
     }
-		
 	}
 	
 	/**
