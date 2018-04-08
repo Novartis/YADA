@@ -903,7 +903,7 @@ public class YADARequest {
 	
 	// URL Parameters
 	/**
-	 * Flog indicating whether or not to include the column header in delimited output. Defaults to {@code false}.
+	 * Flag indicating whether or not to include the column header in delimited output. Defaults to {@code false}.
 	 */
 	private boolean    colhead      = false;
 	/**

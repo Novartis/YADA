@@ -236,7 +236,7 @@ INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA select prop va
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA check credentials','select a.app "APP", a.userid "USERID", a.role "ROLE" from yada_ug a join yada_user b on a.userid = b.userid where b.userid=?v and b.pw=?v','YADABOT','YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA check credentials','pl',1,'Login');
 -- 'YADA select apps' requires content policy to filter for userid in YADA_UG - user must be mapped to app in yada_ug table
-INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pl',1,'Gatekeeper,execution.policy=void,content.policy.predicate=userid=getLoggedUser()');
+-- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pl',1,'Gatekeeper,execution.policy=void,content.policy.predicate=userid=getLoggedUser()');
 -- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=userid:getLoggedUser()');
 
 -- baseline sec
