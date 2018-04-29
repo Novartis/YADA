@@ -1,0 +1,20 @@
+Unstaged changes after reset:
+M	yada-api/src/main/java/com/novartis/opensource/yada/ConnectionFactory.java
+M	yada-api/src/main/java/com/novartis/opensource/yada/Finder.java
+M	yada-api/src/main/java/com/novartis/opensource/yada/JdbcFinder.java
+M	yada-api/src/main/java/com/novartis/opensource/yada/QueryManager.java
+M	yada-api/src/main/java/com/novartis/opensource/yada/YADAFinderException.java
+M	yada-api/src/main/java/com/novartis/opensource/yada/YADARequest.java
+M	yada-api/src/main/java/com/novartis/opensource/yada/adaptor/FileSystemAdaptor.java
+M	yada-api/src/main/java/com/novartis/opensource/yada/adaptor/SOAPAdaptor.java
+M	yada-api/src/main/java/com/novartis/opensource/yada/plugin/CacheUpdater.java
+M	yada-api/src/main/java/com/novartis/opensource/yada/plugin/CachedQueryUpdater.java
+M	yada-api/src/main/java/com/novartis/opensource/yada/plugin/Gatekeeper.java
+M	yada-api/src/main/java/com/novartis/opensource/yada/plugin/ScriptBypass.java
+M	yada-api/src/main/java/com/novartis/opensource/yada/plugin/ScriptPostprocessor.java
+M	yada-api/src/main/java/com/novartis/opensource/yada/plugin/ScriptPreprocessor.java
+M	yada-api/src/main/java/com/novartis/opensource/yada/plugin/XSLPostprocessor.java
+M	yada-api/src/main/java/com/novartis/opensource/yada/util/FileUtils.java
+M	yada-api/src/main/java/com/novartis/opensource/yada/util/QueryUtils.java
+M	yada-api/src/main/java/com/novartis/opensource/yada/util/YADAUtils.java
+M	yada-api/src/test/java/com/novartis/opensource/yada/test/FinderTest.java
