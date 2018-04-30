@@ -1,24 +1,34 @@
 <template>
-  <li class="list-group-item" :data-app="app" @click="loadApp">{{app}}</li>
+  <a class="list-group-item list-group-item-action"
+      :id="app"
+      href="#"
+      role="tab"
+      :data-app="app"
+      @click="loadApp"
+      data-toggle="list">{{app}}</a>
 </template>
 
 <script>
   export default {
     name: 'AppListItem',
     props: ['app'],
+    data () {
+      return {
+
+      }
+    },
     methods: {
 
       // executes yada queries on click to load configuration and queries for display
       loadApp (e) {
 
         // the queries to execute and the events to emit on response
-        let queries = [{qname:'YADA select app config',event:'config-loaded.app'},
-                       {qname:'YADA queries',event:'queries-loaded.app'}]
+        let queries = ['YADA select app config','YADA queries']
 
         // build the jsonparams
         let j = []
         queries.forEach(function(q){
-          j.push({qname:q.qname,DATA:[{APP:e.target.dataset.app}]})
+          j.push({qname:q,DATA:[{APP:e.target.dataset.app}]})
         })
         // exec the queries
         this.$yada.jp(j).then(resp => this.handleMultiResp(resp,queries))
@@ -31,10 +41,9 @@
         // iterate over the queries to emit the corresponding events and
         // pass the correct response (RESULTSET) object in its payload
         queries.forEach(function(q){
-          let obj = that._(resp.data.RESULTSETS)
-                        .map(function(o) {return o.RESULTSET})
-                        .filter({qname:q.qname}).value()
-          that.$emit(q.event,obj)
+          let evt = q.replace(/\s/g,'-') + '.loaded.app'
+          let obj = resp.data.RESULTSETS.map(o => o.RESULTSET).filter(o => o.qname == q)
+          that.$emit(evt,obj)
         })
       }
     }

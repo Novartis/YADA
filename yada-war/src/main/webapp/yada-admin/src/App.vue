@@ -4,18 +4,29 @@
       <div class="background"><img src="./assets/blox250.png"/><span>Admin</span></div>
     </div>
     <div class="row">
-      <div id="app-list" class="col-3">
-        <AppList/>
-      </div>
-      <div id="tab-panel" class="col-9">
+      <div id="tab-panel" class="col-12">
         <ul class="nav nav-tabs">
           <li class="nav-item">
-            <a class="nav-link active" href="#" data-toggle="tab">Queries</a>
+            <a class="nav-link active" id="apps-tab" href="#apps-panel" data-toggle="tab">Apps</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" data-toggle="tab">Configuration</a>
+            <a class="nav-link" id="query-tab" href="#query-panel" data-toggle="tab">Queries</a>
           </li>
-      </ul>
+          <li class="nav-item">
+            <a class="nav-link" id="conf-tab"   href="#conf-panel" data-toggle="tab">Configuration</a>
+          </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="apps-panel" role="tabpanel" aria-labelledby="">
+            <AppList/>
+          </div>
+          <div class="tab-pane fade" id="query-panel" role="tabpanel" aria-labelledby="">
+            <QueryList/>
+          </div>
+          <div class="tab-pane fade" id="conf-panel" role="tabpanel" aria-labelledby="">
+            <AppConfig/>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -23,9 +34,11 @@
 
 <script>
 import AppList from './components/AppList.vue'
+import AppConfig from './components/AppConfig.vue'
+import QueryList from './components/QueryList.vue'
 export default {
   name: 'App',
-  components: { AppList }
+  components: { AppList,AppConfig,QueryList }
 }
 </script>
 

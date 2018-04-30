@@ -1,15 +1,8 @@
 <template>
-  <div>
-    <ul class="nav nav-pills">
-      <li class="nav-item">
-        <a class="nav-link" href="#">Apps</a>
-      </li>
-    </ul>
-    <ul class="list-group">
-      <AppListItem
-        v-for="app in apps"
-        :app="app.APP"/>
-    </ul>
+  <div id="list" class="list-group" role="tablist">
+    <AppListItem
+      v-for="app in apps"
+      :app="app.APP"/>
   </div>
 </template>
 
@@ -20,11 +13,12 @@ export default {
   name: 'AppList',
   data() {
     return {
+      selected: undefined,
       apps: null
     }
   },
   methods: {
-    login() {
+    login () {
       let q = 'YADA check credentials', p = ['YADA','yada'].join(',')
       this.$yada.std(q,p,'POST')
         .then(this.fetch_data())

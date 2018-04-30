@@ -6,9 +6,13 @@ import router from './router'
 import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import axios from 'axios'
-import VueLodash from 'vue-lodash'
+// import VueLodash from 'vue-lodash'
+import 'expose-loader?$!expose-loader?jQuery!jquery'
+import 'expose-loader?DataTables!datatables'
+import 'datatables/media/css/jquery.dataTables.min.css'
 
-Vue.use(VueLodash)
+// Vue.use(VueLodash)
+
 Vue.config.productionTip = false
 
 Vue.prototype.$yada = axios.create({
