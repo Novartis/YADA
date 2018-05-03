@@ -16,12 +16,15 @@
   "dependencies": {
     "axios": "^0.18.0",
     "bootstrap": "^4.1.0",
+    "datatables": "^1.10.13",
+    "expose-loader": "^0.7.5",
     "jquery": "^3.3.1",
     "popper": "^1.0.1",
     "popper.js": "^1.14.3",
     "vue": "^2.5.2",
     "vue-lodash": "^2.0.0",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

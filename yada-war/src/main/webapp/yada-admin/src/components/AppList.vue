@@ -2,7 +2,9 @@
   <div id="list" class="list-group" role="tablist">
     <AppListItem
       v-for="app in apps"
-      :app="app.APP"/>
+      :key="app.APP"
+      :app="app.APP" />
+      <!-- @YADA_queries_loaded_app="YADA_queries_loaded_app"/> -->
   </div>
 </template>
 
@@ -11,19 +13,19 @@ import AppListItem from './AppListItem.vue'
 export default {
   components: { AppListItem },
   name: 'AppList',
-  data() {
+  data () {
     return {
-      selected: undefined,
       apps: null
     }
   },
   methods: {
+    //YADA_queries_loaded_app (obj) { this.$emit('YADA_queries_loaded_app',obj) },
     login () {
       let q = 'YADA check credentials', p = ['YADA','yada'].join(',')
       this.$yada.std(q,p,'POST')
-        .then(this.fetch_data())
+        .then(this.loadApps())
     },
-    fetch_data () {
+    loadApps () {
       this.$yada.path('YADA select apps')
         .then(response => this.setApps(response))
     },
