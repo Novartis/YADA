@@ -22,8 +22,7 @@ export default {
     //YADA_queries_loaded_app (obj) { this.$emit('YADA_queries_loaded_app',obj) },
     login () {
       let q = 'YADA check credentials', p = ['YADA','yada'].join(',')
-      this.$yada.std(q,p,'POST')
-        .then(this.loadApps())
+      this.$yada.std(q,p,'POST').then(this.loadApps())
     },
     loadApps () {
       this.$yada.path('YADA select apps')

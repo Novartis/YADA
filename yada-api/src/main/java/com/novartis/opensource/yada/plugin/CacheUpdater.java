@@ -23,7 +23,7 @@ import net.sf.ehcache.Element;
 import org.apache.log4j.Logger;
 
 import com.novartis.opensource.yada.ConnectionFactory;
-import com.novartis.opensource.yada.Finder;
+import com.novartis.opensource.yada.JdbcFinder;
 import com.novartis.opensource.yada.YADAConnectionException;
 import com.novartis.opensource.yada.YADAFinderException;
 import com.novartis.opensource.yada.YADAQuery;
@@ -50,7 +50,7 @@ public class CacheUpdater extends AbstractBypass
   @Override
 	public String engage(YADARequest yadaReq) throws YADAPluginException
 	{
-		Cache yadaIndex = ConnectionFactory.getConnectionFactory().getCacheConnection(Finder.YADA_CACHE_MGR,Finder.YADA_CACHE);
+		Cache yadaIndex = ConnectionFactory.getConnectionFactory().getCacheConnection(JdbcFinder.YADA_CACHE_MGR,JdbcFinder.YADA_CACHE);
 		for(Object q : yadaIndex.getKeys().toArray(new Object[yadaIndex.getKeys().size()]))
 		{
 			try
@@ -59,7 +59,7 @@ public class CacheUpdater extends AbstractBypass
 				YADAQuery yq = null;
 				try 
 				{
-				  yq = new Finder().getQueryFromIndex((String)q);
+				  yq = new JdbcFinder().getQueryFromIndex((String)q);
 				}
 				catch(YADAFinderException e)
 				{

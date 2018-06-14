@@ -36,13 +36,14 @@
 import AppList from './components/AppList.vue'
 import AppConfig from './components/AppConfig.vue'
 import QueryList from './components/QueryList.vue'
+
 import { mapGetters } from 'vuex'
 export default {
   name: 'App',
   components: { AppList,AppConfig,QueryList },
-  computed: mapGetters(['app','config','queries','qname','tableRows']),
+  computed: mapGetters(['getApp','getConfig','getQueries','getQname','getTableRows']),
   watch: {
-    app (val, oldVal) { this.$refs.querytab.click() }
+    getApp (val, oldVal) { this.$refs.querytab.click() }
   }
 }
 </script>
@@ -55,6 +56,36 @@ export default {
 .page-header .background img {
   margin: 3px 8px;
   width: 50px;
+}
+
+.copy.btn {
+  display: inline-block;
+  font-size: 14px;
+  vertical-align: top;
+  user-select: none;
+  padding: 0;
+  position: relative;
+  top: -3px;
+  float: right;
+  border: 1px solid rgb(0,0,0,0.2);
+  background-image: linear-gradient(#fcfcfc,#eee);
+  opacity: 0;
+}
+
+.copy.btn:before {
+  content:"";
+  background-repeat: no-repeat;
+  background-image: url('../static/clippy.svg');
+  background-position: 50%;
+  background-size: 14px;
+  display: block;
+  height: 26px;
+  width: 26px;
+  vertical-align: top;
+}
+
+*:hover>.copy.btn {
+  opacity: 1;
 }
 
 #app {

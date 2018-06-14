@@ -1042,7 +1042,7 @@ public class YADARequest {
 	 */
 	private String     sortOrder   	= SORT_ASC;
 	/**
-	 * Flag indicating whether or not the {@link Finder} should execute a parallel op to update the query access count and date  
+	 * Flag indicating whether or not the {@link JdbcFinder} should execute a parallel op to update the query access count and date  
 	 */
 	private boolean    updateStats = true;  
 	/**
@@ -3186,7 +3186,7 @@ public class YADARequest {
 		return this.sortOrder;
 	}
 	/**
-	 * Standard accessor for variable.  If {@code true}, the default, the {@link Finder} will execute a
+	 * Standard accessor for variable.  If {@code true}, the default, the {@link JdbcFinder} will execute a
 	 * parallel operation to increment the query access count value and the last accessed date in the YADA index. 
 	 * IF set to {@code false}, the parallel operation is skipped.
 	 * @return boolean value of {@code count}

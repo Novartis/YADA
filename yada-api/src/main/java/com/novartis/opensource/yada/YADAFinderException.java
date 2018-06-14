@@ -15,7 +15,7 @@
 package com.novartis.opensource.yada;
 
 /**
- * Thrown when {@link com.novartis.opensource.yada.Finder} encounters a runtime exception,
+ * Thrown when {@link com.novartis.opensource.yada.JdbcFinder} encounters a runtime exception,
  * usually due to an attempt to retrieve an unknown query.
  * @author David Varon
  *

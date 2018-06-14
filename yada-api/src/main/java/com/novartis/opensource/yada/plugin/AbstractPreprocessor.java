@@ -157,6 +157,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
 	@Override
 	public YADARequest engage(YADARequest yadaReq) throws YADAPluginException
 	{
+		//TODO query-level subclasses should simply return the request without all this arg bs 
 	  setYADARequest(yadaReq);
 	  String[] args = getYADAQuery().getYADAQueryParamValue(YADARequest.PS_ARGLIST);
 	  if(args != null && args.length > 0)

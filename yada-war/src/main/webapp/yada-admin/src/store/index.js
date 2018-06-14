@@ -9,11 +9,16 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+
     loading: false,
     app: '',
     config: {},
     queries: [],
-    qname: ''
+    params: [],
+    props: [],
+    protectors: [],
+    qname: '',
+    query: {}
   },
   actions,
   getters,

@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 
 import com.novartis.opensource.yada.ConnectionFactory;
-import com.novartis.opensource.yada.Finder;
+import com.novartis.opensource.yada.JdbcFinder;
 import com.novartis.opensource.yada.YADAQuery;
 import com.novartis.opensource.yada.YADAQueryResult;
 import com.novartis.opensource.yada.YADARequest;
@@ -201,7 +201,7 @@ public class FileSystemAdaptor extends Adaptor
 			{
 				try
 				{
-					env  = Finder.getEnv(m.group(1));
+					env  = JdbcFinder.getEnv(m.group(1));
 				} 
 				catch (YADAResourceException e)
 				{

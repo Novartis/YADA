@@ -1,20 +1,21 @@
 export default {
-  loading(state) {
+  getLoading(state) {
     return state.loading
   },
-  app(state) {
+  getApp(state) {
     return state.app
   },
-  config(state) {
+  getConfig(state) {
     return state.config
   },
-  queries(state) {
+  getQueries(state) {
     return state.queries
   },
-  tableRows(state) {
+  getTableRows(state) {
     return state
       .queries
       .map(row => ([row.QNAME,
+                    row.QUERY,
                     row.QUERY,
                     row.COMMENTS,
                     row.DEFAULT_PARAMS,
@@ -22,9 +23,21 @@ export default {
                     row.ACCESS_COUNT,
                     row.MODIFIED,
                     row.MODIFIED_BY]))
-      .map(vals => Object.values(vals))
   },
-  qname(state) {
+  getParamTableRows(state) {
+    return state
+      .params
+      .map(row => ([row.ID,
+                    row.TARGET,
+                    row.NAME,
+                    row.VALUE,
+                    row.RULE]))
+  },
+  getQname(state) {
     return state.qname
+  },
+  getQuery(state) {
+    return state.query
   }
+
 }

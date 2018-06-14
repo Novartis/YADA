@@ -48,7 +48,7 @@ import com.novartis.opensource.yada.util.YADAUtils;
 /**
  * QueryManager is a workhorse class that performs essential query preparation
  * tasks prior to execution. These tasks include retrieving {@link YADAQuery}
- * objects using {@link Finder#getQuery(String)}, and creating global and
+ * objects using {@link JdbcFinder#getQuery(String)}, and creating global and
  * query-based data structures for storing and mapping source connections,
  * statements, and results.
  * 
@@ -866,7 +866,7 @@ public class QueryManager
 		{
 			String qname = jpIter.next();
 			
-			YADAQuery yq = new Finder().getQuery(qname,this.getUpdateStats());
+			YADAQuery yq = new JdbcFinder().getQuery(qname,this.getUpdateStats());
 			yqs[index++] = endowQuery(yq,jSONParams.get(qname));
 		}
 		return yqs;
@@ -908,7 +908,7 @@ public class QueryManager
 	 */
 	YADAQuery endowQuery(String q) throws YADAConnectionException, YADAFinderException, YADAQueryConfigurationException, YADAResourceException, YADAUnsupportedAdaptorException
 	{
-		YADAQuery yq = new Finder().getQuery(q,this.getUpdateStats());
+		YADAQuery yq = new JdbcFinder().getQuery(q,this.getUpdateStats());
 		LinkedHashMap<String,String[]> data = new LinkedHashMap<>();
     String[][] params = this.yadaReq.getParams();
     if (params != null)

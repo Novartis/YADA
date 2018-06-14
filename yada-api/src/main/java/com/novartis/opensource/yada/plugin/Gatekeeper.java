@@ -34,7 +34,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.novartis.opensource.yada.Finder;
+import com.novartis.opensource.yada.JdbcFinder;
 import com.novartis.opensource.yada.JSONParams;
 import com.novartis.opensource.yada.JSONParamsEntry;
 import com.novartis.opensource.yada.QueryManager;
@@ -212,7 +212,7 @@ public class Gatekeeper extends AbstractPreprocessor {
           // confirm sec spec is mapped to requested query
           try
           {
-            new Finder().getQuery(secRec.getA11nQname());
+            new JdbcFinder().getQuery(secRec.getA11nQname());
           }
           catch (YADAFinderException e)
           {

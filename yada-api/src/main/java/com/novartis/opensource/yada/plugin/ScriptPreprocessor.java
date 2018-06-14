@@ -25,7 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.novartis.opensource.yada.Finder;
+import com.novartis.opensource.yada.JdbcFinder;
 import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADARequestException;
 import com.novartis.opensource.yada.YADAResourceException;
@@ -66,7 +66,7 @@ public class ScriptPreprocessor extends AbstractPreprocessor {
 		// add plugin
 		try 
 		{
-			cmds.add(Finder.getEnv("yada.bin")+args.remove(0));
+			cmds.add(JdbcFinder.getEnv("yada.bin")+args.remove(0));
 		} 
 		catch (YADAResourceException e)
 		{

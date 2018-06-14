@@ -51,7 +51,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.novartis.opensource.yada.ConnectionFactory;
-import com.novartis.opensource.yada.Finder;
+import com.novartis.opensource.yada.JdbcFinder;
 import com.novartis.opensource.yada.Parser;
 import com.novartis.opensource.yada.YADAConnectionException;
 import com.novartis.opensource.yada.YADAParserException;
@@ -269,7 +269,7 @@ public class QueryUtils
 			//     http://docs.oracle.com/javase/1.5.0/docs/api/java/sql/DriverManager.html?is-external=true
 			driverName = ((HikariDataSource)ds).getDriverClassName();
 			l.debug("JDBC driver is [" + driverName + "]");
-			className = Finder.getEnv("adaptor/" + driverName + version);
+			className = JdbcFinder.getEnv("adaptor/" + driverName + version);
 		} 
 		else if (source.matches(RX_SOAP))
 		{
@@ -324,7 +324,7 @@ public class QueryUtils
     {
       HikariDataSource ds = factory.getDataSourceMap().get(app);
       driverName = ds.getDriverClassName();
-      className = Finder.getEnv("adaptor/" + driverName);
+      className = JdbcFinder.getEnv("adaptor/" + driverName);
     }
     else if(type.equals(ConnectionFactory.TYPE_URL))
     {

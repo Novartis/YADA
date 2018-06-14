@@ -44,7 +44,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.novartis.opensource.yada.ConnectionFactory;
-import com.novartis.opensource.yada.Finder;
+import com.novartis.opensource.yada.JdbcFinder;
 import com.novartis.opensource.yada.YADAConnectionException;
 import com.novartis.opensource.yada.YADAQuery;
 import com.novartis.opensource.yada.YADAQueryResult;
@@ -339,7 +339,7 @@ public class SOAPAdaptor extends Adaptor {
 						    || "negotiate".equals(this.soapAuth.toLowerCase()))
 				{
 					ArrayList<String> args = new ArrayList<>();
-					args.add(Finder.getEnv(YADA_BIN)+CURL_EXEC);
+					args.add(JdbcFinder.getEnv(YADA_BIN)+CURL_EXEC);
 					args.add("-X");	
 					args.add("-s");
 					args.add(this.soapSource+this.soapPath);

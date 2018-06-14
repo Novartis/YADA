@@ -119,12 +119,15 @@ INSERT into YADA_PROP (target,name,value) VALUES ('YADA delete prop for target',
 -- app dml
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA select apps','select a.app "APP", a.name "NAME", a.descr "DESCR", CASE WHEN b.role = ''ADMIN'' THEN a.conf ELSE ''UNAUTHORIZED'' END "CONF", a.active "ACTIVE" from yada_query_conf a join yada_ug b on a.app = b.app where a.app != ''YADA''','YADABOT', 'YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pl',1,'Gatekeeper,execution.policy=void,content.policy.predicate=userid=getQLoggedUser()');
--- INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select apps','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=userid:getLoggedUser()');
 INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA select apps','YADA view protector','E','whitelist');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA select apps-1','protected','true');
 INSERT into YADA_PROP (target,name,value) VALUES ('YADA select apps','protected','true');
 
--- INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA apps','select app as "LABEL" from yada_query_conf where lower(app) like lower(''%''||?v||''%'')','YADABOT','YADA');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA select app config','select a.app "APP", a.name "NAME", a.descr "DESCR", CASE WHEN b.role = ''ADMIN'' THEN a.conf ELSE ''UNAUTHORIZED'' END "CONF", a.active "ACTIVE" from yada_query_conf a join yada_ug b on a.app = b.app where a.app != ''YADA'' and a.app = ?v','YADABOT', 'YADA');
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select app config','pl',1,'Gatekeeper,execution.policy=void,content.policy.predicate=userid=getQLoggedUser()');
+INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA select app config','YADA view protector','E','whitelist');
+INSERT into YADA_PROP (target,name,value) VALUES ('YADA select app config-1','protected','true');
+INSERT into YADA_PROP (target,name,value) VALUES ('YADA select app config','protected','true');
 
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA new app','insert into yada_query_conf (app,name,descr,conf,active) values (?v,?v,?v,?v,?i)', 'YADABOT', 'YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA new app','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=userid:getLoggedUser()');

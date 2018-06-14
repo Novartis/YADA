@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import com.novartis.opensource.yada.ConnectionFactory;
-import com.novartis.opensource.yada.Finder;
+import com.novartis.opensource.yada.JdbcFinder;
 import com.novartis.opensource.yada.YADAConnectionException;
 import com.novartis.opensource.yada.YADAFinderException;
 import com.novartis.opensource.yada.YADAQuery;
@@ -58,7 +58,7 @@ public class CachedQueryUpdater extends AbstractPostprocessor
 
 	/**
 	 * Removes the {@link YADAQuery} from the cache, and re-requests it from
-	 * {@link Finder}, which will re-add it.
+	 * {@link JdbcFinder}, which will re-add it.
 	 * 
 	 * @see com.novartis.opensource.yada.plugin.Postprocess#engage(YADAQuery)
 	 */
@@ -68,12 +68,12 @@ public class CachedQueryUpdater extends AbstractPostprocessor
 	  JSONObject data = new JSONObject(yq.getData().get(0));
 	  String column = data.has(TARGET) || data.has(TARGET.toLowerCase()) ? TARGET : QNAME;
 		String q = yq.getData().get(0).get(column)[0];
-		Cache yadaIndex = ConnectionFactory.getConnectionFactory().getCacheConnection(	Finder.YADA_CACHE_MGR,
-																														Finder.YADA_CACHE);
+		Cache yadaIndex = ConnectionFactory.getConnectionFactory().getCacheConnection(	JdbcFinder.YADA_CACHE_MGR,
+																														JdbcFinder.YADA_CACHE);
 		try
 		{
 			l.debug("Refreshing verson of [" + q + "] in cache.");
-			Element element = new Element(q, new Finder().getQueryFromIndex(q));
+			Element element = new Element(q, new JdbcFinder().getQueryFromIndex(q));
 			yadaIndex.put(element); // automatically overwrites, or writes anew
 			yq.getResult().getResults().add(0, "{\"cache_status\":\"UPDATED\",\"timestamp\":\""+new java.util.Date().toString()+"\"}");
 		} 

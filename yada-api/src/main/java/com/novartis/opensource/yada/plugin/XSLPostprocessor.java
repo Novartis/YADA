@@ -27,7 +27,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
 
-import com.novartis.opensource.yada.Finder;
+import com.novartis.opensource.yada.JdbcFinder;
 import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADAResourceException;
 
@@ -71,7 +71,7 @@ public class XSLPostprocessor extends AbstractPostprocessor {
 				if (arg.endsWith(".xsl"))
 					xsl = arg;
 			}
-			transformer = tFactory.newTransformer(new javax.xml.transform.stream.StreamSource(Finder.getEnv("yada.util")+xsl));
+			transformer = tFactory.newTransformer(new javax.xml.transform.stream.StreamSource(JdbcFinder.getEnv("yada.util")+xsl));
 			// 3. Use the Transformer to transform an XML Source and send the output to a Result object.
 			setTransformerParameters(args, transformer);
 			transformer.transform

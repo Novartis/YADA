@@ -231,6 +231,9 @@ public class ConnectionFactory {
    */
   private Connection getYADAConnection() throws YADAConnectionException 
   { 
+  	
+  	//TODO 
+  	
     Connection yadaConn = null;
     HikariDataSource yadaDs = this.getDataSourceMap().get(YADA_APP);
     if(yadaDs == null)
@@ -515,7 +518,7 @@ public class ConnectionFactory {
 //      throw new YADAConnectionException(msg, e);
     } catch (SQLException e) {
       String msg = "There was a problem obtaining a JDBC Connection to ["
-          + Finder.getYADAJndi()
+          + JdbcFinder.getYADAJndi()
           + "]. This could be caused by misconfiguration of the resource, recently changed credentials, or some other issue.";
       throw new YADAConnectionException(msg, e);
     }

@@ -25,7 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.novartis.opensource.yada.ConnectionFactory;
-import com.novartis.opensource.yada.Finder;
+import com.novartis.opensource.yada.JdbcFinder;
 import com.novartis.opensource.yada.JSONParams;
 import com.novartis.opensource.yada.QueryManager;
 import com.novartis.opensource.yada.Service;
@@ -198,7 +198,7 @@ public class YADAUtils {
 	 */
 	public static String getVersion() throws YADAResourceException 
 	{
-	  return Finder.getEnv(YADA_VERSION);
+	  return JdbcFinder.getEnv(YADA_VERSION);
 	}
 	
 	/**

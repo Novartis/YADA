@@ -1369,6 +1369,9 @@ public class Service {
 								Object plugObj = pluginClass.newInstance();
 								if(getYADARequest().getPluginArgs().size() > 0) // api call might not set any args
 								  yReq.setArgs(yReq.getPluginArgs().get(i));
+								
+								//TODO compare return value from engage and skip new QueryManager instantiation 
+								// if they are the same, because it implies the plugin didn't do nothin
 								setYADARequest(((Preprocess)plugObj).engage(yReq));
 								// reset query manager, as service parameters may have changed
 								try

@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.novartis.opensource.yada.Finder;
+import com.novartis.opensource.yada.JdbcFinder;
 import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADAResourceException;
 
@@ -84,7 +84,7 @@ public class ScriptPostprocessor extends AbstractPostprocessor {
 		try 
 		{
 		  // first arg to cmds is the executable script name passed in the postargs parameter
-			cmds.add(Finder.getEnv("yada.bin")+args.remove(0));
+			cmds.add(JdbcFinder.getEnv("yada.bin")+args.remove(0));
 		} 
 		catch (YADAResourceException e)
 		{

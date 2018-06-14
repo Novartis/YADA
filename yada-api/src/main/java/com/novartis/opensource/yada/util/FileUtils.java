@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.novartis.opensource.yada.Finder;
+import com.novartis.opensource.yada.JdbcFinder;
 import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADAResourceException;
 import com.novartis.opensource.yada.io.YADAIOException;
@@ -122,7 +122,7 @@ public class FileUtils {
 	{
 		String filesep = System.getProperty("file.separator");
 		//TODO add a new argument to enable these directories in 'in' or 'out'
-		String baseDir = Finder.getEnv("io/out");
+		String baseDir = JdbcFinder.getEnv("io/out");
 		String userdir = "";
 		if (null != user && !"".equals(user))
 		{
@@ -139,7 +139,7 @@ public class FileUtils {
 	 */
 	public static String getRelativePath(String path) throws YADAResourceException
 	{
-		String appHome  = Finder.getEnv("app.home");
+		String appHome  = JdbcFinder.getEnv("app.home");
 		return path.substring(appHome.length());
 	}
 	
