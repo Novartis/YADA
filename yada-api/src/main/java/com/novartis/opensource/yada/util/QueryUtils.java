@@ -1351,7 +1351,7 @@ public class QueryUtils
 			for (String in : inColumns)
 			{
 				int colIndex = -1, j = 0;
-				String inCol = in.toUpperCase(); // TODO case sensitivity
+				String inCol = in.toUpperCase(); 
 
 				// get the index of the 'incolumn' in the 'JDBCcolumns' array
 				l.debug("Looking for column [" + inCol + "] in columns array " + ArrayUtils.toString(columns));

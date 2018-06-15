@@ -134,7 +134,8 @@ public class JSONParamsEntry {
 				LinkedHashMap<String,String[]> dataForRow = new LinkedHashMap<>();
 				while (iter.hasNext()) 
 				{
-					String   column = ((String) iter.next()).toUpperCase(); //TODO this likely affects case-sensitivity
+					String   column = ((String) iter.next()); 
+					String   ucCol  = column.toUpperCase();  // DV20180615 case insensitivity (h/t to kildea)
 					String[] value  = null; 
 					
 					// JSONArrays can be passed in as values
@@ -154,7 +155,7 @@ public class JSONParamsEntry {
 						// value passed in was just a string
 						value = new String[] {String.valueOf(row.get(column))};
 					}
-					dataForRow.put(column, value);
+					dataForRow.put(ucCol, value);
 				}
 				// store the col/val hash in the arraylist for the qname
 				addData(dataForRow); 
