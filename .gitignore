@@ -12,3 +12,8 @@ target
 Release*
 **/yadaMvnTestNG.sh
 YADA.db
+**/node_modules
+*.key
+*.pfx
+*.crt
+*.ca-bundle
