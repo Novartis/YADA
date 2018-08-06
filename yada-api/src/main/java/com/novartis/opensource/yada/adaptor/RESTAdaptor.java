@@ -165,9 +165,13 @@ public class RESTAdaptor extends Adaptor {
 			{
 				Matcher m = PARAM_URL_RX.matcher(urlStr);
 				if(m.matches())
-				{
+				{					
 					String param = yq.getVals(row).get(i);
-					urlStr = urlStr.replaceFirst(PARAM_SYMBOL_RX,m.group(1)+param);
+					//urlStr = urlStr.replaceFirst(PARAM_SYMBOL_RX,m.group(1)+param);
+					StringBuffer sb = new StringBuffer();
+					m.appendReplacement(sb, m.group(1)+param);
+					m.appendTail(sb);
+					urlStr = sb.toString();
 				}
 			}
 
