@@ -93,10 +93,6 @@ public class ScriptPostprocessor extends AbstractPostprocessor {
 		}
 		// add args
 		cmds.addAll(args);
-		for (String arg : args)
-		{
-			cmds.add(arg);
-		}
 		// add results path as last argument to executable
 		cmds.add(tmpResult.getAbsolutePath());
 		// add yadaReq json

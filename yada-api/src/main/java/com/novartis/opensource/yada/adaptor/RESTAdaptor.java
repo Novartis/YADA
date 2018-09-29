@@ -57,11 +57,6 @@ public class RESTAdaptor extends Adaptor {
 	protected final static String  PARAM_SYMBOL_RX = "([\\/=:~])(\\?[idvnt])";
 
 	/**
-	 * Constant equal to: {@code ".+"+PARAM_SYMBOL_RX+".*"}
-	 */
-	//protected final static Pattern PARAM_URL_RX    = Pattern.compile(".+"+PARAM_SYMBOL_RX+".*");
-
-	/**
 	 * Constant equal to: {@value}
 	 * {@link JSONParams} key for delivery of {@code HTTP POST, PUT, PATCH} body content
 	 * @since 8.5.0
@@ -159,32 +154,17 @@ public class RESTAdaptor extends Adaptor {
 
 
 			String          urlStr = yq.getUrl(row);
-
-
-//			for (int i=0;i<yq.getParamCount(row);i++)
-//		  {
-				//Matcher m = PARAM_URL_RX.matcher(urlStr);
-				Matcher m = Pattern.compile(PARAM_SYMBOL_RX).matcher(urlStr);
-				//if(m.matches())
-				StringBuffer sb    = new StringBuffer();
-				int i=0;
-				while(m.find())
-				{		
-					String param = yq.getVals(row).get(i++);
-					String repl  = m.group(1)+param;
-					m.appendReplacement(sb, repl);
-//					String       param = yq.getVals(row).get(i);
-//					String       repl  = m.group(1)+param; 							
-//					//urlStr = urlStr.replaceFirst(PARAM_SYMBOL_RX,m.group(1)+param);
-//					
-//					sb.append(urlStr.substring(0,m.start(1)));					
-//					sb.append(repl);					
-//					sb.append(urlStr.substring(m.end(2)));
-//					urlStr = sb.toString();
-				}
-				m.appendTail(sb);
-				urlStr = sb.toString();
-//			}
+			Matcher m = Pattern.compile(PARAM_SYMBOL_RX).matcher(urlStr);
+			StringBuffer sb    = new StringBuffer();
+			int i=0;
+			while(m.find())
+			{		
+				String param = yq.getVals(row).get(i++);
+				String repl  = m.group(1)+param;
+				m.appendReplacement(sb, repl);
+			}
+			m.appendTail(sb);
+			urlStr = sb.toString();
 
 			l.debug("REST url w/params: ["+urlStr+"]");
 			try

@@ -222,6 +222,10 @@ public class QueryUtils
 	 * A constant equal to: {@value}
 	 */
 	public static final String STANDARD_DATE_FMT = "yyyy-MM-dd";
+	/**
+	 * A constant equal to: {@value}
+	 */
+	public static final String QUOTE = "\"";
 
 	/**
 	 * Retrieves the adaptor class from the application context given the
@@ -1000,7 +1004,9 @@ public class QueryUtils
           colName = YADA_COLUMN + (j + 1);
         else if (data.containsKey(colName.toUpperCase()))
           colName = colName.toUpperCase();
-          
+        else if(data.containsKey(colName.replaceAll("\"", "").toUpperCase()))        
+        	colName = colName.replaceAll("\"", "").toUpperCase();
+        
         String[] valsForColumn;
 
         valsForColumn = data.get(colName);
@@ -1260,6 +1266,10 @@ public class QueryUtils
 	        else if(dataForRow.containsKey(colName.toUpperCase()))
 	        { // json params uppper case
 	          colName = colName.toUpperCase();
+	        }
+	        else if(dataForRow.containsKey(colName.replaceAll("\"", "").toUpperCase()))
+	        {
+	        	colName = colName.replaceAll("\"", "").toUpperCase();
 	        }
 	        
 	        // length of value array for inColumn
