@@ -134,10 +134,6 @@ public class QueryManager
 	 */
 	public QueryManager(YADARequest yadaReq) throws YADAQueryConfigurationException, YADAResourceException, YADAConnectionException, YADAFinderException, YADAUnsupportedAdaptorException, YADARequestException, YADAAdaptorException, YADAParserException
 	{
-//		setYADAReq(yadaReq);
-//		if (YADAUtils.useJSONParams(yadaReq))
-//			setJsonParams(yadaReq.getJsonParams());
-//		processQueries();
 	  processRequest(yadaReq);
 	}
 	
@@ -174,15 +170,15 @@ public class QueryManager
 	private void processRequest(YADARequest yadaReq) throws YADAQueryConfigurationException, YADAConnectionException, YADAFinderException, YADAResourceException, YADAUnsupportedAdaptorException, YADARequestException, YADAAdaptorException, YADAParserException
 	{
 	  setYADAReq(yadaReq);
-    if (YADAUtils.hasQname(getYADAReq()))
-    {
-      setQueries(new YADAQuery[] {endowQuery(getYADAReq().getQname())});
-    }
-    else if (YADAUtils.hasJSONParams(getYADAReq())) //TODO this is a redundant call, see the constructor
+	  if (YADAUtils.hasJSONParams(getYADAReq()))
     {
       setJsonParams(yadaReq.getJsonParams());
       setQueries(endowQueries(getJsonParams()));
     }
+	  else if (YADAUtils.hasQname(getYADAReq()))
+    {
+      setQueries(new YADAQuery[] {endowQuery(getYADAReq().getQname())});
+    } 
     else
     {
       String msg = "Your request must contain a 'qname', 'q', 'JSONParams', or 'j' parameter.";
