@@ -1614,4 +1614,27 @@ public class YADAQuery {
   public void setAccessCount(int accessCount) {
     this.accessCount = accessCount;
   }
+  
+  /**
+   * @since 9.0.0
+   */
+  @Override
+  public String toString() {
+  	JSONObject jo = new JSONObject();
+  	jo.append("qname", getQname());
+  	JSONArray data = new JSONArray();
+  	for (int i=0;i<getData().size();i++)
+  	{
+  		JSONObject djo = new JSONObject();
+  		LinkedHashMap<String,String[]> row = getDataRow(i);
+  		for(Map.Entry<String,String[]> entry : row.entrySet())
+  		{
+  			String key = entry.getKey();
+  			String[] value = entry.getValue();
+  			djo.put(key, new JSONArray(value));
+  		}
+  	}
+  	jo.append("DATA", data);
+  	return jo.toString();
+  }
 }
