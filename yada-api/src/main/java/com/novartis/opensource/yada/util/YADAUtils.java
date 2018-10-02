@@ -553,12 +553,14 @@ public class YADAUtils {
 	{
 		String qname = yadaReq.getQname();
 		if ("".equals(qname)	
-			    || (YADARequest.DEFAULT_QNAME.equals(qname) 
-			    		&& !hasBypassPlugin(yadaReq) 
-			    		&& !hasPreprocessPlugin(yadaReq))
-			    || UNDEFINED.equals(qname)
-			    || NULLSTRING.equals(qname)
-			    || null == qname )
+		    || UNDEFINED.equals(qname)
+		    || NULLSTRING.equals(qname)
+		    || null == qname
+		    // qname is 'YADA dummy' and there are NO bypass or preproc plugins in the request
+		    // (which means return 'true' if there ARE plugins:)
+		    || (YADARequest.DEFAULT_QNAME.equals(qname) 
+		    		&& !hasBypassPlugin(yadaReq) 
+		    		&& !hasPreprocessPlugin(yadaReq)))
 			return false;
 		return true;
 	}
