@@ -1071,16 +1071,47 @@ public class YADAQuery {
 	 */
 	public void setConnection(String app) throws YADAConnectionException 
 	{
-		this.setConnection(app, true);
+		//this.setConnection(app, true);
+		if(this.getProtocol().equals(Parser.SOAP))
+		{
+			this.setSOAPConnection(ConnectionFactory.getConnectionFactory().getSOAPConnection());
+		}
+		else
+		{
+			Connection c = ConnectionFactory.getConnectionFactory().getConnection(app);
+			this.setConnection(c);
+			try
+			{
+				if(!c.getAutoCommit())
+				{
+					try
+					{
+						this.setSavepoint(c.setSavepoint());
+					}
+					catch(SQLException e)
+					{
+						String msg = "This JDBC driver does not support savepoints.";
+						l.warn(msg);
+					}
+				} 
+			}
+			catch (SQLException e)
+			{
+				String msg = "Unable to configure connection for transaction.";
+				throw new YADAConnectionException(msg,e);
+			}
+		}
 	}
 	
 	/**
 	 * Set a transactional or non-transactional connection for the source
 	 * @since 4.0.0
+	 * @deprecated since 8.6.1
 	 * @param app the app name stored in the query
 	 * @param transactions set to {@code true} to execute multiple queries as a single transaction.
 	 * @throws YADAConnectionException when the connection can't be opened
 	 */
+	@Deprecated
 	public void setConnection(String app, boolean transactions) throws YADAConnectionException 
 	{
 		if(this.getProtocol().equals(Parser.SOAP))
