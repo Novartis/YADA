@@ -68,6 +68,11 @@ public abstract class AbstractResponse implements Response
 	public final static String QNAME      = "qname";
 	/**
 	 * Constant with value equal to: {@value}
+	 * @since 8.6.1
+	 */
+	public final static String APP        = "app";
+	/**
+	 * Constant with value equal to: {@value}
 	 */
 	public final static String TOTAL      = "total";
 	/**

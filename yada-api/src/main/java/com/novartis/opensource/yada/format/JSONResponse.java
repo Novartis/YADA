@@ -222,7 +222,7 @@ public class JSONResponse extends AbstractResponse {
 			if(hasMultipleResults())
 			{
 				JSONObject resultSetWrapper = new JSONObject();
-				resultSet = new JSONObject();
+				resultSet = new JSONObject();	
 				((JSONArray)this.jsonResponse.get(RESULTSETS)).put(resultSetWrapper);
 				resultSetWrapper.put(RESULTSET, resultSet);
 			}
@@ -231,6 +231,7 @@ public class JSONResponse extends AbstractResponse {
 				resultSet = this.jsonResponse.getJSONObject(RESULTSET); 
 			}
 			resultSet.put(QNAME, this.yqr.getYADAQueryParamValue(YADARequest.getParamValueForKey(this.yqr.getParameters(),YADAUtils.PARAM_FRAG_QNAME)));
+			resultSet.put(APP, this.yqr.getApp());
 			resultSet.put(TOTAL, this.yqr.getCountResult(0));
 		} 
 		catch (JSONException e) 
@@ -322,6 +323,8 @@ public class JSONResponse extends AbstractResponse {
 
 				// handle stats
 				resultSet.put(RECORDS, existing.length());
+				resultSet.put(QNAME, this.yqr.getQname());
+				resultSet.put(APP, this.yqr.getApp());
 				if(count)
 				{
 					resultSet.put(TOTAL, resultSet.getInt(TOTAL) + ((Integer)this.yqr.getCountResult(0)).intValue());
@@ -333,6 +336,7 @@ public class JSONResponse extends AbstractResponse {
 				resultSet.put(ROWS,rows);
 				resultSet.put(RECORDS, rows.length());
 				resultSet.put(QNAME, this.yqr.getYADAQueryParamValue(YADARequest.PS_QNAME));
+				resultSet.put(APP, this.yqr.getApp());
 				if(count)
 				{
 					resultSet.put(TOTAL,this.yqr.getCountResult(0));

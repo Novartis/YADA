@@ -513,6 +513,7 @@ public class Service {
 			j.put("Exception", e.getClass().getName());
       j.put("Message",msg);
       j.put("Qname",yq != null ? yq.getQname() : "UNKNOWN");
+      j.put("App", yq != null ? yq.getApp() : "UNKNOWN");
       j.put("Query",yq != null ? yq.getYADACode() : "");
       j.put("Params",new JSONArray());
       JSONArray ja = j.getJSONArray("Params");

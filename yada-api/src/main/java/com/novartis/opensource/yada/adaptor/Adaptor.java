@@ -53,6 +53,12 @@ public abstract class Adaptor
 	protected YADARequest yadaReq;
 
 	/**
+	 * YADA app to which the qname is mapped
+	 * @since 8.6.1
+	 */
+	protected String app;
+	
+	/**
 	 * Default constructor
 	 */
 	public Adaptor()
