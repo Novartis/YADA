@@ -510,6 +510,7 @@ public class QueryManager
 				{
 					if (result instanceof ResultSet)
 					{
+						l.debug("Closing ResultSet");
 						ConnectionFactory.releaseResources((ResultSet)result);
 					}
 				}
@@ -518,6 +519,7 @@ public class QueryManager
 			{
 				for (PreparedStatement p : yq.getPstmt())
 				{
+					l.debug("Closing PreparedStatement");
 					ConnectionFactory.releaseResources(p);
 					l.debug("PreparedStatement removed from map.");
 				}
@@ -527,6 +529,7 @@ public class QueryManager
 			{
 				for (PreparedStatement p : yq.getPstmtForCount().values())
 				{
+					l.debug("Closing PreparedStatement for count query");
 					ConnectionFactory.releaseResources(p);
 				}
 			}
@@ -534,11 +537,13 @@ public class QueryManager
 			{
 				for (CallableStatement c : yq.getCstmt())
 				{
+					l.debug("Closing CallableStatement");
 					ConnectionFactory.releaseResources(c);
 				}
 			}
 			if(yq.getConnection() != null)
 			{
+				l.debug("Closing Connection");
 				ConnectionFactory.releaseResources((Connection)yq.getConnection());
 			}
 		}
