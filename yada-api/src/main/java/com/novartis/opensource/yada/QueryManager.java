@@ -537,6 +537,10 @@ public class QueryManager
 					ConnectionFactory.releaseResources(c);
 				}
 			}
+			if(yq.getConnection() != null)
+			{
+				ConnectionFactory.releaseResources((Connection)yq.getConnection());
+			}
 		}
 		this.connectionMap.clear();
 		l.debug("QueryManager connection map has been cleared.");
