@@ -1147,7 +1147,7 @@ public class YADAQuery {
 	
 	/**
 	 * Closes {@link CallableStatement}s {@link PreparedStatement}s and Connections
-	 * in order to avoid connection and memory leaks in {@link Preprocess} scenarios
+	 * in order to avoid connection and memory leaks in {@link com.novartis.opensource.yada.plugin.Preprocess} scenarios
 	 * @throws YADAConnectionException when a resource can't be closed
 	 * @since 8.6.1
 	 */
@@ -1206,7 +1206,7 @@ public class YADAQuery {
 	
 	/**
 	 * Checks for the type of Connection used by the queries, closes and nullifies them.  This is 
-	 * to avoid connection leaks in {@link Preprocess} plugin scenarios, as well as 
+	 * to avoid connection leaks in {@link com.novartis.opensource.yada.plugin.Preprocess} plugin scenarios, as well as 
 	 * facilitate long term storage of the query in the cache.
 	 * @throws YADAConnectionException when a resource can't be closed
 	 * @since 4.1.0
