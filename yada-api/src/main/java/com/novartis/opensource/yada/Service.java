@@ -1374,6 +1374,8 @@ public class Service {
 								// reset query manager, as service parameters may have changed
 								try
 								{
+									// close existing connections first
+									this.qMgr.releaseResources();
 									this.qMgr = new QueryManager(getYADARequest());
 								} 
 								catch (YADAQueryConfigurationException e)
