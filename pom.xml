@@ -46,7 +46,7 @@
 		<connection>scm:git:ssh:git@github.com:Novartis/YADA.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/Novartis/YADA.git</developerConnection>
 		<url>scm:git:ssh://github.com/Novartis/YADA</url>
-		<tag>HEAD</tag>
+		<tag>8.6.0</tag>
 	</scm>
 	<properties>
 		<display.version>${project.version}</display.version>
