@@ -1135,6 +1135,7 @@ public class Service {
 									  // remove the param that was created earlier, to avoid potential conflicts later
 									  //TODO review security and other implications of removing the arglist parameter from the query object
 									  yq.getYADAQueryParams().remove(yp);
+									  yq.clearResources();
 										this.qMgr.prepQueryForExecution(this.qMgr.endowQuery(yq));
 									} 
 									catch (YADAQueryConfigurationException|YADAResourceException|YADAUnsupportedAdaptorException e)

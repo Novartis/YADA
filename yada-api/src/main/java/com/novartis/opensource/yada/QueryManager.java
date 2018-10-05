@@ -354,17 +354,27 @@ public class QueryManager
 	private void storeConnection(YADAQuery yq) throws YADAConnectionException
 	{
 		String app = yq.getApp();
-		if (!this.connectionMap.containsKey(app))
+		String protocol = yq.getProtocol();
+		try 
 		{
-			yq.setConnection();
-			this.connectionMap.put(app, yq.getConnection());
+			if (!this.connectionMap.containsKey(app)
+				  || (protocol.equals(Parser.JDBC) && ((Connection)this.connectionMap.get(app)).isClosed()))
+			{
+				yq.setConnection();
+				this.connectionMap.put(app, yq.getConnection());
+			} 
+			else
+			{
+				if (protocol.equals(Parser.JDBC))
+					yq.setConnection((Connection)this.connectionMap.get(app));
+				else if (protocol.equals(Parser.SOAP))
+					yq.setSOAPConnection((SOAPConnection)this.connectionMap.get(app));
+			}
 		} 
-		else
+		catch (SQLException e) 
 		{
-			if (yq.getProtocol().equals(Parser.JDBC))
-				yq.setConnection((Connection)this.connectionMap.get(app));
-			else if (yq.getProtocol().equals(Parser.SOAP))
-				yq.setSOAPConnection((SOAPConnection)this.connectionMap.get(app));
+			String msg = "Unable to close connection";
+			throw new YADAConnectionException(msg, e);
 		}
 	}
 
@@ -677,7 +687,6 @@ public class QueryManager
 	void prepQueryForExecution(YADAQuery yq) throws YADAResourceException, YADAUnsupportedAdaptorException, YADAConnectionException, YADARequestException, YADAAdaptorException, YADAParserException
 	{
 
-    String app           = yq.getApp();
     String conformedCode = yq.getConformedCode();
     String wrappedCode   = "";
     int    dataSize      = yq.getData().size() > 0 ? yq.getData().size() : 1;
