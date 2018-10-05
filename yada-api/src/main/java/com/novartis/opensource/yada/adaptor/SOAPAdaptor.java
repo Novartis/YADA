@@ -285,6 +285,7 @@ public class SOAPAdaptor extends Adaptor {
 		{
 			yq.setResult();
 			YADAQueryResult yqr      = yq.getResult();
+			yqr.setApp(yq.getApp());
 			String          soapUrl  = yq.getSoap(row);
 			
 			try

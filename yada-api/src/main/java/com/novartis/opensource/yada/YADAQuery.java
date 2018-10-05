@@ -1071,16 +1071,46 @@ public class YADAQuery {
 	 */
 	public void setConnection(String app) throws YADAConnectionException 
 	{
-		this.setConnection(app, true);
+		if(this.getProtocol().equals(Parser.SOAP))
+		{
+			this.setSOAPConnection(ConnectionFactory.getConnectionFactory().getSOAPConnection());
+		}
+		else
+		{
+			Connection c = ConnectionFactory.getConnectionFactory().getConnection(app);
+			this.setConnection(c);
+			try
+			{
+				if(!c.getAutoCommit())
+				{
+					try
+					{
+						this.setSavepoint(c.setSavepoint());
+					}
+					catch(SQLException e)
+					{
+						String msg = "This JDBC driver does not support savepoints.";
+						l.warn(msg);
+					}
+				} 
+			}
+			catch (SQLException e)
+			{
+				String msg = "Unable to configure connection for transaction.";
+				throw new YADAConnectionException(msg,e);
+			}
+		}
 	}
 	
 	/**
 	 * Set a transactional or non-transactional connection for the source
 	 * @since 4.0.0
+	 * @deprecated since 8.6.1
 	 * @param app the app name stored in the query
 	 * @param transactions set to {@code true} to execute multiple queries as a single transaction.
 	 * @throws YADAConnectionException when the connection can't be opened
 	 */
+	@Deprecated
 	public void setConnection(String app, boolean transactions) throws YADAConnectionException 
 	{
 		if(this.getProtocol().equals(Parser.SOAP))
@@ -1116,14 +1146,78 @@ public class YADAQuery {
 	}
 	
 	/**
-	 * Checks for the type of connection used by the queries and renders it null.  This is 
+	 * Closes {@link CallableStatement}s {@link PreparedStatement}s and Connections
+	 * in order to avoid connection and memory leaks in {@link com.novartis.opensource.yada.plugin.Preprocess} scenarios
+	 * @throws YADAConnectionException when a resource can't be closed
+	 * @since 8.6.1
+	 */
+	public void clearResources() throws YADAConnectionException
+	{
+		this.clearCsmts();
+		this.clearPsmts();
+		this.clearConnection();
+	}
+	
+	/**
+	 * Checks for the any {@link CallableStatement}s used by the queries and renders it null.  This is 
 	 * to facilitate long term storage of the query in the cache
+	 * @throws YADAConnectionException when a resource can't be closed
+	 * @since 8.6.1
+	 */
+	public void clearCsmts() throws YADAConnectionException 
+	{
+		if(this.getCstmt().size() > 0)
+		{
+			for(int i = 0; i < this.getCstmt().size(); i++)
+			{
+				ConnectionFactory.releaseResources(this.getCstmt(i));
+			}
+			this.setCstmt(new ArrayList<CallableStatement>());
+		}
+	}
+	
+	/**
+	 * Checks for the any {@link PreparedStatement}s used by the queries and renders it null.  This is 
+	 * to facilitate long term storage of the query in the cache
+	 * @throws YADAConnectionException when a resource can't be closed
+	 * @since 8.6.1
+	 */
+	public void clearPsmts() throws YADAConnectionException 
+	{
+		if(this.getPstmtForCount().size() > 0)
+		{
+			for(PreparedStatement pstmtKey : this.getPstmtForCount().keySet())
+			{
+				ConnectionFactory.releaseResources(this.getPstmtForCount(pstmtKey));
+			}
+			this.setPstmtForCount(new HashMap<PreparedStatement,PreparedStatement>());
+		}
+		
+		if(this.getPstmt().size() > 0)
+		{
+			for(int i = 0; i < this.getPstmt().size(); i++)
+			{
+				ConnectionFactory.releaseResources(this.getPstmt(i));
+			}
+			this.setPstmt(new ArrayList<PreparedStatement>());
+			
+		}
+	}
+	
+	/**
+	 * Checks for the type of Connection used by the queries, closes and nullifies them.  This is 
+	 * to avoid connection leaks in {@link com.novartis.opensource.yada.plugin.Preprocess} plugin scenarios, as well as 
+	 * facilitate long term storage of the query in the cache.
+	 * @throws YADAConnectionException when a resource can't be closed
 	 * @since 4.1.0
 	 */
-	public void clearConnection() 
+	public void clearConnection() throws YADAConnectionException 
 	{
 		if(this.connection != null)
+		{
+			ConnectionFactory.releaseResources(this.connection);
 			this.connection = null;
+		}
 		else if(this.soapConnection != null)
 			this.soapConnection = null;
 		else
@@ -1613,5 +1707,28 @@ public class YADAQuery {
    */
   public void setAccessCount(int accessCount) {
     this.accessCount = accessCount;
+  }
+  
+  /**
+   * @since 9.0.0
+   */
+  @Override
+  public String toString() {
+  	JSONObject jo = new JSONObject();
+  	jo.append("qname", getQname());
+  	JSONArray data = new JSONArray();
+  	for (int i=0;i<getData().size();i++)
+  	{
+  		JSONObject djo = new JSONObject();
+  		LinkedHashMap<String,String[]> row = getDataRow(i);
+  		for(Map.Entry<String,String[]> entry : row.entrySet())
+  		{
+  			String key = entry.getKey();
+  			String[] value = entry.getValue();
+  			djo.put(key, new JSONArray(value));
+  		}
+  	}
+  	jo.append("DATA", data);
+  	return jo.toString();
   }
 }

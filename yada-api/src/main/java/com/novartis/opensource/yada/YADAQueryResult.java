@@ -36,6 +36,11 @@ public class YADAQueryResult {
 	 */
 	private String       qname;
 	/**
+	 * The app to which the {@link qname} is mapped
+	 * @since 8.6.1
+	 */
+	private String       app;
+	/**
 	 * The list of query results, in raw form, i.e. {@link java.sql.ResultSet}, {@link String}
 	 */
 	private List<Object> results = new ArrayList<>();
@@ -89,6 +94,22 @@ public class YADAQueryResult {
 	 * @return the query name
 	 */
 	public String getQname() { return this.qname; }
+	/**
+	 * Standard accessor for variable
+	 * @return the app
+	 * @since 8.6.1
+	 */
+	public String getApp() {
+		return app;
+	}
+	/**
+	 * Standard mutator for variable
+	 * @param app the app to set
+	 * @since 8.6.1
+	 */
+	public void setApp(String app) {
+		this.app = app;
+	}
 	/**
 	 * Standard mutator for variable
 	 * @param results list for raw results

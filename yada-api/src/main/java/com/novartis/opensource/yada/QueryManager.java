@@ -134,10 +134,6 @@ public class QueryManager
 	 */
 	public QueryManager(YADARequest yadaReq) throws YADAQueryConfigurationException, YADAResourceException, YADAConnectionException, YADAFinderException, YADAUnsupportedAdaptorException, YADARequestException, YADAAdaptorException, YADAParserException
 	{
-//		setYADAReq(yadaReq);
-//		if (YADAUtils.useJSONParams(yadaReq))
-//			setJsonParams(yadaReq.getJsonParams());
-//		processQueries();
 	  processRequest(yadaReq);
 	}
 	
@@ -174,15 +170,15 @@ public class QueryManager
 	private void processRequest(YADARequest yadaReq) throws YADAQueryConfigurationException, YADAConnectionException, YADAFinderException, YADAResourceException, YADAUnsupportedAdaptorException, YADARequestException, YADAAdaptorException, YADAParserException
 	{
 	  setYADAReq(yadaReq);
-    if (YADAUtils.hasQname(getYADAReq()))
-    {
-      setQueries(new YADAQuery[] {endowQuery(getYADAReq().getQname())});
-    }
-    else if (YADAUtils.hasJSONParams(getYADAReq())) //TODO this is a redundant call, see the constructor
+	  if (YADAUtils.hasJSONParams(getYADAReq()))
     {
       setJsonParams(yadaReq.getJsonParams());
       setQueries(endowQueries(getJsonParams()));
     }
+	  else if (YADAUtils.hasQname(getYADAReq()))
+    {
+      setQueries(new YADAQuery[] {endowQuery(getYADAReq().getQname())});
+    } 
     else
     {
       String msg = "Your request must contain a 'qname', 'q', 'JSONParams', or 'j' parameter.";
@@ -358,17 +354,27 @@ public class QueryManager
 	private void storeConnection(YADAQuery yq) throws YADAConnectionException
 	{
 		String app = yq.getApp();
-		if (!this.connectionMap.containsKey(app))
+		String protocol = yq.getProtocol();
+		try 
 		{
-			yq.setConnection();
-			this.connectionMap.put(app, yq.getConnection());
+			if (!this.connectionMap.containsKey(app)
+				  || (protocol.equals(Parser.JDBC) && ((Connection)this.connectionMap.get(app)).isClosed()))
+			{
+				yq.setConnection();
+				this.connectionMap.put(app, yq.getConnection());
+			} 
+			else
+			{
+				if (protocol.equals(Parser.JDBC))
+					yq.setConnection((Connection)this.connectionMap.get(app));
+				else if (protocol.equals(Parser.SOAP))
+					yq.setSOAPConnection((SOAPConnection)this.connectionMap.get(app));
+			}
 		} 
-		else
+		catch (SQLException e) 
 		{
-			if (yq.getProtocol().equals(Parser.JDBC))
-				yq.setConnection((Connection)this.connectionMap.get(app));
-			else if (yq.getProtocol().equals(Parser.SOAP))
-				yq.setSOAPConnection((SOAPConnection)this.connectionMap.get(app));
+			String msg = "Unable to close connection";
+			throw new YADAConnectionException(msg, e);
 		}
 	}
 
@@ -514,6 +520,7 @@ public class QueryManager
 				{
 					if (result instanceof ResultSet)
 					{
+						l.debug("Closing ResultSet");
 						ConnectionFactory.releaseResources((ResultSet)result);
 					}
 				}
@@ -522,6 +529,7 @@ public class QueryManager
 			{
 				for (PreparedStatement p : yq.getPstmt())
 				{
+					l.debug("Closing PreparedStatement");
 					ConnectionFactory.releaseResources(p);
 					l.debug("PreparedStatement removed from map.");
 				}
@@ -531,6 +539,7 @@ public class QueryManager
 			{
 				for (PreparedStatement p : yq.getPstmtForCount().values())
 				{
+					l.debug("Closing PreparedStatement for count query");
 					ConnectionFactory.releaseResources(p);
 				}
 			}
@@ -538,8 +547,14 @@ public class QueryManager
 			{
 				for (CallableStatement c : yq.getCstmt())
 				{
+					l.debug("Closing CallableStatement");
 					ConnectionFactory.releaseResources(c);
 				}
+			}
+			if(yq.getConnection() != null)
+			{
+				l.debug("Closing Connection");
+				ConnectionFactory.releaseResources((Connection)yq.getConnection());
 			}
 		}
 		this.connectionMap.clear();
@@ -672,7 +687,6 @@ public class QueryManager
 	void prepQueryForExecution(YADAQuery yq) throws YADAResourceException, YADAUnsupportedAdaptorException, YADAConnectionException, YADARequestException, YADAAdaptorException, YADAParserException
 	{
 
-    String app           = yq.getApp();
     String conformedCode = yq.getConformedCode();
     String wrappedCode   = "";
     int    dataSize      = yq.getData().size() > 0 ? yq.getData().size() : 1;

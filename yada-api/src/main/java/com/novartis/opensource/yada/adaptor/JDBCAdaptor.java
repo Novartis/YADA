@@ -382,6 +382,7 @@ public abstract class JDBCAdaptor extends Adaptor{
 		{
 			yq.setResult();
 			YADAQueryResult yqr = yq.getResult();
+			yqr.setApp(yq.getApp());
 			if(yq.getType().equals(Parser.CALL))
 			{
 				CallableStatement c = yq.getCstmt(row);

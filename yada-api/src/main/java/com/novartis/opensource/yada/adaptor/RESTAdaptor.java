@@ -151,7 +151,7 @@ public class RESTAdaptor extends Adaptor {
 			// creates result array and assigns it
 			yq.setResult();
 			YADAQueryResult yqr    = yq.getResult();
-
+			yqr.setApp(yq.getApp());
 
 			String          urlStr = yq.getUrl(row);
 			Matcher m = Pattern.compile(PARAM_SYMBOL_RX).matcher(urlStr);

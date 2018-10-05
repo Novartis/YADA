@@ -112,6 +112,7 @@ public class FileSystemAdaptor extends Adaptor
 		{
 			yq.setResult();
 			YADAQueryResult yqr    = yq.getResult();
+			yqr.setApp(yq.getApp());
 			String          urlStr = yq.getUrl(row);
 			
 			for(int i=0;i<yq.getParamCount(row);i++)
