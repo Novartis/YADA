@@ -308,13 +308,13 @@ public class Service {
   		{
   			getYADARequest().setMethod(paraMap.get(YADARequest.PS_METHOD));
   		}
-  		if (paraMap.get(YADARequest.PL_OVERARGS) != null)
+  		if (paraMap.get(YADARequest.PL_OAUTH) != null)
   		{
-  		  setDeprecatedPlugin(paraMap, YADARequest.PL_OVERARGS);
+  		  getYADARequest().setOAuth(paraMap.get(YADARequest.PL_OAUTH));
   		}
-  		if (paraMap.get(YADARequest.PS_OVERARGS) != null)
+  		if (paraMap.get(YADARequest.PS_OAUTH) != null)
   		{
-  		  setDeprecatedPlugin(paraMap, YADARequest.PS_OVERARGS);
+  			getYADARequest().setOAuth(paraMap.get(YADARequest.PS_OAUTH));
   		}
   		if (paraMap.get(YADARequest.PL_BYPASSARGS) != null)
   		{
