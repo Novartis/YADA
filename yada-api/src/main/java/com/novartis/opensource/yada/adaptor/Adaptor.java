@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import com.novartis.opensource.yada.YADAQuery;
 import com.novartis.opensource.yada.YADAQueryResult;
 import com.novartis.opensource.yada.YADARequest;
+import com.novartis.opensource.yada.YADASecurityException;
 
 /**
  * The abstract Adaptor class is at the root of the package hierarchy. Adaptors
@@ -79,8 +80,9 @@ public abstract class Adaptor
 	 * 
 	 * @param yq the {@link YADAQuery} containing the code to execute
 	 * @throws YADAAdaptorExecutionException if exception is thrown during query execution 
+	 * @throws YADASecurityException if there is authentication or authorization error in preparation for or during execution
 	 */
-	public void execute(YADAQuery yq) throws YADAAdaptorExecutionException
+	public void execute(YADAQuery yq) throws YADAAdaptorExecutionException, YADASecurityException
 	{
 		//
 	}

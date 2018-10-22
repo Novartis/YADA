@@ -47,7 +47,6 @@ import com.novartis.opensource.yada.plugin.Bypass;
 import com.novartis.opensource.yada.plugin.Postprocess;
 import com.novartis.opensource.yada.plugin.Preprocess;
 import com.novartis.opensource.yada.plugin.YADAPluginException;
-import com.novartis.opensource.yada.plugin.YADASecurityException;
 import com.novartis.opensource.yada.util.FileUtils;
 import com.novartis.opensource.yada.util.QueryUtils;
 import com.novartis.opensource.yada.util.YADAUtils;
