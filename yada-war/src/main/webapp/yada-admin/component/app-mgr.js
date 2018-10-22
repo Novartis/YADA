@@ -126,8 +126,7 @@ define(
 	  	      '#see https://github.com/brettwooldridge/HikariCP for documentation\n'+
 	  	      'jdbcUrl=e.g., jdbc:hsqldb:hsql://localhost/YADADB\n'+
 	  	      'username=<replace>\n'+
-	  	      'password=<replace>\n'+
-	  	      'autoCommit=false\n'+
+	  	      'password=<replace>\n'+	  	      
 	  	      'connectionTimeout=300000\n'+
 	  	      'idleTimeout=600000\n'+
 	  	      'maxLifetime=1800000\n'+
