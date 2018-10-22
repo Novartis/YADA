@@ -1189,6 +1189,7 @@ public class YADARequest {
 	 *   <li>{@link #PS_FORMAT}</li>
 	 *   <li>{@link #PS_HARMONYMAP}</li>
 	 *   <li>{@link #PS_METHOD} (for backward compatibility)</li>
+	 *   <li>{@link #PS_OAUTH}</li>
 	 *   <li>{@link #PS_PAGESIZE}</li>
 	 *   <li>{@link #PS_PAGESTART}</li>
 	 *   <li>{@link #PS_ROW_DELIMITER}</li>
@@ -1204,6 +1205,7 @@ public class YADARequest {
 		JSONObject jobj = new JSONObject();
 		try
 		{
+			jobj.put(PS_OAUTH, getOAuth());
 			jobj.put(PS_COUNT, getCount());
 			jobj.put(PS_FILTERS, getFilters());
 			jobj.put(PS_PAGESIZE, getPageSize());
@@ -2239,7 +2241,7 @@ public class YADARequest {
 	{
 		try
 		{
-			this.oauth = new JSONObject(oauth);
+			this.oauth = new JSONObject(oauth[0]);
 		}
 		catch(JSONException e)
 		{
