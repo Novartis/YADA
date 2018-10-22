@@ -36,7 +36,7 @@ public class YADAQueryResult {
 	 */
 	private String       qname;
 	/**
-	 * The app to which the {@link qname} is mapped
+	 * The app to which the {@code qname} is mapped
 	 * @since 8.6.1
 	 */
 	private String       app;

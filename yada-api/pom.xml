@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.novartis.opensource</groupId>
     <artifactId>YADA</artifactId>
-    <version>8.6.2-SNAPSHOT</version>
+    <version>8.7.0-SNAPSHOT</version>
   </parent>
   <artifactId>yada-api</artifactId>
   <name>yada-api</name>
@@ -849,6 +849,16 @@
     </plugins>
   </reporting>
   <dependencies>
+    <dependency>
+	    <groupId>com.google.oauth-client</groupId>
+	    <artifactId>google-oauth-client</artifactId>
+	    <version>1.22.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.http-client</groupId>
+      <artifactId>google-http-client-jackson2</artifactId>
+      <version>1.11.0-beta</version>
+    </dependency>
     <dependency>
       <groupId>com.novartis.opensource</groupId>
       <artifactId>jsqlparser</artifactId>

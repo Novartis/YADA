@@ -39,6 +39,7 @@ import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADARequestException;
 import com.novartis.opensource.yada.YADAResourceException;
 import com.novartis.opensource.yada.YADASQLException;
+import com.novartis.opensource.yada.YADASecurityException;
 import com.novartis.opensource.yada.YADAUnsupportedAdaptorException;
 import com.novartis.opensource.yada.adaptor.YADAAdaptorException;
 import com.novartis.opensource.yada.adaptor.YADAAdaptorExecutionException;
@@ -359,8 +360,9 @@ public class YADAUtils {
 	 * @param yadaReq YADA request configuration
 	 * @return Object result of query execution
 	 * @throws YADAExecutionException if multiple query executions are attempted, or other YADA exceptions are thrown internally
+	 * @throws YADASecurityException if there is authentication or authorization error in preparation for or during execution
 	 */
-	public static Object executeYADAQuery(YADARequest yadaReq) throws YADAExecutionException
+	public static Object executeYADAQuery(YADARequest yadaReq) throws YADAExecutionException, YADASecurityException
 	{
 		Object result = null;
 		try

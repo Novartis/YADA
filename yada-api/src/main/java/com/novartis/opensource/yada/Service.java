@@ -47,7 +47,6 @@ import com.novartis.opensource.yada.plugin.Bypass;
 import com.novartis.opensource.yada.plugin.Postprocess;
 import com.novartis.opensource.yada.plugin.Preprocess;
 import com.novartis.opensource.yada.plugin.YADAPluginException;
-import com.novartis.opensource.yada.plugin.YADASecurityException;
 import com.novartis.opensource.yada.util.FileUtils;
 import com.novartis.opensource.yada.util.QueryUtils;
 import com.novartis.opensource.yada.util.YADAUtils;
@@ -308,13 +307,13 @@ public class Service {
   		{
   			getYADARequest().setMethod(paraMap.get(YADARequest.PS_METHOD));
   		}
-  		if (paraMap.get(YADARequest.PL_OVERARGS) != null)
+  		if (paraMap.get(YADARequest.PL_OAUTH) != null)
   		{
-  		  setDeprecatedPlugin(paraMap, YADARequest.PL_OVERARGS);
+  		  getYADARequest().setOAuth(paraMap.get(YADARequest.PL_OAUTH));
   		}
-  		if (paraMap.get(YADARequest.PS_OVERARGS) != null)
+  		if (paraMap.get(YADARequest.PS_OAUTH) != null)
   		{
-  		  setDeprecatedPlugin(paraMap, YADARequest.PS_OVERARGS);
+  			getYADARequest().setOAuth(paraMap.get(YADARequest.PS_OAUTH));
   		}
   		if (paraMap.get(YADARequest.PL_BYPASSARGS) != null)
   		{

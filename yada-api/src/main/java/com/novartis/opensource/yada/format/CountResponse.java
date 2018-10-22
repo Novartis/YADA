@@ -28,6 +28,7 @@ import com.novartis.opensource.yada.YADARequest;
  * compatibility when the deprecated {@link YADARequest#METHOD_UPDATE} parameter is included in the request
  * @author David Varon
  */
+@SuppressWarnings("javadoc")
 public class CountResponse extends AbstractResponse
 {
 

@@ -15,10 +15,13 @@
 /**
  * 
  */
-package com.novartis.opensource.yada.plugin;
+package com.novartis.opensource.yada;
+
+import com.novartis.opensource.yada.plugin.YADAPluginException;
 
 /**
- * Throw from a security preprocessor when authentication fails.
+ * Throw from a security preprocessor or adaptor when authentication or authorization fails. 
+ * Moved to main package from {@code plugin} for {@code 8.7.0}
  * @author Dave Varon
  * @since 7.0.0
  *

@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import com.novartis.opensource.yada.YADAQuery;
 import com.novartis.opensource.yada.YADARequest;
+import com.novartis.opensource.yada.YADASecurityException;
 
 /**
  * This plugin is both a {@link Preprocess} and {@link Postprocess} plugin.

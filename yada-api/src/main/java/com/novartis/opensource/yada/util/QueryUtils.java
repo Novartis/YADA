@@ -155,7 +155,7 @@ public class QueryUtils
 	 */
 	public static final String RX_DELETE = "^DELETE.*";
 	/**
-	 * A constant equal to: {@code ^([^&lt;]+)((&lt;{1,2})(.+))*$ }
+	 * A constant equal to: {@code ^([^&lt;]+)((&lt;&lcub;1,2&rcub;)(.+))*$ }
 	 * @since PROVISIONAL
 	 */
 	public final static String RX_FILE_URI = "^([^<]+)((<{1,2})(.+))*$";

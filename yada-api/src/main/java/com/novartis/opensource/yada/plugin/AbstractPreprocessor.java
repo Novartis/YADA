@@ -35,6 +35,7 @@ import com.novartis.opensource.yada.YADAConnectionException;
 import com.novartis.opensource.yada.YADAQuery;
 import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADASQLException;
+import com.novartis.opensource.yada.YADASecurityException;
 import com.novartis.opensource.yada.util.YADAUtils;
 
 /**

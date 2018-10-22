@@ -424,6 +424,11 @@ public class YADARequest {
 	 */
 	public static final String PS_METHOD      = "m";
 	/**
+	 * a constant equals to: {@value}
+	 * @since 8.7.0
+	 */
+	public static final String PS_OAUTH       = "o";
+	/**
 	 * A constant equal to: {@value}
 	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 * @deprecated as of 7.1.0
@@ -668,6 +673,12 @@ public class YADARequest {
 	 */
 	public static final String PL_METHOD      = "method";
 	/**
+	 * A constant equals to: {@value}.
+	 * 
+	 * @since 8.7.0
+	 */
+	public static final String PL_OAUTH       = "oauth";
+	/**
 	 * A constant equal to: {@value}.  Use {@link YADARequest#PL_BYPASSARGS} instead.
 	 * @deprecated as of 4.0.0
 	 */
@@ -723,7 +734,7 @@ public class YADARequest {
 	public static final String PL_PLUGINTYPE  = "plugintype";
 	/**
 	 * A constant equal to: {@value}
-	 * @deprecated
+	 * @deprecated as of 7.1.0
 	 */
 	@Deprecated
 	public static final String PL_POSTARGS    = "postargs";
@@ -833,6 +844,7 @@ public class YADARequest {
 		map.put(PS_JOIN, PL_JOIN);
 		map.put(PS_LEFTJOIN, PL_LEFTJOIN);
 		map.put(PS_METHOD,PL_METHOD);
+		map.put(PS_OAUTH,PL_OAUTH);
 		map.put(PS_OVERARGS,PL_OVERARGS);
 		map.put(PS_PAGE,PL_PAGE);
 		map.put(PS_PAGESIZE,PL_PAGESIZE);
@@ -876,6 +888,7 @@ public class YADARequest {
 		map.put(PL_LABELS,PL_LABELS);
 		map.put(PL_MAIL,PL_MAIL);
 		map.put(PL_METHOD,PL_METHOD);
+		map.put(PL_OAUTH,PL_OAUTH);
 		map.put(PL_OVERARGS,PL_OVERARGS);
 		map.put(PL_PAGE,PL_PAGE);
 		map.put(PL_PAGESIZE,PL_PAGESIZE);
@@ -963,7 +976,7 @@ public class YADARequest {
 	private String     mail;
 	/**
 	 * YADA execution method. Defaults to {@link #METHOD_GET}
-	 * @since 1.0.0, deprecated in v4.0.0, un-deprecated in 8.5.0 to support different HTTP methods for {@link RESTAdaptor}
+	 * @since 1.0.0, deprecated in v4.0.0, un-deprecated in 8.5.0 to support different HTTP methods for {@link com.novartis.opensource.yada.adaptor.RESTAdaptor}
 	 */
 	private String     method 	 	  = METHOD_GET;
 	/**
@@ -1015,6 +1028,11 @@ public class YADARequest {
 	 * The proxy server to use for external REST queries
 	 */
 	private String     proxy        = null;
+	/**
+	 * A JSON object containing oauth key/value pairs needed for authenticated requests
+	 * @since 8.7.0 
+	 */
+	private JSONObject oauth        = null;
 	/**
 	 * The name of the query to be executed, when coupled with {@link #params}, or {@link #plugin}.  Defaults to {@link #DEFAULT_QNAME}
 	 */
@@ -1171,6 +1189,7 @@ public class YADARequest {
 	 *   <li>{@link #PS_FORMAT}</li>
 	 *   <li>{@link #PS_HARMONYMAP}</li>
 	 *   <li>{@link #PS_METHOD} (for backward compatibility)</li>
+	 *   <li>{@link #PS_OAUTH}</li>
 	 *   <li>{@link #PS_PAGESIZE}</li>
 	 *   <li>{@link #PS_PAGESTART}</li>
 	 *   <li>{@link #PS_ROW_DELIMITER}</li>
@@ -1186,6 +1205,7 @@ public class YADARequest {
 		JSONObject jobj = new JSONObject();
 		try
 		{
+			jobj.put(PS_OAUTH, getOAuth());
 			jobj.put(PS_COUNT, getCount());
 			jobj.put(PS_FILTERS, getFilters());
 			jobj.put(PS_PAGESIZE, getPageSize());
@@ -1233,7 +1253,6 @@ public class YADARequest {
 	 */
 	public static String getParamValueForKey(List<YADAParam> q, String frag) throws YADAQueryConfigurationException 
 	{
-		//for (Iterator<YADAParam> iterator = q.iterator(); iterator.hasNext();)
 		for (YADAParam param : q)
 		{
 			try
@@ -2214,23 +2233,21 @@ public class YADARequest {
 	}
 	
 	/**
-	 * @deprecated As of YADA 4.0.0
-	 * @param args bypass plugin arguments
+	 * @since 8.7.0
+	 * @param oauth oauth parameters
+	 * @throws YADARequestException if the parameter string is not malformed
 	 */
-	@Deprecated
-	public void setOverArgs(List<String> args) {
-		this.bypassArgs = args;
-		l.debug(getFormattedDebugString("bypassArgs", args.toString()));
-	}
-	
-	/**
-	 * @since 4.0.0
-	 * @param argArr bypass plugin arguments
-   * @deprecated as of 7.1.0
-   */
-  @Deprecated
-	public void setOverargs(String[] argArr) {
-		this.setBypassargs(argArr);
+	public void setOAuth(String[] oauth) throws YADARequestException
+	{
+		try
+		{
+			this.oauth = new JSONObject(oauth[0]);
+		}
+		catch(JSONException e)
+		{
+			String msg = "The OAuth parameter JSON string appears to be malformed.";
+			throw new YADARequestException(msg, e);
+		}
 	}
 	
 	/**
@@ -3038,6 +3055,17 @@ public class YADARequest {
 		return this.pageSize;
 	}
 	
+	/**
+	 * Returns an {@link JSONObject} containing oauth parameters such as <code>consumer_key</code>, 
+	 * <code>secret</code>, etc. See the YADA OAuth 1.0a specification or YADA parameter documentation
+	 * for details. 
+	 * @return the oauth parameters object
+	 * @since 8.7.0
+	 */
+	//TODO Add link to YADA OAuth 1.0a spec 
+	public JSONObject getOAuth() {
+		return this.oauth;
+	}
 	
 	/**
 	 * Returns the results from page {@code pageStart}, using {@link #getPageSize()} to determine which row should

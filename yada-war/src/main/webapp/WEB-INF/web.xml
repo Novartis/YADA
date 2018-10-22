@@ -38,9 +38,26 @@
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 
-	<!-- <filter> <filter-name>CORS</filter-name> <filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>
-		</filter> <filter-mapping> <filter-name>CORS</filter-name> <url-pattern>/*</url-pattern>
-		</filter-mapping> -->
+
+  <!-- Uncomment the following filter and filter-mapping sections to use the this 3rd party CORS filter implementation.  
+       The settings may need to be tweaked. If you are using Apache HTTPD as a reverse proxy for tomcat, 
+       it is advisable to set up CORS handling there instead.  This 3rd-party filter was especially important in the 
+       pre-tomcat-8x days, but more than likely, the default catalina implementation is preferable (see below.) -->
+	<!-- 
+	<filter> 
+    <filter-name>CORS</filter-name>
+    <filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>
+	</filter> 
+	<filter-mapping>
+	 <filter-name>CORS</filter-name>
+	 <url-pattern>/*</url-pattern>
+	</filter-mapping>
+	-->
+	
+	<!-- Uncomment the following filter and filter-mapping sections to use the default CORS tomcat implementation.  
+	     The settings may need to be tweaked. If you are using Apache HTTPD as a reverse proxy for tomcat, 
+	     it is advisable to set up CORS handling there instead.-->
+	<!--
 	<filter>
 		<filter-name>CorsFilter</filter-name>
 		<filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
@@ -62,7 +79,7 @@
 		</init-param>
 		<init-param>
 			<param-name>cors.support.credentials</param-name>
-			<param-value>true</param-value>
+			<param-value>false</param-value>
 		</init-param>
 		<init-param>
 			<param-name>cors.preflight.maxage</param-name>
@@ -72,7 +89,8 @@
 	<filter-mapping>
 		<filter-name>CorsFilter</filter-name>
 		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+	</filter-mapping> 
+	-->
 
 	<servlet>
 		<servlet-name>YADA-init</servlet-name>

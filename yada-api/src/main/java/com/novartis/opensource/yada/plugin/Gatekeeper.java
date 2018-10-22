@@ -44,8 +44,8 @@ import com.novartis.opensource.yada.YADAFinderException;
 import com.novartis.opensource.yada.YADAQuery;
 import com.novartis.opensource.yada.YADAQueryConfigurationException;
 import com.novartis.opensource.yada.YADARequest;
+import com.novartis.opensource.yada.YADASecurityException;
 import com.novartis.opensource.yada.plugin.AbstractPreprocessor;
-import com.novartis.opensource.yada.plugin.YADASecurityException;
 import com.novartis.opensource.yada.util.YADAUtils;
 
 /**

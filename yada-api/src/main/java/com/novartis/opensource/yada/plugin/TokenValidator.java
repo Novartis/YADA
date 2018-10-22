@@ -14,6 +14,8 @@
  */
 package com.novartis.opensource.yada.plugin;
 
+import com.novartis.opensource.yada.YADASecurityException;
+
 /**
  * 
  * @author David Varon
