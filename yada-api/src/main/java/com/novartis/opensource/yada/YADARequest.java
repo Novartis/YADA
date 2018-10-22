@@ -734,7 +734,7 @@ public class YADARequest {
 	public static final String PL_PLUGINTYPE  = "plugintype";
 	/**
 	 * A constant equal to: {@value}
-	 * @deprecated
+	 * @deprecated as of 7.1.0
 	 */
 	@Deprecated
 	public static final String PL_POSTARGS    = "postargs";
@@ -976,7 +976,7 @@ public class YADARequest {
 	private String     mail;
 	/**
 	 * YADA execution method. Defaults to {@link #METHOD_GET}
-	 * @since 1.0.0, deprecated in v4.0.0, un-deprecated in 8.5.0 to support different HTTP methods for {@link RESTAdaptor}
+	 * @since 1.0.0, deprecated in v4.0.0, un-deprecated in 8.5.0 to support different HTTP methods for {@link com.novartis.opensource.yada.adaptor.RESTAdaptor}
 	 */
 	private String     method 	 	  = METHOD_GET;
 	/**
@@ -2235,7 +2235,7 @@ public class YADARequest {
 	/**
 	 * @since 8.7.0
 	 * @param oauth oauth parameters
-	 * 
+	 * @throws YADARequestException if the parameter string is not malformed
 	 */
 	public void setOAuth(String[] oauth) throws YADARequestException
 	{

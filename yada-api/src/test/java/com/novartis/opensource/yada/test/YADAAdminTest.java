@@ -335,6 +335,7 @@ public class YADAAdminTest {
   /**
    * Creates a new query for the current app using {@code SELECT 1 AS COL1} 
    * @param qname the query to insert
+   * @param action the imperative to executed
    * @throws InterruptedException if the any thread has interrupted the current thread
    */
   private void createQueryForNewApp(String qname, String action) throws InterruptedException

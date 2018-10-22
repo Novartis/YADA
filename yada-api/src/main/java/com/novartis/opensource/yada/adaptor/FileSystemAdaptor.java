@@ -52,7 +52,7 @@ public class FileSystemAdaptor extends Adaptor
    */
 	protected final static String  PARAM_SYMBOL_RX = "([\\/=:<])(\\?[idvn])";
 	/**
-   * Constant equal to: {@code &lt;{1,2}.*}
+   * Constant equal to: {@code &lt;&lcub;1,2&rcub;.*}
    */
 	protected final static String  NON_READ_SFX_RX = "<{1,2}.*";
 	/**
