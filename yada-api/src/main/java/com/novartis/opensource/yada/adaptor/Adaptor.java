@@ -130,7 +130,7 @@ public abstract class Adaptor
 	 * @param yq the query to which to apply the new settings
 	 */
 	protected void resetCountParameter(YADAQuery yq) {
-		//TODO run this through the debugger to check the distinction betwen these 2 instances of yadaReq
+		//TODO run this through the debugger to check the distinction between these 2 instances of yadaReq
 		this.yadaReq.setCount(new String[] {"false"});
 		yq.replaceParam(YADARequest.PS_COUNT, "false");
 	}
