@@ -188,8 +188,26 @@ public class RESTAdaptor extends Adaptor {
 		
 		if(yadaReq.getOAuth() != null)
 		{
-			this.oauth = yadaReq.getOAuth();			
+			setOAuth(yadaReq.getOAuth());
 		}
+	}
+
+	/**
+	 * Standard mutator for variable
+	 * @param oauth the JSONObject store in the {@link YADARequest}
+	 * @since 8.7.1
+	 */
+	private void setOAuth(JSONObject oauth) {
+		this.oauth = oauth;
+	}
+	
+	/**
+	 * Standard mutator for variable which converts {@link String} to {@link JSONObject}
+	 * @param yq The {@link YADAQuery} containing the {@code oauth} or {@code o} parameter
+	 * @since 8.7.1
+	 */
+	private void setOAuth(YADAQuery yq) {
+		this.oauth = new JSONObject(yq.getYADAQueryParamValue(YADARequest.PS_OAUTH)[0]);
 	}
 
 	/**
@@ -259,6 +277,8 @@ public class RESTAdaptor extends Adaptor {
 						   		  + "basic auth values.";
 				throw new YADAQueryConfigurationException(msg);
 			}
+			if(null == this.oauth) // not in the request
+				setOAuth(yq);
 			return setAuthenticationOAuth(url);			
 		}
 		else if(url.getUserInfo() != null)
