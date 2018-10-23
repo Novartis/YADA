@@ -35,7 +35,7 @@ final String CONVERTER_EXCEPTION           = PACKAGE + "format.YADAConverterExce
 final String RESPONSE_EXCEPTION            = PACKAGE + "format.YADAResponseException";
 final String IO_EXCEPTION                  = PACKAGE + "io.YADAIOException";
 final String PLUGIN_EXCEPTION              = PACKAGE + "plugin.YADAPluginException";
-final String SECURITY_EXCEPTION            = PACKAGE + "plugin.YADASecurityException";
+final String SECURITY_EXCEPTION            = PACKAGE + "YADASecurityException";
 final String UNHANDLED_EXCEPTION           = "java.lang\\.*";
 
 final String HTTP_SC_NOT_FOUND       = "Not Found";
