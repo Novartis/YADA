@@ -609,7 +609,7 @@ public class RESTAdaptor extends Adaptor {
 				
 				// get body content 
 				String payload = null;
-				if(yq.getDataRow(row).containsKey(YADA_PAYLOAD))
+				if(yq.getData().size() > 0 && yq.getDataRow(row).containsKey(YADA_PAYLOAD))
 						payload = yq.getDataRow(row).get(YADA_PAYLOAD)[0];
 				
 				// init url
