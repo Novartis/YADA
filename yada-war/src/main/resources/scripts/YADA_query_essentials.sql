@@ -22,7 +22,7 @@ DELETE from YADA_QUERY
   and qname not in ('YADA default','YADA yada','YADA user is authorized','YADA sql tester','YADA select nextval','YADA select multiple nextvals');
 
 -- properties
-INSERT INTO YADA_PROP (target,name,value) VALUES ('system','yada.version','${display.version}');
+--INSERT INTO YADA_PROP (target,name,value) VALUES ('system','yada.version','${display.version}');
 INSERT INTO YADA_PROP (target,name,value) VALUES ('system','app.home','${app.home}');
 INSERT INTO YADA_PROP (target,name,value) VALUES ('system','yada.bin','${app.home}/bin/');
 INSERT INTO YADA_PROP (target,name,value) VALUES ('system','yada.util','${app.home}/util/');

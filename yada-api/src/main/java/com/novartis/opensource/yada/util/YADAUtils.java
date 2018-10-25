@@ -14,12 +14,21 @@
  */
 package com.novartis.opensource.yada.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,10 +60,12 @@ import com.novartis.opensource.yada.adaptor.YADAAdaptorExecutionException;
  *
  */
 public class YADAUtils {
+	
+	
   /**
    * A constant equal to: {@value}, the JNDI key for the framework version value
    */
-  public final static String   YADA_VERSION             = "yada.version";
+  public final static String   YADA_VERSION             = "yada-api-version";
   /**
 	 * A constant equal to: {@value}
 	 */
@@ -198,8 +209,31 @@ public class YADAUtils {
 	 * @since 5.1.0
 	 */
 	public static String getVersion() throws YADAResourceException 
-	{
-	  return Finder.getEnv(YADA_VERSION);
+	{		
+		String   version     = "-1";
+		Class<?> clazz       = YADAUtils.class; 
+		String   mfPath      = "META-INF/MANIFEST.MF";
+		String   jarFilePath =  clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
+		Manifest mf          = null;      
+		try(JarFile jar = new JarFile(jarFilePath))
+		{
+		  mf = jar.getManifest();			
+		} 
+		catch (IOException e) 
+		{			
+			try(FileInputStream file = new FileInputStream(jarFilePath+"META-INF/MANIFEST.MF"))
+			{
+				mf = new Manifest(file);
+			} 
+			catch (IOException e1) 
+			{
+				String msg = "Unable to retrieve manifest from jar or path";
+				throw new YADAResourceException(msg, e1);
+			} 
+		}
+		Attributes attr = mf.getMainAttributes();
+		version = attr.getValue(YADA_VERSION);
+		return version;
 	}
 	
 	/**

@@ -612,6 +612,14 @@
           <include>utils/**</include>
         </includes>
       </resource>
+      <resource>
+        <directory>${basedir}/src/main/resources/META-INF</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>MANIFEST.MF</include>
+        </includes>
+        <targetPath>META-INF</targetPath>
+      </resource>
     </resources>
     <testResources>
       <testResource>
@@ -622,6 +630,14 @@
           <include>log4j.properties</include>
           <include>YADA.properties</include>
         </includes>
+      </testResource>
+      <testResource>
+        <directory>${basedir}/src/main/resources/META-INF</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>MANIFEST.MF</include>
+        </includes>
+        <targetPath>META-INF</targetPath>
       </testResource>
       <testResource>
         <directory>${basedir}/src/test/resources/conf</directory>
@@ -655,6 +671,7 @@
         <configuration>
           <archive>
             <addMavenDescriptor>false</addMavenDescriptor>
+            <manifestFile>target/classes/META-INF/MANIFEST.MF</manifestFile> 
           </archive>
         </configuration>
         <executions>
