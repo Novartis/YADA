@@ -124,7 +124,7 @@ public class RESTAdaptor extends Adaptor {
 	/**
 	 * Constant equal to: {@value}
 	 */
-	protected final static String  PARAM_SYMBOL_RX = "([\\/=:~])(\\?[idvnt])";
+	protected final static String  PARAM_SYMBOL_RX = "([\\/=:~]|%(?:2F|3D|3A|7E))(\\?[idvnt])";
 
 	/**
 	 * Constant equal to: {@value}
