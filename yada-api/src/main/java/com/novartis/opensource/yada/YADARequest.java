@@ -2839,10 +2839,13 @@ public class YADARequest {
     // popped off the stack so to speak, but also to retain original order.
     Map<String,List<String>> pluginMap = new LinkedHashMap<>();
     int i = 0;
-    for(String plugin : this.plugin)
+    if(null != this.plugin && this.plugin.length > 0)
     {
-      List<String> args = getPluginArgs() != null ? getPluginArgs().get(i++) : null; 
-      pluginMap.put(plugin, args);
+	    for(String plugin : this.plugin)
+	    {
+	      List<String> args = getPluginArgs() != null ? getPluginArgs().get(i++) : null; 
+	      pluginMap.put(plugin, args);
+	    }
     }
     return pluginMap;
   }
