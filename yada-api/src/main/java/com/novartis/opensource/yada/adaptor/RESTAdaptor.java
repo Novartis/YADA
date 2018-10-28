@@ -48,6 +48,7 @@ import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.javanet.NetHttpTransport;
 
 import com.novartis.opensource.yada.ConnectionFactory;
@@ -144,6 +145,18 @@ public class RESTAdaptor extends Adaptor {
 	 * Constant equal to: {@value}. For retrieving the default keystore.
 	 */
 	private static final String KEYSTORE_TYPE_JKS = "jks";
+
+	/**
+	 * Constant equal to: {@value}. 
+	 * @since 8.7.4
+	 */
+	private static final int HTTP_STATUS_401 = 401;
+	
+	/**
+	 * Constant equal to: {@value}. 
+	 * @since 8.7.4
+	 */
+	private static final int HTTP_STATUS_403 = 403;
 
 	/**
 	 * Variable to hold the proxy server string if necessary
@@ -465,16 +478,27 @@ public class RESTAdaptor extends Adaptor {
 	 * @param request the request object
 	 * @return a String containing the response data
 	 * @throws YADAAdaptorExecutionException when reading the input stream fails
+	 * @throws YADASecurityException when the service returns a 401 or 403
 	 * @since 8.7.0
-	 */
-	private String processResponse(HttpRequest request) throws YADAAdaptorExecutionException 
+	 */ 
+	private String processResponse(HttpRequest request) throws YADAAdaptorExecutionException, YADASecurityException 
 	{
 		String result = "";
-		HttpResponse response;
+		HttpResponse response = null;
 		try 
 		{
 			response = request.execute();
 		} 
+		catch (HttpResponseException e)
+		{
+			int code = e.getStatusCode();
+			if(code == HTTP_STATUS_401 || code == HTTP_STATUS_403)
+			{
+				String msg = "Unauthorized: "+e.getStatusMessage();
+				throw new YADASecurityException(msg,e);
+			}
+				
+		}
 		catch (IOException e) 
 		{
 			String msg = "Unable to execute request.";
