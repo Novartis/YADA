@@ -19,6 +19,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.HttpCookie;
 import java.net.URL;
 import java.net.URLConnection;
@@ -429,7 +431,7 @@ public class RESTAdaptor extends Adaptor {
 		  {
 		    cookieStr += cookie.getName()+"="+cookie.getValue()+";";
 		  }
-		  HttpHeaders headers = new HttpHeaders();
+		  HttpHeaders headers = request.getHeaders();
 		  headers.setCookie(cookieStr);
 		  request.setHeaders(headers);
 		}
@@ -440,13 +442,15 @@ public class RESTAdaptor extends Adaptor {
 	 * and adds them to the {@link HttpRequest}
 	 * @param yq the {@link YADAQuery} object
 	 * @param request the HttpRequest object
+	 * @throws YADAQueryConfigurationException 
 	 * @since 8.7.0
 	 */
-	private void setHeaders(YADAQuery yq, HttpRequest request)
+	private void setHeaders(YADAQuery yq, HttpRequest request) throws YADAQueryConfigurationException
 	{
 		if(yq.getHttpHeaders() != null && yq.getHttpHeaders().length() > 0)
 		{
-			HttpHeaders headers = new HttpHeaders();
+			HttpHeaders headers = request.getHeaders();
+
 			l.debug("Processing custom headers...");
 			@SuppressWarnings("unchecked")
 			Iterator<String> keys = yq.getHttpHeaders().keys();
@@ -455,7 +459,29 @@ public class RESTAdaptor extends Adaptor {
 				String name = keys.next();
 				String value = yq.getHttpHeaders().getString(name);
 				l.debug("Custom header: "+name+" : "+value);
-				headers.set(name, value);
+				
+				String method = "set"+name.replace("-","");
+				try 
+				{
+					Class<HttpHeaders> clazz = HttpHeaders.class;
+					Method meth = clazz.getMethod(method, java.lang.String.class);
+					meth.invoke(headers, value);
+				} 
+				catch (NoSuchMethodException|SecurityException e) 
+				{
+					String msg = "There is no method named ["+method+"]. It could be a case issue."
+							       + "Method names are camel-cased, and header names should have initial " 
+							       + " caps, and hyphens instead of spaces."; 
+					l.warn(msg);
+					l.warn("Trying to use generic setter");
+					headers.set(name, value);
+				} 
+				catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) 
+				{
+					String msg = "The ["+name+"] header could not be set.";
+					throw new YADAQueryConfigurationException(msg, e);
+				} 
+				request.setHeaders(headers);
 			}
 		}
 	}
