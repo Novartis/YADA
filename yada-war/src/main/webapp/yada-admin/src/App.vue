@@ -1,7 +1,7 @@
 <template>
   <div class="nest container-fluid">
     <div class="page-header">
-      <div class="background"><img src="./assets/blox250.png"/><span>Admin</span></div>
+      <div class="background"><img src="blox250.png"/><span>Admin</span></div>
     </div>
     <div class="row">
       <div id="tab-panel" ref="tabpanel" class="col-12">
