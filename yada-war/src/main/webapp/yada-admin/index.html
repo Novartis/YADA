@@ -12,7 +12,8 @@
 
       let cooks  = document.cookie.split(/; /)
       let groups = atob(cooks.filter(o => /yadagroups/.test(o))[0].split(/=/)[1]).split(/,/).sort()
-      console.log(groups)
+      if(!!groups && groups.length > 0)
+        console.log(groups)
 
     </script>
   </body>
