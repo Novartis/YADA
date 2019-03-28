@@ -19,21 +19,23 @@ export default {
     }
   },
   methods: {
-    //YADA_queries_loaded_app (obj) { this.$emit('YADA_queries_loaded_app',obj) },
+    // YADA_queries_loaded_app (obj) { this.$emit('YADA_queries_loaded_app',obj) },
     login () {
-      let q = 'YADA check credentials', p = ['YADA','yada'].join(',')
-      this.$yada.std(q,p,'POST').then(this.loadApps())
+      let q = 'YADA check credentials'
+      let p = ['YADA', 'yada'].join(',')
+      this.$yada.std(q, p, 'POST').then(this.loadApps())
     },
     loadApps () {
-      this.$yada.path('YADA select apps')
+      let q = 'YADA select apps'
+      this.$yada.std(q,null,{c:false})
         .then(response => this.setApps(response))
     },
     setApps (response) {
-      this.apps = response.data.RESULTSET.ROWS
+      this.apps = response.data.RESULTSET.ROWS.sort((a,b)=>{ return a.APP.localeCompare(b.APP, 'en',{sentivity: 'base'})})
     }
   },
   mounted () {
-    this.$nextTick(() => this.login());
+    this.$nextTick(() => this.login())
   }
 }
 </script>
