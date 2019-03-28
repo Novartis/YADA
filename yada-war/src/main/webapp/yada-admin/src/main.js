@@ -30,7 +30,7 @@ Vue.component('octicon', Octicon)
 new Vue({
   el: '#app',
   store,
-  // router,
+  router,
   components: { App },
   template: '<App/>'
 })
