@@ -6,7 +6,7 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/yada-admin',
+      path: '/',
       name: 'App'
       Component: 'App'
     }
