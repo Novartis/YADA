@@ -1,38 +1,42 @@
 <template>
-  <div class="nest container-fluid">
-    <div class="page-header">
-      <div class="background"><img src="static/blox250.png"/><span>Admin</span></div>
-    </div>
-    <div class="row">
-      <div id="tab-panel" ref="tabpanel" class="col-12">
-        <ul class="nav nav-tabs">
-          <li class="nav-item">
-            <a class="nav-link active" id="apps-tab" href="#apps-panel" data-toggle="tab">Apps</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="query-tab" ref="querytab" href="#query-panel" data-toggle="tab">Queries</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="conf-tab" href="#conf-panel" data-toggle="tab">Configuration</a>
-          </li>
-        </ul>
-        <div class="tab-content" id="myTabContent">
-          <div class="tab-pane fade show active" id="apps-panel" role="tabpanel" aria-labelledby="">
-            <AppList/>
-          </div>
-          <div class="tab-pane fade" id="query-panel" role="tabpanel" aria-labelledby="">
-            <QueryList />
-          </div>
-          <div class="tab-pane fade" id="conf-panel" role="tabpanel" aria-labelledby="">
-            <AppConfig/>
+  <div id="app">
+    <div class="nest container-fluid">
+      <div class="page-header">
+        <div class="background"><img src="static/blox250.png"/><span>Admin</span></div>
+      </div>
+      <div class="row">
+        <div id="tab-panel" ref="tabpanel" class="col-12">
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link active" id="apps-tab" href="#apps-panel" data-toggle="tab">Apps</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="query-tab" ref="querytab" href="#query-panel" data-toggle="tab">Queries</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="conf-tab" href="#conf-panel" data-toggle="tab">Configuration</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="apps-panel" role="tabpanel" aria-labelledby="">
+              <AppList/>
+            </div>
+            <div class="tab-pane fade" id="query-panel" role="tabpanel" aria-labelledby="">
+              <QueryList />
+            </div>
+            <div class="tab-pane fade" id="conf-panel" role="tabpanel" aria-labelledby="">
+              <AppConfig/>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <IdleAlert></IdleAlert>
   </div>
 </template>
 
 <script>
+import IdleAlert from './components/IdleAlert.vue'
 import AppList from './components/AppList.vue'
 import AppConfig from './components/AppConfig.vue'
 import QueryList from './components/QueryList.vue'
@@ -40,7 +44,7 @@ import QueryList from './components/QueryList.vue'
 import { mapGetters } from 'vuex'
 export default {
   name: 'App',
-  components: { AppList,AppConfig,QueryList },
+  components: { IdleAlert,AppList,AppConfig,QueryList },
   computed: mapGetters(['getApp','getConfig','getQueries','getQname','getTableRows']),
   watch: {
     getApp (val, oldVal) { this.$refs.querytab.click() }
