@@ -1,5 +1,5 @@
 module.exports = {
-  baseUrl: process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'testing'
+  publicPath: process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'testing'
     ? '/yada-admin/'
     : '/'
 }
