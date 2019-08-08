@@ -12,7 +12,7 @@
     "test": "npm run unit && npm run e2e",
     "lint": "eslint --ext .js,.vue src test/unit test/e2e/specs",
     "build": "node build/build.js",
-    "build": "node build/build-test.js"
+    "build-test": "node build/build-test.js"
   },
   "dependencies": {
     "axios": "^0.18.0",
