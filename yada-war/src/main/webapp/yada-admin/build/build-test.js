@@ -1,7 +1,7 @@
 'use strict'
 require('./check-versions')()
 
-process.env.NODE_ENV = 'development'
+process.env.NODE_ENV = 'testing'
 
 const ora = require('ora')
 const rm = require('rimraf')
