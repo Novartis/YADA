@@ -132,7 +132,7 @@ export default {
       }
       else
       {
-        yadaOptions = arguments[2]
+        yadaOptions = typeof arguments[2] !== 'undefined' ? arguments[2] : {}
         method = arguments[1]
       }
       yadaOptions['j'] = jsonparams
