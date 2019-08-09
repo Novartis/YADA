@@ -1,7 +1,7 @@
 'use strict'
 require('./check-versions')()
 
-process.env.NODE_ENV = 'development'
+process.env.NODE_ENV = 'testing'
 
 const ora = require('ora')
 const rm = require('rimraf')
@@ -9,7 +9,7 @@ const path = require('path')
 const chalk = require('chalk')
 const webpack = require('webpack')
 const config = require('../config')
-const webpackConfig = require('./webpack.prod.conf')
+const webpackConfig = require('./webpack.test.conf')
 
 const spinner = ora('building for production...')
 spinner.start()
