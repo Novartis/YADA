@@ -48,23 +48,32 @@ export default {
       columnDefs: [ {
         targets: 0,
         render: function(data, type, row, meta) {
-          let btn = '<button class="copy btn" data-clipboard-target="tr:nth-child('+(meta.row+1)+')>td:nth-child('+(meta.col+1)+')"></button>';
+          let btn = `<button class="copy btn" data-clipboard-target="tr:nth-child(${(meta.row+1)})>td:nth-child(${(meta.col+1)})"></button>`
           return btn+data;
         }
-      },{
+      }, {
         targets: 1,
         render: function(data, type, row, meta)
         {
-          let btn = '<button class="copy btn" data-clipboard-target="tr:nth-child('+(meta.row+1)+')>td:nth-child('+(meta.col+1)+')"></button>';
-          let pre = '<pre>' + data.replace(/</g, "&lt;").replace(/>/g, "&gt;") + '</pre>'
+          let len = 60
+          let btn = `<button class="copy btn" data-clipboard-target="tr:nth-child(${(meta.row+1)})>td:nth-child(${(meta.col+1)})"></button>`
+          let fmt = data.replace(/</g, "&lt;").replace(/>/g, "&gt;")
+          let trunc = type === 'display' && data.length > len
+                      ? `${fmt.substr(0,len)}...`
+                      : `${fmt}`
+          let pre = `<pre data-toggle="tooltip" title="${fmt}">${trunc}</pre>`
           return btn+pre;
         }
       }, {
         targets: 2,
         render: function(data, type, row, meta)
         {
-          let btn = '<button class="copy btn" data-clipboard-target="tr:nth-child('+(meta.row+1)+')>td:nth-child('+(meta.col+1)+')"></button>';
-          let code = data.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+          let len  = 60
+          let btn  = `<button class="copy btn" data-clipboard-target="tr:nth-child(${(meta.row+1)})>td:nth-child(${(meta.col+1)})"></button>`
+          let fmt  = data.replace(/</g, "&lt;").replace(/>/g, "&gt;")
+          let code = type === 'display' && data.length > len
+                    ? `<span data-toggle="tooltip" title="fmt">${fmt.substr(0,len)}...</span>`
+                    : `<span data-toggle="tooltip" title="fmt">${fmt}</span>`
           return btn+code;
         }
       }, {
@@ -74,26 +83,26 @@ export default {
           var len = 12;
           if (type === 'display' && data.length > len)
           {
-            return '<span data-toggle="tooltip" title="' + data + '">' + data.substr(0, len) + '…</span>';
+            return `<span data-toggle="tooltip" title="${data}">${data.substr(0, len)}…</span>`
           }
           return data; // "short display", or filter
         }
       }
-      ,{
-        targets: [ 5, 7
-        ], // date columns
-        type: "date",
-        className: 'dt-body-center',
-        render: function(data, type, row, meta)
-        {
-          if (data == "")
-            return data;
-          if (data == null)
-            return "";
-          var txt = Vue.getFormattedDate(data, "oracle");
-          return '<span title="' + txt + '">' + txt.substr(0, 10) + '</span>';
-        }
-      }
+      // ,{
+      //   targets: [ 5, 7
+      //   ], // date columns
+      //   type: "date",
+      //   className: 'dt-body-center',
+      //   render: function(data, type, row, meta)
+      //   {
+      //     if (data == "")
+      //       return data;
+      //     if (data == null)
+      //       return "";
+      //     var txt = Vue.getFormattedDate(data, "oracle");
+      //     return '<span title="' + txt + '">' + txt.substr(0, 10) + '</span>';
+      //   }
+      // }
       ],
       columns: [
       // {
@@ -120,33 +129,34 @@ export default {
         visible: false
       }, {
         // data: "COMMENTS",
-        title: "Comments",
-        searchable: true
-      }, {
-        // data: "DEFAULT_PARAMS",
-        title: 'Default Param Count',
-        type: 'num',
-        searchable: false,
-        className: 'dt-body-center'
-      }, {
-        // data: "LAST_ACCESS",
-        title: "Last Accessed",
-        searchable: false
-      }, {
-        // data: "ACCESS_COUNT",
-        title: "Access Count",
-        searchable: false,
-        type: 'num',
-        className: 'dt-body-right'
-      }, {
-        // data: "MODIFIED",
-        title: "Last Modified",
-        searchable: false
-      }, {
-        // data: "MODIFIED_BY",
-        title: "Modified By",
+        title: "Details",
         searchable: false
       }
+      // , {
+      //   // data: "DEFAULT_PARAMS",
+      //   title: 'Default Param Count',
+      //   type: 'num',
+      //   searchable: false,
+      //   className: 'dt-body-center'
+      // }, {
+      //   // data: "LAST_ACCESS",
+      //   title: "Last Accessed",
+      //   searchable: false
+      // }, {
+      //   // data: "ACCESS_COUNT",
+      //   title: "Access Count",
+      //   searchable: false,
+      //   type: 'num',
+      //   className: 'dt-body-right'
+      // }, {
+      //   // data: "MODIFIED",
+      //   title: "Last Modified",
+      //   searchable: false
+      // }, {
+      //   // data: "MODIFIED_BY",
+      //   title: "Modified By",
+      //   searchable: false
+      // }
       ],
       data: vm.rows,
       //searching: false,
