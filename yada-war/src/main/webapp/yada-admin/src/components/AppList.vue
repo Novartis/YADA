@@ -23,7 +23,7 @@ export default {
     login () {
       let q = 'YADA check credentials'
       let p = ['YADA', 'yada'].join(',')
-      this.$yada.std(q, p, 'POST').then(this.loadApps())
+      this.$yada.std(q, p, 'POST').then(this.loadApps)
     },
     loadApps () {
       let q = 'YADA select apps'
