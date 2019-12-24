@@ -15,6 +15,7 @@
     "build-test": "node build/build-test.js"
   },
   "dependencies": {
+    "@primer/octicons": "^9.1.1",
     "axios": "^0.18.0",
     "bootstrap": "^4.1.0",
     "clipboard": "^2.0.1",
@@ -23,6 +24,9 @@
     "jquery": "^3.3.1",
     "popper": "^1.0.1",
     "popper.js": "^1.14.3",
+    "semantic": "0.0.1",
+    "semantic-ui": "^2.4.2",
+    "syntaxhighlighter": "^4.0.1",
     "vue": "^2.5.2",
     "vue-codemirror": "^4.0.5",
     "vue-lodash": "^2.0.0",
