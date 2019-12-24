@@ -7,6 +7,10 @@ yarn-error.log*
 /test/unit/coverage/
 /test/e2e/reports/
 selenium-debug.log
+/cypress/integration/examples/
+/cypress/screenshots/
+/cypress/fixtures/profile.json
+/cypress/fixtures/users.json
 
 # Editor directories and files
 .idea
