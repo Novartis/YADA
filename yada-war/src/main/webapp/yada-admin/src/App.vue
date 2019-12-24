@@ -1,65 +1,414 @@
 <template>
   <div id="app">
-    <div class="nest container-fluid">
-      <div class="page-header">
-        <div class="background"><img class="box-shadow" src="static/blox250.png"/><span>Admin</span></div>
+    <!-- <div class="page-header">
+
+    </div> -->
+    <div class="meaty-bit">
+      <div class="background" >
+        <img class="box-shadow" src="../static/blox250.png"/>
+        <span>Admin</span>
+        <DevTools v-if="env !== 'PROD'"/>
       </div>
-      <div class="row">
-        <div id="tab-panel" ref="tabpanel" class="col-12">
-          <ul class="nav nav-tabs">
-            <li class="nav-item">
-              <a class="nav-link active" id="apps-tab" href="#apps-panel" data-toggle="tab">Apps</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" id="query-tab" ref="querytab" href="#query-panel" data-toggle="tab">Queries</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" id="conf-tab" href="#conf-panel" data-toggle="tab">Configuration</a>
-            </li>
-          </ul>
-          <div class="tab-content" id="myTabContent">
-            <div class="tab-pane fade show active" id="apps-panel" role="tabpanel" aria-labelledby="">
-              <AppList/>
-            </div>
-            <div class="tab-pane fade" id="query-panel" role="tabpanel" aria-labelledby="">
-              <QueryList />
-            </div>
-            <div class="tab-pane fade" id="conf-panel" role="tabpanel" aria-labelledby="">
-              <AppConfig/>
-            </div>
+      <div class="ui top attached tabular menu">
+        <div class="item active" id="apps-tab" data-tab="apps-tab" @click="clearApp">Apps</div>
+        <div class="item disabled" id="conf-tab" ref="conftab" @click="setupConfTab">Configuration</div>
+        <div class="item disabled" id="query-list-tab" ref="querylisttab">Queries</div>
+        <div class="item disabled" id="query-edit-tab" ref="queryedittab">Edit Query</div>
+      </div>
+      <div class="ui bottom attached active tab segment" data-tab="apps-tab" id="apps-panel">
+        <AppList/>
+      </div>
+      <div class="ui bottom attached tab segment" data-tab="conf-tab" ref="confpanel" id="conf-panel">
+        <AppConfig ref="confpanelform"/>
+      </div>
+      <div class="ui bottom attached tab segment" data-tab="query-list-tab" ref="querylistpanel" id="query-list-panel">
+        <QueryList/>
+      </div>
+      <div class="ui bottom attached tab segment" data-tab="query-edit-tab" ref="queryeditpanel" id="query-edit-panel">
+        <QueryEditor/>
+      </div>
+    </div>
+    <div v-if="contextmenu.length > 0" class="ui vertical compact menu contextmenu">
+      <div class="header item">Special Actions:</div>
+      <a v-for="item in contextmenu" class="item contextmenuitem">{{item}}</a>
+    </div>
+    <IdleAlert></IdleAlert>
+    <div class="ui mini modal saving">
+      <!-- <i class="close icon"></i> -->
+      <div class="content">
+        <p>Saving...</p>
+      </div>
+    </div>
+    <div class="ui mini modal confirm">
+      <!-- <i class="close icon"></i> -->
+      <div class="content">
+        <p>{{confirm}}</p>
+        <div class="actions">
+          <div class="ui black deny button">
+            Nope
+          </div>
+          <div class="ui positive right labeled icon button">
+            Yup
+            <i class="checkmark icon"></i>
           </div>
         </div>
       </div>
     </div>
-    <IdleAlert></IdleAlert>
+    <Menu :menuitems="menuitems"/>
+    <TableFilter :filter="filter.render" :stripe="filter.stripe" :selector="filter.selector"/>
   </div>
 </template>
 
 <script>
+//TODO undo ux
+//TODO save ux with prompt
+//TODO delete ux with prompt
+//TODO cancel ux
+
 import IdleAlert from './components/IdleAlert.vue'
 import AppList from './components/AppList.vue'
 import AppConfig from './components/AppConfig.vue'
 import QueryList from './components/QueryList.vue'
+import QueryEditor from './components/QueryEditor.vue'
+import Menu from './components/Menu.vue'
+import TableFilter from './components/TableFilter.vue'
+import DevTools from './components/DevTools.vue'
+// import utils from '@/mixins/utils'
+import * as types from '@/store/vuex-types'
+import { mapState } from 'vuex'
 
-import { mapGetters } from 'vuex'
+const rx_neoapp = /APP[0-9]*/
+
 export default {
   name: 'App',
-  components: { IdleAlert,AppList,AppConfig,QueryList },
-  computed: mapGetters(['getApp','getConfig','getQueries','getQname','getTableRows']),
+  // mixins:[utils],
+  components: { IdleAlert,AppList,AppConfig,QueryList,QueryEditor,TableFilter,Menu,DevTools },
+  data() {
+    return {
+      env: process.env.NODE_ENV_LABEL,
+      modalSave: null,
+      modalConfirm: null
+    }
+  },
+  methods: {
+    clearApp() {
+      this.trace()
+      [this.$refs.conftab,
+       this.$refs.querylisttab,
+       this.$refs.queryedittab
+      ]
+      .forEach(el => {
+        el.classList.add('disabled')
+      })
+    },
+    setupConfTab() {
+      if(!this.$refs.conftab.classList.contains('disabled'))
+        this.$refs.confpanelform.makeCM()
+    },
+    initTabs() {
+      $('.menu > .item').tab({
+        deactivate:'all',
+        // debug:true,
+        // verbose:true,
+        onVisible: (p) => {
+          this.$store.commit(types.SET_ACTIVETAB, p)
+          this.$store.dispatch(types[`ACTIVATE_${p.replace(/-/g,'').toUpperCase()}`])
+        }
+      })
+    }
+  },
+  mounted() {
+    let vm = this
+    // set event listener for clicks to inject save prompt before navigation
+    Array.from(document.querySelectorAll('.menu > .item')).forEach(el => {
+      el.addEventListener('click', e => {
+        e.preventDefault()
+        // store clicked tab
+        let nextTab = e.target
+        vm.$store.commit(types.SET_NEXTTAB, nextTab)
+        // check state
+        if(vm.unsavedChanges > 0)
+        {
+          // disable tab temporarily to prevent navigation before save
+          // this is necessary to delay 'onVisible' handler which clears state
+          // required for saving
+          nextTab.classList.add('disabled')
+          let context = 'query-edit'
+          if(/conf/.test(vm.activeTab))
+          {
+            context = 'app'
+          }
+          // configger and trigger modal
+          vm.$store.dispatch(types.SAVE_CHANGES_CONFIRM, context)
+        }
+        return false
+      })
+    })
+    // initialize tabs
+    vm.initTabs()
+    // initialize modal
+    this.modalSave = $('#app > .ui.mini.modal.saving').modal({inverted:true})
+    this.modalConfirm = $('#app > .ui.mini.modal.confirm').modal({
+      closable: false,
+      inverted: true,
+      onApprove: function() {
+        vm.$store.dispatch(types[vm.confirmAction]).then((r) => {
+          // unsetting flag now _seems_ early but necessary to support prompt
+          // plus it's happening after the promise resolves.
+          // TODO check for error handling - what happens if 'confirmAction' fails?
+          vm.$store.commit(types.SET_UNSAVEDCHANGES, 0)
+          vm.$nextTick(() => {
+            if(!!vm.nextTab)
+            {
+              // force hide the modals to enable clicking, then enable it and click
+              vm.modalSave.modal('hide')
+              vm.modalConfirm.modal('hide')
+              vm.nextTab.classList.remove('disabled')
+              vm.nextTab.click()
+            }
+          })
+        })
+      },
+      onDeny: function(a) {
+        // reset state, renable clicking, and click
+        if(/SAVE/.test(vm.confirmAction))
+        {
+          vm.$store.commit(types.SET_UNSAVEDCHANGES, 0)
+        }
+        vm.$nextTick(() => {
+          vm.$store.commit(types.SET_CONFIRM,       null)
+          vm.$store.commit(types.SET_CONFIRMACTION, null)
+          vm.$store.commit(types.SET_PARAM,         null)
+          if(!!vm.nextTab)
+          {
+            vm.nextTab.classList.remove('disabled')
+            vm.nextTab.click()
+          }
+        })
+      }
+    })
+    this.$store.commit(types.SET_ACTIVETAB, 'apps-tab')
+
+    // scroll handler
+    window.addEventListener('scroll',(e) => {
+      // blur filter
+      document.querySelector('div.filter > div.ui.input > input').blur()
+
+      // move menu to top of screen when scrolled past header
+      let menu = document.querySelector('.main-menu')
+      let filter = document.querySelector('.filter')
+      let th, newTop
+      if(vm.activeTab == 'query-list-tab')
+      {
+        th = document.querySelector('.query.list table thead th')
+        if(window.scrollY == 0)
+        {
+          menu.style.top = 63
+          filter.style.top = 75
+        }
+        else if(window.scrollY < 63)
+        {
+          menu.style.top =  63 - window.scrollY
+          filter.style.top =  75 - window.scrollY
+        }
+        else if(window.scrollY < 123)//if(window.scrollY < newTop)
+        {
+          menu.style.top = (123 + th.offsetHeight) - window.scrollY
+          filter.style.top = (123 + th.offsetHeight) - window.scrollY
+        }
+        else
+        {
+          menu.style.top = th.offsetHeight
+          filter.style.top = th.offsetHeight
+        }
+      }
+      else if(vm.activeTab == 'query-edit-tab' || vm.activeTab == 'apps-tab')
+      {
+        if(window.scrollY == 0)
+        {
+          menu.style.top = 63
+          filter.style.top = 75
+        }
+        else if(window.scrollY < 63)
+        {
+          menu.style.top = 63 - window.scrollY
+          filter.style.top =  75 - window.scrollY
+        }
+        else
+        {
+          menu.style.top = 0
+          filter.style.top = 0
+        }
+      }
+    })
+
+    document.addEventListener('keydown',(e) => {
+      if(e.keyCode == 83 && e.metaKey) // Cmd-s
+      {
+        e.preventDefault()
+        this.$store.dispatch(types.SAVE,{})
+      }
+      else if(e.keyCode == 113) //F2
+      {
+        e.preventDefault()
+        let el = document.querySelector('.CodeMirror-scroll')
+        if(el.closest('.CodeMirror-fullscreen') !== null)
+        {
+          el.style.maxHeight = window.visualViewport.height - 100
+        }
+        else
+        {
+          el.style.maxHeight = '200px'
+        }
+        let menu = document.querySelector('.main-menu.ui.sticky')
+        if(menu.classList.contains('hidden'))
+        {
+          menu.classList.remove('hidden')
+        }
+        else
+        {
+          menu.classList.add('hidden')
+        }
+      }
+      else if(e.keyCode == 70 && e.metaKey) //Cmd-f
+      {
+        e.preventDefault()
+        let el = document.querySelector('div.filter > div.ui.input > input')
+        el.focus()
+        setTimeout(() => {
+          if(el.value.length < 4)
+            el.value = ''
+        },50)
+      }
+    })
+  },
+  computed: {
+    ...mapState(['nextTab','contextmenu','coords','unsavedChanges','app','menuitems','filter','activeTab','qname','query','saving','confirm','confirmAction'])
+  },
   watch: {
-    getApp (val, oldVal) { this.$refs.querytab.click() }
+    unsavedChanges(neo,old) {
+      let bg = document.querySelector('.background')
+      if(neo > 0)
+      {
+        bg.classList.add('unsaved')
+        bg.querySelector('span').innerText = 'Unsaved Changes'
+      }
+      else
+      {
+        bg.classList.remove('unsaved')
+        bg.querySelector('span').innerText = 'Admin'
+      }
+    },
+    confirm(neo,old) {
+      if(!!neo)
+        this.modalConfirm.modal('show')
+      else
+        this.modalConfirm.modal('hide')
+    },
+    saving(neo,old) {
+      if(neo)
+        this.modalSave.modal('show')
+      else
+        this.modalSave.modal('hide')
+    },
+    contextmenu(neo,old) {
+      if(neo.length > 0)
+      {
+          this.$nextTick(() => {
+          let el = document.querySelector('.contextmenu')
+          el.style.left = this.coords[0]-10
+          el.style.top = this.coords[1]-10
+          el.classList.add('visible')
+        })
+      }
+    },
+    app(val, oldVal) {
+      if(!!val)
+      {
+        // enable tabs and navigate
+        [this.$refs.conftab,
+         this.$refs.querylisttab
+        ].forEach(el => {
+            el.classList.remove('disabled')
+            el.setAttribute('data-tab',el.id.replace(/panel/,'tab'))
+            // go to config tab if app code matches new app rx
+            // otherwise go to queries tab
+            if(rx_neoapp.test(val) && /conf-tab/.test(el.id))
+            {
+              el.click()
+            }
+            else if (!rx_neoapp.test(val) && /query-list-tab/.test(el.id))
+            {
+              el.click()
+            }
+          })
+      }
+    },
+    query (neo, old) {
+      if(neo !== null && this.activeTab !== 'query-edit-tab')
+      {
+        let el = document.querySelector('#query-edit-tab')
+        el.classList.remove('disabled')
+        el.setAttribute('data-tab',el.id.replace(/panel/),'tab')
+        el.click()
+      }
+    },
+    qname (neo, old) {
+      // delete query will set qname to empty string, triggering
+      // switch to querylist tab
+      if(neo === '' || neo == null)
+      {
+        this.$store.dispatch(types.LOAD_APP,this.app)
+        .then(() => {
+          this.$refs.querylisttab.click()
+        })
+      }
+      else
+      {
+        // query creation will reset qname
+        // let int = setInterval(() => {
+        //   let td = Array.from(document.querySelectorAll('td:first-child')).filter(td => td.textContent == neo.replace(/[^0-9]/g,''))
+        //   if(td.length > 0)
+        //   {
+        //     clearInterval(int)
+        //     td[0].click();
+        //     this.$store.commit(types.SET_RENAMING,true)
+        //     this.$store.commit(types.SET_CREATING,true)
+        //   }
+        // },200)
+      }
+    }
   }
 }
 </script>
 
 <style>
-.page-header .background {
-  background-color: rgb(241,80,9,0.2);
+
+.meaty-bit {
+  background-color: rgb(249,222,212);
+  top: 0px;
+  position: absolute;
+  width: 100%;
 }
 
-.page-header .background img {
-  margin: 3px 8px;
+.meaty-bit > .background {
+  /* background-color: rgb(241,80,9,0.2); */
+  background-color: rgb(249,222,212);
+  /* position: fixed; */
+  height: 19px;
+}
+
+/* .page-header .background img, */
+.meaty-bit .background img {
+  margin: 5px 8px -35px 3px;
   width: 50px;
+  float: right;
+}
+
+.meaty-bit > .ui.top.attached.tabular.menu {
+  margin-top: -1px;
+  /* position: fixed;
+  top:19; */
 }
 
 .copy.btn {
@@ -98,6 +447,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  margin-bottom: 100px;
   /* margin-top: 60px; */
 }
 
@@ -105,4 +455,68 @@ export default {
   box-shadow: 0 0 20px rgba(0,0,0,0.5);
   /* float: right; */
 }
+
+.ui.menu.contexmenu {
+  border: none;
+}
+
+.ui.menu.vertical.compact.contextmenu {
+  display: none;
+  margin: 0;
+  min-height: 0;
+  background-color: #767676 !important;
+  border: none;
+}
+
+.ui.menu.vertical.compact.contextmenu.visible {
+  display: inline;
+  position: absolute;
+}
+
+.ui.menu.vertical.compact.contextmenu .header.item,
+.ui.menu.vertical.compact.contextmenu .item {
+  padding: 6px;
+  background-color: #767676;
+  color: rgba(255,255,255,0.9);
+  font-size: smaller;
+  border: 1px solid rgba(0,0,0,0.15);
+}
+
+.ui.menu.vertical.compact.contextmenu .item:not(.header) {
+  border-top-right-radius: 0px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 4px;
+}
+
+.ui.menu.vertical.compact.contextmenu .item:not(.header):hover {
+  background-color: rgba(249,222,212,.8);
+  color: rgba(0,0,0,0.87);
+}
+
+.ui.menu.vertical.compact.contextmenu .header.item {
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.9);
+}
+
+.filtered-out {
+  display: none !important;
+}
+
+.meaty-bit .background.unsaved {
+  background-color: red;
+}
+
+.meaty-bit .background.unsaved span {
+  color: white;
+  font-weight: bold;
+}
+
+
+/* .ui.menu.vertical.compact.contextmenu .item.contextmenuitem {
+  padding-left: 5px;
+} */
+
+
+
+
 </style>

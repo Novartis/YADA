@@ -1,26 +1,22 @@
 <template>
-  <div>
-    <DataTable :row-data="getTableRows" @query-selected="querySelected"></DataTable>
-    <QueryEditor v-if="showEditor"/>
+  <div class="query list">
+    <QueryTable @query-selected="querySelected"></QueryTable>
   </div>
 </template>
 <script>
-import DataTable from './DataTable.vue'
+import QueryTable from './QueryTable.vue'
 import QueryEditor from './QueryEditor.vue'
-import * as types from '../store/mutation-types'
-import { mapGetters } from 'vuex';
+import * as types from '../store/vuex-types'
+import { mapState } from 'vuex';
 
 export default {
-  components: { DataTable, QueryEditor },
+  components: { QueryTable, QueryEditor },
   data () {
     return {
-      showEditor: false,
-      rowData: null
     }
   },
   methods: {
     querySelected() {
-      this.showEditor=true
       this.$store.dispatch(types.LOAD_PARAMS)
     },
     refreshCodeMirror() {
@@ -31,7 +27,9 @@ export default {
       this.showEditor = false;
     }
   },
-  computed: mapGetters(['getTableRows','getQname','getQuery']),
+  computed: {
+
+  },
   watch: {
 
   },
@@ -42,4 +40,7 @@ export default {
 }
 </script>
 <style>
+  .query.list {
+    margin-top: 15px;
+  }
 </style>

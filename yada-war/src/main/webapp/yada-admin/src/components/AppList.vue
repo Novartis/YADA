@@ -1,45 +1,46 @@
 <template>
-  <div id="list" class="list-group" role="tablist">
+  <div id="list" class="ui relaxed divided list">
     <AppListItem
       v-for="app in apps"
       :key="app.APP"
       :app="app.APP" />
-      <!-- @YADA_queries_loaded_app="YADA_queries_loaded_app"/> -->
   </div>
 </template>
 
 <script>
 import AppListItem from './AppListItem.vue'
+import * as types from '../store/vuex-types'
+import { mapState } from 'vuex';
 export default {
   components: { AppListItem },
   name: 'AppList',
   data () {
     return {
-      apps: null
     }
   },
   methods: {
-    // YADA_queries_loaded_app (obj) { this.$emit('YADA_queries_loaded_app',obj) },
     login () {
+      this.$store.commit(types.SET_LOGGEDUSER,'YADA')
       let q = 'YADA check credentials'
-      let p = ['YADA', 'yada'].join(',')
-      this.$yada.std(q, p).then(this.loadApps)
+      let p = [ this.loggeduser, 'yada'].join(',')
+      this.$yada.std(q, p).then(this.$store.dispatch(types.LOAD_APPS,{}))
     },
-    loadApps () {
-      let q = 'YADA select apps'
-      this.$yada.std(q,null,{c:false})
-        .then(response => this.setApps(response))
-    },
-    setApps (response) {
-      this.apps = response.data.RESULTSET.ROWS.sort((a,b)=>{ return a.APP.localeCompare(b.APP, 'en',{sentivity: 'base'})})
-    }
   },
   mounted () {
     this.$nextTick(() => this.login())
+  },
+  computed: {
+    ...mapState(['loggeduser','apps','app'])
+  },
+  watch: {
+
   }
 }
 </script>
 
 <style scoped>
-
+  #list div.applistitem:first-child {
+    padding-top: 7px;
+    margin-top: 15px;
+  }
 </style>
