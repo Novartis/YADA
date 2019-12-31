@@ -33,10 +33,15 @@ Vue.config.productionTip = false
 // Vue.component('octicon', Octicon)
 
 /* eslint-disable no-new */
-new Vue({
+const vue = new Vue({
   el: '#app',
   store,
   router,
   components: { App },
   template: '<App/>'
 })
+
+if(window.Cypress && process.env.NODE_ENV_LABEL !== 'PROD')
+{
+  window.vue = vue
+}

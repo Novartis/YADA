@@ -1,5 +1,5 @@
 <template>
-  <div id="list" class="ui relaxed divided list">
+  <div id="app-list" class="ui relaxed divided list">
     <AppListItem
       v-for="app in apps"
       :key="app.APP"
@@ -39,7 +39,7 @@ export default {
 </script>
 
 <style scoped>
-  #list div.applistitem:first-child {
+  #app-list div.applistitem:first-child {
     padding-top: 7px;
     margin-top: 15px;
   }

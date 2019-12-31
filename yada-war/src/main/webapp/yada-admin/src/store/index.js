@@ -70,7 +70,7 @@ export default new Vuex.Store({
         filter: {
           render: false,
           stripe: false,
-          selector: '.query.list tbody>tr',
+          selector: '#query-list tbody>tr',
           rxflags:'i'
         },
         menuitems: [{value:'Add Query',icon:'icon plus',fn:types.ADD_QUERY}]
@@ -97,7 +97,7 @@ export default new Vuex.Store({
 
     // data selections
     app: null,          // app name
-    config: {},         // app config
+    config: null,       // app config
     apps: [],           // app list
     queries: [],        // query list
     param: null,

@@ -3,8 +3,8 @@ const merge = require('webpack-merge')
 const prodEnv = require('./prod.env')
 
 module.exports = merge(prodEnv, {
-  TRACE: 'true',
-  TRACE_STATE: 'true',
+  TRACE: 'false',
+  TRACE_STATE: 'false',
   TRACE_COLLAPSE: 'true',
   NODE_ENV: '"development"',
   // label is used in header, to inform developer/tester, or suppress itself in PROD

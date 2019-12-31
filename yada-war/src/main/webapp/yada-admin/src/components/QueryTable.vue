@@ -1,23 +1,21 @@
 <template>
-  <div>
-    <table class="sticky ui celled table">
-      <caption><h2>{{app}}</h2></caption>
-      <thead>
-        <tr>
-          <th class="three wide" :data-tooltip="'App name '+app+' is implied'" data-position="bottom left">Qname <span style="color:#CCC">(click name to edit query)</span></th>
-          <th class="twelve wide">Query <span style="color:#CCC">(click to view formatted code)</span></th>
-          <th class="one wide">Details</th>
-        </tr>
-      </thead>
-      <tbody class="data">
-        <tr v-for="row in queries">
-          <td @click="setSelectedQuery($event,row)">{{row.QNAME.replace(app+' ','')}}</td>
-          <td class="trigger-codemirror" @click="showCode"><div class="code">{{row.QUERY}}</div></td>
-          <QueryDetails :qname="row.QNAME.toLowerCase().replace(/\s+/g,'-')" :info="[row.LAST_ACCESS,row.ACCESS_COUNT,row.CREATED,row.CREATED_BY,row.MODIFIED,row.MODIFIED_BY]" :comments="row.COMMENTS" :settings="row.DEFAULT_PARAMS" :security="row.IS_SECURE"/>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <table class="sticky ui celled table">
+    <caption><h2>{{app}}</h2></caption>
+    <thead>
+      <tr>
+        <th class="three wide" :data-tooltip="'App name '+app+' is implied'" data-position="bottom left">Qname <span style="color:#CCC">(click name to edit query)</span></th>
+        <th class="twelve wide">Query <span style="color:#CCC">(click to view formatted code)</span></th>
+        <th class="one wide">Details</th>
+      </tr>
+    </thead>
+    <tbody class="data">
+      <tr v-for="row in queries">
+        <td @click="setSelectedQuery($event,row)">{{row.QNAME.replace(app+' ','')}}</td>
+        <td class="trigger-codemirror" @click="showCode"><div class="code">{{row.QUERY}}</div></td>
+        <QueryDetails :qname="row.QNAME.toLowerCase().replace(/\s+/g,'-')" :info="[row.LAST_ACCESS,row.ACCESS_COUNT,row.CREATED,row.CREATED_BY,row.MODIFIED,row.MODIFIED_BY]" :comments="row.COMMENTS" :settings="row.DEFAULT_PARAMS" :security="row.IS_SECURE"/>
+      </tr>
+    </tbody>
+  </table>
 </template>
 <script>
 import Vue from 'vue'

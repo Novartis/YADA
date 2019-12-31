@@ -7,7 +7,7 @@
       <div class="background" >
         <img class="box-shadow" src="../static/blox250.png"/>
         <span>Admin</span>
-        <DevTools v-if="env !== 'PROD'"/>
+        <!-- <DevTools v-if="env !== 'PROD'"/> -->
       </div>
       <div class="ui top attached tabular menu">
         <div class="item active" id="apps-tab" data-tab="apps-tab" @click="clearApp">Apps</div>
@@ -92,7 +92,7 @@ export default {
   },
   methods: {
     clearApp() {
-      this.trace()
+      // this.trace()
       [this.$refs.conftab,
        this.$refs.querylisttab,
        this.$refs.queryedittab
@@ -125,21 +125,25 @@ export default {
         e.preventDefault()
         // store clicked tab
         let nextTab = e.target
-        vm.$store.commit(types.SET_NEXTTAB, nextTab)
-        // check state
-        if(vm.unsavedChanges > 0)
+        // only proceed if click is on different, enabled tab
+        if(!nextTab.classList.contains('disabled') && nextTab.id !== vm.activeTab)
         {
-          // disable tab temporarily to prevent navigation before save
-          // this is necessary to delay 'onVisible' handler which clears state
-          // required for saving
-          nextTab.classList.add('disabled')
-          let context = 'query-edit'
-          if(/conf/.test(vm.activeTab))
+          vm.$store.commit(types.SET_NEXTTAB, nextTab.id)
+          // check state
+          if(vm.unsavedChanges > 0)
           {
-            context = 'app'
+            // disable tab temporarily to prevent navigation before save
+            // this is necessary to delay 'onVisible' handler which clears state
+            // required for saving
+            nextTab.classList.add('disabled')
+            let context = 'query-edit'
+            if(/conf/.test(vm.activeTab))
+            {
+              context = 'app'
+            }
+            // configger and trigger modal
+            vm.$store.dispatch(types.SAVE_CHANGES_CONFIRM, context)
           }
-          // configger and trigger modal
-          vm.$store.dispatch(types.SAVE_CHANGES_CONFIRM, context)
         }
         return false
       })
@@ -163,8 +167,9 @@ export default {
               // force hide the modals to enable clicking, then enable it and click
               vm.modalSave.modal('hide')
               vm.modalConfirm.modal('hide')
-              vm.nextTab.classList.remove('disabled')
-              vm.nextTab.click()
+              let nextTab = document.querySelector(`#${vm.nextTab}`)
+              nextTab.classList.remove('disabled')
+              nextTab.click()
             }
           })
         })
@@ -243,12 +248,12 @@ export default {
     })
 
     document.addEventListener('keydown',(e) => {
-      if(e.keyCode == 83 && e.metaKey) // Cmd-s
+      if(/(?:query-edit|conf)-tab/.test(vm.activeTab) && e.keyCode == 83 && e.metaKey) // Cmd-s
       {
         e.preventDefault()
         this.$store.dispatch(types.SAVE,{})
       }
-      else if(e.keyCode == 113) //F2
+      else if(/(?:query-edit|conf)-tab/.test(vm.activeTab) && e.keyCode == 113) //F2
       {
         e.preventDefault()
         let el = document.querySelector('.CodeMirror-scroll')
@@ -270,7 +275,7 @@ export default {
           menu.classList.add('hidden')
         }
       }
-      else if(e.keyCode == 70 && e.metaKey) //Cmd-f
+      else if(/(?:query-list|apps)-tab/.test(vm.activeTab) && e.keyCode == 70 && e.metaKey) //Cmd-f
       {
         e.preventDefault()
         let el = document.querySelector('div.filter > div.ui.input > input')

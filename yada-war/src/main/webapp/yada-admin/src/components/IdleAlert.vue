@@ -1,4 +1,4 @@
-inactivityTimer<template>
+<template>
   <div>
     <div v-if="!!idle">
       <div class="ui basic modal">

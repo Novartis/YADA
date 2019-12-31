@@ -5,8 +5,8 @@
     </div>
     <div v-else class="object" :class="item.class">
       <i v-if="!!item.icon" :class="item.icon"></i>
-      <span>{{item.value}}</span>
-      <span style="float:right;">{{item.shortcut}}</span>
+      <span class="value">{{item.value}}</span>
+      <span class="shortcut" style="float:right;">{{item.shortcut}}</span>
     </div>
   </div>
 </template>

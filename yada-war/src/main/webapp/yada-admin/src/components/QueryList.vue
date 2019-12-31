@@ -1,5 +1,5 @@
 <template>
-  <div class="query list">
+  <div id="query-list" class="query list">
     <QueryTable @query-selected="querySelected"></QueryTable>
   </div>
 </template>
