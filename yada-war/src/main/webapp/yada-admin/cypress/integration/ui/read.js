@@ -1,55 +1,16 @@
-import { visit,
-  getAppsPanel,
-  getConfPanel,
-  getQueryListPanel,
-  getQueryEditPanel,
-  getAppsTab,
-  getConfTab,
-  getQueryListTab,
-  getQueryEditTab,
-  getMainMenu,
-  hasVisibleFilter,
-  getFilterLabel,
-  getAppListItems,
-  getQueryListItems,
-  getStateValue,
-  hasCorrectMenuItems
- } from '../support/utils.js'
+import * as util from '../../support/utils.js'
 
 describe('Login', function() {
-  it('logs into test', function() {
-
-    cy.clearCookies()
-    cy.visit('https://yada-test.qdss.io/yada-admin/')
-
-    cy.get('body').then($body => {
-      if($body.find('#username').length)
-      {
-        cy.get('#username').type('dvaron@analgesicsolutions.com')
-        cy.get('#password').type('Th3ma0twp.')
-        cy.get('.login-form .ui.button').click()
-
-        cy.location().should(loc => {
-          expect(loc.pathname).to.eq('/yada-admin/index.html')
-        })
-      }
-      else
-      {
-        cy.location().should(loc => {
-          expect(loc.pathname).to.eq('/yada-admin/')
-        })
-        cy.get('#app').should('exist')
-      }
-      cy.getCookie('yadagroups').should('exist')
-    })
-
-
-
+  it('logs in and sets cookies', function() {
+    util.login()
   })
 })
 
-describe('UI Controls', function() {
-  before(() => { visit() })
+
+context('Browse', function() {
+  before(() => {
+    util.visit()
+  })
 
 
   describe('Default State', function() {
@@ -63,52 +24,52 @@ describe('UI Controls', function() {
       })
 
       it('has tabs', function() {
-        getAppsTab().should('exist')
-        getConfTab().should('exist')
-        getQueryListTab().should('exist')
-        getQueryEditTab().should('exist')
+        util.getAppsTab().should('exist')
+        util.getConfTab().should('exist')
+        util.getQueryListTab().should('exist')
+        util.getQueryEditTab().should('exist')
       })
 
       it('has tab panels',function() {
-        getAppsPanel().should('exist')
-        getConfPanel().should('exist')
-        getQueryListPanel().should('exist')
-        getQueryEditPanel().should('exist')
+        util.getAppsPanel().should('exist')
+        util.getConfPanel().should('exist')
+        util.getQueryListPanel().should('exist')
+        util.getQueryEditPanel().should('exist')
       })
 
       it('has menu', function() {
-        getMainMenu().should('exist')
+        util.getMainMenu().should('exist')
       })
 
       it('has visible filter', function() {
-        hasVisibleFilter().should('be.visible')
+        util.getFilter().should('be.visible')
       })
 
       it('has app list', function() {
-        getAppListItems().should('have.length.of.at.least',1)
+        util.getAppListItems().should('have.length.of.at.least',1)
       })
 
       it('has correct tabs in disabled state', function() {
-        getAppsTab().should('not.have.class','disabled')
-        getConfTab().should('have.class','disabled')
-        getQueryListTab().should('have.class','disabled')
-        getQueryEditTab().should('have.class','disabled')
+        util.getAppsTab().should('not.have.class','disabled')
+        util.getConfTab().should('have.class','disabled')
+        util.getQueryListTab().should('have.class','disabled')
+        util.getQueryEditTab().should('have.class','disabled')
       })
 
       it('has correct filter label',function() {
-        getFilterLabel().then($label => {
-          getAppListItems().its('length').should('equal', parseInt($label.text()))
+        util.getFilterLabel().then($label => {
+          util.getAppListItems().its('length').should('equal', parseInt($label.text()))
         })
       })
 
       it('has correct menu options', function() {
-        hasCorrectMenuItems()
+        util.hasCorrectMenuItems()
       })
     })
 
     describe('Default Clickables', function() {
       beforeEach(() => {
-        visit()
+        util.visit()
         cy.isInState({activeTab:'apps-tab'})
       })
 
@@ -117,19 +78,19 @@ describe('UI Controls', function() {
       })
 
       it('has active apps tab', () => {
-        getAppsTab().click().then($tab => cy.wrap($tab).should('have.class','active'))
+        util.getAppsTab().click().then($tab => cy.wrap($tab).should('have.class','active'))
       })
 
       it('has inactive conf tab', () => {
-        getConfTab().click().then($tab => cy.wrap($tab).should('not.have.class','active'))
+        util.getConfTab().click().then($tab => cy.wrap($tab).should('not.have.class','active'))
       })
 
       it('has inactive query list tab', () => {
-        getQueryListTab().click().then($tab => cy.wrap($tab).should('not.have.class','active'))
+        util.getQueryListTab().click().then($tab => cy.wrap($tab).should('not.have.class','active'))
       })
 
       it('has inactive query edit tab', () => {
-        getQueryEditTab().click().then($tab => cy.wrap($tab).should('not.have.class','active'))
+        util.getQueryEditTab().click().then($tab => cy.wrap($tab).should('not.have.class','active'))
       })
     })
   })
@@ -141,9 +102,9 @@ describe('UI Controls', function() {
     describe('App selection', function() {
 
       beforeEach(() => {
-        visit()
+        util.visit()
         cy.isInState({activeTab:'apps-tab'})
-        .then(() => getAppListItems().then($items => $items[2].click()))
+        .then(() => util.getAppListItems().then($items => $items[2].click()))
       })
 
       describe('Confirm query list tab state', function() {
@@ -165,24 +126,46 @@ describe('UI Controls', function() {
         })
 
         it('has visible filter', function() {
-          hasVisibleFilter().should('be.visible')
+          util.getFilter().should('be.visible')
         })
 
         it('has correct filter label',function() {
-          getFilterLabel().then($label => {
-            getQueryListItems().its('length').should('equal', parseInt($label.text()))
+          util.getQueryListItems().then($items => {
+            util.getFilterLabel().then($label => {
+              cy.wrap($items).its('length').should('equal', parseInt($label.text()))
+            })
+
+
+          // util.getFilterLabel().then($label => {
+          //   util.getQueryListItems().its('length').should('equal', parseInt($label.text()))
+          // })
+          })
+        })
+
+        it('has query table', function() {
+          util.getQueryListPanel().find('table.query-list').should('exist')
+        })
+
+        it('has details', function() {
+          util.getQueryListPanel().find('table.query-list > tbody > tr:nth-child(2) > td:nth-child(3)').then($td => {
+            cy.getState().then($state => {
+              const qname = $state.queries[1].QNAME.toLowerCase().replace(/\s/g,'-')
+              cy.wrap($td).find(`#popup-info-${qname}`).should('exist')
+              cy.wrap($td).find(`#popup-comments-${qname}`).should('exist')
+              cy.wrap($td).find(`#popup-security-${qname}`).should('exist')
+            })
           })
         })
 
         it('has correct menu options', function() {
-          hasCorrectMenuItems()
+          util.hasCorrectMenuItems()
         })
 
         it('has correct tabs in disabled state', function() {
-          getAppsTab().should('not.have.class','disabled')
-          getConfTab().should('not.have.class','disabled')
-          getQueryListTab().should('not.have.class','disabled')
-          getQueryEditTab().should('have.class','disabled')
+          util.getAppsTab().should('not.have.class','disabled')
+          util.getConfTab().should('not.have.class','disabled')
+          util.getQueryListTab().should('not.have.class','disabled')
+          util.getQueryEditTab().should('have.class','disabled')
         })
 
       })
@@ -205,7 +188,7 @@ describe('UI Controls', function() {
         })
 
         it('has enabled conf tab', function() {
-          getConfTab().click()
+          util.getConfTab().click()
           .then($tab => cy.wrap($tab).should('have.class','active'))
         })
       })
@@ -229,14 +212,14 @@ describe('UI Controls', function() {
         })
 
         it('has disabled query edit tab', function() {
-          getQueryEditTab().click()
+          util.getQueryEditTab().click()
           .then($tab => cy.wrap($tab).should('not.have.class','active'))
         })
       })
 
       describe('Go to apps tab (reset everything)', function() {
 
-        before(() => {
+        beforeEach(() => {
           cy.isInState({
             activeTab:'query-list-tab',
             nextTab:'query-list-tab',
@@ -252,20 +235,25 @@ describe('UI Controls', function() {
           })
         })
 
-        after(() => {
+        afterEach(() => {
           cy.isInState({activeTab:'apps-tab',nextTab:'apps-tab'})
         })
 
         it('has active apps tab', function() {
-          getAppsTab().click().then($tab => cy.wrap($tab).should('have.class','active'))
+          util.getAppsTab().click()
+          .then($tab => cy.wrap($tab).should('have.class','active'))
         })
 
         // check tabs
         it('has correct tabs in disabled state', function() {
-          getAppsTab().should('not.have.class','disabled')
-          getConfTab().should('have.class','disabled')
-          getQueryListTab().should('have.class','disabled')
-          getQueryEditTab().should('have.class','disabled')
+          util.getAppsTab().click()
+          .then(() => {
+            util.getAppsTab().should('not.have.class','disabled')
+            util.getConfTab().should('have.class','disabled')
+            util.getQueryListTab().should('have.class','disabled')
+            util.getQueryEditTab().should('have.class','disabled')
+          })
+
         })
       })
     })
@@ -275,10 +263,15 @@ describe('UI Controls', function() {
 
     describe('Query Selection then reversion', function() {
 
+      // selects an app then a query
+      // each test starts with query edit tab active
+
       beforeEach(() => {
-        visit()
-        .then(() => getAppListItems().then($items => $items[2].click()))
-        .then(() => getQueryListItems().then($items => $items[2].click()))
+        util.visit()
+        util.getAppListItems()
+          .then($items => $items[2].click())
+        util.getQueryListItems()
+          .then($items => cy.wrap($items[1]).find('td:eq(0)').click().wait(500))
       })
 
       describe('Query Edit Tab State', function() {
@@ -288,13 +281,13 @@ describe('UI Controls', function() {
             nextTab:'query-edit-tab',
             app:'BB',
             queries: [0,1,2],
-            qname: 'Repository',
+            qname: 'BB Repository',
             qnameOrig: 'Repository',
             params: [],
             renderedParams: [],
             props: [],
             protectors: [],
-            query: {},
+            query: {"CREATED_BY":"UNKNOWN1","APP":"BB","CREATED":"2018-09-15 21:44:34","MODIFIED_BY":"UNKNOWN1","QNAME":"BB Repository","QUERY":"/repositories/analgesicsolutions/?v?page=?v","LAST_ACCESS":"2019-05-16 15:35:37.049000","DEFAULT_PARAMS":"0","COMMENTS":"","MODIFIED":"2018-09-18 18:41:42","ACCESS_COUNT":"1","IS_SECURE":"f"},
             config: {
               APP: 'BB',
               ACTIVE: '1',
@@ -306,34 +299,42 @@ describe('UI Controls', function() {
         })
 
         // app name
-        it('has read only app name label', function() {
-
+        it('has app name label', function() {
+          util.getQueryEditPanel().find('.labeled.input .label').contains('BB')
         })
         // query name
         it('has read only query name input', function() {
-
+          util.getQueryEditPanel().find('.labeled.input input').should('have.attr','readonly','readonly')
+        })
+        // code
+        it('has codemirror editing field', function() {
+          util.getQueryEditPanel().find('.query-editor .codemirror .CodeMirror').should('exist')
         })
         // comments
         it('has read only comments field', function() {
-
+          util.getQueryEditPanel().find('.comment div').should('have.text','test')
         })
         // params
         it('has params table', function() {
-
+          util.getQueryEditPanel().find('.params table.paramtab').should('exist')
         })
+
         // security (pfft)
+        it('has security wizard', function() {
+          util.getQueryEditPanel().find('.security')
+        })
 
         // menues
         it('has correct menu options', function() {
-          hasCorrectMenuItems()
+          util.hasCorrectMenuItems()
         })
 
         // tabs are not disabled
         it('has all tabs enabled', function() {
-          getAppsTab().should('have.class','disabled')
-          getConfTab().should('have.class','disabled')
-          getQueryListTab().should('have.class','disabled')
-          getQueryEditTab().should('have.class','disabled')
+          util.getAppsTab().should('not.have.class','disabled')
+          util.getConfTab().should('not.have.class','disabled')
+          util.getQueryListTab().should('not.have.class','disabled')
+          util.getQueryEditTab().should('not.have.class','disabled')
         })
 
       })
@@ -356,25 +357,29 @@ describe('UI Controls', function() {
           })
         })
 
+        beforeEach(() => {
+          util.getQueryListTab().click()
+        })
+
         // click query list tab
         it('clicks query list tab', function() {
-          getQueryListTab().click().then($tab => cy.wrap($tab).should('have.class','active'))
+          util.getQueryListTab().should('have.class','active')
         })
 
         // check tabs
         it('has correct tabs in disabled state', function() {
-          getAppsTab().should('not.have.class','disabled')
-          getConfTab().should('not.have.class','disabled')
-          getQueryListTab().should('not.have.class','disabled')
-          getQueryEditTab().should('have.class','disabled')
+          util.getAppsTab().should('not.have.class','disabled')
+          util.getConfTab().should('not.have.class','disabled')
+          util.getQueryListTab().should('not.have.class','disabled')
+          util.getQueryEditTab().should('have.class','disabled')
         })
       })
 
       describe('Go to config tab (reset query) ', function() {
         after(() => {
           cy.isInState({
-            activeTab:'query-list-tab',
-            nextTab:'query-list-tab',
+            activeTab:'conf-tab',
+            nextTab:'conf-tab',
             app:'BB',
             queries: [0,1,2],
             config: {
@@ -387,17 +392,21 @@ describe('UI Controls', function() {
           })
         })
 
+        beforeEach(() => {
+          util.getConfTab().click()
+        })
+
         // click query list tab
         it('clicks config tab', function() {
-          getConfTab().click().then($tab => cy.wrap($tab).should('have.class','active'))
+          util.getConfTab().should('have.class','active')
         })
 
         // check tabs
         it('has correct tabs in disabled state', function() {
-          getAppsTab().should('not.have.class','disabled')
-          getConfTab().should('not.have.class','disabled')
-          getQueryListTab().should('not.have.class','disabled')
-          getQueryEditTab().should('have.class','disabled')
+          util.getAppsTab().should('not.have.class','disabled')
+          util.getConfTab().should('not.have.class','disabled')
+          util.getQueryListTab().should('not.have.class','disabled')
+          util.getQueryEditTab().should('have.class','disabled')
         })
       })
 
@@ -407,16 +416,20 @@ describe('UI Controls', function() {
           cy.isInState({activeTab:'apps-tab',nextTab:'apps-tab'})
         })
 
+        beforeEach(() => {
+          util.getAppsTab().click()
+        })
+
         it('has active apps tab', function() {
-          getAppsTab().click().then($tab => cy.wrap($tab).should('have.class','active'))
+          util.getAppsTab().should('have.class','active')
         })
 
         // check tabs
         it('has correct tabs in disabled state', function() {
-          getAppsTab().should('not.have.class','disabled')
-          getConfTab().should('have.class','disabled')
-          getQueryListTab().should('have.class','disabled')
-          getQueryEditTab().should('have.class','disabled')
+          util.getAppsTab().should('not.have.class','disabled')
+          util.getConfTab().should('have.class','disabled')
+          util.getQueryListTab().should('have.class','disabled')
+          util.getQueryEditTab().should('have.class','disabled')
         })
       })
     })

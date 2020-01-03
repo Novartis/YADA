@@ -3,7 +3,7 @@
     <span :id="'popup-info-'+qname" class="info" v-html="octinfo"></span>
     <span :id="'popup-comments-'+qname" v-if="!!comments" v-html="octcomment"></span>
     <span :id="'popup-settings-'+qname"v-if="settings > 0" v-html="octsettings"></span>
-    <span :id="'popup-security-'+qname"v-if="!!security" v-html="octsec"></span>
+    <span :id="'popup-security-'+qname"v-if="!!security && security !== 'f'" v-html="octsec"></span>
     <span :id="'popup-security-'+qname"v-else v-html="octalert"></span>
   </td>
 </template>
@@ -45,7 +45,7 @@
         html: `<div>Param Count: ${this.settings}</div>`
       })
       $(`#popup-security-${this.qname}`).popup({
-        html: `<div class="popup-comment">${!!this.security ? 'Secure' : 'NOT SECURE!'}</div>`
+        html: `<div class="popup-comment">${!!this.security && this.security !== 'f' ? 'Secure' : 'NOT SECURE!'}</div>`
       })
     }
   }

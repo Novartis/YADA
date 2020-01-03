@@ -350,18 +350,23 @@ export default {
       }
     },
     query (neo, old) {
-      if(neo !== null && this.activeTab !== 'query-edit-tab')
+      if(neo !== null) // && this.activeTab !== 'query-edit-tab')
       {
         let el = document.querySelector('#query-edit-tab')
         el.classList.remove('disabled')
         el.setAttribute('data-tab',el.id.replace(/panel/),'tab')
         el.click()
       }
+      else
+      {
+        let el = document.querySelector('#query-edit-tab')
+        el.classList.add('disabled')
+      }
     },
     qname (neo, old) {
       // delete query will set qname to empty string, triggering
       // switch to querylist tab
-      if(neo === '' || neo == null)
+      if(neo === '') // || neo == null)
       {
         this.$store.dispatch(types.LOAD_APP,this.app)
         .then(() => {

@@ -1,23 +1,39 @@
 
-export const visit = skipWaiting => {
-  console.log('visit this =', this)
-
-  if (typeof skipWaiting !== 'boolean') {
-    skipWaiting = false
-  }
-
-  const waitForInitialLoad = !skipWaiting
-  console.log('visit will wait for initial todos', waitForInitialLoad)
-  // if (waitForInitialLoad) {
-  //   cy.server()
-  //   cy.route('/todos').as('initialTodos')
-  // }
+export const visit = () => {
   cy.visit('https://localhost.qdss.io:8082/')
-  // console.log('cy.visit /')
-  // if (waitForInitialLoad) {
-  //   console.log('waiting for initial todos')
-  //   cy.wait('@initialTodos')
-  // }
+}
+
+export const login = (u,p) => {
+  let username = Cypress.env('YADA_USER')
+  let password = Cypress.env('YADA_PASS')
+  if(typeof u !== 'undefined')
+    username = u
+  if(typeof p !== 'undefined')
+    password = p
+
+  cy.clearCookies()
+  cy.visit('https://yada-test.qdss.io/yada-admin/')
+
+  cy.get('body').then($body => {
+    if($body.find('#username').length)
+    {
+      cy.get('#username').type(username)
+      cy.get('#password').type(password)
+      cy.get('.login-form .ui.button').click()
+
+      cy.location().should(loc => {
+        expect(loc.pathname).to.eq('/yada-admin/index.html')
+      })
+    }
+    else
+    {
+      cy.location().should(loc => {
+        expect(loc.pathname).to.eq('/yada-admin/')
+      })
+      cy.get('#app').should('exist')
+    }
+    cy.getCookie('yadagroups').should('exist')
+  })
 }
 
 export const getAppsPanel = () => cy.get('#apps-panel')
@@ -29,10 +45,10 @@ export const getConfTab = () => cy.get('#conf-tab')
 export const getQueryListTab = () => cy.get('#query-list-tab')
 export const getQueryEditTab = () => cy.get('#query-edit-tab')
 export const getMainMenu = () => cy.get('.main-menu')
-export const hasVisibleFilter = () => cy.get('.filter')
+export const getFilter = () => cy.get('.filter')
 export const getFilterLabel = () => cy.get('.filter .label')
 export const getAppListItems = () => cy.get('#app-list .applistitem')
-export const getQueryListItems = () => cy.get('#query-list table>tbody>tr')
+export const getQueryListItems = () => cy.get('#query-list table>tbody>tr',{timeout:10000})
 export const hasCorrectMenuItems = () => {
   cy.getState()
   .then($state => $state.tabs[$state['activeTab'].replace(/-tab/,'')].menuitems)

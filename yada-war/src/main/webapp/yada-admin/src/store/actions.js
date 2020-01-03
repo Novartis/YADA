@@ -27,9 +27,16 @@ export default {
     commit(types.SET_CREATING, false)
     commit(types.SET_CLONING, false)
     commit(types.SET_SAVING, false)
-    commit(types.SET_LOADING, false)
     commit(types.SET_CONFIG, null)
     commit(types.SET_QUERIES, [])
+    commit(types.SET_QNAME, null)
+    commit(types.SET_QNAMEORIG, [])
+    commit(types.SET_QUERY, null)
+    commit(types.SET_PARAM, null)
+    commit(types.SET_PARAMS, [])
+    commit(types.SET_RENDEREDPARAMS, [])
+    commit(types.SET_PROPS, [])
+    commit(types.SET_PROTECTORS, [])
 
     commit(types.SET_UNSAVEDPARAMS, 0)
     // UNSAVEDCHANGES = 0 must be last
@@ -39,14 +46,43 @@ export default {
   },
 
   [types.ACTIVATE_CONFTAB] ({state,commit}, tab) {
+    commit(types.SET_RENAMING, false)
+    commit(types.SET_CREATING, false)
+    commit(types.SET_CLONING, false)
+    commit(types.SET_SAVING, false)
+    commit(types.SET_LOADING, false)
+    commit(types.SET_QNAME, null)
+    commit(types.SET_QNAMEORIG, [])
+    commit(types.SET_QUERY, null)
+    commit(types.SET_PARAM, null)
+    commit(types.SET_PARAMS, [])
+    commit(types.SET_RENDEREDPARAMS, [])
+    commit(types.SET_PROPS, [])
+    commit(types.SET_PROTECTORS, [])
 
+    commit(types.SET_UNSAVEDPARAMS, 0)
+    // UNSAVEDCHANGES = 0 must be last
+    commit(types.SET_UNSAVEDCHANGES, 0)
   },
 
   [types.ACTIVATE_QUERYLISTTAB] ({state,commit,dispatch}, tab) {
-    commit('SET_RENAMING',false)
-    commit('SET_QNAME',null)
-    commit('SET_QNAMEORIG',null)
-    commit('SET_QUERY',null)
+    commit(types.SET_RENAMING, false)
+    commit(types.SET_CREATING, false)
+    commit(types.SET_CLONING, false)
+    commit(types.SET_SAVING, false)
+    commit(types.SET_LOADING, false)
+    commit(types.SET_QNAME, null)
+    commit(types.SET_QNAMEORIG, [])
+    commit(types.SET_QUERY, null)
+    commit(types.SET_PARAM, null)
+    commit(types.SET_PARAMS, [])
+    commit(types.SET_RENDEREDPARAMS, [])
+    commit(types.SET_PROPS, [])
+    commit(types.SET_PROTECTORS, [])
+
+    commit(types.SET_UNSAVEDPARAMS, 0)
+    // UNSAVEDCHANGES = 0 must be last
+    commit(types.SET_UNSAVEDCHANGES, 0)
   },
 
   [types.ACTIVATE_QUERYEDITTAB] ({state,commit}, tab) {
@@ -107,7 +143,9 @@ export default {
 
           let queriesSelect = selects[1]
           let queries = r.map(set => set.RESULTSET)
-                         .filter(queries => queries.qname == queriesSelect)[0].ROWS
+                         .filter(queries => queries.qname == queriesSelect)[0]
+                         .ROWS
+                         .sort((a,b) => { return a.QNAME.localeCompare(b.QNAME, 'en',{sentivity: 'base'})})
 
 
           commit(types.SET_CONFIG, conf)

@@ -1,5 +1,5 @@
 <template>
-  <table class="sticky ui celled table">
+  <table class="sticky ui celled table query-list">
     <caption><h2>{{app}}</h2></caption>
     <thead>
       <tr>
