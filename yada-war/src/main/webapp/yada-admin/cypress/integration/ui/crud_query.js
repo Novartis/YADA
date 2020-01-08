@@ -6,7 +6,7 @@ describe('Login', function() {
   })
 })
 
-context.only('Create Query', function() {
+context('Create Query', function() {
   let count = 0
 
   before(() => { cy.cleanYADAIndex() })
