@@ -1,13 +1,9 @@
 <template>
   <div id="app">
-    <!-- <div class="page-header">
-
-    </div> -->
     <div class="meaty-bit">
       <div class="background" >
         <img class="box-shadow" src="../static/blox250.png"/>
         <span>Admin</span>
-        <!-- <DevTools v-if="env !== 'PROD'"/> -->
       </div>
       <div class="ui top attached tabular menu">
         <div class="item active" id="apps-tab" data-tab="apps-tab" @click="clearApp">Apps</div>
@@ -34,13 +30,11 @@
     </div>
     <IdleAlert></IdleAlert>
     <div class="ui mini modal saving">
-      <!-- <i class="close icon"></i> -->
       <div class="content">
         <p>Saving...</p>
       </div>
     </div>
     <div class="ui mini modal confirm">
-      <!-- <i class="close icon"></i> -->
       <div class="content">
         <p>{{confirm}}</p>
         <div class="actions">
@@ -72,17 +66,14 @@ import QueryList from './components/QueryList.vue'
 import QueryEditor from './components/QueryEditor.vue'
 import Menu from './components/Menu.vue'
 import TableFilter from './components/TableFilter.vue'
-import DevTools from './components/DevTools.vue'
-// import utils from '@/mixins/utils'
 import * as types from '@/store/vuex-types'
 import { mapState } from 'vuex'
 
-const rx_neoapp = /APP[0-9]*/
+const rx_neoapp = /APP[0-9]+/
 
 export default {
   name: 'App',
-  // mixins:[utils],
-  components: { IdleAlert,AppList,AppConfig,QueryList,QueryEditor,TableFilter,Menu,DevTools },
+  components: { IdleAlert,AppList,AppConfig,QueryList,QueryEditor,TableFilter,Menu },
   data() {
     return {
       env: process.env.NODE_ENV_LABEL,
@@ -126,24 +117,26 @@ export default {
         // store clicked tab
         let nextTab = e.target
         // only proceed if click is on different, enabled tab
-        if(!nextTab.classList.contains('disabled') && nextTab.id !== vm.activeTab)
+        if(/.+-tab/.test(nextTab.id)
+           && !nextTab.classList.contains('disabled')
+           && nextTab.id !== vm.activeTab
+           && vm.unsavedChanges > 0)
         {
           vm.$store.commit(types.SET_NEXTTAB, nextTab.id)
-          // check state
-          if(vm.unsavedChanges > 0)
+          // disable tab temporarily to prevent navigation before save
+          // this is necessary to delay 'onVisible' handler which clears state
+          // required for saving
+          nextTab.classList.add('disabled')
+          let context = 'query-edit'
+          if(/conf/.test(vm.activeTab))
           {
-            // disable tab temporarily to prevent navigation before save
-            // this is necessary to delay 'onVisible' handler which clears state
-            // required for saving
-            nextTab.classList.add('disabled')
-            let context = 'query-edit'
-            if(/conf/.test(vm.activeTab))
-            {
-              context = 'app'
-            }
-            // configger and trigger modal
-            vm.$store.dispatch(types.SAVE_CHANGES_CONFIRM, context)
+            context = 'app'
           }
+          // configger and trigger modal only if real mouse click
+          // the screenx,screeny coords should only be present when actually clicking
+          // we'll see if cypress imposes it
+          if(!!e.screenX && e.screenX != 0 && !!e.screenY && e.screenY != 0)
+            vm.$store.dispatch(types.SAVE_CHANGES_CONFIRM, context)
         }
         return false
       })
@@ -151,8 +144,16 @@ export default {
     // initialize tabs
     vm.initTabs()
     // initialize modal
-    this.modalSave = $('#app > .ui.mini.modal.saving').modal({inverted:true})
+    this.modalSave = $('#app > .ui.mini.modal.saving').modal({
+      // name:'Saving',
+      // debug:true,
+      // verbose:true,
+      inverted:true,
+    })
     this.modalConfirm = $('#app > .ui.mini.modal.confirm').modal({
+      // name:'Confirming',
+      // debug:true,
+      // verbose:true,
       closable: false,
       inverted: true,
       onApprove: function() {
@@ -168,6 +169,7 @@ export default {
               vm.modalSave.modal('hide')
               vm.modalConfirm.modal('hide')
               let nextTab = document.querySelector(`#${vm.nextTab}`)
+              vm.$store.commit(types.SET_NEXTTAB,null)
               nextTab.classList.remove('disabled')
               nextTab.click()
             }
@@ -186,8 +188,10 @@ export default {
           vm.$store.commit(types.SET_PARAM,         null)
           if(!!vm.nextTab)
           {
-            vm.nextTab.classList.remove('disabled')
-            vm.nextTab.click()
+            let nextTab = document.querySelector(`#${vm.nextTab}`)
+            vm.$store.commit('SET_NEXTTAB',null)
+            nextTab.classList.remove('disabled')
+            nextTab.click()
           }
         })
       }
@@ -288,7 +292,7 @@ export default {
     })
   },
   computed: {
-    ...mapState(['nextTab','contextmenu','coords','unsavedChanges','app','menuitems','filter','activeTab','qname','query','saving','confirm','confirmAction'])
+    ...mapState(['nextTab','contextmenu','coords','unsavedChanges','app','menuitems','filter','activeTab','qname','query','saving','creating','confirm','confirmAction'])
   },
   watch: {
     unsavedChanges(neo,old) {
@@ -305,7 +309,7 @@ export default {
       }
     },
     confirm(neo,old) {
-      if(!!neo)
+      if(neo)
         this.modalConfirm.modal('show')
       else
         this.modalConfirm.modal('hide')
@@ -330,27 +334,38 @@ export default {
     app(val, oldVal) {
       if(!!val)
       {
-        // enable tabs and navigate
         [this.$refs.conftab,
          this.$refs.querylisttab
         ].forEach(el => {
-            el.classList.remove('disabled')
             el.setAttribute('data-tab',el.id.replace(/panel/,'tab'))
             // go to config tab if app code matches new app rx
             // otherwise go to queries tab
-            if(rx_neoapp.test(val) && /conf-tab/.test(el.id))
+            if(!!!this.nextTab)
             {
-              el.click()
+              if(rx_neoapp.test(val) && /(?:conf)-tab/.test(el.id))
+              {
+                el.classList.remove('disabled')
+                el.click()
+                this.unsaved()
+              }
+              else if (!rx_neoapp.test(val))
+              {
+                el.classList.remove('disabled')
+                if(/query-list-tab/.test(el.id))
+                  el.click()
+              }
             }
-            else if (!rx_neoapp.test(val) && /query-list-tab/.test(el.id))
+            else
             {
-              el.click()
+              if(/(?:conf)-tab/.test(el.id))
+                el.classList.remove('disabled')
+              document.querySelector(`#${this.nextTab}`).click()
             }
           })
       }
     },
     query (neo, old) {
-      if(neo !== null) // && this.activeTab !== 'query-edit-tab')
+      if(neo !== null)
       {
         let el = document.querySelector('#query-edit-tab')
         el.classList.remove('disabled')
@@ -366,26 +381,12 @@ export default {
     qname (neo, old) {
       // delete query will set qname to empty string, triggering
       // switch to querylist tab
-      if(neo === '') // || neo == null)
+      if(neo === '')
       {
         this.$store.dispatch(types.LOAD_APP,this.app)
         .then(() => {
           this.$refs.querylisttab.click()
         })
-      }
-      else
-      {
-        // query creation will reset qname
-        // let int = setInterval(() => {
-        //   let td = Array.from(document.querySelectorAll('td:first-child')).filter(td => td.textContent == neo.replace(/[^0-9]/g,''))
-        //   if(td.length > 0)
-        //   {
-        //     clearInterval(int)
-        //     td[0].click();
-        //     this.$store.commit(types.SET_RENAMING,true)
-        //     this.$store.commit(types.SET_CREATING,true)
-        //   }
-        // },200)
       }
     }
   }
@@ -402,13 +403,10 @@ export default {
 }
 
 .meaty-bit > .background {
-  /* background-color: rgb(241,80,9,0.2); */
   background-color: rgb(249,222,212);
-  /* position: fixed; */
   height: 19px;
 }
 
-/* .page-header .background img, */
 .meaty-bit .background img {
   margin: 5px 8px -35px 3px;
   width: 50px;
@@ -417,8 +415,6 @@ export default {
 
 .meaty-bit > .ui.top.attached.tabular.menu {
   margin-top: -1px;
-  /* position: fixed;
-  top:19; */
 }
 
 .copy.btn {
@@ -458,12 +454,10 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-bottom: 100px;
-  /* margin-top: 60px; */
 }
 
 .box-shadow {
   box-shadow: 0 0 20px rgba(0,0,0,0.5);
-  /* float: right; */
 }
 
 .ui.menu.contexmenu {
@@ -520,13 +514,4 @@ export default {
   color: white;
   font-weight: bold;
 }
-
-
-/* .ui.menu.vertical.compact.contextmenu .item.contextmenuitem {
-  padding-left: 5px;
-} */
-
-
-
-
 </style>

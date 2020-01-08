@@ -13,7 +13,7 @@ context('Browse', function() {
   })
 
 
-  describe('Default State', function() {
+  describe('Defaults', function() {
 
     describe('Default Elements', function() {
       beforeEach(() => {
@@ -67,7 +67,7 @@ context('Browse', function() {
       })
     })
 
-    describe('Default Clickables', function() {
+    describe('Default Clicks', function() {
       beforeEach(() => {
         util.visit()
         cy.isInState({activeTab:'apps-tab'})
@@ -97,7 +97,7 @@ context('Browse', function() {
 
 
 
-  describe('Choose App', function() {
+  describe('Select App', function() {
 
     describe('App selection', function() {
 
@@ -112,7 +112,7 @@ context('Browse', function() {
         after(() => {
           cy.isInState({
             activeTab:'query-list-tab',
-            nextTab:'query-list-tab',
+            // nextTab:'query-list-tab',
             app:'BB',
             queries: [0,1,2],
             config: {
@@ -174,7 +174,7 @@ context('Browse', function() {
         after(() => {
           cy.isInState({
             activeTab:'conf-tab',
-            nextTab:'conf-tab',
+            // nextTab:'conf-tab',
             app:'BB',
             queries: [0,1,2],
             config: {
@@ -187,9 +187,34 @@ context('Browse', function() {
           })
         })
 
-        it('has enabled conf tab', function() {
+        beforeEach(() => {
           util.getConfTab().click()
-          .then($tab => cy.wrap($tab).should('have.class','active'))
+        })
+
+        it('has enabled conf tab', function() {
+
+          util.getConfPanel().should('have.class','active')
+        })
+
+        it('has readonly name', function() {
+          util.getConfPanel().find('input[name="app"]').should('have.attr','readonly','readonly')
+          util.getConfPanel().find('input[name="app"]').invoke('val').should('eq','BB')
+        }),
+
+        it('is active', function() {
+          util.getConfPanel().find('input[name="active"]:checked').should('exist')
+        })
+
+        it('has name', function() {
+          util.getConfPanel().find('input[name="name"]').invoke('val').should('eq','BitBucket')
+        })
+
+        it('has description', function() {
+          util.getConfPanel().find('input[name="descr"]').invoke('val').should('eq','BitBucket API')
+        })
+
+        it('has a single configuration editor', function() {
+          util.getConfPanel().find('.CodeMirror').its('length').should('eq',1)
         })
       })
 
@@ -198,7 +223,7 @@ context('Browse', function() {
         after(() => {
           cy.isInState({
             activeTab:'query-list-tab',
-            nextTab:'query-list-tab',
+            // nextTab:'query-list-tab',
             app:'BB',
             queries: [0,1,2],
             config: {
@@ -222,7 +247,7 @@ context('Browse', function() {
         beforeEach(() => {
           cy.isInState({
             activeTab:'query-list-tab',
-            nextTab:'query-list-tab',
+            // nextTab:'query-list-tab',
             app:'BB',
             queries: [0,1,2],
             config: {
@@ -236,7 +261,7 @@ context('Browse', function() {
         })
 
         afterEach(() => {
-          cy.isInState({activeTab:'apps-tab',nextTab:'apps-tab'})
+          cy.isInState({activeTab:'apps-tab'}) //,nextTab:'apps-tab'})
         })
 
         it('has active apps tab', function() {
@@ -259,7 +284,7 @@ context('Browse', function() {
     })
   })
 
-  describe('Choose Query', function() {
+  describe('Select App then Query', function() {
 
     describe('Query Selection then reversion', function() {
 
@@ -278,11 +303,11 @@ context('Browse', function() {
         after(() => {
           cy.isInState({
             activeTab:'query-edit-tab',
-            nextTab:'query-edit-tab',
+            // nextTab:'query-edit-tab',
             app:'BB',
             queries: [0,1,2],
             qname: 'BB Repository',
-            qnameOrig: 'Repository',
+            qnameOrig: 'BB Repository',
             params: [],
             renderedParams: [],
             props: [],
@@ -344,7 +369,7 @@ context('Browse', function() {
         after(() => {
           cy.isInState({
             activeTab:'query-list-tab',
-            nextTab:'query-list-tab',
+            // nextTab:'query-list-tab',
             app:'BB',
             queries: [0,1,2],
             config: {
@@ -379,7 +404,7 @@ context('Browse', function() {
         after(() => {
           cy.isInState({
             activeTab:'conf-tab',
-            nextTab:'conf-tab',
+            // nextTab:'conf-tab',
             app:'BB',
             queries: [0,1,2],
             config: {
@@ -413,7 +438,7 @@ context('Browse', function() {
       describe('Go to apps tab (reset everything)', function() {
 
         after(() => {
-          cy.isInState({activeTab:'apps-tab',nextTab:'apps-tab'})
+          cy.isInState({activeTab:'apps-tab'}) //,nextTab:'apps-tab'})
         })
 
         beforeEach(() => {

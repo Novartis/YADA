@@ -30,7 +30,7 @@ export default {
     commit(types.SET_CONFIG, null)
     commit(types.SET_QUERIES, [])
     commit(types.SET_QNAME, null)
-    commit(types.SET_QNAMEORIG, [])
+    commit(types.SET_QNAMEORIG, null)
     commit(types.SET_QUERY, null)
     commit(types.SET_PARAM, null)
     commit(types.SET_PARAMS, [])
@@ -40,19 +40,19 @@ export default {
 
     commit(types.SET_UNSAVEDPARAMS, 0)
     // UNSAVEDCHANGES = 0 must be last
-    commit(types.SET_UNSAVEDCHANGES, 0)
+    // commit(types.SET_UNSAVEDCHANGES, 0)
     dispatch(types.LOAD_APPS, {})
 
   },
 
   [types.ACTIVATE_CONFTAB] ({state,commit}, tab) {
     commit(types.SET_RENAMING, false)
-    commit(types.SET_CREATING, false)
+    // commit(types.SET_CREATING, false)
     commit(types.SET_CLONING, false)
     commit(types.SET_SAVING, false)
     commit(types.SET_LOADING, false)
     commit(types.SET_QNAME, null)
-    commit(types.SET_QNAMEORIG, [])
+    commit(types.SET_QNAMEORIG, null)
     commit(types.SET_QUERY, null)
     commit(types.SET_PARAM, null)
     commit(types.SET_PARAMS, [])
@@ -72,7 +72,7 @@ export default {
     commit(types.SET_SAVING, false)
     commit(types.SET_LOADING, false)
     commit(types.SET_QNAME, null)
-    commit(types.SET_QNAMEORIG, [])
+    commit(types.SET_QNAMEORIG, null)
     commit(types.SET_QUERY, null)
     commit(types.SET_PARAM, null)
     commit(types.SET_PARAMS, [])
@@ -114,6 +114,7 @@ export default {
     let conf = { ACTIVE:'1',APP:app,CONF:'',DESCR:'',NAME:'' }
     commit(types.SET_APP, app)
     commit(types.SET_CONFIG, conf)
+    // commit(types.SET_UNSAVEDCHANGES,state.unsavedChanges+1)
   },
 
   [types.LOAD_APP]({state, commit, dispatch}, app) {
@@ -150,6 +151,7 @@ export default {
 
           commit(types.SET_CONFIG, conf)
           commit(types.SET_QUERIES, queries)
+          commit(types.SET_NEXTTAB, null)
           commit(types.SET_LOADING, false)
         }
       )
@@ -515,6 +517,8 @@ export default {
     }
     commit(types.SET_QNAME, qname)
     commit(types.SET_QUERY, query)
+    // this next line can't happen here because it triggers the click handler in App.vue
+    // commit(types.SET_UNSAVEDCHANGES, state.unsavedChanges+1)
   },
 
   // delete query menu item will trigger this action

@@ -70,11 +70,8 @@ import { mapState } from 'vuex'
 import CodeMirrorWrap from './CodeMirrorWrap.vue'
 import ParamTable from './ParamTable.vue'
 import SecurityConfig from './SecurityConfig.vue'
-// import Menu from './Menu.vue'
 import * as types from '../store/vuex-types'
-// import utils from '../mixins/utils'
 export default {
-  // mixins: [utils],
   components: { CodeMirrorWrap, ParamTable, SecurityConfig },
   data() {
     return {
@@ -82,36 +79,19 @@ export default {
       code: '',
       comment: '',
       editComment: false,
-      // renaming: false
     }
   },
   methods: {
-    /*
-     * Updates QNAME, QUERY, COMMENTS, DATE MOD, NAME MOD
-     */
-    saveQuery: function(e) {
-      console.log('save',e,this,'test')
-      return new Promise((res,rej) => {
-        if(this.renaming)
-        {
-          // check uniqueness
-          let val = document.querySelector('.qname input').value
-          this.$store.dispatch(types.CHECK_UNIQ, val)
-          .then((r) => {
-            console.log(r.data)
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-        }
-      })
-      .then(() => {
 
-      })
-    },
     rename: function(e) {
-      let qname = document.querySelector('input[name="qname"]').value
+      // set the local qname property to the new field content
+      this.qname = document.querySelector('input[name="qname"]').value
+      // set a local var
+      let qname = `${this.app} ${this.qname}`
+      // change the qname in the state and also in the query object
       this.$store.commit(types.SET_QNAME, qname)
+      this.$set(this.query,'QNAME', qname)
+      // increment unsaved count
       this.unsaved()
     },
     addRow: function(e) {
@@ -147,29 +127,34 @@ export default {
   },
   watch: {
     unsavedChanges(neo,old) {
-      if(neo > 0 && this.activeTab == 'query-edit-tab')
+      // only process if we're viewing the edit form
+      if(this.activeTab == 'query-edit-tab')
       {
-        let app   = this.app
-        let qname = document.querySelector('input[name="qname"]').value
-        let date  = new Date().toISOString().substr(0,19).replace(/T/,' ')
-        let commentsEl = document.querySelector('textarea[name="comment"]')
-        let comments = commentsEl != null ? commentsEl.value : this.query.COMMENTS
-        let user = this.loggeduser
-        let query = {
-          APP: app,
-          QNAME: qname,
-          COMMENTS: comments,
-          MODIFIED: date,
-          MODIFIED_BY: user,
-          QUERY: this.query.QUERY
-        }
-        if(this.creating || this.renaming)
+        // only process if unsaved changes exist and NOT in creation mode (renaming, standard edit)
+        if(neo > 0 && !this.creating)
         {
-          query.ACCESS_COUNT = this.query.ACCESS_COUNT
-          query.CREATED = this.query.CREATED
-          query.CREATED_BY = this.query.CREATED_BY
+          let app   = this.app
+          let qname = document.querySelector('input[name="qname"]').value
+          let date  = new Date().toISOString().substr(0,19).replace(/T/,' ')
+          let commentsEl = document.querySelector('textarea[name="comment"]')
+          let comments = commentsEl != null ? commentsEl.value : this.query.COMMENTS
+          let user = this.loggeduser
+          let query = {
+            APP: app,
+            QNAME: `${app} ${qname}`,
+            COMMENTS: comments,
+            MODIFIED: date,
+            MODIFIED_BY: user,
+            QUERY: this.query.QUERY
+          }
+          if(this.renaming)
+          {
+            query.ACCESS_COUNT = this.query.ACCESS_COUNT
+            query.CREATED = this.query.CREATED
+            query.CREATED_BY = this.query.CREATED_BY
+          }
+          this.$store.commit(types.SET_QUERY, query)
         }
-        this.$store.commit(types.SET_QUERY, query)
       }
     },
     query(neo,old) {
@@ -178,9 +163,13 @@ export default {
         this.qname = neo.QNAME.replace(this.app+' ','')
         this.code = neo.QUERY
         this.comment = neo.COMMENTS
-        if(/^[0-9]+$/.test(this.qname))
+        // if(/^[0-9]+$/.test(this.qname))
+        // {
+        //   this.$store.commit(types.SET_RENAMING,true)
+        // }
+        if(this.creating)
         {
-          this.$store.commit(types.SET_RENAMING,true)
+          this.unsaved()
         }
       }
     },

@@ -1,14 +1,14 @@
 <template>
   <div class="app config">
-    <form v-if="config !== null" class="ui form">
+    <form class="ui form">
       <div class="inline fields">
         <div v-if="creating" class="five wide field">
           <label>Code {{creating}}</label>
-          <input  name="app" type="text" :value="config.APP" @input="updateModel">
+          <input  name="app" type="text" :value="typeof config === 'undefined' || config == null ? '' : config.APP" @input="updateModel">
         </div>
         <div v-else class="five wide field">
           <label>Code {{creating}}</label>
-          <input name="app" type="text" :value="config.APP" readonly>
+          <input name="app" type="text" :value="typeof config === 'undefined' || config == null ? '' : config.APP" readonly>
         </div>
         <div class="three wide field">
           <div class="ui toggle checkbox">
@@ -19,25 +19,23 @@
       </div>
       <div class="field">
         <label>Name</label>
-        <input name="name" type="text" :value="config.NAME" @input="updateModel">
+        <input name="name" type="text" :value="typeof config === 'undefined' || config == null ? '' : config.NAME" @input="updateModel">
       </div>
       <div class="field">
         <label>Description</label>
-        <input name="descr" type="text" :value="config.DESCR" @input="updateModel">
+        <input name="descr" type="text" :value="typeof config === 'undefined' || config == null? '' : config.DESCR" @input="updateModel">
       </div>
       <div class="field">
         <label>Configuration</label>
-        <textarea id="conf" rows="20">{{config.CONF}}</textarea>
+        <textarea id="conf" rows="20" v-if="typeof config === 'undefined' || config == null"></textarea>
+        <textarea id="conf" rows="20" v-else>{{config.CONF}}</textarea>
       </div>
-
     </form>
-
   </div>
 </template>
 <script>
 import { mapState } from 'vuex'
 import * as types from '../store/vuex-types'
-// import Vue from 'Vue'
 const CodeMirror = require('codemirror')
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/eclipse.css'
@@ -64,35 +62,33 @@ export default {
 
     makeCM(value) {
       let vm = this
-      let cmr = vm.cm
       setTimeout(() => {
         let ta = document.getElementById('conf')
-        if(cmr == null)
+        if(vm.cm == null)
         {
-          cmr = CodeMirror.fromTextArea(ta,{
+          vm.cm = CodeMirror.fromTextArea(ta,{
             lineNumbers: true,
             theme:'eclipse',
             mode: 'text/x-sh',
           })
-          cmr.on('change',(i,obj) => {
+          vm.cm.on('change',(i,obj) => {
             if(obj.origin !== 'setValue')
             {
               vm.unsaved()
             }
-            vm.$set(vm.config,'CONF',cmr.getValue())
+            vm.$set(vm.config,'CONF',vm.cm.getValue())
           })
-          vm.cm = cmr
         }
         setTimeout(() => {
-          cmr.refresh()
-        },100)
-      },100)
+          vm.cm.refresh()
+        },10)
+      },10)
 
     }
   },
   computed:{
     ...mapState(['loading','saving','config','creating']),
-    checked() { return this.config.ACTIVE == "1" ? 'checked' : '' }
+    checked() { return typeof this.config === 'undefined' || this.config == null ? '' : this.config.ACTIVE == "1" ? 'checked' : '' }
   },
   updated() {
 
@@ -102,36 +98,33 @@ export default {
   },
   watch: {
     config(neo,old) {
-      // console.log('neo',neo,'old',old)
-      if(typeof neo !== 'undefined' && neo !== null)
-      {
-        // console.log(neo.CONF)
-        if(!!this.cm)
+      this.debounce(250,function() {
+        if(typeof neo !== 'undefined' && neo !== null)
         {
-          this.cm.setValue(neo.CONF)
-          setTimeout(() => {
-            this.cm.refresh()
-          },100)
+          if(this.cm != null)
+          {
+            this.cm.setValue(neo.CONF)
+            setTimeout(() => {
+              this.cm.refresh()
+            },10)
+          }
         }
-        else
-        {
-          this.makeCM(neo.CONF)
-        }
-        // let hasMods = Object.keys(neo).filter(a => {
-        //   return neo[a] !== old[a]
-        // })
-      }
+      })
+
     }
   }
 
 }
 </script>
 <style>
+  .app.config .CodeMirror {
+    height: 370 !important;
+  }
   .app.config label {
     text-align: left;
   }
   .app.config {
-    height: 400px;
+    height: 600px;
     text-align: left !important;
   }
   input[readonly=readonly] {

@@ -23,9 +23,9 @@ export default new Vuex.Store({
     cloning: false,
     unsavedChanges: 0, // triggered by changes to input fields
     unsavedParams: 0,  // triggered by any param changes
-    activeTab: '',     // the currently selected tab
-    nextTab: '',
-    confirmAction: '',
+    activeTab: null,     // the currently selected tab
+    nextTab: null,
+    confirmAction: null,
 
     loggeduser: 'YADA',
     mainmenu: [],

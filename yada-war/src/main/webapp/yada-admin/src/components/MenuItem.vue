@@ -16,13 +16,8 @@ export default {
   props: [ 'item' ],
   methods: {
      menuClickHandler: function(e,t) {
-       // t.fn(e)
-       // console.log(this)
        this.$store.dispatch(t.fn,{})
      }
-  },
-  mounted() {
-    // console.log(this)
   }
 }
 </script>

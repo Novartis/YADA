@@ -80,6 +80,7 @@ Cypress.Commands.add("isInState", (obj) => {
     cy.getState().its('app').should(($val) => { stateChecker($val, obj, 'app', null) })
     cy.getState().its('param').should(($val) => { stateChecker($val, obj, 'param', null) })
     cy.getState().its('qname').should(($val) => { stateChecker($val, obj, 'qname', null) })
+    cy.getState().its('qnameOrig').should(($val) => { stateChecker($val, obj, 'qnameOrig', null) })
     cy.getState().its('query.QUERY').should(($val) => { stateChecker($val, obj, 'query.QUERY', null ) })
     cy.getState().its('config').should(($val) => { stateChecker($val, obj, 'config', null, true) })
     cy.getState().its('queries.length').should(($val) => { stateChecker($val, obj, 'queries.length', 0) })
@@ -87,7 +88,17 @@ Cypress.Commands.add("isInState", (obj) => {
     cy.getState().its('renderedParams.length').should(($val) => { stateChecker($val, obj, 'renderedParams.length', 0) })
     cy.getState().its('props.length').should(($val) => { stateChecker($val, obj, 'props.length', 0) })
     cy.getState().its('protectors.length').should(($val) => { stateChecker($val, obj, 'protectors.length', 0) })
-    cy.getState().its('activeTab').should(($val) => { stateChecker($val, obj, 'activeTab', '') })
-    cy.getState().its('nextTab').should(($val) => { stateChecker($val, obj, 'nextTab', '') })
-    cy.getState().its('confirmAction').should(($val) => { stateChecker($val, obj, 'confirmAction', '') })
+    cy.getState().its('activeTab').should(($val) => { stateChecker($val, obj, 'activeTab', null) })
+    cy.getState().its('nextTab').should(($val) => { stateChecker($val, obj, 'nextTab', null) })
+    cy.getState().its('confirmAction').should(($val) => { stateChecker($val, obj, 'confirmAction', null) })
+})
+
+Cypress.Commands.add("cleanYADAIndex",() => {
+  cy.exec(`psql -U yada -w -h signals-test.qdss.io -c \
+          "delete from yada_query_conf where app like 'CYP%';\
+           delete from yada_ug where app like 'CYP%';\
+           delete from yada_query where app like 'CYP%';\
+           delete from yada_param where target like 'CYP%';\
+           delete from yada_prop where target like 'CYP%';\
+           delete from yada_a11n where target like 'CYP%';"`)
 })

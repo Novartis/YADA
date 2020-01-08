@@ -7,7 +7,6 @@
     @click="loadApp"
     @mouseenter="killpopups">{{app}}
     <!-- @contextmenu="contextMenu" disabling this for now-->
-    <!-- <a class="" href="#">{{app}}</a> -->
   </div>
 </template>
 
@@ -25,25 +24,8 @@
       }
     },
     methods: {
-      changeTab(tab) {
-        document.querySelector(`.item[data-tab="${tab}"]`).click()
-      },
       loadApp(e) {
-        // console.log(e)
-        // if(this.app == e.target.dataset.app)
-        // {
-        //   this.$store.dispatch(types.LOAD_APP,null)
-        //   .then(() => {
-        //     this.$store.dispatch(types.LOAD_APP,e.target.dataset.app)}
-        //   )
-        // }
-        // else
-        // {
-          this.$store.dispatch(types.LOAD_APP,e.target.dataset.app)
-          .then(() => {
-            // console.log(JSON.stringify(this.config))
-          })
-        // }
+        this.$store.dispatch(types.LOAD_APP,e.target.dataset.app)
       },
       contextMenu(e) {
         e.preventDefault()

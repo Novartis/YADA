@@ -22,7 +22,6 @@ import Vue from 'vue'
 import * as types from '../store/vuex-types'
 import QueryDetails from './QueryDetails'
 import { mapState } from 'vuex'
-//TODO query table detail rollovers
 
 const CodeMirror = require('codemirror')
 export default {
@@ -44,8 +43,6 @@ export default {
         this.$store.commit(types.SET_QNAMEORIG,qname)
         this.$store.commit(types.SET_QUERY,row)
         this.$emit('query-selected')
-        // if(!!this.query && qname == this.query.QNAME)
-        // {
         let el = document.querySelector('#query-edit-tab')
         el.classList.remove('disabled')
         el.setAttribute('data-tab',el.id.replace(/panel/),'tab')
@@ -96,7 +93,7 @@ export default {
                               theme: 'eclipse',
                               workDelay:50,
                               scrollbarStyle: 'null'})
-              let cmEl = document.querySelector('.CodeMirror-scroll')
+              let cmEl = document.querySelector('#query-list-panel .CodeMirror-scroll')
               cmEl.style.maxWidth = td.offsetWidth-27
               $(cmEl).transition({animation:'fade in',duration:'.5s'})
 
@@ -148,7 +145,6 @@ export default {
     overflow: hidden;
     white-space: wrap;
     text-overflow: ellipsis;
-    /* max-height: 200px; */
   }
 
   div.filter {

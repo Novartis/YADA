@@ -9,12 +9,6 @@
         </div>
       </div>
     </div>
-    <!-- <div class="prompt" :class="{show: unsavedChanges }">
-      <i class="arrow up icon" style="position:fixed;right:54;bottom:20;"></i>
-      <div>
-        Save Changes (&#8984;-s)
-      </div>
-    </div> -->
   </div>
 </template>
 <script>
@@ -61,7 +55,7 @@ export default {
   border-bottom-right-radius: 5px !important;
 }
 
-.main-menu > .ui.vertical.menu.menu-button.active  {
+.main-menu > .ui.vertical-.menu.menu-button.active  {
   border-bottom-left-radius: 0px !important;
   border-bottom-right-radius: 0px !important;
 }
@@ -81,7 +75,7 @@ export default {
   animation: bounce 2s infinite;
 }
 
-.main.menu > .prompt.show > i.icon {
+.main-menu > .prompt.show > i.icon {
   position: fixed !important;
   right: 44px !important;
   bottom: 20px !important;

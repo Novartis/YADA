@@ -142,7 +142,6 @@ export default {
     border-radius: .25rem;
     position: relative;
     right: 0;
-    /* margin-right: -28px; */
   }
 
   .codemirror-info .instructions {
