@@ -101,23 +101,27 @@ export default {
 
     },
     setMode: function(event) {
+      // change comment property
+      // let ta = document.querySelector('textarea.comment')
+      // this.$set(this.query,'COMMENT',ta!==null?ta.value:this.query.COMMENT)
+      // console.log(ta !== null ? ta.value : this.query.COMMENT)
+
       // toggle MODE
       if(!!!this.editComment)
       {
         this.editComment = true
         Vue.nextTick(() => {
-          document.querySelector('textArea.comment').focus()
+          document.querySelector('textarea.comment').focus()
         })
       }
       else
       {
         this.editComment = false
-        console.log('Saving...')
       }
     }
   },
   computed: {
-    ...mapState(['qnameOrig','query','app','renaming','creating','cloning','unsavedChanges','activeTab','loggeduser'])
+    ...mapState(['qnameOrig','query','app','renaming','creating','cloning','unsavedChanges','activeTab','loggeduser','queries'])
   },
   mounted() {
     $('.ui.accordion').accordion()
@@ -130,36 +134,43 @@ export default {
       // only process if we're viewing the edit form
       if(this.activeTab == 'query-edit-tab')
       {
-        // only process if unsaved changes exist and NOT in creation mode (renaming, standard edit)
-        if(neo > 0 && !this.creating)
+        let app   = this.app
+        let qname = document.querySelector('input[name="qname"]').value
+        let date  = new Date().toISOString().substr(0,19).replace(/T/,' ')
+        let commentsEl = document.querySelector('textarea[name="comment"]')
+        let comments = commentsEl != null ? commentsEl.value : this.query.COMMENTS
+        let user = this.loggeduser
+        let query = {
+          APP: app,
+          QNAME: `${app} ${qname}`,
+          COMMENTS: comments,
+          MODIFIED: date,
+          MODIFIED_BY: user,
+          QUERY: this.query.QUERY
+        }
+        if(this.renaming)
         {
-          let app   = this.app
-          let qname = document.querySelector('input[name="qname"]').value
-          let date  = new Date().toISOString().substr(0,19).replace(/T/,' ')
-          let commentsEl = document.querySelector('textarea[name="comment"]')
-          let comments = commentsEl != null ? commentsEl.value : this.query.COMMENTS
-          let user = this.loggeduser
-          let query = {
-            APP: app,
-            QNAME: `${app} ${qname}`,
-            COMMENTS: comments,
-            MODIFIED: date,
-            MODIFIED_BY: user,
-            QUERY: this.query.QUERY
-          }
-          if(this.renaming)
-          {
-            query.ACCESS_COUNT = this.query.ACCESS_COUNT
-            query.CREATED = this.query.CREATED
-            query.CREATED_BY = this.query.CREATED_BY
-          }
+          query.ACCESS_COUNT = this.query.ACCESS_COUNT
+          query.CREATED = this.query.CREATED
+          query.CREATED_BY = this.query.CREATED_BY
+        }
+        // only process if unsaved changes exist and NOT in creation mode (renaming, standard edit)
+        if(!this.creating)
+        {
           this.$store.commit(types.SET_QUERY, query)
+          let index = this.queries.findIndex(q => {return q.QNAME == `${app} ${qname}`})
+
+          if(index > -1)
+          {
+            this.$set(this.queries,index,query)
+          }
         }
       }
     },
     query(neo,old) {
       if(neo !== null)
       {
+
         this.qname = neo.QNAME.replace(this.app+' ','')
         this.code = neo.QUERY
         this.comment = neo.COMMENTS

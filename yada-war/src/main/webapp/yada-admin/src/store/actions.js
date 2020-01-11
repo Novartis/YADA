@@ -187,7 +187,10 @@ export default {
       let payload = state.config
       j.push({qname:q,DATA:[payload]})
       return this._vm.$yada.jp(j)
-      .then(() => {setTimeout(() => {commit(types.SET_SAVING, false)},500)})
+      .then(() => {setTimeout(() => {
+        commit(types.SET_SAVING, false)
+        commit(types.SET_UNSAVEDCHANGES, 0)
+      },500)})
     }
   },
 

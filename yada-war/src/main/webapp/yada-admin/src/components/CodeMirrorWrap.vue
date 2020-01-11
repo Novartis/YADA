@@ -95,7 +95,6 @@ export default {
             this.codemirror.setOption('mode', mode)
             this.codemirror.on('change', (i,obj) => {
               let val = this.codemirror.getValue()
-              console.log(this.switching)
               if(obj.origin !== 'setValue')  // avoids marking unsaved when switching queries
               {
                 that.unsaved(i,obj)
@@ -107,6 +106,10 @@ export default {
             this.charcount = this.codemirror.getValue().length
             $('#query-editor-ghost').html(`<pre>${this.codemirror.getValue()}</pre>`)
             $('#query-editor').data('codemirror', this.codemirror)
+            if(window.Cypress && process.env.NODE_ENV_LABEL !== 'PROD')
+            {
+              window.cm = this.codemirror
+            }
           }
         }
       }

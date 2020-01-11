@@ -102,3 +102,8 @@ Cypress.Commands.add("cleanYADAIndex",() => {
            delete from yada_prop where target like 'CYP%';\
            delete from yada_a11n where target like 'CYP%';"`)
 })
+
+Cypress.Commands.add("confirmSave", (count) => {
+  cy.exec(`psql -U yada -w -h signals-test.qdss.io -c \
+          "select * from yada_query where qname = 'CYP0 QNAME${count}';"`)
+})

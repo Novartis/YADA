@@ -74,7 +74,7 @@ export const chooseMenuOption = (option) => {
   return cy.get('.main-menu > .menu > .item > .menu.visible > div.item').contains(option).click()
 }
 
-export const createApp = (count) => {
+export const createApp = (count,edit) => {
   return chooseMenuOption('Add App').then(() => {
     // confirm conf tab is working and rename the new app
     cy.getState().its('activeTab').should('eq','conf-tab')
@@ -89,11 +89,13 @@ export const createApp = (count) => {
     getAppsTab().should('not.have.class','disabled')
     getQueryListTab().should('have.class','disabled')
     getQueryEditTab().should('have.class','disabled')
-    cy.get('#conf-panel .CodeMirror textarea').type(`#CYP${count} Configuration content test`,{force:true})
     cy.get('input[name="app"]').clear().type(`CYP${count}`)
-    cy.get('input[name="name"]').clear().type(`CYP${count} Name content`)
-    cy.get('input[name="descr"]').clear().type(`CYP${count} Description content test`)
-
+    if(typeof edit === 'undefined' || edit === null || edit)
+    {
+      cy.get('#conf-panel .CodeMirror textarea').type(`#CYP${count} Configuration content test`,{force:true})
+      cy.get('input[name="name"]').clear().type(`CYP${count} Name content`)
+      cy.get('input[name="descr"]').clear().type(`CYP${count} Description content test`)
+    }
   })
 }
 
@@ -121,9 +123,10 @@ export const createQuery = (count) => {
 
 export const confirmConfig = (count) => {
   getConfTab().click().then(() => {
+    cy.get('#conf-panel .CodeMirror textarea',{timeout:10000}).should('have.value',`#CYP${count} Configuration content test`)
     cy.get('input[name="app"]').should('have.value',`CYP${count}`)
     cy.get('input[name="name"]').should('have.value',`CYP${count} Name content`)
     cy.get('input[name="descr"]').should('have.value',`CYP${count} Description content test`)
-    cy.get('#conf-panel .CodeMirror textarea',{timeout:10000}).should('have.value',`#CYP${count} Configuration content test`)
+
   })
 }

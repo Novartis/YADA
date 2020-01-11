@@ -337,7 +337,7 @@ context('Browse', function() {
         })
         // comments
         it('has read only comments field', function() {
-          util.getQueryEditPanel().find('.comment div').should('have.text','test')
+          util.getQueryEditPanel().find('.comment div').should('have.text','testing again')
         })
         // params
         it('has params table', function() {

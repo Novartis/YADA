@@ -81,4 +81,51 @@ context('Create App', function() {
       })
     })
   })
+
+  it('Creates then Mods App and Saves by Shortcut', function() {
+    // save app
+    cy.get('body').type('{meta}S').then(val => {
+      // assert state
+      cy.getState().its('unsavedChanges').should('eq',0)
+      cy.getState().its('creating').should('eq',false)
+      cy.get('.background.unsaved').should('not.exist')
+      // go to apps tab
+      util.getAppsTab().click().then(() => {
+        // go to CYP app
+        cy.get('#app-list').contains('.applistitem',`CYP${count}`)
+        .then($el => {cy.wrap($el[0]).click()})
+        .then(() => {
+          // assert state
+          cy.getState().its('activeTab').should('eq','query-list-tab')
+          // go to conf tab and assert state
+          util.confirmConfig(count)
+          // mod fields
+          cy.get('#conf-panel .CodeMirror textarea').type(` #CYP${count} Configuration mods test`,{force:true})
+          cy.get('input[name="name"]').clear().type(`CYP${count} Name mods`)
+          cy.get('input[name="descr"]').clear().type(`CYP${count} Description mods test`)
+          // save changes
+          cy.get('body').type('{meta}S').then(() => {
+            // assert state
+            cy.wait(500).getState().its('unsavedChanges').should('eq',0)
+            cy.getState().its('creating').should('eq',false)
+            cy.get('.background.unsaved').should('not.exist')
+            // go to apps tab
+            util.getAppsTab().click().then(() => {
+              // go to CYP app
+              cy.get('#app-list').contains('.applistitem',`CYP${count}`).click().then(() => {
+                // go to conf tab
+                util.getConfTab().click().then(() => {
+                  // assert state
+                  cy.get('#conf-panel .CodeMirror',{timeout:10000}).contains('pre',`#CYP${count} Configuration content test #CYP${count} Configuration mods test`).should('exist')
+                  cy.get('input[name="app"]').should('have.value',`CYP${count}`)
+                  cy.get('input[name="name"]').should('have.value',`CYP${count} Name mods`)
+                  cy.get('input[name="descr"]').should('have.value',`CYP${count} Description mods test`)
+                })
+              })
+            })
+          })
+        })
+      })
+    })
+  })
 })
