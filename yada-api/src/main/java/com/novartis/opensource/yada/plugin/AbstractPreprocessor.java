@@ -42,7 +42,7 @@ import com.novartis.opensource.yada.util.YADAUtils;
  * @author David Varon
  * @since 0.4.2
  */
-public abstract class AbstractPreprocessor implements Preprocess, Validation, TokenValidator, ExecutionPolicy, ContentPolicy
+public abstract class AbstractPreprocessor implements Preprocess, Validation, Authorization, TokenValidator, ExecutionPolicy, ContentPolicy
 {
   /**
    * Constant equal to {@value}
@@ -115,14 +115,14 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   /**
    * The {@link YADAQuery} object processed by the plugin
    */
-  private YADAQuery yq;
+  protected YADAQuery yq;
 
   /**
    * The authentication token, e.g., user id
    * @since 7.0.0
    */
   private Object token = null;
-
+ 
   /**
    * The {@link TokenValidator}
    * @since 7.0.0
@@ -208,6 +208,7 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
 	 * Convenience method with calls 
 	 * {@link #validateURL()}, 
 	 * {@link #validateToken()}, 
+	 * {@link #authorize()}, 
 	 * {@link #applyExecutionPolicy()}, 
 	 * and {@link #applyContentPolicy()}
 	 * @since 7.0.0
@@ -220,9 +221,13 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
 
 	  // will use argument to inject, if present, or return gracefully
 	  setTokenValidator();
-	  // default impl does nothing
-	  validateToken();
+	  
+	  // default impl does nothing - override in gatekeeper plugin
+	  validateToken(); 
 
+	  // default impl does nothing - override in gatekeeper plugin
+	  authorize();
+	  
 	  // will use argument to inject, if present, or use current class,
 	  // if interface is implemented, or return gracefully
 	  setSecurityPolicy(EXECUTION_POLICY);
@@ -265,6 +270,28 @@ public abstract class AbstractPreprocessor implements Preprocess, Validation, To
   public void validateToken() throws YADASecurityException
   {
     // nothing to do
+  }
+
+
+	/**
+	 * Authorization of query use for given context {@link Authorization#authorize()}
+	 * @since 8.7.6
+	 */
+  @Override
+  public void authorize() throws YADASecurityException
+  {
+    // nothing to do			  
+  }
+
+	/**
+	 * Authorization of general use for given context {@link Authorization#authorize()}
+	 * Not implemented in preprocessor
+	 * @since 8.7.6
+	 */
+  @Override
+  public void authorize(String payload) throws YADASecurityException 
+  {
+	// nothing to do
   }
 
   /**
