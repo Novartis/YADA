@@ -19,12 +19,13 @@ package com.novartis.opensource.yada.plugin;
 
 import com.novartis.opensource.yada.YADAQuery;
 import com.novartis.opensource.yada.YADARequest;
+import com.novartis.opensource.yada.YADASecurityException;
 
 /**
  * @author David Varon
  * @since 0.4.2
  */
-public abstract class AbstractPostprocessor implements Postprocess
+public abstract class AbstractPostprocessor implements Postprocess, Authorization
 {
 	/**
 	 * Null implementation
@@ -40,5 +41,29 @@ public abstract class AbstractPostprocessor implements Postprocess
 	 */
 	@Override
 	public String engage(YADARequest yadaReq, String result) throws YADAPluginException { return null; }
+
+	/**
+	 * Authorization of query use for given context {@link Authorization#authorize()}
+	 * @since 8.7.6
+	 */
+	@Override
+	public void authorize() throws YADASecurityException
+	  {
+	    // nothing to do			  
+	  }
+
+	/**
+	 * Authorization of general use for given context {@link Authorization#authorize()}
+	 * Not implemented in preprocessor
+	 * @return 
+	 * @since 8.7.6
+	 */
+	@Override
+	public void authorize(String payload) throws YADASecurityException 
+	  {
+		// nothing to do
+	  }
+
+
 	
 }
