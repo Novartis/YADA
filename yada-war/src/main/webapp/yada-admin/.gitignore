@@ -19,6 +19,8 @@ selenium-debug.log
 *.ntvs*
 *.njsproj
 *.sln
+
+# cypress artifacts
 *.mp4
 
 # proprietary
