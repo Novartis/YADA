@@ -23,6 +23,7 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+import '@4tw/cypress-drag-drop'
 
 const stateChecker = ($val, obj, key, defval, deep) => {
   // debugger
@@ -103,7 +104,61 @@ Cypress.Commands.add("cleanYADAIndex",() => {
            delete from yada_a11n where target like 'CYP%';"`)
 })
 
-Cypress.Commands.add("confirmSave", (count) => {
-  cy.exec(`psql -U yada -w -h signals-test.qdss.io -c \
-          "select * from yada_query where qname = 'CYP0 QNAME${count}';"`)
+Cypress.Commands.add("confirmQuerySave", (count,column,value) => {
+  let sql = `select row_to_json(yada_query) from yada_query where qname = 'CYP0 QNAME${count}'`
+  if(typeof column !== 'undefined')
+  {
+    if(typeof value === 'undefined')
+      value = ''
+    sql = `${sql} AND ${column} = '${value}'`
+  }
+  let connect = `psql -U ${Cypress.env('YADA_INDEX_USER')} -w -h ${Cypress.env('YADA_INDEX_HOST')} -t -c "${sql};"`
+  cy.exec(connect)
+})
+
+Cypress.Commands.add("confirmRenameSave", (count,old,neo) => {
+  let sql = `select row_to_json(row) from
+  (select *
+   From yada_query a
+   join yada_param b on a.qname = b.target
+   where a.app = 'CYP0' and a.qname in ('CYP0 ${old}','CYP0 ${neo}')) row`
+  let connect = `psql -U ${Cypress.env('YADA_INDEX_USER')} -w -h ${Cypress.env('YADA_INDEX_HOST')} -t -c "${sql};"`
+  cy.exec(connect)
+})
+
+Cypress.Commands.add("confirmCloneSave", (count,old,neo) => {
+  let sql = `select row_to_json(row) from
+  (select *
+   From yada_query a
+   join yada_param b on a.qname = b.target
+   where a.app = 'CYP0' and a.qname in ('CYP0 ${old}','CYP0 ${neo}')) row`
+  let connect = `psql -U ${Cypress.env('YADA_INDEX_USER')} -w -h ${Cypress.env('YADA_INDEX_HOST')} -t -c "${sql};"`
+  cy.exec(connect)
+})
+
+Cypress.Commands.add("confirmParamSave", (count,name,value,rule,id) => {
+  let sql = `select row_to_json(yada_param) from yada_param where target like 'CYP0 QNAME${count}%'`
+  if(typeof name !== 'undefined')
+  {
+    sql = `${sql} AND name = '${name}' AND value = '${value}' AND rule = '${rule}' AND id = '${id}'`
+  }
+  let connect = `psql -U ${Cypress.env('YADA_INDEX_USER')} -w -h ${Cypress.env('YADA_INDEX_HOST')} -t -c "${sql};"`
+  cy.exec(connect)
+})
+
+Cypress.Commands.add("deleteParameters", (count) => {
+  let sql = `delete from yada_param where target like 'CYP% QNAME${count}%'`
+  let connect = `psql -U ${Cypress.env('YADA_INDEX_USER')} -w -h ${Cypress.env('YADA_INDEX_HOST')} -t -c "${sql};"`
+  cy.exec(connect)
+})
+
+Cypress.Commands.add('save', () => {
+  return cy.get('body').type('{meta}S').wait(1000).then((val) => {
+    cy.getState().its('unsavedChanges').should('eq',0)
+    cy.getState().its('unsavedParams').should('eq',0)
+    cy.getState().its('renaming').should('eq',false)
+    cy.getState().its('creating').should('eq',false)
+    cy.getState().its('cloning').should('eq',false)
+    cy.get('.background.unsaved').should('not.exist')
+  })
 })

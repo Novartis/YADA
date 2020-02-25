@@ -12,6 +12,10 @@ context('Browse', function() {
     util.visit()
   })
 
+  after(() => {
+    cy.clearCookies()
+  })
+
 
   describe('Defaults', function() {
 

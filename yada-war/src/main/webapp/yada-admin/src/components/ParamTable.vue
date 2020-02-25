@@ -11,15 +11,20 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="param,idx in params" @dragover="dragover($event)" @dragenter="dragenter($event)" @dragleave="dragleave($event)" @dragstart="dragstart($event)" @drop="dragdrop($event)">
+        <!-- @dragenter="dragenter($event)"  -->
+        <tr draggable="true" v-for="param,idx in params"
+            @dragover="dragover($event)"
+            @dragleave="dragleave($event)"
+            @dragstart="dragstart($event)"
+            @drop="dragdrop($event)">
           <!-- ID (rank) -->
-          <td class="ui one wide center aligned" @mouseenter="toggleDraggers" @mouseleave="toggleDraggers">
+          <td class="ui one wide center aligned param-id" @mouseenter="toggleDraggers" @mouseleave="toggleDraggers">
             <i :class="idx == 0 ? 'sort down' : idx == params.length - 1 ? 'sort up' : 'sort'" class="icon hidden" ></i>
             {{param.ID}}
           </td>
           <!-- NAME -->
-          <td class="ui three wide center aligned" :data-content="getParamName(param)" data-position="top center" @click="setMode($event,param,idx)">
-            <div>{{param.NAME}}</div>
+          <td class="ui three wide center aligned param-name" :data-content="getParamName(param)" data-position="top center" @click="setMode($event,param,idx)">
+            <div class="value">{{param.NAME}}</div>
             <div class="hide">
               <div class="ui search selection compact dropdown parameter-selector">
                 <input type="hidden" name="parameter" value="">
@@ -32,8 +37,8 @@
             </div>
           </td>
           <!-- VALUE -->
-          <td class="ui nine wide collapsing" nowrap :data-content="getTooltip(param)"  @click="setMode($event,param,idx)">
-            <div v-if="!!!mode[idx] || mode[idx] !== 'edit' || isSecurityParam(param)">
+          <td class="ui nine wide collapsing param-val" nowrap :data-content="getTooltip(param)"  @click="setMode($event,param,idx)">
+            <div class="value" v-if="!!!mode[idx] || mode[idx] !== 'edit' || isSecurityParam(param)">
               {{param.VALUE}}
             </div>
             <div v-else-if="getParamType(param) == 'Number'" class="ui input">
@@ -51,7 +56,7 @@
             </div>
           </td>
           <!-- RULE -->
-          <td class="ui one wide center aligned">
+          <td class="ui one wide center aligned param-rule">
             <span :data-content="!!param.RULE ? (isSecurityParam(param) ? 'Security params are never permitted to be overrideable' : 'NOT overrideable in URL') : 'overrideable in URL'">
               <!-- <i :class="mutable(param)" class="large icon" @click="toggleMutability($event,param)"></i> -->
               <div class="ui toggle fitted checkbox mutability" :class="isSecurityParam(param) ? 'disabled' : ''">
@@ -61,7 +66,7 @@
             </span>
           </td>
           <!-- ACTION (delete) -->
-          <td class="ui two wide center aligned" @mouseenter="toggleButton" @mouseleave="toggleButton">
+          <td class="ui two wide center aligned param-action" @mouseenter="toggleButton" @mouseleave="toggleButton">
             <div class="ui center aligned">
               <button class="ui tiny icon red button delete hidden" v-if="true" @click="deleteRow(idx)" data-tooltip="Delete Parameter" data-position="top right">
                 <i class="small delete icon"></i>
@@ -131,9 +136,15 @@ export default {
     //   this.params.push(row)
     // },
     deleteRow: function(idx) {
+
       let param = this.params[idx]
-      this.$store.dispatch(types.DEL_PARAM_CONFIRM, param)
-      this.$store.commit(types.SET_UNSAVEDPARAMS,this.unsavedParams+1)
+      console.log(`deleting row ${idx} with ${JSON.stringify(param)}...`)
+      this.$store.dispatch(types.DEL_PARAM_CONFIRM, param).then(() => {
+        // this.updateIds()
+        this.$store.commit(types.SET_UNSAVEDPARAMS,this.unsavedParams+1)
+        console.log(`deleted row ${idx} with ${JSON.stringify(param)}...`)
+      })
+
     },
 
     //*** DND METHODS
@@ -144,7 +155,7 @@ export default {
         if(el.classList.contains('hidden'))
         {
           el.classList.remove('hidden')
-          el.closest('tr').setAttribute('draggable',true)
+          // el.closest('tr').setAttribute('draggable',true)
         }
         else
         {
@@ -161,33 +172,42 @@ export default {
         el.classList.add(...icon.split(' '))
       })
     },
-    // this disables dragover event, not sure why 'row' is set--it currently does noting
+
     dragover: function(e) {
-      e.preventDefault()
       let row = e.target.closest('tr')
+      if(!row.classList.contains('dropzone'))
+      {
+        row.classList.add('dropzone')
+      }
     },
+
     // updates row css on exit
     dragleave: function(e) {
+      console.log('dragleave')
       e.preventDefault()
       let row = e.target.closest('tr')
       row.classList.remove('dropzone')
     },
+
     // updates row css on enter, 'id' and 'did' are set but have not impact currently
     dragenter: function(e) {
-      this.dragging = true
-      let row = e.target.closest('tr')
-      if(!!!this.draggedRow)
-      {
-        this.draggedRow = row
-      }
-      else
-        row.classList.add('dropzone')
-      let id = parseInt(row.querySelector('td:first-child').textContent)
-      let did = parseInt(this.draggedRow.querySelector('td:first-child').textContent)
+      console.log('dragenter')
+    //   this.dragging = true
+    //   let row = e.target.closest('tr')
+    //   // if(!!!this.draggedRow)
+    //   // {
+    //   //   this.draggedRow = row
+    //   // }
+    //   // else
+    //     row.classList.add('dropzone')
+    //   let id = parseInt(row.querySelector('td:first-child').textContent)
+    //   let did = parseInt(this.draggedRow.querySelector('td:first-child').textContent)
     },
     // sets 'row' and 'id' vars but does nothing with them
     dragstart: function(e) {
       let row = e.target.closest('tr')
+      this.draggedRow = row
+      this.dragging = true
       row.classList.add('dragging')
       let id = parseInt(row.querySelector('td:first-child').textContent)
       console.log(row.rowIndex, id)
@@ -195,7 +215,7 @@ export default {
     // disables dnd,
     dragdrop: function(e) {
       let row   = e.target.closest('tr')
-      row.removeAttribute('draggable')
+      // row.removeAttribute('draggable')
       this.draggedRow.classList.remove('dragging')
 
       let id    = row.rowIndex //parseInt(row.querySelector('td:first-child').textContent)
@@ -216,7 +236,7 @@ export default {
     updateIds: function() {
       let vm = this
       let rowDict = Array.from(document.querySelectorAll('.params tbody > tr')).reduce((a,c) => {
-        a[parseInt(c.querySelector('td:first-child').textContent)] = c.rowIndex-1
+        a[parseInt(c.querySelector('td:first-child').textContent)] = c.rowIndex
         return a
       },{})
       console.log(rowDict)
@@ -234,7 +254,6 @@ export default {
     },
 
     setMode: function(event,param,idx) {
-      console.log(event.currentTarget)
       let vm = this
       // if mode == 'EDIT', current target will be INPUT
       if(event.currentTarget.tagName == 'INPUT')
@@ -243,9 +262,10 @@ export default {
         // if edit just occurred and tabbing out, event.type == 'blur'
         if(event.type == 'blur')
         {
-          delete param.MODE
           if(input.validity.valid)
           {
+            input.parentElement.classList.remove('error')
+            delete param.MODE
             // change stored value and set flags for saving
             if(param.VALUE != input.value)
             {
@@ -253,14 +273,17 @@ export default {
               // global unsavedChanges flag
               vm.unsaved()
               // unsavedParams flag
-              vm.$store.commit(types.SET_UNSAVEDPARAMS,this.unsavedParams+1)
+              vm.$store.commit(types.SET_UNSAVEDPARAMS,vm.unsavedParams+1)
+              vm.$set(vm.params,idx,param)
             }
+            if(document.querySelector('.error') == null)
+              vm.$store.commit(types.SET_ERRORS, false)
           }
           else
           {
             input.parentElement.classList.add('error')
+            vm.$store.commit(types.SET_ERRORS, true)
           }
-          vm.$set(vm.params,idx,param)
 
         }
         else if(event.type == 'click' )
@@ -325,6 +348,7 @@ export default {
                   param.VALUE = vm.getParamDefault(param)
                   vm.$set(vm.params,idx,param)
                   delete param.MODE
+                  vm.$store.commit(types.SET_UNSAVEDPARAMS,vm.unsavedParams+1)
                   vm.unsaved()
 
                 }
@@ -369,6 +393,7 @@ export default {
     params() { return this.renderedParams }
   },
   watch: {
+
     confirmAction(neo,old) {
       if(neo === null)
       {
@@ -390,7 +415,7 @@ export default {
       param.RULE = rule
       vm.$set(vm.params,idx,param)
       vm.unsaved()
-      vm.$store.commit(types.SET_UNSAVEDPARAMS,this.unsavedParams+1)
+      vm.$store.commit(types.SET_UNSAVEDPARAMS,vm.unsavedParams+1)
     }})
     $('.checkbox.paramval').checkbox({
         onChange: function() {

@@ -34,11 +34,22 @@
         <p>Saving...</p>
       </div>
     </div>
+    <div class="ui mini modal warn">
+      <div class="content">
+        <p>You are trying to save an invalid value.</p>
+        <div class="actions">
+          <div class="ui positive right floated labeled icon button dang">
+            Dang
+            <i class="checkmark icon"></i>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="ui mini modal confirm">
       <div class="content">
         <p>{{confirm}}</p>
         <div class="actions">
-          <div class="ui black deny button">
+          <div class="ui black deny right button">
             Nope
           </div>
           <div class="ui positive right labeled icon button">
@@ -78,7 +89,8 @@ export default {
     return {
       env: process.env.NODE_ENV_LABEL,
       modalSave: null,
-      modalConfirm: null
+      modalConfirm: null,
+      modalWarn: null
     }
   },
   methods: {
@@ -150,6 +162,37 @@ export default {
       // verbose:true,
       inverted:true,
     })
+    this.modalWarn = $('#app > .ui.mini.modal.warn').modal({
+      // name:'Confirming',
+      // debug:true,
+      // verbose:true,
+      // closable: true,
+      inverted: true,
+      onApprove: function() {
+        vm.$store.commit(types.SET_SHOWWARNING, false)
+      }
+      // onApprove: function() {
+      //   vm.$store.dispatch(types[vm.confirmAction]).then((r) => {
+      //     // unsetting flag now _seems_ early but necessary to support prompt
+      //     // plus it's happening after the promise resolves.
+      //     // TODO check for error handling - what happens if 'confirmAction' fails?
+      //     vm.$store.commit(types.SET_UNSAVEDCHANGES, 0)
+      //     vm.$nextTick(() => {
+      //       if(!!vm.nextTab)
+      //       {
+      //         // force hide the modals to enable clicking, then enable it and click
+      //         vm.modalSave.modal('hide')
+      //         vm.modalConfirm.modal('hide')
+      //         let nextTab = document.querySelector(`#${vm.nextTab}`)
+      //         vm.$store.commit(types.SET_NEXTTAB,null)
+      //         nextTab.classList.remove('disabled')
+      //         nextTab.click()
+      //       }
+      //     })
+      //   })
+      // }
+    })
+
     this.modalConfirm = $('#app > .ui.mini.modal.confirm').modal({
       // name:'Confirming',
       // debug:true,
@@ -292,9 +335,15 @@ export default {
     })
   },
   computed: {
-    ...mapState(['nextTab','contextmenu','coords','unsavedChanges','app','menuitems','filter','activeTab','qname','query','saving','creating','confirm','confirmAction'])
+    ...mapState(['showWarning','nextTab','contextmenu','coords','unsavedChanges','app','menuitems','filter','activeTab','qname','query','saving','creating','confirm','confirmAction'])
   },
   watch: {
+    showWarning(neo, old) {
+      if(neo)
+      {
+        this.modalWarn.modal('show')
+      }
+    },
     unsavedChanges(neo,old) {
       let bg = document.querySelector('.background')
       if(neo > 0)
@@ -513,5 +562,9 @@ export default {
 .meaty-bit .background.unsaved span {
   color: white;
   font-weight: bold;
+}
+
+.ui.button.dang {
+  margin-bottom: 20px;
 }
 </style>

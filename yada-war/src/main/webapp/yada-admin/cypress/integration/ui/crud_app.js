@@ -58,7 +58,7 @@ context('Create App', function() {
     util.getAppsTab().click().then(() => {
       cy.get('.ui.dimmer.visible.active').should('exist')
       cy.get('.confirm.visible.active').should('exist')
-      cy.get('.ui.positive.button').click().then(() => {
+      cy.get('.confirm .ui.positive.button').click().then(() => {
         cy.getState().its('activeTab').should('eq','apps-tab')
         cy.get('#app-list').contains('.applistitem',`CYP${count}`)
         .then($el => {cy.wrap($el[0]).click()})

@@ -15,6 +15,8 @@ export default {
   [types.SET_NEXTTAB](s,p) { s.nextTab = p },
   [types.SET_FILTER](s,p) { s.filter = p },
   [types.SET_LOGGEDUSER](s,p) { s.loggeduser = p},
+  [types.SET_ERRORS](s,p) { s.errors = p},
+  [types.SET_SHOWWARNING](s,p) { s.showWarning = p },
   [types.SET_UNSAVEDCHANGES](s,p) {s.unsavedChanges = p},
   [types.SET_UNSAVEDPARAMS](s,p) {s.unsavedParams = p},
   [types.SET_RENDEREDPARAMS](s,p) {s.renderedParams = p},

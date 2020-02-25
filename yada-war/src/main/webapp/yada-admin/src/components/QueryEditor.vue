@@ -39,16 +39,19 @@
         Comments
       </h5>
       <div class="ui form content comment" :class="{active:!!comment}">
-        <div v-if="!!comment && !!!editComment" @click="setMode($event)">{{comment}}</div>
+        <div v-if="!!comment && !!!editComment" @click="setMode($event)" v-html="escComment"></div>
         <div class="field" v-else>
+          <!-- <textarea name="comment" class="comment" @input="debounce(unsaved,250)" @blur="setMode($event)">{{comment}}</textarea> -->
           <textarea name="comment" class="comment" @input="unsaved" @blur="setMode($event)">{{comment}}</textarea>
         </div>
       </div>
+    </div>
+    <div class="ui fluid accordion">
       <h5 class="title">
         <i class="dropdown icon"></i>
-        Default Parameters
+        Default YADA Query-level Parameters
       </h5>
-      <div class="content hidden">
+      <div class="content parameters">
         <div>
           <ParamTable ref='paramtab'/>
         </div>
@@ -57,7 +60,7 @@
         <i class="dropdown icon"></i>
         Security Configuration
       </h5>
-      <div class="content hidden">
+      <div class="content security">
         <SecurityConfig/>
       </div>
     </div>
@@ -121,7 +124,8 @@ export default {
     }
   },
   computed: {
-    ...mapState(['qnameOrig','query','app','renaming','creating','cloning','unsavedChanges','activeTab','loggeduser','queries'])
+    ...mapState(['qnameOrig','query','app','renaming','creating','cloning','unsavedChanges','unsavedParams','activeTab','loggeduser','queries']),
+    escComment() { return this.comment.replace(/\n/g,'<br/>')}
   },
   mounted() {
     $('.ui.accordion').accordion()
@@ -146,14 +150,17 @@ export default {
           COMMENTS: comments,
           MODIFIED: date,
           MODIFIED_BY: user,
-          QUERY: this.query.QUERY
+          QUERY: this.query.QUERY,
+          ACCESS_COUNT: this.query.ACCESS_COUNT,
+          CREATED: this.query.CREATED,
+          CREATED_BY: this.query.CREATED_BY
         }
-        if(this.renaming)
-        {
-          query.ACCESS_COUNT = this.query.ACCESS_COUNT
-          query.CREATED = this.query.CREATED
-          query.CREATED_BY = this.query.CREATED_BY
-        }
+        // if(this.renaming)
+        // {
+        //   query.ACCESS_COUNT = this.query.ACCESS_COUNT
+        //   query.CREATED = this.query.CREATED
+        //   query.CREATED_BY = this.query.CREATED_BY
+        // }
         // only process if unsaved changes exist and NOT in creation mode (renaming, standard edit)
         if(!this.creating)
         {
@@ -204,7 +211,18 @@ export default {
     cloning(neo,old) {
       if(!!neo)
       {
+        // this.qname = this.qname+' CLONE'
         this.$store.dispatch(types.SAVE_QUERY)
+        .then(() => {
+          this.qname = this.$store.state.qname.replace(`${this.app} `,'')
+        })
+      }
+    },
+    unsavedParams(neo,old) {
+      let panel = document.querySelector('.parameters')
+      if(neo > 0 && panel.computedStyleMap().get('display').value == 'none')
+      {
+        panel.closest('.accordion').querySelector('h5').click()
       }
     }
   }

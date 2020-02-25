@@ -90,13 +90,20 @@ export default {
   },
 
   [types.SAVE] ({state,commit,dispatch}) {
-    if(state.activeTab == 'conf-tab')
+    if(state.errors)
     {
-      dispatch(types.SAVE_APP)
+      commit(types.SET_SHOWWARNING, true)
     }
     else
     {
-      dispatch(types.SAVE_QUERY)
+      if(state.activeTab == 'conf-tab')
+      {
+        dispatch(types.SAVE_APP)
+      }
+      else
+      {
+        dispatch(types.SAVE_QUERY)
+      }
     }
   },
 
@@ -227,6 +234,7 @@ export default {
   [types.CLONE_QUERY]({commit,state}) {
     commit(types.SET_CLONING,true)
     commit(types.SET_CREATING,true)
+    commit(types.SET_UNSAVEDCHANGES, state.unsavedChanges+1)
   },
 
 
@@ -312,17 +320,18 @@ export default {
     qname = state.qname
     if(state.renaming || state.cloning)
     {
+      console.log(`Query before: ${JSON.stringify(state.query)}`)
       // modify qname in vuex objects to reflect changes
       query = state.query
       if(state.cloning)
       {
+        let comment = `Clone of ${qname.replace(/ CLONE$/,'')} at ${new Date().toISOString().substr(0,19).replace(/T/,' ')}`
         qname = `${state.qname} CLONE`
         let query = state.query
           query['QNAME'] = qname
-          query['ACCESS_COUNT'] = 0
-          query['COMMENTS'] = `Clone of ${qname.replace(/ CLONE$/,'')} at ${new Date().toISOString().substr(0,19).replace(/T/,' ')}
 
-          ${query.COMMENTS}`
+          query['ACCESS_COUNT'] = 0
+          query['COMMENTS'] = /^Clone of/.test(query.COMMENTS) ? query.COMMENTS : comment+"\n"+query.COMMENTS
       }
       let hasParams = typeof state.params !== 'undefined' && state.params !== null && state.params.length > 0
       let hasProps = typeof state.props !== 'undefined' && state.props !== null && state.props.length > 0
@@ -348,6 +357,7 @@ export default {
       commit(types.SET_PARAMS,params)
       commit(types.SET_PROPS,props)
       commit(types.SET_PROTECTORS,prots)
+      console.log(`Query after: ${JSON.stringify(state.query)}`)
     }
 
     if(state.creating || state.renaming || state.cloning)
@@ -373,21 +383,21 @@ export default {
 
       // prepare jsonparams
       j = prepareQueries(qnames,payloads)
-      let insertQuery = j.filter(q => q.qname == 'YADA new query')[0]
-      let insertParams = j.filter(q => q.qname == 'YADA insert default param')[0]
-      let insertProps = j.filter(q => q.qname == 'YADA insert prop')[0]
-      let insertProtectors = j.filter(q => q.qname == 'YADA insert protector for target')[0]
+      let insertQuery = j.filter(q => q.qname == 'YADA new query')
+      let insertParams = j.filter(q => q.qname == 'YADA insert default param')
+      let insertProps = j.filter(q => q.qname == 'YADA insert prop')
+      let insertProtectors = j.filter(q => q.qname == 'YADA insert protector for target')
       return dispatch(types.CHECK_UNIQ, qname)
       .then((r) => {
         if(r.data.RESULTSET.ROWS[0].count == 0)
         {
-          promises.push(this._vm.$yada.jp([insertQuery]))
-          if(typeof insertParams !== 'undefined')
-            promises.push(this._vm.$yada.jp([insertParams]))
-          if(typeof insertProps !== 'undefined')
-            promises.push(this._vm.$yada.jp([insertProps]))
-          if(typeof insertProtectors !== 'undefined')
-            promises.push(this._vm.$yada.jp([insertProtectors]))
+          promises.push(this._vm.$yada.jp(insertQuery))
+          if(typeof insertParams !== 'undefined' && insertParams.length > 0)
+            promises.push(this._vm.$yada.jp(insertParams))
+          if(typeof insertProps !== 'undefined' && insertProps.length > 0)
+            promises.push(this._vm.$yada.jp(insertProps))
+          if(typeof insertProtectors !== 'undefined' && insertProtectors > 0)
+            promises.push(this._vm.$yada.jp(insertProtectors))
           // execute inserts
           return Promise.all(promises)
           .then(() => {
@@ -398,11 +408,13 @@ export default {
           })
           .catch((err) => {
             // error handling
+            console.log(err)
           })
           .finally(() => {
             if(state.cloning || state.renaming)
             {
               console.log(state)
+
             }
             // query list tab is active
             dispatch(types.LOAD_APP,state.app)

@@ -19,6 +19,7 @@ selenium-debug.log
 *.ntvs*
 *.njsproj
 *.sln
+*.mp4
 
 # proprietary
 login.html

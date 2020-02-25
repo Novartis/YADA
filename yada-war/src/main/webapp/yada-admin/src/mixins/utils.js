@@ -24,7 +24,7 @@ export const utils = {
       return hash;
     },
     unsaved (e,o) {
-      this.trace()
+      // this.trace()
       this.$store.commit(types.SET_UNSAVEDCHANGES, this.unsavedChanges+1)
     },
     debounce (delay, fn) {
