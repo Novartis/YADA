@@ -22,6 +22,9 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.Cookie;
+import java.net.HttpCookie;
+
 import org.apache.log4j.Logger;
 
 import com.novartis.opensource.yada.Finder;
@@ -95,6 +98,45 @@ public class ScriptPostprocessor extends AbstractPostprocessor {
 		cmds.addAll(args);
 		// add results path as last argument to executable
 		cmds.add(tmpResult.getAbsolutePath());
+		// override the yadaReq.cookie parameter to contain the named cookie
+		// values instead of the names alone, so that the values can be utilized
+		// in the postprocessor script which does not have any access to the
+		// HttpServletRequest object that its java counterparts do
+		
+		// Orig list of cookie names passed to yada request
+		boolean      takeAllCookies = yadaReq.getCookies().get(0).equalsIgnoreCase("true");
+		List<String> cookieStrings = new ArrayList<String>();
+		
+		// Orig cookie objects (name/value pairs) stored in http request
+		Cookie[] cookies = yadaReq.getRequest().getCookies();		
+		
+		// iterate over cookie array and store
+    if (cookies != null)
+    {
+      for (Cookie c : cookies)
+      {
+        if (takeAllCookies || yadaReq.getCookies().contains(c.getName()))
+        {
+        	HttpCookie hc = new HttpCookie(c.getName(), c.getValue());
+        	hc.setComment(c.getComment());
+        	hc.setDomain(c.getDomain());
+        	hc.setMaxAge(c.getMaxAge());
+        	hc.setPath(c.getPath());        	
+        	hc.setSecure(c.getSecure());
+        	hc.setVersion(c.getVersion());
+        	cookieStrings.add(hc.toString());
+        }
+      }
+    }    
+    if(yadaReq.getParameterMap().containsKey(YADARequest.PS_COOKIES))
+    {
+    	yadaReq.getParameterMap().put(YADARequest.PS_COOKIES,cookieStrings.toArray(new String[] {}));
+    }
+    else
+    {
+    	yadaReq.getParameterMap().put(YADARequest.PL_COOKIES,cookieStrings.toArray(new String[] {}));
+    }
+		
 		// add yadaReq json
 		cmds.add(yadaReq.toString());
 		l.debug("Executing script plugin: "+cmds);
