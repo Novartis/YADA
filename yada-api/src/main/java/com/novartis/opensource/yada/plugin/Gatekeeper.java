@@ -55,6 +55,7 @@ import com.novartis.opensource.yada.util.YADAUtils;
  * @since 7.0.0
  *
  */
+@SecurityPreprocessor
 public class Gatekeeper extends AbstractPreprocessor {
 
   /**
