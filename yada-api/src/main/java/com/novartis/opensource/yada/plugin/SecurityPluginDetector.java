@@ -42,7 +42,7 @@ class SecurityPluginDetector extends AbstractPostprocessor {
 	/**
 	 * The {@code SPP} or SecurityPreprocessor flag column
 	 */
-	private final static String SSP    = "SPP";
+	private final static String SPP    = "SPP";
 	/**
 	 * The {@code pl} parameter
 	 */
@@ -68,7 +68,7 @@ class SecurityPluginDetector extends AbstractPostprocessor {
 			crs.populate(rs);
 			RowSetMetaDataImpl crsmd = (RowSetMetaDataImpl) crs.getMetaData();
 			crsmd.setColumnCount(6);
-			crsmd.setColumnName(5, SSP);
+			crsmd.setColumnName(5, SPP);
 			
 			while(crs.next())
 			{
@@ -82,9 +82,13 @@ class SecurityPluginDetector extends AbstractPostprocessor {
 	  						? Class.forName(plugin) 
 	  						: Class.forName(YADARequest.PLUGIN_PKG + "." + plugin);
 	  				Annotation secPlugin = pluginClass.getAnnotation(SecurityPreprocessor.class);
-	  				if(secPlugin instanceof SecurityPreprocessor)
+	  				if(secPlugin != null && secPlugin instanceof SecurityPreprocessor)
 	  				{
-	  					crs.updateString(NAME, "true");
+	  					crs.updateString(SPP, "true");
+	  				}
+	  				else
+	  				{
+	  					crs.updateString(SPP, "false");
 	  				}
 	  			} 
 	  			catch (ClassNotFoundException e) 
