@@ -84,8 +84,8 @@ public class SecurityPluginDetector extends AbstractPostprocessor {
 			
 			// update metadata
 			RowSetMetaDataImpl crsmd = (RowSetMetaDataImpl) crs.getMetaData();
-			crsmd.setColumnCount(6);			
-			for(int i=1;i<7;i++)
+			crsmd.setColumnCount(rs.getMetaData().getColumnCount());			
+			for(int i=1;i<crsmd.getColumnCount();i++)
 			{
 				crsmd.setColumnName(i, rs.getMetaData().getColumnName(i));
 				crsmd.setColumnType(i, rs.getMetaData().getColumnType(i));
