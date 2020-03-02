@@ -34,15 +34,27 @@ public class SecurityPluginDetector extends AbstractPostprocessor {
 	/**
 	 * The {@code NAME} column
 	 */
-	private final static String NAME   = "NAME";
+	private final static String NAME_U   = "NAME";
 	/**
 	 * The {@code VALUE} column
 	 */
-	private final static String VALUE  = "VALUE";
+	private final static String VALUE_U  = "VALUE";
 	/**
 	 * The {@code SPP} or SecurityPreprocessor flag column
 	 */
-	private final static String SPP    = "SPP";
+	private final static String SPP_U    = "SPP";
+	/**
+	 * The {@code name} column
+	 */
+	private final static String NAME_L   = "name";
+	/**
+	 * The {@code value} column
+	 */
+	private final static String VALUE_L  = "value";
+	/**
+	 * The {@code spp} or SecurityPreprocessor flag column
+	 */
+	private final static String SPP_L    = "spp";
 	/**
 	 * The {@code pl} parameter
 	 */
@@ -65,16 +77,28 @@ public class SecurityPluginDetector extends AbstractPostprocessor {
 		{
 			ResultSet    rs  = (ResultSet) yq.getResult().getResult(0);
 			CachedRowSet crs = RowSetProvider.newFactory().createCachedRowSet();
+			String name = NAME_U, 
+					   value = VALUE_U, 
+					   spp = SPP_U;
 			crs.populate(rs);
 			RowSetMetaDataImpl crsmd = (RowSetMetaDataImpl) crs.getMetaData();
-			crsmd.setColumnCount(6);
-			crsmd.setColumnName(5, SPP);
+			crsmd.setColumnCount(6);			
+			crsmd.setColumnName(6, spp);
+			
+			if(crsmd.getColumnName(1).matches("[a-z]+"))
+			{
+				name = NAME_L;
+				value = VALUE_L;
+				spp = SPP_L;
+				crsmd.setColumnName(6, spp);
+			}
 			
 			while(crs.next())
 			{
-				if(crs.getString(NAME).equals(PLUGIN))
+				
+				if(crs.getString(name).equals(PLUGIN))
 				{
-					String plugin = crs.getString(VALUE);
+					String plugin = crs.getString(value);
 	  			Class<?> pluginClass;
 	  			try 
 	  			{
@@ -84,11 +108,11 @@ public class SecurityPluginDetector extends AbstractPostprocessor {
 	  				Annotation secPlugin = pluginClass.getAnnotation(SecurityPreprocessor.class);
 	  				if(secPlugin != null && secPlugin instanceof SecurityPreprocessor)
 	  				{
-	  					crs.updateString(SPP, "true");
+	  					crs.updateString(spp, "true");
 	  				}
 	  				else
 	  				{
-	  					crs.updateString(SPP, "false");
+	  					crs.updateString(spp, "false");
 	  				}
 	  			} 
 	  			catch (ClassNotFoundException e) 
