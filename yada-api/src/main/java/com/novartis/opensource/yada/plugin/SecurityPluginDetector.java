@@ -81,22 +81,25 @@ public class SecurityPluginDetector extends AbstractPostprocessor {
 					   value = VALUE_U, 
 					   spp = SPP_U;
 			crs.populate(rs);
+			
+			// update metadata
 			RowSetMetaDataImpl crsmd = (RowSetMetaDataImpl) crs.getMetaData();
 			crsmd.setColumnCount(6);			
-			for(int i=1;i<6;i++)
+			for(int i=1;i<7;i++)
 			{
 				crsmd.setColumnName(i, rs.getMetaData().getColumnName(i));
+				crsmd.setColumnType(i, rs.getMetaData().getColumnType(i));
 			}
-			crsmd.setColumnName(6, spp);
 			
+			// case sensitivity
 			if(crsmd.getColumnName(1).matches("[a-z]+"))
 			{
 				name = NAME_L;
 				value = VALUE_L;
 				spp = SPP_L;
-				crsmd.setColumnName(6, spp);
 			}
 			
+			// populate column six
 			while(crs.next())
 			{
 				
@@ -113,11 +116,7 @@ public class SecurityPluginDetector extends AbstractPostprocessor {
 	  				if(secPlugin != null && secPlugin instanceof SecurityPreprocessor)
 	  				{
 	  					crs.updateString(spp, "true");
-	  				}
-	  				else
-	  				{
-	  					crs.updateString(spp, "false");
-	  				}
+	  				}	  				
 	  			} 
 	  			catch (ClassNotFoundException e) 
 	  			{
