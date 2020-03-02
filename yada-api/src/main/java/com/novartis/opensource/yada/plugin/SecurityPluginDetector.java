@@ -105,7 +105,7 @@ public class SecurityPluginDetector extends AbstractPostprocessor {
 				
 				if(crs.getString(name).equals(PLUGIN))
 				{
-					String plugin = crs.getString(value);
+					String plugin = crs.getString(value).split(",")[0];
 	  			Class<?> pluginClass;
 	  			try 
 	  			{
