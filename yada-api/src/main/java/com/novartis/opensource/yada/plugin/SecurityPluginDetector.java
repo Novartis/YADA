@@ -26,7 +26,7 @@ import com.novartis.opensource.yada.YADASecurityException;
  * @since 8.7.6
  *
  */
-class SecurityPluginDetector extends AbstractPostprocessor {
+public class SecurityPluginDetector extends AbstractPostprocessor {
 	/**
 	 * Local logger handle
 	 */
