@@ -7,6 +7,7 @@ import java.lang.annotation.Annotation;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.sql.RowSetMetaData;
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetMetaDataImpl;
 import javax.sql.rowset.RowSetProvider;
@@ -81,6 +82,7 @@ public class SecurityPluginDetector extends AbstractPostprocessor {
 					   value = VALUE_U, 
 					   spp = SPP_U;
 			crs.populate(rs);
+			crs.setMetaData((RowSetMetaData) rs.getMetaData());
 			RowSetMetaDataImpl crsmd = (RowSetMetaDataImpl) crs.getMetaData();
 			crsmd.setColumnCount(6);			
 			crsmd.setColumnName(6, spp);
