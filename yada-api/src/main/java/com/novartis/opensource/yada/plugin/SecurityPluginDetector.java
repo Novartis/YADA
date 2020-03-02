@@ -98,6 +98,7 @@ public class SecurityPluginDetector extends AbstractPostprocessor {
 	  			}		
 			  }
 			}
+			crs.beforeFirst();
 			yq.getResult().setResult(0, crs);
 		} 
 		catch (SQLException e) 
