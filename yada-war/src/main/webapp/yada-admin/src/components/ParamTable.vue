@@ -363,7 +363,7 @@ export default {
       }
     },
     isSecurityParam: function(param) {
-      return /(auth.path|(execution|content).policy)/.test(param.VALUE)
+      return (param.SPP === 'true')
     },
     mutable: function(param) {
       return !!param.RULE ? 'toggle off black' : 'toggle on red'

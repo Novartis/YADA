@@ -142,7 +142,7 @@
                   </div>
                   <div class="fourteen wide field right floated protector query config ">
                     <div class="ui input">
-                      <input type="text" placeholder="Protecor Query Config...">
+                      <input type="text" placeholder="Protecor Query Config..." :value="secParam.contentPolicy">
                     </div>
                   </div>
                 </div>
@@ -172,7 +172,7 @@
           standardized way.
         </div>
         <div class="ui fluid input">
-          <input type="text" placeholder="Content policy...">
+          <input type="text" placeholder="Content policy..." :value="secParam.contentPolicy">
         </div>
       </div>
     </div>
@@ -190,10 +190,33 @@ export default {
     }
   },
   methods: {
-
+    isSecurityPlugin: function(param) {
+      return param.SPP === 'true'
+    },
+    hasSecurityPlugin: function() {
+      return this.params.some(p => {
+        return this.isSecurityPlugin(p)
+      })
+    },
+    securityPlugin: function() {
+      return this.params.filter(p => this.isSecurityPlugin(p))[0]
+    }
   },
   computed: {
-
+    ...mapState(['paramlist','renderedParams','qname','unsavedChanges','confirmAction','unsavedParams']),
+    params() { return this.renderedParams }
+    secParam() { return this.securityPlugin.split(/,/).reduce((a,c) => {
+      if(/=/.test(c))
+      {
+        let pair = c.split(/=/)
+        a[pair[0]] = pair[1]
+      }
+      else
+      {
+        a['plugin'] = c
+      }
+      return a
+    },{})
   },
   watch: {
 
