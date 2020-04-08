@@ -17,53 +17,586 @@
  */
 package com.novartis.opensource.yada.plugin;
 
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.novartis.opensource.yada.YADAExecutionException;
 import com.novartis.opensource.yada.YADAQuery;
 import com.novartis.opensource.yada.YADARequest;
+import com.novartis.opensource.yada.YADARequestException;
 import com.novartis.opensource.yada.YADASecurityException;
 
 /**
  * @author David Varon
- * @since 0.4.2
+ * @since 0.4.2 Preprocess, Validation, Authorization, TokenValidator,
+ *        ExecutionPolicy, ContentPolicy
  */
-public abstract class AbstractPostprocessor implements Postprocess, Authorization
-{
+public abstract class AbstractPostprocessor
+    implements Postprocess, ContentPolicy, Validation, Authorization, TokenValidator {
+	// implements ExecutionPolicy, ContentPolicy {
+
+	/**
+	 * A constant equal to {@value} for handling param value syntax
+	 */
+	private static final String RX_NOTJSON = "^[^{].+$";
+
+	/**
+	 * Constant with value: {@value}
+	 *
+	 * @since 2.0
+	 */
+	protected final static String JWSKEY = "jws.key";
+
+	/**
+	 * Constant with value: {@value}
+	 *
+	 * @since 2.0
+	 */
+	protected final static String JWTISS = "jwt.iss";
+
+	/**
+	 * Constant with value: {@value}
+	 *
+	 * @since 8.7.6
+	 */
+	protected final static String RESULT_KEY_RESULTSET = "RESULTSET";
+
+	/**
+	 * Constant with value: {@value}
+	 *
+	 * @since 8.7.6
+	 */
+	protected final static String RESULT_KEY_RECORDS = "records";
+
+	/**
+	 * Constant with value: {@value}
+	 *
+	 * @since 8.7.6
+	 */
+	protected final static String RESULT_KEY_ROWS = "ROWS";
+
+	/**
+	 * Constant with value: {@value}
+	 *
+	 * @since 8.7.6
+	 */
+	protected final static String RESULT_KEY_RESOURCE = "resource";
+
+	/**
+	 * The {@link YADARequest} object processed by the plugin
+	 */
+	private YADARequest yadaReq;
+
+	/**
+	 * The {@link YADAQuery} object processed by the plugin
+	 */
+	private YADAQuery yq;
+
+	/**
+	 * parsed HTTPHeaders string
+	 * 
+	 * @since 8.5.0
+	 */
+	private JSONObject httpHeaders;
+
+	/**
+	 * The authentication token, e.g., user id
+	 * 
+	 * @since 8.7.6
+	 */
+	private Object token = null;
+
+	/**
+	 * The {@link TokenValidator}
+	 * 
+	 * @since 8.7.6
+	 */
+	private TokenValidator tokenValidator;
+
+	/**
+	 * The {@code args} {@link List} from {@link YADARequest#getArgs}
+	 * 
+	 * @since 8.7.6
+	 */
+	private List<String> args;
+
+	/**
+	 * The request object provided by Tomcat
+	 */
+	private HttpServletRequest request;
+
+	/**
+	 * Contains the user identity data from authority
+	 */
+	private Object identity = new Object();
+
+	/**
+	 * Contains the conditions specified in A11N.
+	 * 
+	 * TODO: rename qualifier, condition, role, ... ?
+	 */
+	private JSONObject yadaGrants = new JSONObject();
+
+	/**
+	 * Contains the user grant from authority
+	 */
+	private Object grant = new Object();
+
+	/**
+	 * Contains the query result from authority
+	 */
+	private String outcome = new String();
+
 	/**
 	 * Null implementation
+	 * 
 	 * @see com.novartis.opensource.yada.plugin.Postprocess#engage(com.novartis.opensource.yada.YADAQuery)
 	 */
 	@Override
-	public void engage(YADAQuery yq) throws YADAPluginException { /* nothing to do */ }
-	
-	/**
-	 * Null implementation
-	 * @throws YADAPluginException when there is a processing error
-	 * @see com.novartis.opensource.yada.plugin.Postprocess#engage(com.novartis.opensource.yada.YADARequest, java.lang.String)
-	 */
-	@Override
-	public String engage(YADARequest yadaReq, String result) throws YADAPluginException { return null; }
+	public void engage(YADAQuery yq) throws YADAPluginException {
+		/* nothing to do */ }
 
 	/**
-	 * Authorization of query use for given context {@link Authorization#authorize()}
+	 * Base implementation, calls {@link #setYADARequest(YADARequest)},
+	 * {@link #setRequest(HttpServletRequest)}, {@link #setOutcome(String)},
+	 * {@link #specifyYADACredentials(YADARequest)} and returns
+	 * {@link #getOutcome()}
+	 * 
+	 * @throws YADAPluginException
+	 *           when there is a processing error
+	 * @see com.novartis.opensource.yada.plugin.Postprocess#engage(com.novartis.opensource.yada.YADARequest,
+	 *      java.lang.String)
+	 */
+	@Override
+	public String engage(YADARequest yadaReq, String result) throws YADAPluginException {
+		setYADARequest(yadaReq);
+		setRequest(yadaReq.getRequest());
+		setOutcome(result);
+		specifyYADACredentials(yadaReq);
+
+		// return the query result or other string
+		return getOutcome();
+	}
+
+	/**
+	 * Override in subclasses to store credentials specified in request
+	 * 
+	 * @since 8.7.6
+	 */
+	public void specifyYADACredentials(YADARequest yReq) throws YADASecurityException {
+		/* nothing to do */
+	}
+
+	/**
+	 * Convenience method with calls {@link #validateToken()},
+	 * {@link #authorize()},
+	 * 
 	 * @since 8.7.6
 	 */
 	@Override
-	public void authorize() throws YADASecurityException
-	  {
-	    // nothing to do			  
-	  }
+	public void validateYADARequest() throws YADASecurityException {
+
+		// default impl does nothing - override in authorizer plugin
+		validateToken();
+
+		// default impl does nothing - override in authorizer plugin
+		authorize(getOutcome());
+
+	}
 
 	/**
-	 * Authorization of general use for given context {@link Authorization#authorize()}
-	 * Not implemented in preprocessor
-	 * @return 
+	 * Authorization of query use for given context
+	 * {@link Authorization#authorize()}
+	 * 
 	 * @since 8.7.6
 	 */
 	@Override
-	public void authorize(String payload) throws YADASecurityException 
-	  {
+	public void authorize() throws YADASecurityException {
+		/* nothing to do */ }
+
+	/**
+	 * Authorization of general use for given context
+	 * {@link Authorization#authorize()} Not implemented in preprocessor
+	 * 
+	 * @return
+	 * @throws YADAPluginException
+	 * @since 8.7.6
+	 */
+	@Override
+	public void authorize(String payload) throws YADASecurityException {
 		// nothing to do
-	  }
+	}
 
+	/**
+	 * Default implementation calls {@link TokenValidator#validateToken()} via
+	 * injection
+	 * 
+	 * @since 8.7.6
+	 */
+	@Override
+	public void validateToken() throws YADASecurityException {
+		// nothing to do
+	}
 
-	
+	@Override
+	public String getCookie(String cookie) {
+		Cookie[] cookies = getYADARequest().getRequest().getCookies();
+		if (cookies != null) {
+			for (Cookie c : cookies) {
+				if (c.getName().equals(cookie)) {
+					return c.getValue();
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Default implementation intended for override
+	 * 
+	 * @throws YADASecurityException
+	 * 
+	 * @since 8.7.6
+	 */
+	@Override
+	public void setToken() throws YADASecurityException {
+		// nothing to do
+	}
+
+	/**
+	 * Standard mutator for variable
+	 * 
+	 * @param token
+	 *          the value of the authentication token
+	 * @throws YADASecurityException
+	 * @since 8.7.6
+	 */
+	@Override
+	public void setToken(Object token) throws YADASecurityException {
+		this.token = token;
+	}
+
+	/**
+	 * Standard accessor for variable
+	 * 
+	 * @return the value of the validated {@code NIBR521} header
+	 * @throws YADASecurityException
+	 *           when token retrieval fails
+	 * @since 8.7.6
+	 */
+	@Override
+	public Object getToken() throws YADASecurityException {
+		return this.token;
+	}
+
+	/**
+	 * Obtain token from source
+	 * 
+	 * @return the value of the validated {@code NIBR521} header
+	 * @throws YADASecurityException
+	 *           when token retrieval fails
+	 * @since 8.7.6
+	 */
+	public void obtainToken(YADARequest yReq) throws YADASecurityException {
+		// nothing to do
+	}
+
+	@Override
+	public String getHeader(String header) {
+		return getYADARequest().getRequest().getHeader(header);
+	}
+
+	/**
+	 * @return the yadaReq
+	 */
+	public YADARequest getYADARequest() {
+		return yadaReq;
+	}
+
+	/**
+	 * @param yadaReq
+	 *          the yadaReq to set
+	 */
+	public void setYADARequest(YADARequest yadaReq) {
+		this.yadaReq = yadaReq;
+	}
+
+	/**
+	 * Standard mutator for variable
+	 * 
+	 * @param yq
+	 *          the {@link YADAQuery} to which this preprocessor is attached
+	 */
+	public void setYADAQuery(YADAQuery yq) {
+		this.yq = yq;
+	}
+
+	/**
+	 * Standard accessor for variable
+	 * 
+	 * @return the {@link YADAQuery} to which this preprocessor is attached
+	 */
+	public YADAQuery getYADAQuery() {
+		return this.yq;
+	}
+
+	/**
+	 * Array mutator for variable, preferred for compatibility with
+	 * {@link javax.servlet.http.HttpServletRequest#getParameterMap()} Converts
+	 * parameter string into {@link JSONObject}
+	 * 
+	 * @param httpHeaders
+	 *          the {@link String} array originating in the
+	 *          {@link HttpServletRequest}
+	 * @throws YADARequestException
+	 *           when the header string is malformed
+	 * @since 8.5.0
+	 */
+	public void setHTTPHeaders(String[] httpHeaders) throws YADARequestException {
+		String hdrStr = httpHeaders[0];
+		Matcher m1 = Pattern.compile(RX_NOTJSON).matcher(hdrStr);
+		Map<String, String> reqHeaders = new HashMap<String, String>();
+
+		// api circumvents http request so check for null
+		if (null != getRequest()) {
+			@SuppressWarnings("unchecked")
+			Enumeration<String> hdrNames = getRequest().getHeaderNames();
+			while (hdrNames.hasMoreElements()) {
+				String name = hdrNames.nextElement();
+				reqHeaders.put(name, getRequest().getHeader(name));
+			}
+		}
+
+		if (m1.matches()) // it's a list of header names
+		{
+			String[] hdrList = hdrStr.split(",");
+			this.httpHeaders = new JSONObject();
+			for (String name : hdrList) {
+				this.httpHeaders.put(name, reqHeaders.get(name));
+			}
+		} else // it's a json object
+		{
+			try {
+				this.httpHeaders = new JSONObject(hdrStr);
+				JSONArray names = this.httpHeaders.names();
+				JSONArray vals = this.httpHeaders.toJSONArray(names);
+				for (int i = 0; i < vals.length(); i++) {
+					if (vals.optBoolean(i)) {
+						String name = names.getString(i);
+						this.httpHeaders.put(name, reqHeaders.get(name));
+					}
+				}
+			} catch (JSONException e) {
+				String msg = "The HTTPHeaders specification is not valid JSON:\n\n" + httpHeaders[0];
+				throw new YADARequestException(msg, e);
+			}
+		}
+
+	}
+
+	/**
+	 * Returns the {@code HTTPHeaders} or {@code H} parameter value as a
+	 * {@link JSONObject}
+	 * 
+	 * @return a {@link JSONObject} built from the value of the
+	 *         {@code HTTPHeaders} or {@code H} parameter value
+	 * @since 8.5.0
+	 */
+	public JSONObject getHttpHeaders() {
+		return this.httpHeaders;
+	}
+
+	/**
+	 * Returns {@code true} if {@link #httpHeaders} contains a header array entry,
+	 * otherwise {@code false}
+	 * 
+	 * @return {@code true} if {@link #httpHeaders} contains a header array entry,
+	 *         otherwise {@code false}
+	 * @since 8.5.0
+	 */
+	public boolean hasHttpHeaders() {
+		if (null == this.getHttpHeaders() || this.getHttpHeaders().length() == 0) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * @return the grant
+	 */
+	public Object getGrant() {
+		return grant;
+	}
+
+	/**
+	 * @param grant
+	 *          the grant to set
+	 */
+	public void setGrant(Object grant) {
+		this.grant = grant;
+	}
+
+	/**
+	 * @return the identity
+	 * @throws YADAExecutionException
+	 * @throws YADASecurityException
+	 * @throws YADARequestException
+	 */
+	public Object getIdentity() {
+		return identity;
+	}
+
+	/**
+	 * @param identity
+	 *          the identity to set
+	 */
+	public void setIdentity(Object identity) {
+		this.identity = identity;
+	}
+
+	/**
+	 * @return the yadaGrants
+	 */
+	public JSONObject getYadaGrants() {
+		return this.yadaGrants;
+	}
+
+	/**
+	 * @param yadaGrants
+	 *          the yadaGrants to set
+	 */
+	public void setYadaGrants(JSONObject yadaGrants) {
+		this.yadaGrants = yadaGrants;
+	}
+
+	/**
+	 * @return the request
+	 */
+	public HttpServletRequest getRequest() {
+		return this.request;
+	}
+
+	/**
+	 * @param request
+	 *          the request to set
+	 */
+	public void setRequest(HttpServletRequest request) {
+		this.request = request;
+	}
+
+	/**
+	 * @return the args
+	 */
+	public List<String> getArgs() {
+		return args;
+	}
+
+	/**
+	 * @param args
+	 *          the args to set
+	 */
+	public void setArgs(List<String> args) {
+		this.args = args;
+	}
+
+	/**
+	 * @return the tokenValidator
+	 */
+	public TokenValidator getTokenValidator() {
+		return tokenValidator;
+	}
+
+	/**
+	 * @param tokenValidator
+	 *          the tokenValidator to set
+	 */
+	public void setTokenValidator(TokenValidator tokenValidator) {
+		this.tokenValidator = tokenValidator;
+	}
+
+	/**
+	 * @return the result
+	 */
+	public String getOutcome() {
+		return outcome;
+	}
+
+	/**
+	 * @param result
+	 *          the result to set
+	 */
+	public void setOutcome(String result) {
+		this.outcome = result;
+	}
+
+	@Override
+	public void validateURL() throws YADASecurityException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void applyPolicy(SecurityPolicy securityPolicy) throws YADASecurityException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void applyPolicy() throws YADASecurityException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void applyContentPolicy() throws YADASecurityException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public List<SecurityPolicyRecord> getSecurityPolicyRecords(String arg0) throws YADASecurityException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object getSessionAttribute(String arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getValue(String arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getValue(int arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isBlacklist(String arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isWhitelist(String arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
