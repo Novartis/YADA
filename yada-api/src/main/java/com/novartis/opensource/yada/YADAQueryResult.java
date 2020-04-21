@@ -122,6 +122,13 @@ public class YADAQueryResult {
 	 */
 	public void addResult(int row, Object result) { getResults().add(row,result); }
 	/**
+	 * Replaces the result object at the index designated by {@code row}
+	 * @param row the result list index to replace
+	 * @param result the object to replace at the index
+	 * @since 8.7.6
+	 */
+	public void setResult(int row, Object result) { getResults().set(row,result); }
+	/**
 	 * Standard accessor for variable
 	 * @return the list of raw results
 	 */
