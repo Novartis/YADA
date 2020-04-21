@@ -71,6 +71,7 @@ Cypress.Commands.add('getState', () => {
 
 
 Cypress.Commands.add("isInState", (obj) => {
+    cy.log('Checking state...')
     cy.getState().its('saving').should(($val) => { stateChecker($val, obj, 'saving', false) })
     cy.getState().its('creating').should(($val) => { stateChecker($val, obj, 'checker', false) })
     cy.getState().its('renaming').should(($val) => { stateChecker($val, obj, 'renaming', false) })
@@ -95,6 +96,7 @@ Cypress.Commands.add("isInState", (obj) => {
 })
 
 Cypress.Commands.add("cleanYADAIndex",() => {
+  cy.log('Cleaning YADA index...')
   cy.exec(`psql -U yada -w -h signals-test.qdss.io -c \
           "delete from yada_query_conf where app like 'CYP%';\
            delete from yada_ug where app like 'CYP%';\
@@ -105,6 +107,7 @@ Cypress.Commands.add("cleanYADAIndex",() => {
 })
 
 Cypress.Commands.add("confirmQuerySave", (count,column,value) => {
+  cy.log('Confirming save...')
   let sql = `select row_to_json(yada_query) from yada_query where qname = 'CYP0 QNAME${count}'`
   if(typeof column !== 'undefined')
   {
@@ -117,6 +120,7 @@ Cypress.Commands.add("confirmQuerySave", (count,column,value) => {
 })
 
 Cypress.Commands.add("confirmRenameSave", (count,old,neo) => {
+  cy.log('Confirming rename saved...')
   let sql = `select row_to_json(row) from
   (select *
    From yada_query a
@@ -127,6 +131,7 @@ Cypress.Commands.add("confirmRenameSave", (count,old,neo) => {
 })
 
 Cypress.Commands.add("confirmCloneSave", (count,old,neo) => {
+  cy.log('Confirming clone saved...')
   let sql = `select row_to_json(row) from
   (select *
    From yada_query a
@@ -137,23 +142,38 @@ Cypress.Commands.add("confirmCloneSave", (count,old,neo) => {
 })
 
 Cypress.Commands.add("confirmParamSave", (count,name,value,rule,id) => {
+  cy.log('Confirming parameters saved...')
   let sql = `select row_to_json(yada_param) from yada_param where target like 'CYP0 QNAME${count}%'`
   if(typeof name !== 'undefined')
   {
-    sql = `${sql} AND name = '${name}' AND value = '${value}' AND rule = '${rule}' AND id = '${id}'`
+    sql = `${sql} AND name = '${name}' AND value = '${value}' AND rule = '${rule}' AND id = '${parseInt(id)}'`
+  }
+  let connect = `psql -U ${Cypress.env('YADA_INDEX_USER')} -w -h ${Cypress.env('YADA_INDEX_HOST')} -t -c "${sql};"`
+  cy.exec(connect)
+})
+
+Cypress.Commands.add("confirmA11nSave", (count,policy,type,qname) => {
+  cy.log('Confirming authorization data saved...')
+  let sql = `select row_to_json(yada_a11n) from yada_a11n where target like 'CYP0 QNAME${count}%'`
+  if(typeof policy !== 'undefined')
+  {
+    sql = `${sql} AND policy = '${policy}' AND type = '${type}' AND qname = '${qname}'`
   }
   let connect = `psql -U ${Cypress.env('YADA_INDEX_USER')} -w -h ${Cypress.env('YADA_INDEX_HOST')} -t -c "${sql};"`
   cy.exec(connect)
 })
 
 Cypress.Commands.add("deleteParameters", (count) => {
+  cy.log('Deleting parameters...')
   let sql = `delete from yada_param where target like 'CYP% QNAME${count}%'`
   let connect = `psql -U ${Cypress.env('YADA_INDEX_USER')} -w -h ${Cypress.env('YADA_INDEX_HOST')} -t -c "${sql};"`
   cy.exec(connect)
 })
 
 Cypress.Commands.add('save', () => {
+  cy.log('Saving...')
   return cy.get('body').type('{meta}S').wait(1000).then((val) => {
+    cy.log('Confirming state has been reset...')
     cy.getState().its('unsavedChanges').should('eq',0)
     cy.getState().its('unsavedParams').should('eq',0)
     cy.getState().its('renaming').should('eq',false)

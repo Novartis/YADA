@@ -131,24 +131,39 @@ export default {
         // only proceed if click is on different, enabled tab
         if(/.+-tab/.test(nextTab.id)
            && !nextTab.classList.contains('disabled')
-           && nextTab.id !== vm.activeTab
-           && vm.unsavedChanges > 0)
+           && nextTab.id !== vm.activeTab)
         {
-          vm.$store.commit(types.SET_NEXTTAB, nextTab.id)
-          // disable tab temporarily to prevent navigation before save
-          // this is necessary to delay 'onVisible' handler which clears state
-          // required for saving
-          nextTab.classList.add('disabled')
-          let context = 'query-edit'
-          if(/conf/.test(vm.activeTab))
+          // do stuff even if nothing changed:
+          //   close 'Security' section on query edit
+          //   done with pure js -- semantic api doesn't work here
+          //
+          //
+          const queryEditorView = document.querySelector('.query-editor-view')
+          const securityAccordion = queryEditorView.querySelector('.ui.accordion.security')          
+          securityAccordion.querySelectorAll('.active').forEach(el => {
+            el.classList.remove('active')
+          })
+
+          // stuff to do ONLY if something changed:
+          if(vm.unsavedChanges > 0)
           {
-            context = 'app'
+            vm.$store.commit(types.SET_NEXTTAB, nextTab.id)
+            // disable tab temporarily to prevent navigation before save
+            // this is necessary to delay 'onVisible' handler which clears state
+            // required for saving
+            nextTab.classList.add('disabled')
+            let context = 'query-edit'
+            if(/conf/.test(vm.activeTab))
+            {
+              context = 'app'
+            }
+            // configger and trigger modal only if real mouse click
+            // the screenx,screeny coords should only be present when actually clicking
+            // we'll see if cypress imposes it
+            if(!!e.screenX && e.screenX != 0 && !!e.screenY && e.screenY != 0)
+              vm.$store.dispatch(types.SAVE_CHANGES_CONFIRM, context)
+
           }
-          // configger and trigger modal only if real mouse click
-          // the screenx,screeny coords should only be present when actually clicking
-          // we'll see if cypress imposes it
-          if(!!e.screenX && e.screenX != 0 && !!e.screenY && e.screenY != 0)
-            vm.$store.dispatch(types.SAVE_CHANGES_CONFIRM, context)
         }
         return false
       })

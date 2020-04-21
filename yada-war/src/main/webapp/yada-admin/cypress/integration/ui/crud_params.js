@@ -260,7 +260,7 @@ context('Default Query Parameters', function() {
           it('Swaps parameter three and one', function() {
             util.testParamDnD(count,names,3,1)
           })
-        })
-      })
-    })
+        }) // swap non-adjacent
+      }) // reorder
+    }) // multiple
   })

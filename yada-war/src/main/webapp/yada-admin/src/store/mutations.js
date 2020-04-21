@@ -36,9 +36,5 @@ export default {
   [types.SET_PARAM](s,p) { s.param = p },
   [types.SET_PROPS](s,p) { s.props = p },
   [types.SET_PROTECTORS](s,p) { s.protectors = p },
-
-
-
-
-
+  [types.SET_SECCONF](s,p) { s.secconf = p }
 }

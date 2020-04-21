@@ -100,6 +100,7 @@ export default new Vuex.Store({
     // data selections
     app: null,          // app name
     config: null,       // app config
+    secconf: null,      // security config
     apps: [],           // app list
     queries: [],        // query list
     param: null,

@@ -29,7 +29,6 @@ export const SAVE = 'SAVE'
 export const SET_APP    = 'SET_APP'
 export const SET_APPS   = 'SET_APPS'
 export const SET_CONFIG = 'SET_CONFIG'
-
 export const SET_QNAME      = 'SET_QNAME'
 export const SET_QNAMEORIG  = 'SET_QNAMEORIG'
 export const SET_QUERY      = 'SET_QUERY'
@@ -38,6 +37,7 @@ export const SET_PROTECTORS = 'SET_PROTECTORS'
 export const SET_PARAM      = 'SET_PARAM'
 export const SET_PARAMS     = 'SET_PARAMS'
 export const SET_RENDEREDPARAMS = 'SET_RENDEREDPARAMS'
+export const SET_SECCONF = 'SET_SETCONF'
 
 // data actions
 export const LOAD_APP    = 'LOAD_APP'
@@ -62,5 +62,7 @@ export const DEL_QUERY_CONFIRM = 'DELETE_QUERY_CONFIRM'
 export const SAVE_CHANGES_CONFIRM = 'SAVE_CHANGES_CONFIRM'
 
 export const ADD_PARAM = 'ADD_PARAM'
+export const ADD_SECPARAM = 'ADD_SECPARAM'
+export const MOD_SECPARAM = 'MOD_SECPARAM'
 export const DEL_PARAM = 'DEL_PARAM'
 export const DEL_PARAM_CONFIRM = 'DEL_PARAM_CONFIRM'

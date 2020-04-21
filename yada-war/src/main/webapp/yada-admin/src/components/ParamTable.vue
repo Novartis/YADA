@@ -387,13 +387,23 @@ export default {
     },
   },
   computed: {
-    ...mapState(['paramlist','renderedParams','qname','unsavedChanges','confirmAction','unsavedParams']),
+    ...mapState(['paramlist','renderedParams','qname','unsavedChanges','confirmAction','unsavedParams']),  //,'secconf'
     mode() { return this.params.map(p => {return p.MODE}) },
     sortedParams() { return this.params.sort((a,b) => {return parseInt(a.ID) - parseInt(b.ID)})},
     params() { return this.renderedParams }
   },
   watch: {
-
+    // secconf(neo,old) {
+    //   if(JSON.stringify(neo) != JSON.stringify(old))
+    //   {
+    //     let secparams = this.params.filter(param => {return this.isSecurityParam(param)})
+    //     let param
+    //     if(secparams.length > 0)
+    //       param = secparams[0]
+    //
+    //
+    //   }
+    // },
     confirmAction(neo,old) {
       if(neo === null)
       {

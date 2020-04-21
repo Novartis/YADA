@@ -86,7 +86,7 @@ export default {
 .ui.selection.dropdown.active:hover,
 .ui.selection.dropdown:focus,
 .ui.selection.dropdown.active:focus {
-  border: 0px solid rgba(0,0,0,0.05) !important;
+  border: 0px solid rgba(0,0,0,0.05);
 }
 
 .main-menu .ui.vertical.menu.menu-button .menu {

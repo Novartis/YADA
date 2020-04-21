@@ -56,7 +56,9 @@
           <ParamTable ref='paramtab'/>
         </div>
       </div>
-      <h5 class="title">
+    </div>
+    <div class="ui fluid accordion security">
+      <h5 class="title secconf">
         <i class="dropdown icon"></i>
         Security Configuration
       </h5>

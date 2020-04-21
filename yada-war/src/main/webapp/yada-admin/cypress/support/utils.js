@@ -5,9 +5,9 @@ export const visit = () => {
 
 export const login = (u,p) => {
   cy.getCookies().then((cooks) => {
-    console.log(cooks)
+    // console.log(cooks)
     if(cooks.reduce((a,c) => {
-        console.log(c.name)
+        // console.log(c.name)
         return a += /yada(?:groups|jwt)/.test(c.name) ? 1 : 0
       },0) < 2)
     {
@@ -96,6 +96,7 @@ export const getFilter = () => cy.get('.filter')
 export const getFilterLabel = () => cy.get('.filter .label')
 export const getAppListItems = () => cy.get('#app-list').find('.applistitem',{timeout:10000})
 export const getQueryListItems = () => cy.get('#query-list table>tbody>tr',{timeout:10000})
+export const getDefaultSecParamPanel = () => cy.get('#query-edit-panel .secconf')
 export const hasCorrectMenuItems = () => {
   cy.getState()
   .then($state => $state.tabs[$state['activeTab'].replace(/-tab/,'')].menuitems)
@@ -286,12 +287,17 @@ export const setInvalidParameter = (count,row,type,name,value,dfault) => {
 }
 
 export const createMultipleParams = (count,names) => {
-  return setOneOfManyParameter(count,1,'boolean',names[0],'false','false')
-  .then(() => {
-    setOneOfManyParameter(count,2,'string',names[1],'testing','Change me...')
-  })
-  .then(() => {
-      setOneOfManyParameter(count,3,'number',names[2],'-1','20')
+  return cy.get(`.params>table>tbody>tr`).its('length').then((rows) => {
+    if(rows == names.length)
+    {
+      setOneOfManyParameter(count,1,'boolean',names[0],'false','false')
+      .then(() => {
+        setOneOfManyParameter(count,2,'string',names[1],'testing','Change me...')
+      })
+      .then(() => {
+          setOneOfManyParameter(count,3,'number',names[2],'-1','20')
+      })
+    }
   })
 }
 
@@ -314,6 +320,7 @@ export const testParameterDeletion = (count,names,row) => {
                 const reso = result.stdout.replace(/\n/g,',')
                 const array  = JSON.parse(`[${reso}]`)
                 cy.wrap(Array.isArray(array)).should('eq',true)
+                console.log(array)
                 cy.wrap(array).should('have.length',2)
                 cy.wrap(array[0].name).should('eq',row != 1 ? names[0] : names[1])
                 cy.wrap(array[1].name).should('eq',row != 3 ? names[2] : names[1])
@@ -372,6 +379,147 @@ export const testParamDnD = (count,names,src,tgt) => {
           cy.wrap(array.filter(o => o.id == 2)[0].name).should('eq',names[2])
           cy.wrap(array.filter(o => o.id == 3)[0].name).should('eq',names[1])
         }
+      })
+    })
+  })
+}
+
+// add security plugin
+export const addSecPlugin = (pl) => {
+  return cy.get('.security input[name="plugin"]').then((el) => {
+    let input = cy.wrap(el).then(() => {
+      input.should('have.value', '')
+      input.type(pl)
+    })
+  })
+}
+
+// add security policy
+export const addSecPolicy = (policy,type,query,config) => {
+  cy.get(`.security .${policy}-policy`).click()
+  cy.get(`.security .${policy}-policy .item`).contains(type).click()
+  let prop = `query`
+  if (policy == 'authorization')
+  {
+    prop = `grant`
+  }
+  cy.get(`.security input[name="${policy}.policy.${prop}"]`).type(query)
+  if(typeof config !== 'undefined' && config !== null)
+  {
+    cy.get(`.security input[name="${policy}.policy.config"]`).type(config)
+  }
+}
+
+// confirm authorization policy is readonly
+export const confirmSecPolicyRO = (policy) => {
+  cy.log(`Confirming ${policy} policy is read-only...`)
+  let prop = 'query'
+  if(policy == 'authorization')
+    prop = 'grant'
+  cy.get(`.security .${policy}-policy`).click()
+  cy.get(`.security .${policy}-policy .item`).contains('whitelist').should('have.class','disabled')
+  cy.get(`.security input[name="${policy}.policy.${prop}"]`).should('have.attr','readonly')
+  if(policy == 'execution')
+    cy.get(`.security input[name="${policy}.policy.config"]`).should('have.attr','readonly')
+}
+
+// save and confirm save of sec param
+export const confirmSecPlugin = (count, param, value, policy, type, qname) => {
+  cy.log(`Saving and confirming ${typeof policy === 'undefined' ? '' : policy} policy in parameter ${param}...`)
+  cy.getState().its('unsavedChanges').should('be.gt',0)
+  cy.getState().its('unsavedParams').should('be.gt',0)
+  cy.get('.params>table>tbody>tr',{timeout:10000}).its('length').should('be.gt',0)
+  cy.get('.background.unsaved').should('exist')
+  cy.getState().its('renderedParams').its('length').should('be.gt',0)
+  cy.getState().its('renderedParams').its(param).its('VALUE').should('eq',value)
+  cy.save().then(() => {
+
+    cy.confirmParamSave(count,'pl',value,'1',param+1).then(result => {
+      const reso = JSON.parse(result.stdout)
+      cy.wrap(Array.isArray(reso)).should('eq',false)
+      cy.wrap(typeof reso).should('eq','object')
+      cy.wrap(reso).its('value').should('eq',value)
+    })
+    if(typeof policy !== 'undefined')
+    {
+      cy.confirmA11nSave(count,policy, type, qname)
+    }
+  })
+}
+
+export const confirmSecLoadAfterSave = (count,param,value) => {
+  const qname = `QNAME${count}`
+  getAppsTab().click()
+  .then(() => {
+    cy.get('#app-list').contains('.applistitem',`CYP0`)
+    .then($el => {
+      cy.wrap($el[0]).click().then(() => {
+        cy.get('.query-list > tbody > tr').contains('td:first-child()', qname)
+        .then($el => {
+          cy.wrap($el[0]).click().then(() => {
+            getDefaultSecParamPanel().click().then(() => {
+              cy.getState().its('renderedParams').its(param).its('VALUE').should('eq',value)
+              cy.getState().its('renderedParams').then(val => {
+                console.log(val)
+                let value   = val[param].VALUE
+                let secconf = value.split(/,/).reduce((a,c) => {
+                  let pair = c.split(/=/)
+                  if(pair.length == 1)
+                    a['plugin'] = pair[0]
+                  else
+                    a[pair[0]] = pair[1]
+                  return a
+                },{})
+                cy.get('input[name="plugin"]').should('have.value',secconf['plugin'])
+                if('auth.path.rx' in secconf)
+                  cy.get('input[name="auth.path.rx"]').should('have.value',secconf['auth.path.rx'])
+                console.log(secconf)
+                if('authorization.policy.grant' in secconf)
+                {
+                  cy.wrap(val[param]).its('POLICY').should('eq','A')
+                  cy.get('input[name="authorization.policy.type"]').should('have.value',val[param].TYPE)
+                  cy.get('.authorization-policy>div:first').should('have.text', val[param].TYPE)
+                  cy.get('input[name="authorization.policy.grant"]').should('have.value',secconf['authorization.policy.grant'])
+
+                  cy.wrap(value).should('contain','execution.policy=void')
+                  cy.get('input[name="execution.policy.type"]').should('have.value','')
+                  cy.get('.execution-policy>div:first').should('be.empty')
+                  cy.get('input[name="execution.policy.query"]').should('be.empty')
+                  cy.get('input[name="execution.policy.config"]').should('be.empty')
+                }
+                else
+                {
+                  cy.wrap(val[param]).its('POLICY').should('eq','E')
+                  cy.get('input[name="authorization.policy.type"]').should('be.empty')
+                  cy.get('.authorization-policy>div:first').should('be.empty')
+                  cy.get('input[name="authorization.policy.grant"]').should('be.empty')
+                }
+                if('execution.policy' in secconf)
+                {
+                  // cy.wrap(val[param]).its('POLICY').should('eq','E')
+                  cy.wrap(value).should('contain','execution.policy=void')
+                  cy.get('input[name="execution.policy.type"]').should('have.value','')
+                  cy.get('.execution-policy>div:first').should('be.empty')
+                  cy.get('input[name="execution.policy.query"]').should('be.empty')
+                  cy.get('input[name="execution.policy.config"]').should('be.empty')
+                }
+                if('execution.policy.columns' in secconf)
+                {
+                  cy.wrap(val[param]).its('POLICY').should('eq','E')
+                  cy.wrap(value).should('contain','execution.policy.columns')
+                  cy.get('input[name="execution.policy.type"]').should('have.value',val[param].TYPE)
+                  cy.get('.execution-policy>div:first').should('have.text',val[param].TYPE)
+                  cy.get('input[name="execution.policy.query"]').should('have.value',val[param].QNAME)
+                  cy.get('input[name="execution.policy.config"]').should('have.value',secconf['execution.policy.columns'])
+
+                  cy.get('input[name="authorization.policy.type"]').should('be.empty')
+                  cy.get('.authorization-policy>div:first').should('be.empty')
+                  cy.get('input[name="authorization.policy.grant"]').should('be.empty')
+                }
+              })
+            })
+          })
+        })
       })
     })
   })

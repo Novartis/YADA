@@ -37,6 +37,7 @@ export default {
     commit(types.SET_RENDEREDPARAMS, [])
     commit(types.SET_PROPS, [])
     commit(types.SET_PROTECTORS, [])
+    commit(types.SET_SECCONF, null)
 
     commit(types.SET_UNSAVEDPARAMS, 0)
     // UNSAVEDCHANGES = 0 must be last
@@ -59,6 +60,7 @@ export default {
     commit(types.SET_RENDEREDPARAMS, [])
     commit(types.SET_PROPS, [])
     commit(types.SET_PROTECTORS, [])
+    commit(types.SET_SECCONF, null)
 
     commit(types.SET_UNSAVEDPARAMS, 0)
     // UNSAVEDCHANGES = 0 must be last
@@ -79,6 +81,7 @@ export default {
     commit(types.SET_RENDEREDPARAMS, [])
     commit(types.SET_PROPS, [])
     commit(types.SET_PROTECTORS, [])
+    commit(types.SET_SECCONF, null)
 
     commit(types.SET_UNSAVEDPARAMS, 0)
     // UNSAVEDCHANGES = 0 must be last
@@ -175,12 +178,8 @@ export default {
       j.push({qname:'YADA new app admin', DATA:[{APP:app,USERID:state.loggeduser}]})
 
       return this._vm.$yada.jp(j)
-        .then(function(resp) {
-          dispatch(types.LOAD_APP,null)
-        })
-        .then(function(resp) {
-          dispatch(types.LOAD_APP,app)
-        })
+        .then(() => { dispatch(types.LOAD_APP,null) })
+        .then(() => { dispatch(types.LOAD_APP,app)  })
         .finally(function(resp) {
           commit(types.SET_UNSAVEDCHANGES, 0)
           commit(types.SET_SAVING,false)
@@ -212,7 +211,7 @@ export default {
 
     // build the jsonparams
     let j = []
-    selects.forEach(q => j.push({qname:q,DATA:[{target:state.qname}]}))
+    selects.forEach(q => j.push({qname:q,DATA:[{target:state.qname,app:state.app}]}))
 
     this._vm.$yada.jp(j).then(resp => {
       let r = resp.data.RESULTSETS
@@ -223,7 +222,52 @@ export default {
       commit(types.SET_PARAMS, params)
       commit(types.SET_RENDEREDPARAMS, params)
       commit(types.SET_PROPS, props)
+      // we set prots here, but we also pull prot values below from params
+      // because they're joined in
       commit(types.SET_PROTECTORS, prots)
+
+      let secparams = params.filter(el => el.SPP == 'true')
+      let conf = {
+        "plugin": "",
+        "auth.path.rx": "",
+        "authorization.policy.type": "",
+        "authorization.policy.grant": "",
+        "execution.policy.type": "",
+        "execution.policy.query": "",
+        "execution.policy.config": "",
+        "content.policy.predicate": ""
+      }
+      if(secparams.length > 0)
+      {
+        let secparam = secparams[0]
+        conf =  secparam['VALUE'].split(/,/).reduce((a,c) => {
+          if(/=/.test(c))
+          {
+            let pair = c.split(/=/)
+            if(/columns|indices|indexes/.test(pair[0]))
+              a[pair[0].replace(/columns|indices|indexes/,'config')] = pair[1]
+            else
+              a[pair[0]] = pair[1]
+          }
+          else
+          {
+            a['plugin'] = c
+          }
+          return a
+        },{})
+
+        if(secparam['POLICY'] == 'E')
+        {
+          conf['execution.policy.type'] = secparam['TYPE']
+          conf['execution.policy.query'] = secparam['QNAME']
+        }
+        else if(secparam['POLICY'] == 'A')
+        {
+          conf['authorization.policy.type'] = secparam['TYPE']
+          conf['authorization.policy.grant'] = secparam['QNAME']
+        }
+      }
+      commit(types.SET_SECCONF, conf)
     })
   },
 
@@ -294,13 +338,18 @@ export default {
           }
         })
       )
+      if(state.renderedParams.filter(el => el.SPP == 'true').length > 0)
+      {
+        qnames.push('YADA insert protector for target')
+        payloads.push(state.protectors)
+      }
     }
 
     j = prepareQueries(qnames,payloads)
     let updateQuery = j.filter(q => q.qname == 'YADA update query')[0]
     let updateParams = j.filter(q => q.qname == 'YADA insert default param')[0]
     let updateProps = j.filter(q => q.qname == 'YADA update prop')[0]
-    let updateProtectors = j.filter(q => q.qname == 'YADA update protector for target')[0]
+    let updateProtectors = j.filter(q => q.qname == 'YADA insert protector for target')[0]
     promises.push(this._vm.$yada.jp([updateQuery]))
     if(typeof updateParams !== 'undefined')
       promises.push(this._vm.$yada.jp([updateParams]))
@@ -309,6 +358,12 @@ export default {
     if(typeof updateProtectors !== 'undefined')
       promises.push(this._vm.$yada.jp([updateProtectors]))
     return Promise.all(promises)
+    // .finally(() => {
+    //   commit(types.SET_UNSAVEDCHANGES, 0)
+    //   commit(types.SET_UNSAVEDPARAMS, 0)
+    //   commit(types.SET_SAVING, false)
+    //   commit(types.SET_SECCONF, null)
+    // },500)
   },
   /**
    *  See flow chart: https://drive.google.com/file/d/1Y4H8-AQLNBs0d8UZY83qfzm_DOmTh6tk/view?usp=sharing
@@ -347,8 +402,8 @@ export default {
       if(hasProtectors)
       {
         prots = state.protectors.map(p => {
-          p['TARGET'] = qname;
-          p['QNAME'] = state.protectors[0].qname
+          // p['TARGET'] = qname;
+          p['APP'] = state.protectors[0].app
           return p
         })
       }
@@ -362,23 +417,41 @@ export default {
 
     if(state.creating || state.renaming || state.cloning)
     {
+      // prepare params
+      if(state.creating)
+      {
+        params = state.renderedParams.map(p => {
+          return {
+            TARGET: qname,
+            ID: p.ID,
+            NAME: p.NAME,
+            VALUE: p.VALUE,
+            RULE: p.RULE,
+            APP: state.app
+          }
+        })
+        commit(types.SET_PARAMS,params)
+      }
+
       // prepare query payloads
       qnames = [
         'YADA new query',
         'YADA insert default param',
+        'YADA insert protector for target'
       ]
       payloads = [
         state.query,
-        state.params
+        state.params,
+        state.protectors
       ]
 
       if(state.renaming || state.cloning)
       {
         // include properties and protectors if renaming or cloning
         qnames.push('YADA insert prop')
-        qnames.push('YADA insert protector for target')
+        // qnames.push('YADA insert protector for target')
         payloads.push(state.props)
-        payloads.push(state.protectors)
+        // payloads.push(state.protectors)
       }
 
       // prepare jsonparams
@@ -396,7 +469,7 @@ export default {
             promises.push(this._vm.$yada.jp(insertParams))
           if(typeof insertProps !== 'undefined' && insertProps.length > 0)
             promises.push(this._vm.$yada.jp(insertProps))
-          if(typeof insertProtectors !== 'undefined' && insertProtectors > 0)
+          if(typeof insertProtectors !== 'undefined' && insertProtectors.length > 0)
             promises.push(this._vm.$yada.jp(insertProtectors))
           // execute inserts
           return Promise.all(promises)
@@ -427,6 +500,7 @@ export default {
                 commit(types.SET_CREATING, false)
                 commit(types.SET_CLONING, false)
                 commit(types.SET_RENAMING, false)
+                // commit(types.SET_SECCONF, null)
                 clearInterval(int)
               // }
             },200)
@@ -442,6 +516,7 @@ export default {
           commit(types.SET_CREATING, false)
           commit(types.SET_CLONING, false)
           commit(types.SET_RENAMING, false)
+          // commit(types.SET_SECCONF, null)
         }
       })
     }
@@ -449,25 +524,24 @@ export default {
     {
       if(state.unsavedParams > 0)
       {
-        qnames = ['YADA delete default params for target']
-        payloads = [{
-          TARGET: state.qname,
-          APP: state.app
-        }]
+        qnames = ['YADA delete default params for target','YADA delete protector for target']
+        let pload = {TARGET: state.qname,APP: state.app}
+        payloads = [pload,pload]
         j = prepareQueries(qnames,payloads)
         return this._vm.$yada.jp(j)
         .then(() => {
           return dispatch(types.MOD_QUERY)
-        })
-        .catch((err) => {
-          // error handling
-        })
-        .finally(() => {
-          setTimeout(() => {
-            commit(types.SET_UNSAVEDCHANGES, 0)
-            commit(types.SET_UNSAVEDPARAMS, 0)
-            commit(types.SET_SAVING, false)
-          },500)
+          .catch((err) => {
+            // error handling
+          })
+          .finally(() => {
+            setTimeout(() => {
+              commit(types.SET_UNSAVEDCHANGES, 0)
+              commit(types.SET_UNSAVEDPARAMS, 0)
+              commit(types.SET_SAVING, false)
+              // commit(types.SET_SECCONF, null)
+            },500)
+          })
         })
       }
       else
@@ -481,10 +555,81 @@ export default {
             commit(types.SET_UNSAVEDCHANGES, 0)
             commit(types.SET_UNSAVEDPARAMS, 0)
             commit(types.SET_SAVING, false)
+            // commit(types.SET_SECCONF, null)
           },500)
         })
       }
     }
+  },
+
+  [types.ADD_SECPARAM]({state,commit}) {
+    let conf = state.secconf
+    let arg  = conf.plugin
+    let max = state.renderedParams.length == 0 ? 0 : Math.max(...state.renderedParams.map(p => parseInt(p.ID)))
+    let row = {'TARGET':state.qname,'ID': (max + 1), 'NAME':'pl','VALUE':arg,'RULE':1, 'SPP': 'true'}
+    let renderedParams = state.renderedParams
+    renderedParams.push(row)
+
+    let policy  = conf['authorization.policy.grant'] !== '' ? 'A' : 'E'
+    let poltype = policy == 'A' ? 'authorization' : 'execution'
+    let polprop = policy == 'A' ? 'grant' : 'query'
+    let qname   = conf[`${poltype}.policy.${polprop}`]
+    let type    = conf[`${poltype}.policy.type`]
+    let protector = {'TARGET':state.qname,'POLICY':policy,'QNAME':qname,'TYPE':type}
+    let protectors = state.protectors == null ? [] : state.protectors
+    protectors.push(protector)
+
+    commit(types.SET_PROTECTORS, protectors)
+    commit(types.SET_RENDEREDPARAMS,renderedParams)
+    commit(types.SET_UNSAVEDCHANGES,state.unsavedChanges+1)
+    commit(types.SET_UNSAVEDPARAMS,state.unsavedParams+1)
+  },
+
+  [types.MOD_SECPARAM]({state,commit}) {
+    let conf = state.secconf
+    let plugin  = conf.plugin
+    let authurl = conf['auth.path.rx'] == '' ? '' : `,auth.path.rx=${conf['auth.path.rx']}`
+    let execPol = '', content = '', authPol = ''
+
+    if(conf['authorization.policy.grant'] != ''
+        || conf['execution.policy.config'] != ''
+        || conf['content.policy'] != '')
+    {
+      authPol =  conf['authorization.policy.grant'] == '' ? '' : `,authorization.policy.grant=${conf['authorization.policy.grant']}`
+      execPol =  ',execution.policy'
+                      + (conf['execution.policy.config'] == ''
+                        ? '=void'
+                        : (conf['execution.policy.config'].split(/ /).every(el => /\d+(?:\:.+)?/.test(el))
+                           ? '.indexes'
+                           : '.columns')
+                           + `=${conf['execution.policy.config']}`)
+      content = ',content.policy' + (conf['content.policy.predicate'] == '' ? '=void' : `.predicate=${conf['content.policy.predicate']}`)
+    }
+
+    let arg     = `${plugin}${authurl}${authPol}${execPol}${content}`
+    // let max = state.renderedParams.length == 0 ? 0 : Math.max(...state.renderedParams.map(p => parseInt(p.ID)))
+    // let row = {'TARGET':state.qname,'ID': (max + 1), 'NAME':'pl','VALUE':arg,'RULE':1}
+    let renderedParams = state.renderedParams
+    renderedParams.forEach(el => {
+      if(el.SPP == 'true')
+      {
+        el.VALUE = arg
+      }
+    })
+
+    let policy  = conf['authorization.policy.grant'] !== '' ? 'A' : 'E'
+    let poltype = policy == 'A' ? 'authorization' : 'execution'
+    let polprop = policy == 'A' ? 'grant' : 'query'
+    let qname   = conf[`${poltype}.policy.${polprop}`]
+    let type    = conf[`${poltype}.policy.type`]
+    let protector = {'TARGET':state.qname,'POLICY':policy,'QNAME':qname,'TYPE':type,'APP':state.app}
+    let protectors = []
+    protectors.push(protector)
+
+    commit(types.SET_PROTECTORS, protectors)
+    commit(types.SET_RENDEREDPARAMS,renderedParams)
+    commit(types.SET_UNSAVEDCHANGES,state.unsavedChanges+1)
+    commit(types.SET_UNSAVEDPARAMS,state.unsavedParams+1)
   },
 
   [types.ADD_PARAM]({state,commit}) {
@@ -532,6 +677,7 @@ export default {
     }
     commit(types.SET_QNAME, qname)
     commit(types.SET_QUERY, query)
+    commit(types.SET_SECCONF, null)
     // this next line can't happen here because it triggers the click handler in App.vue
     // commit(types.SET_UNSAVEDCHANGES, state.unsavedChanges+1)
   },
@@ -597,10 +743,18 @@ export default {
       return phash != paramhash
     })
 
+    let protectors = []
+    // currently only one secconf per query so no need to check anything else
+    if(state.param.SPP == 'true')
+    {
+      protectors = state.protectors.filter(el => el.TARGET !== state.param.TARGET)
+    }
+
     commit(types.SET_CONFIRMACTION,null)
     commit(types.SET_PARAM,null)
     commit(types.SET_CONFIRM,null)
     commit(types.SET_RENDEREDPARAMS, renParams)
+    commit(types.SET_PROTECTORS, protectors)
     commit(types.SET_UNSAVEDCHANGES, state.unsavedChanges+1)
     commit(types.SET_UNSAVEDPARAMS, state.unsavedParams+1)
 
