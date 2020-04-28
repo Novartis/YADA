@@ -4,6 +4,7 @@
 package com.novartis.opensource.yada.plugin;
 
 import com.novartis.opensource.yada.Finder;
+import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADASecurityException;
 
 import net.sf.ehcache.Cache;
@@ -17,9 +18,80 @@ import net.sf.ehcache.Element;
 
 public interface Authorization {
 
+	/**
+	 * Constant with value: {@value}
+	 *
+	 * @since 2.0
+	 */
+	public final static String JWSKEY = "jws.key";
+
+	/**
+	 * Constant with value: {@value}
+	 *
+	 * @since 2.0
+	 */
+	public final static String JWTISS = "jwt.iss";
+
 	// --------------------------------------------------------------------------------
 	// TODO: Change these to system properties
 	// --------------------------------------------------------------------------------
+
+	/**
+	 * Constant with value: {@value}
+	 *
+	 * @since 8.7.6
+	 */
+	public final static String YADA_IDENTITY_SUB = "sub";
+
+	/**
+	 * Constant with value: {@value}
+	 *
+	 * @since 8.7.6
+	 */
+	public final static String YADA_IDENTITY_APP = "app";
+
+	/**
+	 * Constant with value: {@value}
+	 *
+	 * @since 8.7.6
+	 */
+	public final static String YADA_IDENTITY_ID = "identity";
+
+	/**
+	 * Constant with value: {@value}
+	 *
+	 * @since 8.7.6
+	 */
+	public final static String YADA_IDENTITY_KEY = "key";
+
+	/**
+	 * Constant with value: {@value}
+	 *
+	 * @since 8.7.6
+	 */
+	public final static String YADA_IDENTITY_KEYS = "keys";
+
+	/**
+	 * Constant with value: {@value}
+	 *
+	 * @since 8.7.6
+	 */
+	public final static String YADA_IDENTITY_TKN = "token";
+
+	/**
+	 * Constant with value: {@value}
+	 *
+	 * @since 8.7.6
+	 */
+	public final static String YADA_IDENTITY_GRANTS = "grants";
+
+	/**
+	 * Constant with value: {@value}
+	 *
+	 * @since 8.7.6
+	 */
+	public final static String YADA_IDENTITY_IAT = "iat";
+
 	/**
 	 * Constant equal to: {@value}
 	 */
@@ -50,6 +122,54 @@ public interface Authorization {
 	 */
 	public final static Integer YADA_GROUP_TTL = 119;
 
+	/**
+	 * Constant with value: {@value}
+	 *
+	 * @since 3.0
+	 */
+	public final static String AUTH_TYPE_WHITELIST = "whitelist";
+
+	// --------------------------------------------------------------------------------
+
+	/**
+	 * Constant equal to {@value}
+	 * 
+	 * @since 8.7.6
+	 */
+	public final static String RX_HDR_AUTH_USR_PREFIX = "(Basic)(.+?)([A-Za-z0-9\\-\\._~\\+\\/]+=*)";
+
+	/**
+	 * Constant equal to {@value}
+	 * 
+	 * @since 8.7.6
+	 */
+	public final static String RX_HDR_AUTH_USR_CREDS = "(.+)[:=](.+)";
+
+	/**
+	 * Constant equal to {@value} Formerly: (Bearer)(.+?)([a-zA-Z0-9-_.]{5,})
+	 * 
+	 * @since 8.7.6
+	 */
+	public final static String RX_HDR_AUTH_TKN_PREFIX = "(Bearer)(.+?)([A-Za-z0-9\\-\\._~\\+\\/]+=*)";
+
+	// --------------------------------------------------------------------------------
+	// TODO: Make these YADA queries?
+	// --------------------------------------------------------------------------------
+
+	/**
+	 * Constant equal to {@value}. The query executed to evaluate authorization.
+	 */
+	public final static String YADA_LOGIN_QUERY = "SELECT a.app \"APP\", a.userid \"USERID\", a.role \"ROLE\" "
+	    + "FROM yada_ug a JOIN yada_user b on a.userid = b.userid where b.userid = ? and b.pw = ? order by a.app";
+
+	/**
+	 * Constant equal to {@value}. The query executed to evaluate authorization.
+	 */
+	public final static String YADA_A11N_QUERY = "SELECT DISTINCT a.target, a.policy, a.type, a.qname "
+	    + "FROM YADA_A11N a " // join YADA_QUERY b on (a.target = b.qname OR
+	                          // a.target = b.app) "
+	    + "WHERE a.target = ?";
+
 	// --------------------------------------------------------------------------------
 
 	/**
@@ -64,6 +184,11 @@ public interface Authorization {
 	 * Authorization of query use for given context
 	 */
 	public void authorize() throws YADASecurityException;
+
+	/**
+	 * Confirm token is valid and user possesses necessary grants
+	 */
+	public void authorizeRequest(YADARequest yadaReq, String result) throws YADASecurityException;
 
 	/**
 	 * Write to the IAM cache

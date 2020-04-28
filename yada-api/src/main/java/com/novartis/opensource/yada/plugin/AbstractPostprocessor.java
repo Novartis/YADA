@@ -1,5 +1,6 @@
 /**
  * Copyright 2016 Novartis Institutes for BioMedical Research Inc.
+
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,7 +32,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.novartis.opensource.yada.YADAExecutionException;
 import com.novartis.opensource.yada.YADAQuery;
 import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADARequestException;
@@ -42,28 +42,13 @@ import com.novartis.opensource.yada.YADASecurityException;
  * @since 0.4.2 Preprocess, Validation, Authorization, TokenValidator,
  *        ExecutionPolicy, ContentPolicy
  */
-public abstract class AbstractPostprocessor
-    implements Postprocess, ContentPolicy, Validation, Authorization, TokenValidator {
+public abstract class AbstractPostprocessor implements Postprocess, Authorization, TokenValidator {
 	// implements ExecutionPolicy, ContentPolicy {
 
 	/**
 	 * A constant equal to {@value} for handling param value syntax
 	 */
 	private static final String RX_NOTJSON = "^[^{].+$";
-
-	/**
-	 * Constant with value: {@value}
-	 *
-	 * @since 2.0
-	 */
-	protected final static String JWSKEY = "jws.key";
-
-	/**
-	 * Constant with value: {@value}
-	 *
-	 * @since 2.0
-	 */
-	protected final static String JWTISS = "jwt.iss";
 
 	/**
 	 * Constant with value: {@value}
@@ -137,28 +122,6 @@ public abstract class AbstractPostprocessor
 	private HttpServletRequest request;
 
 	/**
-	 * Contains the user identity data from authority
-	 */
-	private Object identity = new Object();
-
-	/**
-	 * Contains the conditions specified in A11N.
-	 * 
-	 * TODO: rename qualifier, condition, role, ... ?
-	 */
-	private JSONObject yadaGrants = new JSONObject();
-
-	/**
-	 * Contains the user grant from authority
-	 */
-	private Object grant = new Object();
-
-	/**
-	 * Contains the query result from authority
-	 */
-	private String outcome = new String();
-
-	/**
 	 * Null implementation
 	 * 
 	 * @see com.novartis.opensource.yada.plugin.Postprocess#engage(com.novartis.opensource.yada.YADAQuery)
@@ -168,10 +131,7 @@ public abstract class AbstractPostprocessor
 		/* nothing to do */ }
 
 	/**
-	 * Base implementation, calls {@link #setYADARequest(YADARequest)},
-	 * {@link #setRequest(HttpServletRequest)}, {@link #setOutcome(String)},
-	 * {@link #specifyYADACredentials(YADARequest)} and returns
-	 * {@link #getOutcome()}
+	 * Base implementation returns {@code #result}
 	 * 
 	 * @throws YADAPluginException
 	 *           when there is a processing error
@@ -180,38 +140,27 @@ public abstract class AbstractPostprocessor
 	 */
 	@Override
 	public String engage(YADARequest yadaReq, String result) throws YADAPluginException {
-		setYADARequest(yadaReq);
-		setRequest(yadaReq.getRequest());
-		setOutcome(result);
-		specifyYADACredentials(yadaReq);
-
-		// return the query result or other string
-		return getOutcome();
-	}
-
-	/**
-	 * Override in subclasses to store credentials specified in request
-	 * 
-	 * @since 8.7.6
-	 */
-	public void specifyYADACredentials(YADARequest yReq) throws YADASecurityException {
-		/* nothing to do */
+		// return the query result
+		return result;
 	}
 
 	/**
 	 * Convenience method with calls {@link #validateToken()},
-	 * {@link #authorize()},
+	 * {@link #authorize(String)},
 	 * 
 	 * @since 8.7.6
 	 */
 	@Override
-	public void validateYADARequest() throws YADASecurityException {
+	public void authorizeRequest(YADARequest yadaReq, String result) throws YADASecurityException {
+
+		// default impl does nothing - override in authorizer plugin
+		obtainToken(yadaReq);
 
 		// default impl does nothing - override in authorizer plugin
 		validateToken();
 
 		// default impl does nothing - override in authorizer plugin
-		authorize(getOutcome());
+		authorize(result);
 
 	}
 
@@ -249,7 +198,7 @@ public abstract class AbstractPostprocessor
 		// nothing to do
 	}
 
-	@Override
+	// TODO: comment on this....
 	public String getCookie(String cookie) {
 		Cookie[] cookies = getYADARequest().getRequest().getCookies();
 		if (cookies != null) {
@@ -300,19 +249,7 @@ public abstract class AbstractPostprocessor
 		return this.token;
 	}
 
-	/**
-	 * Obtain token from source
-	 * 
-	 * @return the value of the validated {@code NIBR521} header
-	 * @throws YADASecurityException
-	 *           when token retrieval fails
-	 * @since 8.7.6
-	 */
-	public void obtainToken(YADARequest yReq) throws YADASecurityException {
-		// nothing to do
-	}
-
-	@Override
+	// TODO: comment on this....
 	public String getHeader(String header) {
 		return getYADARequest().getRequest().getHeader(header);
 	}
@@ -352,6 +289,10 @@ public abstract class AbstractPostprocessor
 	}
 
 	/**
+	 * 
+	 * TODO: Move this to a utility class or abstract superclass (also in
+	 * AbstractPreprocessor)
+	 * 
 	 * Array mutator for variable, preferred for compatibility with
 	 * {@link javax.servlet.http.HttpServletRequest#getParameterMap()} Converts
 	 * parameter string into {@link JSONObject}
@@ -433,54 +374,6 @@ public abstract class AbstractPostprocessor
 	}
 
 	/**
-	 * @return the grant
-	 */
-	public Object getGrant() {
-		return grant;
-	}
-
-	/**
-	 * @param grant
-	 *          the grant to set
-	 */
-	public void setGrant(Object grant) {
-		this.grant = grant;
-	}
-
-	/**
-	 * @return the identity
-	 * @throws YADAExecutionException
-	 * @throws YADASecurityException
-	 * @throws YADARequestException
-	 */
-	public Object getIdentity() {
-		return identity;
-	}
-
-	/**
-	 * @param identity
-	 *          the identity to set
-	 */
-	public void setIdentity(Object identity) {
-		this.identity = identity;
-	}
-
-	/**
-	 * @return the yadaGrants
-	 */
-	public JSONObject getYadaGrants() {
-		return this.yadaGrants;
-	}
-
-	/**
-	 * @param yadaGrants
-	 *          the yadaGrants to set
-	 */
-	public void setYadaGrants(JSONObject yadaGrants) {
-		this.yadaGrants = yadaGrants;
-	}
-
-	/**
 	 * @return the request
 	 */
 	public HttpServletRequest getRequest() {
@@ -525,78 +418,9 @@ public abstract class AbstractPostprocessor
 		this.tokenValidator = tokenValidator;
 	}
 
-	/**
-	 * @return the result
-	 */
-	public String getOutcome() {
-		return outcome;
-	}
-
-	/**
-	 * @param result
-	 *          the result to set
-	 */
-	public void setOutcome(String result) {
-		this.outcome = result;
-	}
-
-	@Override
-	public void validateURL() throws YADASecurityException {
+	public void obtainToken(YADARequest yReq) throws YADASecurityException {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
-	public void applyPolicy(SecurityPolicy securityPolicy) throws YADASecurityException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void applyPolicy() throws YADASecurityException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void applyContentPolicy() throws YADASecurityException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public List<SecurityPolicyRecord> getSecurityPolicyRecords(String arg0) throws YADASecurityException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object getSessionAttribute(String arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getValue(String arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getValue(int arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean isBlacklist(String arg0) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isWhitelist(String arg0) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }

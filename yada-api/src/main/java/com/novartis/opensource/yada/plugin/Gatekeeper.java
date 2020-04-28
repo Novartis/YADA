@@ -46,6 +46,7 @@ import org.json.JSONObject;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.novartis.opensource.yada.ConnectionFactory;
 import com.novartis.opensource.yada.Finder;
 import com.novartis.opensource.yada.JSONParams;
@@ -126,13 +127,6 @@ public class Gatekeeper extends AbstractPreprocessor {
 	 */
 	protected static final String RX_IDX_INJECTION = "(([0-9]+):)?(get[A-Z][a-zA-Z0-9_]+\\([A-Za-z0-9_]*\\))";
 
-	/**
-	 * Constant equal to {@value}
-	 * 
-	 * @since 8.7.6
-	 */
-	protected static final String RX_HDR_AUTH_TKN_PREFIX = "(Bearer)(.+?)([a-zA-Z0-9-_.]{5,})";
-
 	// --------------------------------------------------------------------------------
 	// TODO: Change these to system properties
 	// --------------------------------------------------------------------------------
@@ -149,7 +143,51 @@ public class Gatekeeper extends AbstractPreprocessor {
 	 */
 	public final static String YADA_CK_TKN = "yadajwt";
 
+	/**
+	 * Constant with value: {@value} SourceExchanger plugin reference
+	 * 
+	 * @since 1.0
+	 */
+	private final static String SOURCE_EXCHANGER = "SourceExchanger";
+
 	// --------------------------------------------------------------------------------
+
+	/**
+	 * Contains the list of allow qualifiers from A11N
+	 */
+	private ArrayList<String> allowList = new ArrayList<String>();
+
+	/**
+	 * Contains the list of deny qualifiers from A11N
+	 */
+	private ArrayList<String> denyList = new ArrayList<String>();
+
+	/**
+	 * Contains the user identity data from authority
+	 */
+	private Object identity = new Object();
+
+	/**
+	 * Contains the token user
+	 */
+	private Object sub = new Object();
+
+	/**
+	 * Contains the conditions specified in A11N.
+	 * 
+	 * TODO: rename qualifier, condition, role, ... ?
+	 */
+	private JSONObject locks = new JSONObject();
+
+	/**
+	 * Contains the user grant from authority
+	 */
+	private Object grant = new Object();
+
+	/**
+	 * Contains the list of groups for Content Policy
+	 */
+	private ArrayList<String> ships = new ArrayList<String>();
 
 	/**
 	 * Validates the request host, user, security params, and security query
@@ -165,9 +203,9 @@ public class Gatekeeper extends AbstractPreprocessor {
 	 */
 
 	@Override
-	public void engage(YADARequest yReq, YADAQuery yq) throws YADAPluginException, YADASecurityException {
+	public void engage(YADARequest yadaReq, YADAQuery yq) throws YADAPluginException, YADASecurityException {
 
-		super.engage(yReq, yq);
+		super.engage(yadaReq, yq);
 
 		// Make header available
 		try {
@@ -176,7 +214,7 @@ public class Gatekeeper extends AbstractPreprocessor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		obtainToken(yReq);
+		obtainToken(yadaReq);
 		validateYADARequest();
 
 	}
@@ -186,8 +224,8 @@ public class Gatekeeper extends AbstractPreprocessor {
 	 * 
 	 * @throws YADASecurityException
 	 */
-	@Override
-	public void obtainToken(YADARequest yReq) throws YADASecurityException {
+
+	public void obtainToken(YADARequest yadaReq) throws YADASecurityException {
 
 		// Check header for token
 		Pattern rxAuthTkn = Pattern.compile(RX_HDR_AUTH_TKN_PREFIX);
@@ -208,12 +246,10 @@ public class Gatekeeper extends AbstractPreprocessor {
 			this.setToken(getCookie(YADA_CK_TKN));
 		}
 
-		// **************************************************************************
-		// TODO: Uncomment to always require a token for Gatekeeper access
-		// **************************************************************************
-		// if (this.getToken() == null || this.getToken().equals(""))
-		// throw new YADASecurityException("Unauthorized.");
-		// **************************************************************************
+		// Always require a token for Gatekeeper access
+		if (this.getToken() == null || this.getToken().equals(""))
+			throw new YADASecurityException("Unauthorized.");
+
 	}
 
 	/**
@@ -225,32 +261,18 @@ public class Gatekeeper extends AbstractPreprocessor {
 
 	@Override
 	public void validateToken() throws YADASecurityException {
-
-		if (null != this.getToken() && !"".equals(this.getToken())) {
-
-			// validate token as well-formed
-			try {
-				JWT.require(Algorithm.HMAC512(System.getProperty(JWSKEY))).withIssuer(System.getProperty(JWTISS)).build()
-				    .verify((String) this.getToken());
-			} catch (UnsupportedEncodingException | JWTVerificationException exception) {
-				// UTF-8 encoding not supported
-				String msg = "Validation Error ";
-				throw new YADASecurityException(msg, exception);
-			}
-
-			// Check authority for identity
-			try {
-				this.setIdentity(obtainIdentity());
-			} catch (YADASecurityException | YADARequestException | YADAExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else {
-			String tkn = System.getProperty(DEFAULT_AUTH_TOKEN_PROPERTY);
-			if (tkn == null || tkn.equals(""))
-				throw new YADASecurityException("Unauthorized. " + DEFAULT_AUTH_TOKEN_PROPERTY + " system property not set.");
-			setToken(tkn);
+		// validate token as well-formed
+		try {
+			DecodedJWT token = JWT.require(Algorithm.HMAC512(System.getProperty(JWSKEY)))
+			    .withIssuer(System.getProperty(JWTISS)).build().verify((String) this.getToken());
+			// store the sub for comparison with identity at authorization
+			setSub(token.getSubject());
+		} catch (UnsupportedEncodingException | JWTVerificationException exception) {
+			// UTF-8 encoding not supported
+			String msg = "Validation Error ";
+			throw new YADASecurityException(msg, exception);
 		}
+
 	}
 
 	/**
@@ -265,15 +287,27 @@ public class Gatekeeper extends AbstractPreprocessor {
 	 *        - then cache, setIdentity, and return identity
 	 * 
 	 */
-
 	public Object obtainIdentity() throws YADASecurityException, YADARequestException, YADAExecutionException {
 		Object result = getCacheEntry(YADA_IDENTITY_CACHE, (String) this.getToken());
 		return result;
 	}
 
-	public Object obtainGrant(String key) throws YADASecurityException, YADARequestException, YADAExecutionException {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * Obtain specified GRANT(KEYS) from current identity
+	 */
+	public Object obtainGrant(String app) throws YADASecurityException, YADARequestException, YADAExecutionException {
+		JSONObject jo = new JSONObject((String) getIdentity());
+		JSONArray ja = jo.getJSONArray(YADA_IDENTITY_GRANTS);
+		// find the app
+		JSONArray keys = new JSONArray();
+		for (int i = 0; i < ja.length(); i++) {
+			if (app.equals(ja.getJSONObject(i).getString(YADA_IDENTITY_APP).toString())) {
+				for (int ii = 0; ii < ja.getJSONObject(i).getJSONArray(YADA_IDENTITY_KEYS).length(); ii++) {
+					keys.put(ja.getJSONObject(i).getJSONArray(YADA_IDENTITY_KEYS).getJSONObject(ii).getString(YADA_IDENTITY_KEY));
+				}
+			}
+		}
+		return keys;
 	}
 
 	/**
@@ -288,51 +322,79 @@ public class Gatekeeper extends AbstractPreprocessor {
 
 		boolean authorized = false;
 
+		// Check authority for identity
+		try {
+			setIdentity(obtainIdentity());
+		} catch (YADASecurityException | YADARequestException | YADAExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		// The a11n table specifies conditions for access to queries
 		// YADA authorizes a user to run a query when a query qualifier
 		// qualifier specifies the grants conditioning access to a query
 		// qualifier{ROLE:TYPE}, where TYPE is 'blacklist' or 'whitelist'
 		try {
-			setYadaGrants(obtainYadaGrants());
+			setLocks(obtainLocks());
 		} catch (YADARequestException | YADAExecutionException e2) {
 			String msg = "A11N Request Exception";
 			throw new YADASecurityException(msg);
 		}
 
-		// Valid Key List of GRANT keys
-		if (getYadaGrants().length() > 0) {
-			JSONArray key = getYadaGrants().names();
+		if (getLocks().length() > 0) {
+			JSONArray key = getLocks().names();
 			for (int i = 0; i < key.length(); ++i) {
 				String grant = key.getString(i);
-				String listtype = getYadaGrants().getString(grant);
+				String listtype = getLocks().getString(grant);
 				if (listtype.equals(AUTH_TYPE_WHITELIST)) {
+					// allowList contains locks granting Authorization for
+					// this query
 					addAllowListEntry(grant);
-				} else if (listtype.equals(AUTH_TYPE_BLACKLIST)) {
-					addDenyListEntry(grant);
 				}
 			}
-			// allowList contains the set of Qualifiers granting Authorization for
-			// this query
-			getAllowList().removeAll(getDenyList());
 		}
-
 		if (null != this.getToken() && !"".equals(this.getToken())) {
-
-			// NO A11N CONDITIONS CONFIGURED FOR THIS QUERY
-			if (getAllowList().size() == 0) {
-				authorized = true;
-				// TODO: Match [APP,USERID,*] with row in getIdentity()
-				//
-				//
-
-			} else {
-				authorized = true;
-				// TODO: Match [APP,USERID,ROLE] with row in getIdentity()
-				//
-				//
+			// User check token.sub == identity.sub validates identity is set and
+			// matches token
+			JSONObject jo = new JSONObject((String) getIdentity());
+			if (jo.getString(YADA_IDENTITY_SUB).equals(getSub())) {
+				// What app (context) are we interested in?
+				String app = "";
+				YADARequest ryq = this.getYADARequest();
+				if (ryq.getPluginConfig().containsKey(SOURCE_EXCHANGER)) {
+					// connection source app - from SourceExchanger argument
+					app = ryq.getPluginConfig().get(SOURCE_EXCHANGER).get(0);
+				} else {
+					// connection source app - from query
+					YADAQuery ayq = this.getYADAQuery();
+					app = ayq.getApp();
+				}
+				try {
+					// Obtain a relevant GRANT if it exists within IDENTITY
+					setGrant(obtainGrant(app));
+				} catch (YADASecurityException | YADARequestException | YADAExecutionException e) {
+					String msg = "User is not authorized";
+					throw new YADASecurityException(msg);
+				}
+				// Is there a GRANT with APP matching the app (context) we are
+				// interested in?
+				if (((JSONArray) getGrant()).length() > 0) {
+					if (getAllowList().size() > 0) {
+						// Do we have a GRANT containing a KEY fitting the LOCK (specified
+						// in a11n table 'A' row) protecting this query?
+						for (int i = 0; i < ((JSONArray) getGrant()).length(); i++) {
+							if (getAllowList().contains(((JSONArray) getGrant()).get(i).toString())) {
+								authorized = true;
+							}
+						}
+					} else {
+						// No LOCK specified so user qualified by having some level of
+						// access to the APP
+						authorized = true;
+					}
+				}
 			}
 		}
-
 		// Check for failed authorization and throw error
 		if (!authorized) {
 			String msg = "Authorization Error.";
@@ -349,16 +411,20 @@ public class Gatekeeper extends AbstractPreprocessor {
 	 * @throws YADAExecutionException
 	 * @since 8.7.6
 	 */
-	public JSONObject obtainYadaGrants() throws YADARequestException, YADASecurityException, YADAExecutionException {
+	public JSONObject obtainLocks() throws YADARequestException, YADASecurityException, YADAExecutionException {
 		JSONObject result = new JSONObject();
 		// get the security params associated to the query
+		// TODO only use one a11n query and parse out the 'A' records here
 		// TODO: Replace prepared statement with YADA query
 		String qname = getYADAQuery().getQname();
-		try (ResultSet rs = YADAUtils.executePreparedStatement(YADA_A11N_QUERY_A, new Object[] { qname });) {
+		try (ResultSet rs = YADAUtils.executePreparedStatement(YADA_A11N_QUERY, new Object[] { qname });) {
 			while (rs.next()) {
-				String type = rs.getString(2); // YADA_A11N.TYPE
-				String qualifier = rs.getString(3); // YADA_A11N.QNAME (a role name)
-				result.put(qualifier, type);
+				// YADA_A11N.POLICY == "A"
+				if ("A".equals(rs.getString(2))) {
+					String type = rs.getString(3); // YADA_A11N.TYPE
+					String qualifier = rs.getString(4); // YADA_A11N.QNAME (a role name)
+					result.put(qualifier, type);
+				}
 			}
 			ConnectionFactory.releaseResources(rs);
 		} catch (SQLException | YADAConnectionException | YADASQLException e) {
@@ -788,4 +854,94 @@ public class Gatekeeper extends AbstractPreprocessor {
 		setTokenValidator(this);
 	}
 
+	public ArrayList<String> getAllowList() {
+		return allowList;
+	}
+
+	public void addAllowListEntry(String grant) {
+		getAllowList().add(grant);
+	}
+
+	public ArrayList<String> getDenyList() {
+		return denyList;
+	}
+
+	public void addDenyListEntry(String grant) {
+		getDenyList().add(grant);
+	}
+
+	/**
+	 * @return the identity TODO: To Authorization
+	 */
+	public Object getIdentity() {
+		return identity;
+	}
+
+	/**
+	 * @param identity
+	 *          the identity to set
+	 */
+	public void setIdentity(Object identity) {
+		this.identity = identity;
+	}
+
+	/**
+	 * @return the locks
+	 */
+	public JSONObject getLocks() {
+		return locks;
+	}
+
+	/**
+	 * @param locks
+	 *          the locks to set
+	 */
+	public void setLocks(JSONObject locks) {
+		this.locks = locks;
+	}
+
+	/**
+	 * @return the grant
+	 */
+	public Object getGrant() {
+		return grant;
+	}
+
+	/**
+	 * @param grant
+	 *          the grant to set
+	 */
+	public void setGrant(Object grant) {
+		this.grant = grant;
+	}
+
+	/**
+	 * @return the ships
+	 */
+	public ArrayList<String> getShips() {
+		return ships;
+	}
+
+	/**
+	 * @param ships
+	 *          the ships to set
+	 */
+	public void setShips(ArrayList<String> ships) {
+		this.ships = ships;
+	}
+
+	/**
+	 * @return the sub
+	 */
+	public Object getSub() {
+		return sub;
+	}
+
+	/**
+	 * @param sub
+	 *          the sub to set
+	 */
+	public void setSub(Object sub) {
+		this.sub = sub;
+	}
 }

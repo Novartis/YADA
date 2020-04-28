@@ -94,19 +94,6 @@ public abstract class AbstractPreprocessor
 	protected static final String EXECUTION_POLICY = "execution.policy";
 
 	/**
-	 * Constant with value: {@value}
-	 *
-	 * @since 2.0
-	 */
-	protected final static String JWSKEY = "jws.key";
-	/**
-	 * Constant with value: {@value}
-	 *
-	 * @since 2.0
-	 */
-	protected final static String JWTISS = "jwt.iss";
-
-	/**
 	 * Constant equal to {@value}
 	 * 
 	 * @since 7.0.0
@@ -128,42 +115,9 @@ public abstract class AbstractPreprocessor
 	protected static final String VOID = "void";
 
 	/**
-	 * Constant with value: {@value}
-	 *
-	 * @since 3.0
-	 */
-	protected final static String AUTH_TYPE_WHITELIST = "whitelist";
-
-	/**
-	 * Constant with value: {@value}
-	 *
-	 * @since 3.0
-	 */
-	protected final static String AUTH_TYPE_BLACKLIST = "blacklist";
-
-	/**
 	 * A constant equal to {@value} for handling param value syntax
 	 */
 	private static final String RX_NOTJSON = "^[^{].+$";
-
-	// --------------------------------------------------------------------------------
-	// TODO: Make these YADA queries?
-	// --------------------------------------------------------------------------------
-
-	/**
-	 * Constant equal to {@value}. The query executed to evaluate authorization.
-	 */
-	protected static final String YADA_A11N_QUERY = "SELECT DISTINCT a.target, a.policy, a.type, a.qname "
-	    + "FROM YADA_A11N a " // join YADA_QUERY b on (a.target = b.qname OR
-	                          // a.target = b.app) "
-	    + "WHERE a.target = ?";
-	/**
-	 * Constant equal to {@value}. The query executed to evaluate authorization.
-	 */
-	protected static final String YADA_A11N_QUERY_A = "SELECT DISTINCT a.target, a.type, a.qname " + "FROM YADA_A11N a "
-	    + "WHERE a.policy = 'A' and a.target = ?";
-
-	// --------------------------------------------------------------------------------
 
 	/**
 	 * The {@link YADARequest} object processed by the plugin
@@ -214,39 +168,6 @@ public abstract class AbstractPreprocessor
 	 * The request object provided by Tomcat
 	 */
 	private HttpServletRequest request;
-
-	/**
-	 * Contains the list of allow qualifiers from A11N
-	 */
-	private ArrayList<String> allowList = new ArrayList<String>();
-
-	/**
-	 * Contains the list of deny qualifiers from A11N
-	 */
-	private ArrayList<String> denyList = new ArrayList<String>();
-
-	/**
-	 * Contains the user identity data from authority
-	 */
-	private Object identity = new Object();
-
-	/**
-	 * Contains the conditions specified in A11N.
-	 * 
-	 * TODO: rename qualifier, condition, role, ... ?
-	 */
-	private JSONObject yadaGrants = new JSONObject();
-
-	/**
-	 * Contains the user grant from authority
-	 */
-	private Object grant = new Object();
-
-	/**
-	 * Contains the list of groups for Content Policy
-	 */
-	private ArrayList<String> ships = new ArrayList<String>();
-
 	/**
 	 * The {@code preArgs} {@link List} from {@link YADARequest#getPreArgs}
 	 * 
@@ -518,18 +439,6 @@ public abstract class AbstractPreprocessor
 	@Override
 	public Object getToken() throws YADASecurityException {
 		return this.token;
-	}
-
-	/**
-	 * Obtain token from source
-	 * 
-	 * @return the value of the validated {@code NIBR521} header
-	 * @throws YADASecurityException
-	 *           when token retrieval fails
-	 * @since 8.7.6
-	 */
-	public void obtainToken(YADARequest yadaReq) throws YADASecurityException {
-		// nothing to do
 	}
 
 	@Override
@@ -986,80 +895,9 @@ public abstract class AbstractPreprocessor
 		return "";
 	}
 
-	/**
-	 * @return the identity
-	 */
-	public Object getIdentity() {
-		return identity;
-	}
+	@Override
+	public void authorizeRequest(YADARequest yadaReq, String result) throws YADASecurityException {
+		// TODO Auto-generated method stub
 
-	/**
-	 * @param identity
-	 *          the identity to set
-	 */
-	public void setIdentity(Object identity) {
-		this.identity = identity;
 	}
-
-	/**
-	 * @return the yadaGrants
-	 */
-	public JSONObject getYadaGrants() {
-		return this.yadaGrants;
-	}
-
-	/**
-	 * @param yadaGrants
-	 *          the yadaGrants to set
-	 */
-	public void setYadaGrants(JSONObject yadaGrants) {
-		this.yadaGrants = yadaGrants;
-	}
-
-	public ArrayList<String> getAllowList() {
-		return this.allowList;
-	}
-
-	public void addAllowListEntry(String grant) {
-		getAllowList().add(grant);
-	}
-
-	public ArrayList<String> getDenyList() {
-		return this.denyList;
-	}
-
-	public void addDenyListEntry(String grant) {
-		getDenyList().add(grant);
-	}
-
-	/**
-	 * @return the grant
-	 */
-	public Object getGrant() {
-		return grant;
-	}
-
-	/**
-	 * @param grant
-	 *          the grant to set
-	 */
-	public void setGrant(Object grant) {
-		this.grant = grant;
-	}
-
-	/**
-	 * @return the ships
-	 */
-	public ArrayList<String> getShips() {
-		return this.ships;
-	}
-
-	/**
-	 * @param ships
-	 *          the ships to set
-	 */
-	public void setShips(ArrayList<String> ships) {
-		this.ships = ships;
-	}
-
 }
