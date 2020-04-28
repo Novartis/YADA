@@ -897,7 +897,7 @@ public abstract class AbstractPreprocessor
 
 	@Override
 	public void authorizeRequest(YADARequest yadaReq, String result) throws YADASecurityException {
-		// TODO Auto-generated method stub
+		// nothing to do
 
 	}
 }

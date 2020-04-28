@@ -40,38 +40,6 @@ import com.novartis.opensource.yada.util.YADAUtils;
 public class Authorizer extends AbstractPostprocessor implements Authorization {
 
 	/**
-	 * Constant with value: {@value}
-	 *
-	 * @since 2.0
-	 */
-	private final static String YADA_LOGIN_QNAME = "YADA check credentials";
-
-	// --------------------------------------------------------------------------------
-	// TODO: Change these to system properties
-	// --------------------------------------------------------------------------------
-
-	/**
-	 * Array of IAM headers we want to have access to
-	 */
-	protected static final String[] YADA_HDR_AUTH_NAMES = { "authorization" };
-
-	/**
-	 * Constant with value: {@value}
-	 *
-	 * @since 2.0
-	 */
-	protected final static String YADA_HDR_AUTH_USR_PREFIX = "Basic ";
-
-	/**
-	 * Constant with value: {@value}
-	 *
-	 * @since 8.7.6
-	 */
-	public final static String YADA_CK_TKN = "yadajwt";
-
-	// --------------------------------------------------------------------------------
-
-	/**
 	 * Contains resource and allowList
 	 */
 	private JSONObject yadaAuthorization = new JSONObject();
@@ -373,19 +341,6 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	 * @throws YADASecurityException
 	 * @throws YADAExecutionException
 	 * @since 8.7.6
-	 *
-	 * 
-	 *        String app = new String(); HashSet<String> grant = new
-	 *        HashSet<String>(); // TODO: Replace prepared statement with YADA
-	 *        query try (ResultSet rs =
-	 *        YADAUtils.executePreparedStatement(YADA_LOGIN_QUERY, new Object[] {
-	 *        userid, pw });) { while (rs.next()) { if (app.length() == 0) { app =
-	 *        rs.getString(1); // YADA_LOGIN.APP } else if (app !=
-	 *        rs.getString(1)) { a.put(new JSONObject().put("app",
-	 *        app).put("grant", grant)); app = rs.getString(1); // YADA_LOGIN.APP
-	 *        } grant.add(rs.getString(3)); // YADA_LOGIN.ROLE (a grant name) }
-	 *
-	 *
 	 * 
 	 */
 
@@ -431,10 +386,10 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 				}
 
 				result.put(YADA_IDENTITY_SUB, hasheduserid);
-				// a uses the form:
+				// a is used to get the form:
 				// [{"app":app1,"grant":grant1},{"app":app1,"grant":grant2},...{"app":appN,"grant":grantN}]
-				// result.put("grants", a);
-				// aid uses the form:
+				// result.put(YADA_IDENTITY_GRANTS, a);
+				// aid is used to get the form:
 				// [{"app":app1,"keys":[{"key":key1},{"key":key2},...{"key":keyN}]}]
 				result.put(YADA_IDENTITY_GRANTS, aid);
 				result.put(YADA_IDENTITY_IAT, java.time.Instant.now().getEpochSecond());

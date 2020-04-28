@@ -39,6 +39,32 @@ public interface Authorization {
 	/**
 	 * Constant with value: {@value}
 	 *
+	 * @since 2.0
+	 */
+	private final static String YADA_LOGIN_QNAME = "YADA check credentials";
+	
+	/**
+	 * Array of IAM headers we want to have access to
+	 */
+	public final static String[] YADA_HDR_AUTH_NAMES = { "Authorization" };
+
+	/**
+	 * Constant with value: {@value}
+	 *
+	 * @since 2.0
+	 */
+	public final static String YADA_HDR_AUTH_USR_PREFIX = "Basic ";
+
+	/**
+	 * Constant with value: {@value}
+	 *
+	 * @since 8.7.6
+	 */
+	public final static String YADA_CK_TKN = "yadajwt";
+	
+	/**
+	 * Constant with value: {@value}
+	 *
 	 * @since 8.7.6
 	 */
 	public final static String YADA_IDENTITY_SUB = "sub";
@@ -127,7 +153,8 @@ public interface Authorization {
 	 *
 	 * @since 3.0
 	 */
-	public final static String AUTH_TYPE_WHITELIST = "whitelist";
+	public final static String AUTH_TYPE_WHITELIST = "whitelist";	
+
 
 	// --------------------------------------------------------------------------------
 

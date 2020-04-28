@@ -132,18 +132,6 @@ public class Gatekeeper extends AbstractPreprocessor {
 	// --------------------------------------------------------------------------------
 
 	/**
-	 * Array of IAM headers we want to have access to
-	 */
-	protected static final String[] YADA_HDR_AUTH_NAMES = { "Authorization" };
-
-	/**
-	 * Constant with value: {@value}
-	 *
-	 * @since 8.7.6
-	 */
-	public final static String YADA_CK_TKN = "yadajwt";
-
-	/**
 	 * Constant with value: {@value} SourceExchanger plugin reference
 	 * 
 	 * @since 1.0
@@ -330,10 +318,9 @@ public class Gatekeeper extends AbstractPreprocessor {
 			e.printStackTrace();
 		}
 
-		// The a11n table specifies conditions for access to queries
-		// YADA authorizes a user to run a query when a query qualifier
-		// qualifier specifies the grants conditioning access to a query
-		// qualifier{ROLE:TYPE}, where TYPE is 'blacklist' or 'whitelist'
+		// TODO Rewrite comments for clarity.
+		// The a11n table specifies conditions for access to protected queries
+		// The app used for the query source is the default condition for access
 		try {
 			setLocks(obtainLocks());
 		} catch (YADARequestException | YADAExecutionException e2) {
@@ -414,7 +401,6 @@ public class Gatekeeper extends AbstractPreprocessor {
 	public JSONObject obtainLocks() throws YADARequestException, YADASecurityException, YADAExecutionException {
 		JSONObject result = new JSONObject();
 		// get the security params associated to the query
-		// TODO only use one a11n query and parse out the 'A' records here
 		// TODO: Replace prepared statement with YADA query
 		String qname = getYADAQuery().getQname();
 		try (ResultSet rs = YADAUtils.executePreparedStatement(YADA_A11N_QUERY, new Object[] { qname });) {
