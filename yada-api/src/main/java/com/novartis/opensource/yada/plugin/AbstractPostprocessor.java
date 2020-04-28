@@ -306,7 +306,7 @@ public abstract class AbstractPostprocessor implements Postprocess, Authorizatio
 	 */
 	public void setHTTPHeaders(String[] httpHeaders) throws YADARequestException {
 		String hdrStr = httpHeaders[0];
-		Matcher m1 = Pattern.compile(RX_NOTJSON).matcher(hdrStr);
+		Matcher m1 = Pattern.compile(RX_NOTJSON, Pattern.CASE_INSENSITIVE).matcher(hdrStr);
 		Map<String, String> reqHeaders = new HashMap<String, String>();
 
 		// api circumvents http request so check for null

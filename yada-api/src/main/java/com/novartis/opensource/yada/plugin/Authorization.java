@@ -36,11 +36,10 @@ public interface Authorization {
 	// TODO: Change these to system properties
 	// --------------------------------------------------------------------------------
 
-	
 	/**
 	 * Array of IAM headers we want to have access to
 	 */
-	public final static String[] YADA_HDR_AUTH_NAMES = { "Authorization" };
+	public final static String[] YADA_HDR_AUTH_NAMES = { "authorization" };
 
 	/**
 	 * Constant with value: {@value}
@@ -55,7 +54,7 @@ public interface Authorization {
 	 * @since 8.7.6
 	 */
 	public final static String YADA_CK_TKN = "yadajwt";
-	
+
 	/**
 	 * Constant with value: {@value}
 	 *
@@ -147,8 +146,7 @@ public interface Authorization {
 	 *
 	 * @since 3.0
 	 */
-	public final static String AUTH_TYPE_WHITELIST = "whitelist";	
-
+	public final static String AUTH_TYPE_WHITELIST = "whitelist";
 
 	// --------------------------------------------------------------------------------
 
