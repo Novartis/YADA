@@ -43,7 +43,6 @@ import com.novartis.opensource.yada.YADASecurityException;
  *        ExecutionPolicy, ContentPolicy
  */
 public abstract class AbstractPostprocessor implements Postprocess, Authorization, TokenValidator {
-	// implements ExecutionPolicy, ContentPolicy {
 
 	/**
 	 * A constant equal to {@value} for handling param value syntax
