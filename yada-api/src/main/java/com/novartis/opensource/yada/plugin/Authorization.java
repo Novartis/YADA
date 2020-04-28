@@ -36,12 +36,6 @@ public interface Authorization {
 	// TODO: Change these to system properties
 	// --------------------------------------------------------------------------------
 
-	/**
-	 * Constant with value: {@value}
-	 *
-	 * @since 2.0
-	 */
-	private final static String YADA_LOGIN_QNAME = "YADA check credentials";
 	
 	/**
 	 * Array of IAM headers we want to have access to
