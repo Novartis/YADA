@@ -963,4 +963,24 @@ public class Gatekeeper extends AbstractPreprocessor {
 		return false;
 	}
 
+	/**
+	 * @since 8.7.6
+	 */
+	public boolean hasIdentity() {
+		if (null != getIdentity() && !"".equals(getIdentity())) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @since 8.7.6
+	 */
+	public boolean hasAllowList() {
+		if (getAllowList().size() > 0) {
+			return true;
+		}
+		return false;
+	}
+
 }

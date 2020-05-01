@@ -429,10 +429,21 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	/**
+	 * @throws YADASecurityException
 	 * @since 8.7.6
 	 */
-	public boolean hasIdentity() {
-		if (null != getIdentity() && !"".equals(getIdentity())) {
+	public boolean hasToken() throws YADASecurityException {
+		if (null != this.getToken() && !"".equals(this.getToken())) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @since 8.7.6
+	 */
+	public boolean hasLocks() {
+		if (getLocks().length() > 0) {
 			return true;
 		}
 		return false;
@@ -443,6 +454,16 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	 */
 	public boolean hasGrants() {
 		if (((JSONArray) getGrant()).length() > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @since 8.7.6
+	 */
+	public boolean hasIdentity() {
+		if (null != getIdentity() && !"".equals(getIdentity())) {
 			return true;
 		}
 		return false;
@@ -463,27 +484,6 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	 */
 	public boolean hasCredentials() {
 		if (null != getCredentials() && !"".equals(getCredentials())) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * @since 8.7.6
-	 */
-	public boolean hasLocks() {
-		if (getLocks().length() > 0) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * @throws YADASecurityException
-	 * @since 8.7.6
-	 */
-	public boolean hasToken() throws YADASecurityException {
-		if (null != this.getToken() && !"".equals(this.getToken())) {
 			return true;
 		}
 		return false;
