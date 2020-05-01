@@ -125,6 +125,8 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 
 	/**
 	 * Authorize payload
+	 * 
+	 * @since 8.7.6
 	 */
 	@Override
 	public void authorize(String payload) throws YADASecurityException {
@@ -147,77 +149,49 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 			throw new YADASecurityException(msg);
 		}
 
-		if (getLocks().length() > 0) {
+		if (hasLocks()) {
 			JSONArray key = getLocks().names();
 			for (int i = 0; i < key.length(); ++i) {
 				String grant = key.getString(i);
 				String listtype = getLocks().getString(grant);
-				// Unless obtainLocks() is overridden there is only a single whitelist
-				// value in the allowList
 				if (listtype.equals(AUTH_TYPE_WHITELIST)) {
 					// allowList contains locks granting Authorization for
 					// this query
 					addAllowListEntry(grant);
+				} else {
+					// obtainLocks() writes whitelist grants only
+					// this supports the addition of blacklist grants
+					removeAllowListEntry(grant);
 				}
 			}
 		}
-
-		// The resource is inserted to the payload
-		if (payload != null && !"".equals(payload)) {
-			JSONObject j = new JSONObject(payload);
-			JSONObject r = j.getJSONObject(RESULT_KEY_RESULTSET);
-
-			if (r.getInt(RESULT_KEY_RECORDS) > 0) {
-				JSONArray a = r.getJSONArray(RESULT_KEY_ROWS);
-				setResource(a.getJSONObject(0).getString(RESULT_KEY_RESOURCE));
-
-				if (null != getIdentity() && !"".equals(getIdentity())) {
-					try {
-						// Obtain a relevant GRANT if it exists within IDENTITY
-						setGrant(obtainGrant(getApp()));
-					} catch (YADASecurityException | YADARequestException | YADAExecutionException e) {
-						String msg = "User is not authorized";
-						throw new YADASecurityException(msg);
-					}
-					// Is there a GRANT with APP matching the APP argument?
-					if (((JSONArray) getGrant()).length() > 0) {
-						if (getAllowList().size() > 0) {
-							// pl=Authorizer,<APP>,<LOCK>
-							for (int i = 0; i < ((JSONArray) getGrant()).length(); i++) {
-								if (getAllowList().contains(((JSONArray) getGrant()).get(i).toString())) {
-									authorized = true;
-								}
-							}
-						} else {
-							// pl=Authorizer,<APP>
-							authorized = true;
-						}
-					}
-				}
-			}
-		}
-
-		if (authorized == true) {
-			JSONObject j = new JSONObject(payload);
-			JSONObject r = j.getJSONObject(RESULT_KEY_RESULTSET);
-			if (r.getInt(RESULT_KEY_RECORDS) > 0) {
-				// JSONArray a = r.getJSONArray(RESULT_KEY_ROWS);
-				// JSONObject b = a.getJSONObject(0);
-				// b.put(YADA_CK_TKN, this.getToken());
-				// a.put(0, b);
-				// r.put(RESULT_KEY_RECORDS, a);
-				// j.put(RESULT_KEY_RESULTSET, r);
-				// // Write the result
-				// setResult(j.toString());
-				// Return only the token
-				setResult((String) this.getToken());
-			} else {
+		if (hasIdentity()) {
+			try {
+				// Obtain a relevant GRANT if it exists within IDENTITY
+				setGrant(obtainGrant(getApp()));
+			} catch (YADASecurityException | YADARequestException | YADAExecutionException e) {
 				String msg = "User is not authorized";
 				throw new YADASecurityException(msg);
 			}
-		} else
-
-		{
+			// Is there a GRANT with APP matching the APP argument?
+			if (hasGrants()) {
+				if (hasAllowList()) {
+					// pl=Authorizer,<APP>,<LOCK>
+					for (int i = 0; i < ((JSONArray) getGrant()).length(); i++) {
+						if (getAllowList().contains(((JSONArray) getGrant()).get(i).toString())) {
+							authorized = true;
+						}
+					}
+				} else {
+					// pl=Authorizer,<APP>
+					authorized = true;
+				}
+			}
+		}
+		if (authorized == true) {
+			// Return the token
+			setResult((String) this.getToken());
+		} else {
 			String msg = "User is not authorized";
 			throw new YADASecurityException(msg);
 		}
@@ -234,16 +208,18 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	public JSONObject obtainLocks() throws YADARequestException, YADASecurityException, YADAExecutionException {
 
 		JSONObject result = new JSONObject();
-		// Grab the arguments
-		// The first is the APP (required) and set
-		// The second is the LOCK (optional) and returned if present
-		// This method sets a single whitelist value
+		// The first argument is the APP (required) and set
+		// All following are the LOCK(S) (optional) and returned if present
+		// This method sets whitelist values only
 		List<String> arg = this.getYADARequest().getArgs();
-		if (arg != null && !arg.isEmpty() && arg.size() < 3) {
-			if (arg.size() > 1) {
-				result.put(arg.get(arg.size() - 1), AUTH_TYPE_WHITELIST);
+		if (arg != null && !arg.isEmpty()) {
+			for (int i = 0; i < arg.size(); i++) {
+				if (i == 0) {
+					setApp(arg.get(i));
+				} else {
+					result.put(arg.get(i), AUTH_TYPE_WHITELIST);
+				}
 			}
-			setApp(arg.get(0));
 		}
 		return result;
 	}
@@ -253,6 +229,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	 * identity with token
 	 * 
 	 * @throws YADASecurityException
+	 * @since 8.7.6
 	 */
 	@Override
 	public void obtainToken(YADARequest yadaReq) throws YADASecurityException {
@@ -269,7 +246,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 				}
 			}
 		}
-		if (null != getCredentials() && !"".equals(getCredentials())) {
+		if (hasCredentials()) {
 			// We have credentials
 			byte[] credentialBytes = Base64.getDecoder().decode(getCredentials());
 			String credentialString = new String(credentialBytes);
@@ -286,12 +263,11 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 
 			try {
 				// use credentials to retrieve user identity
-				String id;
-				id = obtainIdentity(userid, pw, hasheduserid).toString();
-				if (id.length() != 0) {
+				String id = obtainIdentity(userid, pw, hasheduserid).toString();
+				if (id.length() > 0) {
 					// create a token
 					generateToken(hasheduserid);
-					if (null != this.getToken() && !"".equals(this.getToken())) {
+					if (hasToken()) {
 						// add identity to cache using token as key
 						this.setCacheEntry(YADA_IDENTITY_CACHE, (String) this.getToken(), id, YADA_IDENTITY_TTL);
 						obtainedtoken = true;
@@ -311,6 +287,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	/**
 	 * @throws YADASecurityException
 	 * 
+	 * @since 8.7.6
 	 * 
 	 */
 	public void generateToken(String hasheduserid) throws YADASecurityException {
@@ -331,6 +308,28 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 
 		this.setToken(token);
 
+	}
+
+	/**
+	 * Overrides {@link TokenValidator#validateToken()}.
+	 *
+	 * @throws YADASecurityException
+	 *           when the {@link #DEFAULT_AUTH_TOKEN_PROPERTY} is not set
+	 */
+
+	@Override
+	public void validateToken() throws YADASecurityException {
+		if (hasToken()) {
+			// validate token as well-formed
+			try {
+				JWT.require(Algorithm.HMAC512(System.getProperty(JWSKEY))).withIssuer(System.getProperty(JWTISS)).build()
+				    .verify((String) this.getToken());
+			} catch (UnsupportedEncodingException | JWTVerificationException exception) {
+				// UTF-8 encoding not supported
+				String msg = "Validation Error ";
+				throw new YADASecurityException(msg, exception);
+			}
+		}
 	}
 
 	/**
@@ -404,39 +403,8 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	/**
-	 * Overrides {@link TokenValidator#validateToken()}.
-	 *
-	 * @throws YADASecurityException
-	 *           when the {@link #DEFAULT_AUTH_TOKEN_PROPERTY} is not set
-	 */
-
-	@Override
-	public void validateToken() throws YADASecurityException {
-		if (null != this.getToken() && !"".equals(this.getToken())) {
-			// validate token as well-formed
-			try {
-				JWT.require(Algorithm.HMAC512(System.getProperty(JWSKEY))).withIssuer(System.getProperty(JWTISS)).build()
-				    .verify((String) this.getToken());
-			} catch (UnsupportedEncodingException | JWTVerificationException exception) {
-				// UTF-8 encoding not supported
-				String msg = "Validation Error ";
-				throw new YADASecurityException(msg, exception);
-			}
-		}
-	}
-
-	/**
-	 * 
-	 * @return
-	 * @throws YADARequestException
-	 * @throws YADASecurityException
-	 * @throws YADAExecutionException
 	 * @since 8.7.6
-	 * 
-	 *        check getIdentity, if not there check cache
-	 * 
 	 */
-
 	public Object obtainIdentity() throws YADASecurityException, YADARequestException, YADAExecutionException {
 		Object result = getCacheEntry(YADA_IDENTITY_CACHE, (String) this.getToken());
 		return result;
@@ -458,6 +426,67 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 			}
 		}
 		return keys;
+	}
+
+	/**
+	 * @since 8.7.6
+	 */
+	public boolean hasIdentity() {
+		if (null != getIdentity() && !"".equals(getIdentity())) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @since 8.7.6
+	 */
+	public boolean hasGrants() {
+		if (((JSONArray) getGrant()).length() > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @since 8.7.6
+	 */
+	public boolean hasAllowList() {
+		if (getAllowList().size() > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @since 8.7.6
+	 */
+	public boolean hasCredentials() {
+		if (null != getCredentials() && !"".equals(getCredentials())) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @since 8.7.6
+	 */
+	public boolean hasLocks() {
+		if (getLocks().length() > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @throws YADASecurityException
+	 * @since 8.7.6
+	 */
+	public boolean hasToken() throws YADASecurityException {
+		if (null != this.getToken() && !"".equals(this.getToken())) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -559,6 +588,10 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 
 	public void addAllowListEntry(String grant) {
 		getAllowList().add(grant);
+	}
+
+	public void removeAllowListEntry(String grant) {
+		getAllowList().remove(grant);
 	}
 
 	public ArrayList<String> getDenyList() {

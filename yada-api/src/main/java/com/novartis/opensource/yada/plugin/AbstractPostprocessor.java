@@ -90,7 +90,7 @@ public abstract class AbstractPostprocessor implements Postprocess, Authorizatio
 	/**
 	 * parsed HTTPHeaders string
 	 * 
-	 * @since 8.5.0
+	 * @since 8.7.6
 	 */
 	private JSONObject httpHeaders;
 
@@ -301,7 +301,7 @@ public abstract class AbstractPostprocessor implements Postprocess, Authorizatio
 	 *          {@link HttpServletRequest}
 	 * @throws YADARequestException
 	 *           when the header string is malformed
-	 * @since 8.5.0
+	 * @since 8.7.6
 	 */
 	public void setHTTPHeaders(String[] httpHeaders) throws YADARequestException {
 		String hdrStr = httpHeaders[0];
@@ -351,7 +351,7 @@ public abstract class AbstractPostprocessor implements Postprocess, Authorizatio
 	 * 
 	 * @return a {@link JSONObject} built from the value of the
 	 *         {@code HTTPHeaders} or {@code H} parameter value
-	 * @since 8.5.0
+	 * @since 8.7.6
 	 */
 	public JSONObject getHttpHeaders() {
 		return this.httpHeaders;
@@ -363,7 +363,7 @@ public abstract class AbstractPostprocessor implements Postprocess, Authorizatio
 	 * 
 	 * @return {@code true} if {@link #httpHeaders} contains a header array entry,
 	 *         otherwise {@code false}
-	 * @since 8.5.0
+	 * @since 8.7.6
 	 */
 	public boolean hasHttpHeaders() {
 		if (null == this.getHttpHeaders() || this.getHttpHeaders().length() == 0) {

@@ -219,7 +219,6 @@ public class Gatekeeper extends AbstractPreprocessor {
 		Pattern rxAuthTkn = Pattern.compile(RX_HDR_AUTH_TKN_PREFIX);
 
 		if (this.hasHttpHeaders()) {
-
 			for (int i = 0; i < this.getHttpHeaders().names().length(); i++) {
 				Matcher m1 = rxAuthTkn
 				    .matcher((CharSequence) this.getHttpHeaders().get(this.getHttpHeaders().names().getString(i)));
@@ -227,17 +226,14 @@ public class Gatekeeper extends AbstractPreprocessor {
 					this.setToken(m1.group(3));
 				}
 			}
-		}
-
-		// Check cookie for token
-		else {
+		} else {
+			// Check cookie for token
 			this.setToken(getCookie(YADA_CK_TKN));
 		}
-
-		// Always require a token for Gatekeeper access
-		if (this.getToken() == null || this.getToken().equals(""))
+		if (!hasToken()) {
+			// Always require a token for Gatekeeper access
 			throw new YADASecurityException("Unauthorized.");
-
+		}
 	}
 
 	/**
@@ -327,8 +323,7 @@ public class Gatekeeper extends AbstractPreprocessor {
 			String msg = "A11N Request Exception";
 			throw new YADASecurityException(msg);
 		}
-
-		if (getLocks().length() > 0) {
+		if (hasLocks()) {
 			JSONArray key = getLocks().names();
 			for (int i = 0; i < key.length(); ++i) {
 				String grant = key.getString(i);
@@ -337,10 +332,13 @@ public class Gatekeeper extends AbstractPreprocessor {
 					// allowList contains locks granting Authorization for
 					// this query
 					addAllowListEntry(grant);
+				} else {
+					// support blacklist grants
+					removeAllowListEntry(grant);
 				}
 			}
 		}
-		if (null != this.getToken() && !"".equals(this.getToken())) {
+		if (hasToken()) {
 			// User check token.sub == identity.sub validates identity is set and
 			// matches token
 			JSONObject jo = new JSONObject((String) getIdentity());
@@ -363,9 +361,8 @@ public class Gatekeeper extends AbstractPreprocessor {
 					String msg = "User is not authorized";
 					throw new YADASecurityException(msg);
 				}
-				// Is there a GRANT with APP matching the app (context) we are
-				// interested in?
-				if (((JSONArray) getGrant()).length() > 0) {
+				// Is there a GRANT with APP matching the APP argument?
+				if (hasGrants()) {
 					if (getAllowList().size() > 0) {
 						// Do we have a GRANT containing a KEY fitting the LOCK (specified
 						// in a11n table 'A' row) protecting this query?
@@ -848,6 +845,10 @@ public class Gatekeeper extends AbstractPreprocessor {
 		getAllowList().add(grant);
 	}
 
+	public void removeAllowListEntry(String grant) {
+		getAllowList().remove(grant);
+	}
+
 	public ArrayList<String> getDenyList() {
 		return denyList;
 	}
@@ -930,4 +931,36 @@ public class Gatekeeper extends AbstractPreprocessor {
 	public void setSub(Object sub) {
 		this.sub = sub;
 	}
+
+	/**
+	 * @throws YADASecurityException
+	 * @since 8.7.6
+	 */
+	public boolean hasToken() throws YADASecurityException {
+		if (null != this.getToken() && !"".equals(this.getToken())) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @since 8.7.6
+	 */
+	public boolean hasLocks() {
+		if (getLocks().length() > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @since 8.7.6
+	 */
+	public boolean hasGrants() {
+		if (((JSONArray) getGrant()).length() > 0) {
+			return true;
+		}
+		return false;
+	}
+
 }
