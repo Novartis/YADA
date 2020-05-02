@@ -66,7 +66,7 @@ public class Service {
 	 *
 	 * @since 8.7.6
 	 */
-	private final static String YADA_RESOURCE_ACCESS_UNAUTHORIZED = "(401 Unauthorized)";
+	private final static String RX_YADA_RESOURCE_ACCESS_UNAUTHORIZED = "(401 Unauthorized)";
 
 	
 	/**
@@ -760,7 +760,7 @@ public class Service {
 			// YADA resource access returns '401 Unauthorized'
 			// This should only happen when the query is run without 
 			// specifying the Authorizer plugin and argument(s)
-			Pattern rx = Pattern.compile(YADA_RESOURCE_ACCESS_UNAUTHORIZED);
+			Pattern rx = Pattern.compile(RX_YADA_RESOURCE_ACCESS_UNAUTHORIZED);
 			Matcher m = rx.matcher(gResult);
 			if (m.matches()) {
 					String msg = "User is not authorized";
