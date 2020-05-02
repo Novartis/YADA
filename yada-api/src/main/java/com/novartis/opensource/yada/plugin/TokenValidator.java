@@ -14,6 +14,7 @@
  */
 package com.novartis.opensource.yada.plugin;
 
+import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADASecurityException;
 
 /**
@@ -47,5 +48,10 @@ public interface TokenValidator {
    * @since 7.0.0
    */
   public void setToken() throws YADASecurityException;
+  
+  /**
+   * @since 8.7.6
+   */
+  public void obtainToken(YADARequest yadaReq) throws YADASecurityException;
 }
 

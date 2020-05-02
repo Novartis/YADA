@@ -900,4 +900,12 @@ public abstract class AbstractPreprocessor
 		// nothing to do
 
 	}
+
+	/**
+	 * @since 8.7.6
+	 */
+	@Override
+	public void obtainToken(YADARequest yadaReq) throws YADASecurityException {
+		// nothing to do
+	}
 }

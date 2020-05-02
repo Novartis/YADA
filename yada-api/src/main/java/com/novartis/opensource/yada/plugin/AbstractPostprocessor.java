@@ -417,9 +417,12 @@ public abstract class AbstractPostprocessor implements Postprocess, Authorizatio
 		this.tokenValidator = tokenValidator;
 	}
 
-	public void obtainToken(YADARequest yReq) throws YADASecurityException {
-		// TODO Auto-generated method stub
-
+	/**
+	 * @since 8.7.6
+	 */
+	@Override
+	public void obtainToken(YADARequest yadaReq) throws YADASecurityException {
+		// nothing to do
 	}
 
 }
