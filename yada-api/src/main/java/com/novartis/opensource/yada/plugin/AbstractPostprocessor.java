@@ -150,7 +150,7 @@ public abstract class AbstractPostprocessor implements Postprocess, Authorizatio
 	 * @since 8.7.6
 	 */
 	@Override
-	public void authorizeRequest(YADARequest yadaReq, String result) throws YADASecurityException {
+	public void authorizeYADARequest(YADARequest yadaReq, String result) throws YADASecurityException {
 
 		// default impl does nothing - override in authorizer plugin
 		obtainToken(yadaReq);

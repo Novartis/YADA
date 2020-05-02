@@ -118,7 +118,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 			throw new YADASecurityException(msg);
 		}
 
-		authorizeRequest(yadaReq, result);
+		authorizeYADARequest(yadaReq, result);
 
 		return getResult();
 	}

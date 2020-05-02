@@ -248,6 +248,9 @@ public abstract class AbstractPreprocessor
 
 		// will use argument to inject, if present, or return gracefully
 		setTokenValidator();
+		
+		// default impl does nothing - override in gatekeeper plugin 
+		obtainToken(getYADARequest());
 
 		// default impl does nothing - override in gatekeeper plugin
 		validateToken();

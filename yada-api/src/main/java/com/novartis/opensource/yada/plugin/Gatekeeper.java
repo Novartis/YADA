@@ -202,7 +202,7 @@ public class Gatekeeper extends AbstractPreprocessor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		obtainToken(yadaReq);
+
 		validateYADARequest();
 
 	}
