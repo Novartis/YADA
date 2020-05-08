@@ -37,16 +37,30 @@ public interface Authorization {
 	// --------------------------------------------------------------------------------
 
 	/**
-	 * Array of IAM headers we want to have access to
+	 * Constant with value: {@value}
+	 *
+	 * @since 8.7.6
 	 */
-	public final static String[] YADA_HDR_AUTH_NAMES = { "authorization" };
+	public final static String YADA_HDR_AUTH = "Authorization";
 
 	/**
 	 * Constant with value: {@value}
 	 *
-	 * @since 2.0
+	 * @since 8.7.6
 	 */
-	public final static String YADA_HDR_AUTH_USR_PREFIX = "Basic ";
+	public final static String YADA_HDR_SYNC_TKN = "X-CSRF-Token";
+
+	/**
+	 * Constant with value: {@value}
+	 *
+	 * @since 8.7.6
+	 */
+	public final static String YADA_HDR_AUTH_JWT_PREFIX = "Bearer";
+
+	/**
+	 * Array of IAM headers we want to have access to
+	 */
+	public final static String[] YADA_HDR_AUTH_NAMES = { YADA_HDR_AUTH.toLowerCase(), YADA_HDR_SYNC_TKN.toLowerCase() };
 
 	/**
 	 * Constant with value: {@value}
@@ -207,7 +221,7 @@ public interface Authorization {
 	/**
 	 * Confirm token is valid and user possesses necessary grants
 	 */
-	public void authorizeRequest(YADARequest yadaReq, String result) throws YADASecurityException;
+	public void authorizeYADARequest(YADARequest yadaReq, String result) throws YADASecurityException;
 
 	/**
 	 * Write to the IAM cache

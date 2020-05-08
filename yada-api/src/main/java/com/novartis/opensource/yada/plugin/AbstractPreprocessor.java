@@ -248,8 +248,8 @@ public abstract class AbstractPreprocessor
 
 		// will use argument to inject, if present, or return gracefully
 		setTokenValidator();
-		
-		// default impl does nothing - override in gatekeeper plugin 
+
+		// default impl does nothing - override in gatekeeper plugin
 		obtainToken(getYADARequest());
 
 		// default impl does nothing - override in gatekeeper plugin
@@ -899,7 +899,7 @@ public abstract class AbstractPreprocessor
 	}
 
 	@Override
-	public void authorizeRequest(YADARequest yadaReq, String result) throws YADASecurityException {
+	public void authorizeYADARequest(YADARequest yadaReq, String result) throws YADASecurityException {
 		// nothing to do
 
 	}

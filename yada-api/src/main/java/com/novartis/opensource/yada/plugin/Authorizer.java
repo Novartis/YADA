@@ -83,6 +83,11 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	private String result = new String();
 
 	/**
+	 * Contains the synchronization token
+	 */
+	private String syncToken = new String();
+
+	/**
 	 * Contains the list of allow qualifiers from A11N
 	 */
 	private ArrayList<String> allowList = new ArrayList<String>();
@@ -131,7 +136,6 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	@Override
 	public void authorize(String payload) throws YADASecurityException {
 
-		// How we grant authorization
 		boolean authorized = false;
 
 		// Check authority for identity
@@ -142,6 +146,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 			throw new YADASecurityException(msg);
 		}
 
+		// Check request for locks
 		try {
 			setLocks(obtainLocks());
 		} catch (YADARequestException | YADAExecutionException e2) {
@@ -155,8 +160,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 				String grant = key.getString(i);
 				String listtype = getLocks().getString(grant);
 				if (listtype.equals(AUTH_TYPE_WHITELIST)) {
-					// allowList contains locks granting Authorization for
-					// this query
+					// Add locks to allowList
 					addAllowListEntry(grant);
 				} else {
 					// obtainLocks() writes whitelist grants only
@@ -173,7 +177,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 				String msg = "User is not authorized";
 				throw new YADASecurityException(msg);
 			}
-			// Is there a GRANT with APP matching the APP argument?
+			// Is there a GRANT for this APP?
 			if (hasGrants()) {
 				if (hasAllowList()) {
 					// pl=Authorizer,<APP>,<LOCK>
@@ -189,12 +193,25 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 			}
 		}
 		if (authorized == true) {
-			// Return the token
-			setResult((String) this.getToken());
+			// Return the tokens
+			setResult(generateResult().toString());
 		} else {
 			String msg = "User is not authorized";
 			throw new YADASecurityException(msg);
 		}
+	}
+
+	/**
+	 * 
+	 * @since 8.7.6
+	 */
+	public JSONObject generateResult() {
+		JSONObject result = new JSONObject();
+		// Add the sync token
+		result.put(YADA_HDR_SYNC_TKN, getSyncToken());
+		// Add the identity token
+		result.put(YADA_HDR_AUTH_JWT_PREFIX, getSyncToken());
+		return result;
 	}
 
 	/**
@@ -206,7 +223,6 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	 * @since 8.7.6
 	 */
 	public JSONObject obtainLocks() throws YADARequestException, YADASecurityException, YADAExecutionException {
-
 		JSONObject result = new JSONObject();
 		// The first argument is the APP (required) and set
 		// All following are the LOCK(S) (optional) and returned if present
@@ -251,22 +267,22 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 			byte[] credentialBytes = Base64.getDecoder().decode(getCredentials());
 			String credentialString = new String(credentialBytes);
 			String userid = new String();
-			String hasheduserid = new String();
 			String pw = new String();
 			Pattern rxAuthUsrCreds = Pattern.compile(RX_HDR_AUTH_USR_CREDS);
 			Matcher m2 = rxAuthUsrCreds.matcher(credentialString);
 			if (m2.matches()) {// found user
 				userid = m2.group(1);
-				hasheduserid = String.valueOf(userid.hashCode());
 				pw = m2.group(2);
 			}
 
 			try {
+				// create the sync token
+				generateSyncToken(userid);
 				// use credentials to retrieve user identity
-				String id = obtainIdentity(userid, pw, hasheduserid).toString();
+				String id = obtainIdentity(userid, pw).toString();
 				if (id.length() > 0) {
-					// create a token
-					generateToken(hasheduserid);
+					// create the identity token
+					generateToken(userid);
 					if (hasToken()) {
 						// add identity to cache using token as key
 						this.setCacheEntry(YADA_IDENTITY_CACHE, (String) this.getToken(), id, YADA_IDENTITY_TTL);
@@ -290,24 +306,35 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	 * @since 8.7.6
 	 * 
 	 */
-	public void generateToken(String hasheduserid) throws YADASecurityException {
+	public void generateToken(String userid) throws YADASecurityException {
 		// issueDate: JWT iat
 		// expirationDate: issueDate + identity cache TTL seconds
-
 		String token;
 		Instant issueDate = Instant.now().truncatedTo(ChronoUnit.SECONDS);
 		Instant expirationDate = issueDate.plus(YADA_IDENTITY_TTL, ChronoUnit.SECONDS);
 		try {
-			token = JWT.create().withSubject(hasheduserid).withExpiresAt(Date.from(expirationDate))
+			token = JWT.create().withSubject(userid).withExpiresAt(Date.from(expirationDate))
 			    .withIssuer(System.getProperty(JWTISS)).withIssuedAt(Date.from(issueDate))
 			    .sign(Algorithm.HMAC512(System.getProperty(JWSKEY)));
 		} catch (IllegalArgumentException | JWTCreationException | UnsupportedEncodingException e) {
 			String msg = "User is not authorized";
 			throw new YADASecurityException(msg);
 		}
-
 		this.setToken(token);
+	}
 
+	/**
+	 * @throws YADASecurityException
+	 * 
+	 * @since 8.7.6
+	 * 
+	 */
+	public void generateSyncToken(String userid) throws YADASecurityException {
+		// Create a synchronization token with the userid and the current time
+		Instant issueDate = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+		String token = userid + issueDate.toString();
+		token = String.valueOf(token.hashCode());
+		setSyncToken(token);
 	}
 
 	/**
@@ -343,7 +370,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	 * 
 	 */
 
-	public Object obtainIdentity(String userid, String pw, String hasheduserid)
+	public Object obtainIdentity(String userid, String pw)
 	    throws YADARequestException, YADASecurityException, YADAExecutionException {
 		JSONObject result = new JSONObject();
 		JSONArray a = new JSONArray();
@@ -384,7 +411,9 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 					aid.put(new JSONObject().put(YADA_IDENTITY_APP, applist.get(i)).put(YADA_IDENTITY_KEYS, keys));
 				}
 
-				result.put(YADA_IDENTITY_SUB, hasheduserid);
+				result.put(YADA_IDENTITY_SUB, userid);
+				// Use sync token in Gatekeeper to verify the sender owns the token
+				result.put(YADA_HDR_SYNC_TKN, getSyncToken());
 				// a is used to get the form:
 				// [{"app":app1,"grant":grant1},{"app":app1,"grant":grant2},...{"app":appN,"grant":grantN}]
 				// result.put(YADA_IDENTITY_GRANTS, a);
@@ -630,6 +659,21 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	 */
 	public void setResult(String result) {
 		this.result = result;
+	}
+
+	/**
+	 * @return the syncToken
+	 */
+	public String getSyncToken() {
+		return syncToken;
+	}
+
+	/**
+	 * @param syncToken
+	 *          the syncToken to set
+	 */
+	public void setSyncToken(String syncToken) {
+		this.syncToken = syncToken;
 	}
 
 }

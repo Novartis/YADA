@@ -156,9 +156,9 @@ public class Gatekeeper extends AbstractPreprocessor {
 	private Object identity = new Object();
 
 	/**
-	 * Contains the token user
+	 * Contains the synchronization token
 	 */
-	private Object sub = new Object();
+	private String syncToken = new String();
 
 	/**
 	 * Contains the conditions specified in A11N.
@@ -198,6 +198,7 @@ public class Gatekeeper extends AbstractPreprocessor {
 		// Make header available
 		try {
 			this.setHTTPHeaders(YADA_HDR_AUTH_NAMES);
+			setSyncToken(obtainSyncToken(yadaReq));
 		} catch (YADARequestException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -213,11 +214,10 @@ public class Gatekeeper extends AbstractPreprocessor {
 	 * @throws YADASecurityException
 	 */
 
+	@Override
 	public void obtainToken(YADARequest yadaReq) throws YADASecurityException {
-
 		// Check header for token
 		Pattern rxAuthTkn = Pattern.compile(RX_HDR_AUTH_TKN_PREFIX);
-
 		if (this.hasHttpHeaders()) {
 			for (int i = 0; i < this.getHttpHeaders().names().length(); i++) {
 				Matcher m1 = rxAuthTkn
@@ -237,6 +237,27 @@ public class Gatekeeper extends AbstractPreprocessor {
 	}
 
 	/**
+	 * Checking header then cookie for token to set
+	 * 
+	 * @throws YADASecurityException
+	 */
+
+	public String obtainSyncToken(YADARequest yadaReq) throws YADASecurityException {
+		// Check header for sync token
+		String result = new String();
+		if (this.hasHttpHeaders()) {
+			JSONObject object = this.getHttpHeaders();
+			JSONArray keys = object.names();
+			for (int i = 0; i < keys.length(); ++i) {
+				if (keys.getString(i).equals(YADA_HDR_SYNC_TKN)) {
+					result = object.getString(YADA_HDR_SYNC_TKN);
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
 	 * Overrides {@link TokenValidator#validateToken()}.
 	 *
 	 * @throws YADASecurityException
@@ -249,8 +270,6 @@ public class Gatekeeper extends AbstractPreprocessor {
 		try {
 			DecodedJWT token = JWT.require(Algorithm.HMAC512(System.getProperty(JWSKEY)))
 			    .withIssuer(System.getProperty(JWTISS)).build().verify((String) this.getToken());
-			// store the sub for comparison with identity at authorization
-			setSub(token.getSubject());
 		} catch (UnsupportedEncodingException | JWTVerificationException exception) {
 			// UTF-8 encoding not supported
 			String msg = "Validation Error ";
@@ -305,6 +324,7 @@ public class Gatekeeper extends AbstractPreprocessor {
 	public void authorize() throws YADASecurityException {
 
 		boolean authorized = false;
+		boolean blacklist = false;
 
 		// Check authority for identity
 		try {
@@ -314,9 +334,7 @@ public class Gatekeeper extends AbstractPreprocessor {
 			e.printStackTrace();
 		}
 
-		// TODO Rewrite comments for clarity.
-		// The a11n table specifies conditions for access to protected queries
-		// The app used for the query source is the default condition for access
+		// Check a11n table for locks
 		try {
 			setLocks(obtainLocks());
 		} catch (YADARequestException | YADAExecutionException e2) {
@@ -329,20 +347,20 @@ public class Gatekeeper extends AbstractPreprocessor {
 				String grant = key.getString(i);
 				String listtype = getLocks().getString(grant);
 				if (listtype.equals(AUTH_TYPE_WHITELIST)) {
-					// allowList contains locks granting Authorization for
-					// this query
+					// Add whitelist locks to allowList
 					addAllowListEntry(grant);
 				} else {
-					// support blacklist grants
+					// Remove blacklist locks and require key by setting blacklist to true
 					removeAllowListEntry(grant);
+					blacklist = true;
 				}
 			}
 		}
-		if (hasToken()) {
-			// User check token.sub == identity.sub validates identity is set and
-			// matches token
+		if (hasToken() && hasSyncToken()) {
+			// Check header.syncToken == identity.syncToken
+			// https://en.wikipedia.org/wiki/Cross-site_request_forgery#Synchronizer_token_pattern
 			JSONObject jo = new JSONObject((String) getIdentity());
-			if (jo.getString(YADA_IDENTITY_SUB).equals(getSub())) {
+			if (jo.getString(YADA_HDR_SYNC_TKN).equals(getSyncToken())) {
 				// What app (context) are we interested in?
 				String app = "";
 				YADARequest ryq = this.getYADARequest();
@@ -361,8 +379,9 @@ public class Gatekeeper extends AbstractPreprocessor {
 					String msg = "User is not authorized";
 					throw new YADASecurityException(msg);
 				}
-				// Is there a GRANT with APP matching the APP argument?
-				if (hasGrants()) {
+				// Is there a GRANT for this APP or is there a blacklist entry requiring
+				// a valid lock?
+				if (hasGrants() || blacklist == true) {
 					if (getAllowList().size() > 0) {
 						// Do we have a GRANT containing a KEY fitting the LOCK (specified
 						// in a11n table 'A' row) protecting this query?
@@ -372,8 +391,7 @@ public class Gatekeeper extends AbstractPreprocessor {
 							}
 						}
 					} else {
-						// No LOCK specified so user qualified by having some level of
-						// access to the APP
+						// GRANT exists for this APP and no LOCK specified
 						authorized = true;
 					}
 				}
@@ -918,26 +936,22 @@ public class Gatekeeper extends AbstractPreprocessor {
 	}
 
 	/**
-	 * @return the sub
+	 * @throws YADASecurityException
+	 * @since 8.7.6
 	 */
-	public Object getSub() {
-		return sub;
-	}
-
-	/**
-	 * @param sub
-	 *          the sub to set
-	 */
-	public void setSub(Object sub) {
-		this.sub = sub;
+	public boolean hasToken() throws YADASecurityException {
+		if (null != this.getToken() && !"".equals(this.getToken())) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
 	 * @throws YADASecurityException
 	 * @since 8.7.6
 	 */
-	public boolean hasToken() throws YADASecurityException {
-		if (null != this.getToken() && !"".equals(this.getToken())) {
+	public boolean hasSyncToken() throws YADASecurityException {
+		if (null != this.getSyncToken() && !"".equals(this.getSyncToken())) {
 			return true;
 		}
 		return false;
@@ -981,6 +995,21 @@ public class Gatekeeper extends AbstractPreprocessor {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * @return the syncToken
+	 */
+	public String getSyncToken() {
+		return syncToken;
+	}
+
+	/**
+	 * @param syncToken
+	 *          the syncToken to set
+	 */
+	public void setSyncToken(String syncToken) {
+		this.syncToken = syncToken;
 	}
 
 }
