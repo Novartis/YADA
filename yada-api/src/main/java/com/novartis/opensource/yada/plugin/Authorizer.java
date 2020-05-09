@@ -616,11 +616,11 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	public void addAllowListEntry(String grant) {
-		getAllowList().add(grant);
+		this.allowList.add(grant);
 	}
 
 	public void removeAllowListEntry(String grant) {
-		getAllowList().remove(grant);
+		this.allowList.remove(grant);
 	}
 
 	public ArrayList<String> getDenyList() {
@@ -628,7 +628,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	public void addDenyListEntry(String grant) {
-		getDenyList().add(grant);
+		this.denyList.add(grant);
 	}
 
 	/**
