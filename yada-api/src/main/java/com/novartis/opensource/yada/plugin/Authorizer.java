@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.auth0.jwt.JWT;
@@ -203,14 +204,16 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 
 	/**
 	 * 
+	 * @throws JSONException
+	 * @throws YADASecurityException
 	 * @since 8.7.6
 	 */
-	public JSONObject generateResult() {
+	public JSONObject generateResult() throws YADASecurityException, JSONException {
 		JSONObject result = new JSONObject();
 		// Add the sync token
 		result.put(YADA_HDR_SYNC_TKN, getSyncToken());
 		// Add the identity token
-		result.put(YADA_HDR_AUTH_JWT_PREFIX, getSyncToken());
+		result.put(YADA_HDR_AUTH_JWT_PREFIX, this.getToken());
 		return result;
 	}
 
