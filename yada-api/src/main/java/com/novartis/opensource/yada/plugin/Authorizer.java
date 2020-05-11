@@ -138,6 +138,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	public void authorize(String payload) throws YADASecurityException {
 
 		boolean authorized = false;
+		boolean blacklist = false;
 
 		// Check authority for identity
 		try {
@@ -167,6 +168,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 					// obtainLocks() writes whitelist grants only
 					// this supports the addition of blacklist grants
 					removeAllowListEntry(grant);
+					blacklist = true;
 				}
 			}
 		}
@@ -178,8 +180,9 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 				String msg = "User is not authorized";
 				throw new YADASecurityException(msg);
 			}
-			// Is there a GRANT for this APP?
-			if (hasGrants()) {
+			// Is there a GRANT for this APP or is there a blacklist entry requiring
+			// a valid lock?
+			if (hasGrants() || blacklist == true) {
 				if (hasAllowList()) {
 					// pl=Authorizer,<APP>,<LOCK>
 					for (int i = 0; i < ((JSONArray) getGrant()).length(); i++) {
