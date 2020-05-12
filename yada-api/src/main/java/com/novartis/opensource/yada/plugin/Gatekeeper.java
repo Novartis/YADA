@@ -249,8 +249,8 @@ public class Gatekeeper extends AbstractPreprocessor {
 			JSONObject object = this.getHttpHeaders();
 			JSONArray keys = object.names();
 			for (int i = 0; i < keys.length(); ++i) {
-				if (keys.getString(i).equals(YADA_HDR_SYNC_TKN)) {
-					result = object.getString(YADA_HDR_SYNC_TKN);
+				if (keys.getString(i).equalsIgnoreCase(YADA_HDR_SYNC_TKN)) {
+					result = object.getString(keys.getString(i));
 				}
 			}
 		}

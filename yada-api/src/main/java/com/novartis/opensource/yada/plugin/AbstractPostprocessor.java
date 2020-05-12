@@ -288,10 +288,6 @@ public abstract class AbstractPostprocessor implements Postprocess, Authorizatio
 	}
 
 	/**
-	 * 
-	 * TODO: Move this to a utility class or abstract superclass (also in
-	 * AbstractPreprocessor)
-	 * 
 	 * Array mutator for variable, preferred for compatibility with
 	 * {@link javax.servlet.http.HttpServletRequest#getParameterMap()} Converts
 	 * parameter string into {@link JSONObject}
@@ -301,40 +297,38 @@ public abstract class AbstractPostprocessor implements Postprocess, Authorizatio
 	 *          {@link HttpServletRequest}
 	 * @throws YADARequestException
 	 *           when the header string is malformed
-	 * @since 8.7.6
+	 * @since 8.5.0
 	 */
 	public void setHTTPHeaders(String[] httpHeaders) throws YADARequestException {
-		String hdrStr = httpHeaders[0];
-		Matcher m1 = Pattern.compile(RX_NOTJSON, Pattern.CASE_INSENSITIVE).matcher(hdrStr);
+		Matcher m1 = Pattern.compile(RX_NOTJSON, Pattern.CASE_INSENSITIVE).matcher(httpHeaders.toString());
 		Map<String, String> reqHeaders = new HashMap<String, String>();
-
+		// ignore key case
 		// api circumvents http request so check for null
 		if (null != getRequest()) {
 			@SuppressWarnings("unchecked")
 			Enumeration<String> hdrNames = getRequest().getHeaderNames();
 			while (hdrNames.hasMoreElements()) {
 				String name = hdrNames.nextElement();
-				reqHeaders.put(name, getRequest().getHeader(name));
+				reqHeaders.put(name.toLowerCase(), getRequest().getHeader(name));
 			}
 		}
 
 		if (m1.matches()) // it's a list of header names
 		{
-			String[] hdrList = hdrStr.split(",");
 			this.httpHeaders = new JSONObject();
-			for (String name : hdrList) {
-				this.httpHeaders.put(name, reqHeaders.get(name));
+			for (String name : httpHeaders) {
+				this.httpHeaders.put(name, reqHeaders.get(name.toLowerCase()));
 			}
 		} else // it's a json object
 		{
 			try {
-				this.httpHeaders = new JSONObject(hdrStr);
+				this.httpHeaders = new JSONObject(httpHeaders);
 				JSONArray names = this.httpHeaders.names();
 				JSONArray vals = this.httpHeaders.toJSONArray(names);
 				for (int i = 0; i < vals.length(); i++) {
 					if (vals.optBoolean(i)) {
 						String name = names.getString(i);
-						this.httpHeaders.put(name, reqHeaders.get(name));
+						this.httpHeaders.put(name, reqHeaders.get(name.toLowerCase()));
 					}
 				}
 			} catch (JSONException e) {
