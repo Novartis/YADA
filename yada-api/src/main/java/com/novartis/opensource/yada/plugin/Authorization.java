@@ -60,7 +60,7 @@ public interface Authorization {
 	/**
 	 * Array of IAM headers we want to have access to
 	 */
-	public final static String[] YADA_HDR_AUTH_NAMES = { YADA_HDR_AUTH.toLowerCase(), YADA_HDR_SYNC_TKN.toLowerCase() };
+	public final static String[] YADA_HDR_AUTH_NAMES = { YADA_HDR_AUTH, YADA_HDR_SYNC_TKN };
 
 	/**
 	 * Constant with value: {@value}

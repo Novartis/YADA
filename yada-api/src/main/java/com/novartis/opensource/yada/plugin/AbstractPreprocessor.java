@@ -785,14 +785,12 @@ public abstract class AbstractPreprocessor
 	 * parameter string into {@link JSONObject}
 	 * 
 	 * @param httpHeaders
-	 *          the {@link String} array originating in the
-	 *          {@link HttpServletRequest}
 	 * @throws YADARequestException
 	 *           when the header string is malformed
-	 * @since 8.5.0
+	 * @since 8.7.6
 	 */
 	public void setHTTPHeaders(String[] httpHeaders) throws YADARequestException {
-		Matcher m1 = Pattern.compile(RX_NOTJSON, Pattern.CASE_INSENSITIVE).matcher(httpHeaders.toString());
+		Matcher m1 = Pattern.compile(RX_NOTJSON).matcher(httpHeaders.toString());
 		Map<String, String> reqHeaders = new HashMap<String, String>();
 		// ignore key case
 		// api circumvents http request so check for null

@@ -200,8 +200,9 @@ public class Gatekeeper extends AbstractPreprocessor {
 			this.setHTTPHeaders(YADA_HDR_AUTH_NAMES);
 			setSyncToken(obtainSyncToken(yadaReq));
 		} catch (YADARequestException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// Gatekeeper prevents access on header setting or syncToken
+			// obtaining/setting errors
+			throw new YADASecurityException("Unauthorized.");
 		}
 
 		validateYADARequest();
