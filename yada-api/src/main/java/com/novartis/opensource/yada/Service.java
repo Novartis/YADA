@@ -19,9 +19,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,6 +60,14 @@ import com.novartis.opensource.yada.util.YADAUtils;
  *
  */
 public class Service {
+	
+	/**
+	 * Constant with value: {@value}
+	 *
+	 * @since 8.7.6
+	 */
+	private final static String RX_YADA_RESOURCE_ACCESS_UNAUTHORIZED = "(401 Unauthorized)";
+
 	
 	/**
 	 * Local logger handle
@@ -746,6 +756,20 @@ public class Service {
 			gResult = engagePostprocess(gResult);
 			// process for export, if desired
 			gResult = exportResult(gResult);
+			
+			// YADA resource access returns '401 Unauthorized'
+			// This should only happen when the query is run without 
+			// specifying the Authorizer plugin and argument(s)
+			Pattern rx = Pattern.compile(RX_YADA_RESOURCE_ACCESS_UNAUTHORIZED);
+			Matcher m = rx.matcher(gResult);
+			if (m.matches()) {
+					String msg = "User is not authorized";
+					throw new YADASecurityException(msg);
+			}
+			
+			
+			
+			
 		}
 		finally
 		{

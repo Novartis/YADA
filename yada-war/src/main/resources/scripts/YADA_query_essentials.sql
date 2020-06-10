@@ -228,6 +228,17 @@ INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA crud by qname 
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA view protector','select 1 from yada_ug where upper(role) in (''ADMIN'',''USER'') and app=?v and userid=?v','YADABOT','YADA');
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA view by qname protector','select 1 from yada_ug where upper(role) in (''ADMIN'',''USER'') and app = (select app from yada_query where qname = ?v) and userid=?v','YADABOT','YADA');
 
+
+-- security API
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA resource access','select ''401 Unauthorized'' as resource','YADABOT','YADA');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA static resource','select ''YADA static resource'' as resource','YADABOT','YADA');
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA static resource','pl',1,'Gatekeeper,content.policy=void,execution.policy=void');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA protected static resource','select ''YADA protected static resource'' as resource','YADABOT','YADA');
+INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA protected static resource','pl',1,'Gatekeeper,content.policy=void,execution.policy=void');
+INSERT into YADA_A11N (target,qname,policy,type) VALUES ('YADA protected static resource','ADMIN','A','whitelist');
+
+
+
 -- default login property
 
 -- check login property (unprotected -- is this a vulnerability?)
