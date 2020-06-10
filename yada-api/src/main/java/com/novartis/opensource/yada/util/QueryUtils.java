@@ -520,7 +520,7 @@ public class QueryUtils
 	 * @throws YADAParserException when the parser fails
 	 * @see com.novartis.opensource.yada.QueryManager
 	 */
-	@SuppressWarnings("static-method")
+
 	private void processJDBCStatement(YADAQuery yq) throws YADAParserException
 	{
 	  // new method
@@ -1102,7 +1102,7 @@ public class QueryUtils
 	 * @param val
 	 *          the value to assign
 	 */
-	@SuppressWarnings("static-method")
+	
 	private void setQueryParameter(PreparedStatement pstmt, int index, char type,
 																	String val)
 	{

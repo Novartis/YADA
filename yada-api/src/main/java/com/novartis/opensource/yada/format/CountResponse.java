@@ -40,7 +40,7 @@ public class CountResponse extends AbstractResponse
 	/**
 	 * Ivar containing the result to be returned by this class's {@link #toString()} method
 	 */
-	private Integer result = new Integer(0);
+	private Integer result = Integer.valueOf(0);
 	
 	/**
 	 * Null constructor. 

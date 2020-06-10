@@ -401,7 +401,7 @@ public class SqlldrUtil {
 	 * @param out stdout
 	 * @throws IOException if the {@code in} or {@code out} cannot be read or written
 	 */
-	@SuppressWarnings("static-method")
+	
 	private void copy(InputStream in, OutputStream out) throws IOException 
     {
 		while (true) 

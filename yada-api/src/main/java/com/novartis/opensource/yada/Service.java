@@ -19,11 +19,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -251,11 +249,11 @@ public class Service {
   		{
   			getYADARequest().setFilters(paraMap.get(YADARequest.PS_FILTERS));
   		}
-  		if (paraMap.get(YADARequest.PL_FORMAT) != null && !paraMap.get(YADARequest.PL_FORMAT).equals(YADARequest.FORMAT_JSON))
+  		if (paraMap.get(YADARequest.PL_FORMAT) != null && !paraMap.get(YADARequest.PL_FORMAT)[0].equals(YADARequest.FORMAT_JSON))
   		{
   			getYADARequest().setFormat(paraMap.get(YADARequest.PL_FORMAT));
   		}
-  		if (paraMap.get(YADARequest.PS_FORMAT) != null && !paraMap.get(YADARequest.PS_FORMAT).equals(YADARequest.FORMAT_JSON))
+  		if (paraMap.get(YADARequest.PS_FORMAT) != null && !paraMap.get(YADARequest.PS_FORMAT)[0].equals(YADARequest.FORMAT_JSON))
   		{
   			getYADARequest().setFormat(paraMap.get(YADARequest.PS_FORMAT));
   		}
@@ -309,11 +307,11 @@ public class Service {
   		{
   			getYADARequest().setMail(paraMap.get(YADARequest.PL_MAIL));
   		}
-  		if (paraMap.get(YADARequest.PL_METHOD) != null && !paraMap.get(YADARequest.PL_METHOD).equals(YADARequest.METHOD_GET))
+  		if (paraMap.get(YADARequest.PL_METHOD) != null && !paraMap.get(YADARequest.PL_METHOD)[0].equals(YADARequest.METHOD_GET))
   		{
   			getYADARequest().setMethod(paraMap.get(YADARequest.PL_METHOD));
   		}
-  		if (paraMap.get(YADARequest.PS_METHOD) != null && !paraMap.get(YADARequest.PS_METHOD).equals(YADARequest.METHOD_GET))
+  		if (paraMap.get(YADARequest.PS_METHOD) != null && !paraMap.get(YADARequest.PS_METHOD)[0].equals(YADARequest.METHOD_GET))
   		{
   			getYADARequest().setMethod(paraMap.get(YADARequest.PS_METHOD));
   		}
@@ -373,11 +371,11 @@ public class Service {
   		{
   			getYADARequest().setParallel(paraMap.get(YADARequest.PL_PARALLEL));
   		}
-  		if (paraMap.get(YADARequest.PL_PLUGINTYPE) != null && !paraMap.get(YADARequest.PL_PLUGINTYPE).equals(YADARequest.PREPROCESS))
+  		if (paraMap.get(YADARequest.PL_PLUGINTYPE) != null && !paraMap.get(YADARequest.PL_PLUGINTYPE)[0].equals(YADARequest.PREPROCESS))
   		{
   			getYADARequest().setPluginType(paraMap.get(YADARequest.PL_PLUGINTYPE));
   		}
-  		if (paraMap.get(YADARequest.PS_PLUGINTYPE) != null && !paraMap.get(YADARequest.PL_PLUGINTYPE).equals(YADARequest.PREPROCESS))
+  		if (paraMap.get(YADARequest.PS_PLUGINTYPE) != null && !paraMap.get(YADARequest.PL_PLUGINTYPE)[0].equals(YADARequest.PREPROCESS))
   		{
   			getYADARequest().setPluginType(paraMap.get(YADARequest.PS_PLUGINTYPE));
   		}
@@ -425,11 +423,11 @@ public class Service {
   		{
   			getYADARequest().setProxy(paraMap.get(YADARequest.PS_PROXY));
   		}
-  		if (paraMap.get(YADARequest.PL_QNAME) != null && !paraMap.get(YADARequest.PL_QNAME).equals(YADARequest.DEFAULT_QNAME))
+  		if (paraMap.get(YADARequest.PL_QNAME) != null && !paraMap.get(YADARequest.PL_QNAME)[0].equals(YADARequest.DEFAULT_QNAME))
   		{
   			getYADARequest().setQname(paraMap.get(YADARequest.PL_QNAME));
   		}
-  		if (paraMap.get(YADARequest.PS_QNAME) != null && !paraMap.get(YADARequest.PS_QNAME).equals(YADARequest.DEFAULT_QNAME))
+  		if (paraMap.get(YADARequest.PS_QNAME) != null && !paraMap.get(YADARequest.PS_QNAME)[0].equals(YADARequest.DEFAULT_QNAME))
   		{
   			getYADARequest().setQname(paraMap.get(YADARequest.PS_QNAME));
   		}
@@ -457,19 +455,19 @@ public class Service {
   		{
   			getYADARequest().setSortKey(paraMap.get(YADARequest.PS_SORTKEY));
   		}
-  		if (paraMap.get(YADARequest.PL_SORTORDER) != null && !paraMap.get(YADARequest.PL_SORTORDER).equals(YADARequest.SORT_ASC))
+  		if (paraMap.get(YADARequest.PL_SORTORDER) != null && !paraMap.get(YADARequest.PL_SORTORDER)[0].equals(YADARequest.SORT_ASC))
   		{
   			getYADARequest().setSortOrder(paraMap.get(YADARequest.PL_SORTORDER));
   		}
-  		if (paraMap.get(YADARequest.PS_SORTORDER) != null && !paraMap.get(YADARequest.PS_SORTORDER).equals(YADARequest.SORT_ASC))
+  		if (paraMap.get(YADARequest.PS_SORTORDER) != null && !paraMap.get(YADARequest.PS_SORTORDER)[0].equals(YADARequest.SORT_ASC))
   		{
   			getYADARequest().setSortOrder(paraMap.get(YADARequest.PS_SORTORDER));
   		}
-  		if (paraMap.get(YADARequest.PL_USER) != null && !paraMap.get(YADARequest.PL_USER).equals(YADARequest.DEFAULT_USER))
+  		if (paraMap.get(YADARequest.PL_USER) != null && !paraMap.get(YADARequest.PL_USER)[0].equals(YADARequest.DEFAULT_USER))
   		{
   			getYADARequest().setUser(paraMap.get(YADARequest.PL_USER));
   		}
-  		if (paraMap.get(YADARequest.PS_USER) != null && !paraMap.get(YADARequest.PS_USER).equals(YADARequest.DEFAULT_USER))
+  		if (paraMap.get(YADARequest.PS_USER) != null && !paraMap.get(YADARequest.PS_USER)[0].equals(YADARequest.DEFAULT_USER))
   		{
   			getYADARequest().setUser(paraMap.get(YADARequest.PS_USER));
   		}
@@ -1215,7 +1213,7 @@ public class Service {
 	 * @param yq the yada query object
 	 * @throws YADAPluginException when the plugin fails to execute successfully
 	 */
-	@SuppressWarnings("static-method")
+	
 	private void engagePostprocess(YADAQuery yq) throws YADAPluginException
 	{
 		if(yq.hasParam(YADARequest.PS_PLUGIN))

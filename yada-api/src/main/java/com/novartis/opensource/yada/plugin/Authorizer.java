@@ -3,7 +3,6 @@
  */
 package com.novartis.opensource.yada.plugin;
 
-import java.io.UnsupportedEncodingException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -100,8 +99,8 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 
 	/**
 	 * Base implementation, calls {@link #setYADARequest(YADARequest)},
-	 * {@link #setRequest(HttpServletRequest)}, {@link #setHTTPHeaders(String)},
-	 * {@link #authorizeRequest(YADARequest, String)} and returns
+	 * {@link #setRequest(HttpServletRequest)}, {@link #setHTTPHeaders(String[])},
+	 * {@link #authorizeYADARequest(YADARequest, String)} and returns
 	 * {@link #getResult()}
 	 * 
 	 * @throws YADAPluginException
@@ -207,6 +206,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 
 	/**
 	 * 
+	 * @return 
 	 * @throws JSONException
 	 * @throws YADASecurityException
 	 * @since 8.7.6
@@ -307,6 +307,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	/**
+	 * @param userid 
 	 * @throws YADASecurityException
 	 * 
 	 * @since 8.7.6
@@ -322,7 +323,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 			token = JWT.create().withSubject(userid).withExpiresAt(Date.from(expirationDate))
 			    .withIssuer(System.getProperty(JWTISS)).withIssuedAt(Date.from(issueDate))
 			    .sign(Algorithm.HMAC512(System.getProperty(JWSKEY)));
-		} catch (IllegalArgumentException | JWTCreationException | UnsupportedEncodingException e) {
+		} catch (IllegalArgumentException | JWTCreationException e) {
 			String msg = "User is not authorized";
 			throw new YADASecurityException(msg);
 		}
@@ -330,6 +331,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	/**
+	 * @param userid 
 	 * @throws YADASecurityException
 	 * 
 	 * @since 8.7.6
@@ -357,7 +359,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 			try {
 				JWT.require(Algorithm.HMAC512(System.getProperty(JWSKEY))).withIssuer(System.getProperty(JWTISS)).build()
 				    .verify((String) this.getToken());
-			} catch (UnsupportedEncodingException | JWTVerificationException exception) {
+			} catch (JWTVerificationException exception) {
 				// UTF-8 encoding not supported
 				String msg = "Validation Error ";
 				throw new YADASecurityException(msg, exception);
@@ -367,6 +369,8 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 
 	/**
 	 * Obtain Identity with basic authentication
+	 * @param userid 
+	 * @param pw 
 	 * 
 	 * @return identity
 	 * @throws YADARequestException
@@ -438,6 +442,10 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	/**
+	 * @return 
+	 * @throws YADASecurityException 
+	 * @throws YADARequestException 
+	 * @throws YADAExecutionException 
 	 * @since 8.7.6
 	 */
 	public Object obtainIdentity() throws YADASecurityException, YADARequestException, YADAExecutionException {
@@ -447,6 +455,11 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 
 	/**
 	 * Obtain specified GRANT(KEYS) from current identity
+	 * @param app 
+	 * @return 
+	 * @throws YADASecurityException 
+	 * @throws YADARequestException 
+	 * @throws YADAExecutionException 
 	 */
 	public Object obtainGrant(String app) throws YADASecurityException, YADARequestException, YADAExecutionException {
 		JSONObject jo = new JSONObject((String) getIdentity());
@@ -464,6 +477,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	/**
+	 * @return {@code true} if {@link AbstractPostprocessor#getToken()} is set, otherwise {@code false}
 	 * @throws YADASecurityException
 	 * @since 8.7.6
 	 */
@@ -475,6 +489,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	/**
+	 * @return {@code true} if {@link #locks} has at least 1 entry, otherwise {@code false}
 	 * @since 8.7.6
 	 */
 	public boolean hasLocks() {
@@ -485,6 +500,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	/**
+	 * @return {@code true} if {@link #grant} has at least 1 entry, otherwise {@code false}
 	 * @since 8.7.6
 	 */
 	public boolean hasGrants() {
@@ -495,6 +511,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	/**
+	 * @return 
 	 * @since 8.7.6
 	 */
 	public boolean hasIdentity() {
@@ -505,6 +522,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	/**
+	 * @return {@code true} if {@link #allowList} has at least 1 entry, otherwise {@code false}
 	 * @since 8.7.6
 	 */
 	public boolean hasAllowList() {
@@ -515,6 +533,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	/**
+	 * @return {@code true} if {@link #credentials} has at least 1 entry, otherwise {@code false}
 	 * @since 8.7.6
 	 */
 	public boolean hasCredentials() {
@@ -525,10 +544,10 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	/**
-	 * @return the yadaAuthorization
+	 * @return {@link #yadaAuthorization}
 	 */
 	public JSONObject getYADAAuthorization() {
-		return yadaAuthorization;
+		return this.yadaAuthorization;
 	}
 
 	/**
@@ -540,10 +559,10 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	/**
-	 * @return the resource
+	 * @return {@link #resource}
 	 */
 	public String getResource() {
-		return resource;
+		return this.resource;
 	}
 
 	/**
@@ -555,10 +574,10 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	/**
-	 * @return the credentials
+	 * @return {@link #credentials}
 	 */
 	public String getCredentials() {
-		return credentials;
+		return this.credentials;
 	}
 
 	/**
@@ -570,10 +589,10 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	/**
-	 * @return the grant
+	 * @return {@link #grant}
 	 */
 	public Object getGrant() {
-		return grant;
+		return this.grant;
 	}
 
 	/**
@@ -585,13 +604,10 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	/**
-	 * @return the identity
-	 * @throws YADAExecutionException
-	 * @throws YADASecurityException
-	 * @throws YADARequestException
+	 * @return {@link #identity}
 	 */
 	public Object getIdentity() {
-		return identity;
+		return this.identity;
 	}
 
 	/**
@@ -603,10 +619,10 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	/**
-	 * @return the locks
+	 * @return {@link #locks}
 	 */
 	public JSONObject getLocks() {
-		return locks;
+		return this.locks;
 	}
 
 	/**
@@ -617,31 +633,46 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 		this.locks = locks;
 	}
 
+	/**
+	 * @return {@link #allowList}
+	 */
 	public ArrayList<String> getAllowList() {
-		return allowList;
+		return this.allowList;
 	}
 
+	/**
+	 * @param grant
+	 */
 	public void addAllowListEntry(String grant) {
 		this.allowList.add(grant);
 	}
 
+	/**
+	 * @param grant
+	 */
 	public void removeAllowListEntry(String grant) {
 		this.allowList.remove(grant);
 	}
 
+	/**
+	 * @return the {@link #denyList}
+	 */
 	public ArrayList<String> getDenyList() {
-		return denyList;
+		return this.denyList;
 	}
 
+	/**
+	 * @param grant
+	 */
 	public void addDenyListEntry(String grant) {
 		this.denyList.add(grant);
 	}
 
 	/**
-	 * @return the app
+	 * @return the {@link #app}
 	 */
 	public String getApp() {
-		return app;
+		return this.app;
 	}
 
 	/**
@@ -653,10 +684,10 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	/**
-	 * @return the result
+	 * @return {@link #result}
 	 */
 	public String getResult() {
-		return result;
+		return this.result;
 	}
 
 	/**
@@ -668,10 +699,10 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	/**
-	 * @return the syncToken
+	 * @return {@link #syncToken}
 	 */
 	public String getSyncToken() {
-		return syncToken;
+		return this.syncToken;
 	}
 
 	/**

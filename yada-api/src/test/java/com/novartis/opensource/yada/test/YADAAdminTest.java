@@ -49,7 +49,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
  * 
  * @author David Varon
  * @since 8.3.0
+ * @deprecated since 8.7.6
  */
+@Deprecated
 public class YADAAdminTest {
   
   /**
@@ -620,7 +622,6 @@ public class YADAAdminTest {
     String xpath = "//div[contains(@class,\"security-options\")][2]";
     e = new WebDriverWait(d, 20).until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
     
-    List<WebElement> policies = d.findElements(By.className("security-options"));
     List<WebElement> policyTypes = d.findElements(By.className("policy-type"));
     List<WebElement> policyArgs = d.findElements(By.className("policy-arg"));
     
@@ -640,7 +641,6 @@ public class YADAAdminTest {
     xpath = "//div[contains(@class,\"security-options\")][3]";
     e = new WebDriverWait(d, 20).until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
     
-    policies = d.findElements(By.className("security-options"));
     policyTypes = d.findElements(By.className("policy-type"));
     policyArgs = d.findElements(By.className("policy-arg"));
     List<WebElement> policyProtectors = d.findElements(By.className("policy-protector"));
@@ -661,7 +661,6 @@ public class YADAAdminTest {
     xpath = "(//input[contains(@class,\"security-options\")])[3]";
     e = new WebDriverWait(d, 20).until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
     
-    policies = d.findElements(By.className("security-options"));
     policyTypes = d.findElements(By.className("policy-type"));
     policyArgs = d.findElements(By.className("policy-arg"));
     policyProtectors = d.findElements(By.className("policy-protector"));

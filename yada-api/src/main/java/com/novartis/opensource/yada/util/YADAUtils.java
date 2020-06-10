@@ -207,7 +207,6 @@ public class YADAUtils {
 	{		
 		String   version     = "-1";
 		Class<?> clazz       = YADAUtils.class; 
-		String   mfPath      = "META-INF/MANIFEST.MF";
 		String   jarFilePath =  clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
 		Manifest mf          = null;      
 		try(JarFile jar = new JarFile(jarFilePath))

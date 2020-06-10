@@ -1864,7 +1864,7 @@ public class YADARequest {
 	 * @param exportLimit maximim number of results to export
 	 */
 	public void setExportLimit(String[] exportLimit) {
-		int i = new Integer(exportLimit[0]).intValue();
+		int i = Integer.valueOf(exportLimit[0]); 
 		if (i > -1)
 		{
 			this.exportLimit = i;
@@ -2339,7 +2339,7 @@ public class YADARequest {
 	 * @param pageSize the number of result "rows" to return
 	 */
 	public void setPageSize(String[] pageSize) {
-		int i = new Integer(pageSize[0]).intValue();
+		int i = Integer.valueOf(pageSize[0]);
 		if (i != YADARequest.DEFAULT_PAGE_SIZE)
 		{
 			if(i == -1)
@@ -2369,7 +2369,7 @@ public class YADARequest {
 	 * @param pageStart the subset of results
 	 */
 	public void setPageStart(String[] pageStart) {
-		int i = new Integer(pageStart[0]).intValue();
+		int i = Integer.valueOf(pageStart[0]);
 		if (i != YADARequest.DEFAULT_START_PAGE)
 		{
 			this.pageStart = i;
@@ -2796,7 +2796,7 @@ public class YADARequest {
 	 * @param viewLimit the maximum number of rows to retrieve, independent of {@code pageSize}
 	 */
 	public void setViewLimit(String[] viewLimit) {
-		int i = new Integer(viewLimit[0]).intValue();
+		int i = Integer.valueOf(viewLimit[0]).intValue();
 		if (i > -1)
 		{
 			this.viewLimit = i;
@@ -3394,7 +3394,7 @@ public class YADARequest {
 	 */
 	public boolean hasHarmonyMap()
 	{
-		if(null == getHarmonyMap() || "".equals(getHarmonyMap()))
+		if(null == getHarmonyMap() || "".equals(getHarmonyMap().toString()))
 			return false;
 		return true;
 	}
@@ -3449,7 +3449,7 @@ public class YADARequest {
 	 * @param strings the parameter value
 	 * @return a formatted string
 	 */
-	@SuppressWarnings("static-method")
+	
 	private String getFormattedDebugString(String name, String[] strings) {
 		String sSet = "Set [" + name + "]";
 		String sVal = "[" + ArrayUtils.toString(strings) + "]";

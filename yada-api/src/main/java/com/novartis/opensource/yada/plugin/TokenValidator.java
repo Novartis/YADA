@@ -50,6 +50,8 @@ public interface TokenValidator {
   public void setToken() throws YADASecurityException;
   
   /**
+   * @param yadaReq 
+   * @throws YADASecurityException 
    * @since 8.7.6
    */
   public void obtainToken(YADARequest yadaReq) throws YADASecurityException;

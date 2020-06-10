@@ -29,7 +29,6 @@
 package com.novartis.opensource.yada.plugin;
 
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -46,7 +45,6 @@ import org.json.JSONObject;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.novartis.opensource.yada.ConnectionFactory;
 import com.novartis.opensource.yada.Finder;
 import com.novartis.opensource.yada.JSONParams;
@@ -181,11 +179,9 @@ public class Gatekeeper extends AbstractPreprocessor {
 	 * Validates the request host, user, security params, and security query
 	 * execution results
 	 *
-	 * @throws YADAPluginException
-	 *           when plugin processing fails
-	 * @throws YADASecurityException
-	 *           when the user is unauthorized or there is an error in policy
-	 *           processing
+	 * @throws YADAPluginException   when plugin processing fails
+	 * @throws YADASecurityException when the user is unauthorized or there is an
+	 *                               error in policy processing
 	 * @see com.novartis.opensource.yada.plugin.AbstractPreprocessor#engage(com.novartis.opensource.yada.YADARequest,
 	 *      com.novartis.opensource.yada.YADAQuery)
 	 */
@@ -222,7 +218,7 @@ public class Gatekeeper extends AbstractPreprocessor {
 		if (this.hasHttpHeaders()) {
 			for (int i = 0; i < this.getHttpHeaders().names().length(); i++) {
 				Matcher m1 = rxAuthTkn
-				    .matcher((CharSequence) this.getHttpHeaders().get(this.getHttpHeaders().names().getString(i)));
+						.matcher((CharSequence) this.getHttpHeaders().get(this.getHttpHeaders().names().getString(i)));
 				if (m1.matches() && m1.groupCount() == 3) {// valid header
 					this.setToken(m1.group(3));
 				}
@@ -239,6 +235,9 @@ public class Gatekeeper extends AbstractPreprocessor {
 
 	/**
 	 * Checking header then cookie for token to set
+	 * 
+	 * @param yadaReq
+	 * @return
 	 * 
 	 * @throws YADASecurityException
 	 */
@@ -261,17 +260,17 @@ public class Gatekeeper extends AbstractPreprocessor {
 	/**
 	 * Overrides {@link TokenValidator#validateToken()}.
 	 *
-	 * @throws YADASecurityException
-	 *           when the {@link #DEFAULT_AUTH_TOKEN_PROPERTY} is not set
+	 * @throws YADASecurityException when the {@link #DEFAULT_AUTH_TOKEN_PROPERTY}
+	 *                               is not set
 	 */
 
 	@Override
 	public void validateToken() throws YADASecurityException {
 		// validate token as well-formed
 		try {
-			DecodedJWT token = JWT.require(Algorithm.HMAC512(System.getProperty(JWSKEY)))
-			    .withIssuer(System.getProperty(JWTISS)).build().verify((String) this.getToken());
-		} catch (UnsupportedEncodingException | JWTVerificationException exception) {
+			JWT.require(Algorithm.HMAC512(System.getProperty(JWSKEY))).withIssuer(System.getProperty(JWTISS)).build()
+					.verify((String) this.getToken());
+		} catch (JWTVerificationException exception) {
 			// UTF-8 encoding not supported
 			String msg = "Validation Error ";
 			throw new YADASecurityException(msg, exception);
@@ -281,14 +280,14 @@ public class Gatekeeper extends AbstractPreprocessor {
 
 	/**
 	 * 
-	 * @return
+	 * @return the identity object
 	 * @throws YADARequestException
 	 * @throws YADASecurityException
 	 * @throws YADAExecutionException
 	 * @since 8.7.6
 	 * 
-	 *        check getIdentity, if not there check cache, if not there check IAM
-	 *        - then cache, setIdentity, and return identity
+	 *        check getIdentity, if not there check cache, if not there check IAM -
+	 *        then cache, setIdentity, and return identity
 	 * 
 	 */
 	public Object obtainIdentity() throws YADASecurityException, YADARequestException, YADAExecutionException {
@@ -298,6 +297,12 @@ public class Gatekeeper extends AbstractPreprocessor {
 
 	/**
 	 * Obtain specified GRANT(KEYS) from current identity
+	 * 
+	 * @param app
+	 * @return
+	 * @throws YADASecurityException
+	 * @throws YADARequestException
+	 * @throws YADAExecutionException
 	 */
 	public Object obtainGrant(String app) throws YADASecurityException, YADARequestException, YADAExecutionException {
 		JSONObject jo = new JSONObject((String) getIdentity());
@@ -307,7 +312,8 @@ public class Gatekeeper extends AbstractPreprocessor {
 		for (int i = 0; i < ja.length(); i++) {
 			if (app.equals(ja.getJSONObject(i).getString(YADA_IDENTITY_APP).toString())) {
 				for (int ii = 0; ii < ja.getJSONObject(i).getJSONArray(YADA_IDENTITY_KEYS).length(); ii++) {
-					keys.put(ja.getJSONObject(i).getJSONArray(YADA_IDENTITY_KEYS).getJSONObject(ii).getString(YADA_IDENTITY_KEY));
+					keys.put(ja.getJSONObject(i).getJSONArray(YADA_IDENTITY_KEYS).getJSONObject(ii)
+							.getString(YADA_IDENTITY_KEY));
 				}
 			}
 		}
@@ -318,7 +324,6 @@ public class Gatekeeper extends AbstractPreprocessor {
 	 * Authorization of query use for given context
 	 * {@link Authorization#authorize()}
 	 * 
-	 * @throws YADAExecutionException
 	 * @since 8.7.6
 	 */
 	@Override
@@ -437,12 +442,11 @@ public class Gatekeeper extends AbstractPreprocessor {
 	}
 
 	/**
-	 * Returns {@code true} if {@link #WHITELIST} or {@link #BLACKLIST} is stored
-	 * in the {@code YSEC_PARAMS} table corresponding to the security target
+	 * Returns {@code true} if {@link #WHITELIST} or {@link #BLACKLIST} is stored in
+	 * the {@code YSEC_PARAMS} table corresponding to the security target
 	 *
-	 * @param policy
-	 *          the value of the {@code YSEC_PARAM_NAME} field in the
-	 *          {@code YSEC_PARAMS} table
+	 * @param policy the value of the {@code YSEC_PARAM_NAME} field in the
+	 *               {@code YSEC_PARAMS} table
 	 * @return {@code true} if {@link #WHITELIST} or {@link #BLACKLIST} is set
 	 */
 
@@ -451,12 +455,11 @@ public class Gatekeeper extends AbstractPreprocessor {
 	}
 
 	/**
-	 * Retrieves and processes the security query, and validates the results per
-	 * the security specification s *
+	 * Retrieves and processes the security query, and validates the results per the
+	 * security specification s *
 	 * 
-	 * @throws YADASecurityException
-	 *           when there is an issue retrieving or processing the security
-	 *           query
+	 * @throws YADASecurityException when there is an issue retrieving or processing
+	 *                               the security query
 	 */
 
 	@Override
@@ -509,7 +512,7 @@ public class Gatekeeper extends AbstractPreprocessor {
 		boolean policyHasParams = false;
 		boolean policyHasJSONParams = false;
 		boolean reqHasParams = getYADARequest().getParams() == null || getYADARequest().getParams().length == 0 ? false
-		    : true;
+				: true;
 		boolean reqHasJSONParams = YADAUtils.hasJSONParams(getYADARequest());
 		for (SecurityPolicyRecord secRec : spec) {
 
@@ -524,8 +527,8 @@ public class Gatekeeper extends AbstractPreprocessor {
 			// request and policy must have syntax compatibility, i.e., matching param
 			// syntax, or no params
 			if ((policyHasParams && !reqHasJSONParams) || (policyHasJSONParams && !reqHasParams)
-			    || (!policyHasParams && reqHasJSONParams) || (!policyHasJSONParams && reqHasParams)
-			    || !(policyHasParams || reqHasParams || policyHasJSONParams || reqHasJSONParams)) {
+					|| (!policyHasParams && reqHasJSONParams) || (!policyHasJSONParams && reqHasParams)
+					|| !(policyHasParams || reqHasParams || policyHasJSONParams || reqHasJSONParams)) {
 
 				// confirm sec spec is config properly
 				if (hasValidPolicy(secRec.getType())) // whitelist or blacklist
@@ -559,8 +562,8 @@ public class Gatekeeper extends AbstractPreprocessor {
 
 		// process the relevant specs
 		for (SecurityPolicyRecord secRec : prunedSpec) // policy code (E,C), policy
-		                                               // type (white,black), target
-		                                               // (qname),
+														// type (white,black), target
+														// (qname),
 		// A11nqname
 		{
 			String a11nQname = secRec.getA11nQname();
@@ -608,10 +611,10 @@ public class Gatekeeper extends AbstractPreprocessor {
 									if (arg.equals(""))
 										val = getClass().getMethod(method).invoke(this, new Object[] {});
 									else
-										val = getClass().getMethod(method, new Class[] { java.lang.String.class }).invoke(this,
-										    new Object[] { arg });
-								} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-								    | InvocationTargetException e) {
+										val = getClass().getMethod(method, new Class[] { java.lang.String.class })
+												.invoke(this, new Object[] { arg });
+								} catch (NoSuchMethodException | SecurityException | IllegalAccessException
+										| IllegalArgumentException | InvocationTargetException e) {
 									String msg = "Unathorized. Injected method invocation failed.";
 									throw new YADASecurityException(msg, e);
 								}
@@ -666,9 +669,9 @@ public class Gatekeeper extends AbstractPreprocessor {
 								val = getClass().getMethod(method).invoke(this, new Object[] {});
 							else
 								val = getClass().getMethod(method, new Class[] { java.lang.String.class }).invoke(this,
-								    new Object[] { arg });
-						} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-						    | InvocationTargetException e) {
+										new Object[] { arg });
+						} catch (NoSuchMethodException | SecurityException | IllegalAccessException
+								| IllegalArgumentException | InvocationTargetException e) {
 							String msg = "Unathorized. Injected method invocation failed.";
 							throw new YADASecurityException(msg, e);
 						}
@@ -716,8 +719,7 @@ public class Gatekeeper extends AbstractPreprocessor {
 	 * {@link Preprocess} disengages.
 	 *
 	 *
-	 * @throws YADASecurityException
-	 *           when token retrieval fails
+	 * @throws YADASecurityException when token retrieval fails
 	 */
 
 	@Override
@@ -756,9 +758,10 @@ public class Gatekeeper extends AbstractPreprocessor {
 				if (arg.equals(""))
 					val = getClass().getMethod(method).invoke(this, new Object[] {});
 				else
-					val = getClass().getMethod(method, new Class[] { java.lang.String.class }).invoke(this, new Object[] { arg });
+					val = getClass().getMethod(method, new Class[] { java.lang.String.class }).invoke(this,
+							new Object[] { arg });
 			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-			    | InvocationTargetException e) {
+					| InvocationTargetException e) {
 				String msg = "Unathorized. Injected method invocation failed.";
 				throw new YADASecurityException(msg, e);
 			}
@@ -795,8 +798,7 @@ public class Gatekeeper extends AbstractPreprocessor {
 	 * Utility function for content policy
 	 * 
 	 * @return the auth token wrapped in single quotes
-	 * @throws YADASecurityException
-	 *           when the token can't retrieved
+	 * @throws YADASecurityException when the token can't retrieved
 	 */
 	public String getQToken() throws YADASecurityException {
 		String quote = "'";
@@ -823,8 +825,7 @@ public class Gatekeeper extends AbstractPreprocessor {
 	/**
 	 * Utility function for content policy
 	 * 
-	 * @param cookie
-	 *          the desired HTTP request cookie
+	 * @param cookie the desired HTTP request cookie
 	 * @return the value of {@code cookie} wrapped in single quotes
 	 */
 
@@ -837,8 +838,7 @@ public class Gatekeeper extends AbstractPreprocessor {
 	/**
 	 * Utility function for content policy
 	 * 
-	 * @param header
-	 *          the desired HTTP request header
+	 * @param header the desired HTTP request header
 	 * @return the value of {@code header} wrapped in single quotes
 	 */
 	public String getQHeader(String header) {
@@ -856,22 +856,37 @@ public class Gatekeeper extends AbstractPreprocessor {
 		setTokenValidator(this);
 	}
 
+	/**
+	 * @return the {@link #allowList}
+	 */
 	public ArrayList<String> getAllowList() {
-		return allowList;
+		return this.allowList;
 	}
 
+	/**
+	 * @param grant
+	 */
 	public void addAllowListEntry(String grant) {
 		this.allowList.add(grant);
 	}
 
+	/**
+	 * @param grant
+	 */
 	public void removeAllowListEntry(String grant) {
 		this.allowList.remove(grant);
 	}
 
+	/**
+	 * @return {@link #denyList}
+	 */
 	public ArrayList<String> getDenyList() {
-		return denyList;
+		return this.denyList;
 	}
 
+	/**
+	 * @param grant
+	 */
 	public void addDenyListEntry(String grant) {
 		this.denyList.add(grant);
 	}
@@ -880,12 +895,11 @@ public class Gatekeeper extends AbstractPreprocessor {
 	 * @return the identity TODO: To Authorization
 	 */
 	public Object getIdentity() {
-		return identity;
+		return this.identity;
 	}
 
 	/**
-	 * @param identity
-	 *          the identity to set
+	 * @param identity the identity to set
 	 */
 	public void setIdentity(Object identity) {
 		this.identity = identity;
@@ -895,12 +909,11 @@ public class Gatekeeper extends AbstractPreprocessor {
 	 * @return the locks
 	 */
 	public JSONObject getLocks() {
-		return locks;
+		return this.locks;
 	}
 
 	/**
-	 * @param locks
-	 *          the locks to set
+	 * @param locks the locks to set
 	 */
 	public void setLocks(JSONObject locks) {
 		this.locks = locks;
@@ -910,12 +923,11 @@ public class Gatekeeper extends AbstractPreprocessor {
 	 * @return the grant
 	 */
 	public Object getGrant() {
-		return grant;
+		return this.grant;
 	}
 
 	/**
-	 * @param grant
-	 *          the grant to set
+	 * @param grant the grant to set
 	 */
 	public void setGrant(Object grant) {
 		this.grant = grant;
@@ -925,18 +937,18 @@ public class Gatekeeper extends AbstractPreprocessor {
 	 * @return the ships
 	 */
 	public ArrayList<String> getShips() {
-		return ships;
+		return this.ships;
 	}
 
 	/**
-	 * @param ships
-	 *          the ships to set
+	 * @param ships the ships to set
 	 */
 	public void setShips(ArrayList<String> ships) {
 		this.ships = ships;
 	}
 
 	/**
+	 * @return
 	 * @throws YADASecurityException
 	 * @since 8.7.6
 	 */
@@ -948,6 +960,7 @@ public class Gatekeeper extends AbstractPreprocessor {
 	}
 
 	/**
+	 * @return
 	 * @throws YADASecurityException
 	 * @since 8.7.6
 	 */
@@ -959,6 +972,8 @@ public class Gatekeeper extends AbstractPreprocessor {
 	}
 
 	/**
+	 * @return {@code true} if {@link #locks} has at least 1 entry,
+	 *         otherwise {@code false}
 	 * @since 8.7.6
 	 */
 	public boolean hasLocks() {
@@ -969,6 +984,9 @@ public class Gatekeeper extends AbstractPreprocessor {
 	}
 
 	/**
+	 * @return
+	 * @@return {@code true} if {@link #grant} has at least 1 entry,
+	 *          otherwise {@code false}
 	 * @since 8.7.6
 	 */
 	public boolean hasGrants() {
@@ -979,6 +997,8 @@ public class Gatekeeper extends AbstractPreprocessor {
 	}
 
 	/**
+	 * @return {@code true} if {@link #identity} is set, otherwise
+	 *         {@code false}
 	 * @since 8.7.6
 	 */
 	public boolean hasIdentity() {
@@ -989,6 +1009,8 @@ public class Gatekeeper extends AbstractPreprocessor {
 	}
 
 	/**
+	 * @return {@code true} if {@link #allowList} has at least 1 entry,
+	 *         otherwise {@code false}
 	 * @since 8.7.6
 	 */
 	public boolean hasAllowList() {
@@ -1006,8 +1028,7 @@ public class Gatekeeper extends AbstractPreprocessor {
 	}
 
 	/**
-	 * @param syncToken
-	 *          the syncToken to set
+	 * @param syncToken the syncToken to set
 	 */
 	public void setSyncToken(String syncToken) {
 		this.syncToken = syncToken;
