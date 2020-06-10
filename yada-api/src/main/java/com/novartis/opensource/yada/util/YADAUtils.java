@@ -14,11 +14,8 @@
  */
 package com.novartis.opensource.yada.util;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
@@ -27,14 +24,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
-import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.novartis.opensource.yada.ConnectionFactory;
-import com.novartis.opensource.yada.Finder;
 import com.novartis.opensource.yada.JSONParams;
 import com.novartis.opensource.yada.QueryManager;
 import com.novartis.opensource.yada.Service;
