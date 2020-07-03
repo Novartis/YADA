@@ -22,6 +22,7 @@
     "datatables": "^1.10.13",
     "expose-loader": "^0.7.5",
     "jquery": "^3.3.1",
+    "octicons": "^8.5.0",
     "popper": "^1.0.1",
     "popper.js": "^1.14.3",
     "semantic": "0.0.1",
