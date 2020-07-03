@@ -3,18 +3,19 @@ DATE=`date +%Y%m%d%H%M%S`
 DATADIR=${project.basedir}/../../data
 BAKDIR=${DATADIR}/backup
 DB_TMP=/tmp/db.tmp
-DB_USER=yada
+DB_USER=${YADA_INDEX_USERNAME}
 DB_NAME=yada
-DB_PASS=yada
-
+DB_PASS=${YADA_INDEX_PASSWORD}
+DB_HOST=${YADA_INDEX_HOST}
+PGPASSWORD=${DB_PASS}
 YADA_SCRIPTDIR="${project.basedir}/../yada-war/src/main/resources/scripts"
 
 
 EXEC_POSTGRESQL=psql
-CMD_POSTGRESQL="${EXEC_POSTGRESQL} -q -U ${DB_USER} -w -d ${DB_NAME} -f ${DB_TMP}"
+CMD_POSTGRESQL="${EXEC_POSTGRESQL} -q  -h ${DB_HOST} -U ${DB_USER} -w -d ${DB_NAME} -f ${DB_TMP}"
 BAK_POSTGRESQL=pg_dump
 BAK_POSTGRESQL_ARCH=${BAKDIR}/${DB_NAME}-${BAK_POSTGRESQL}${DATE}.gz
-BAK_CMD_POSTGRESQL="${BAK_POSTGRESQL} -U ${DB_USER} -w ${DB_NAME} | gzip -c > ${BAK_POSTGRESQL_ARCH}"
+BAK_CMD_POSTGRESQL="${BAK_POSTGRESQL}  -h ${DB_HOST} -U ${DB_USER} -w ${DB_NAME} | gzip -c > ${BAK_POSTGRESQL_ARCH}"
 
 
 EXEC_MYSQL=mysql
