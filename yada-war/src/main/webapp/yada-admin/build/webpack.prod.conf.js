@@ -38,8 +38,8 @@ const webpackConfig = merge(baseWebpackConfig, {
       'process.env.TRACE_COLLAPSE': 'true',
       'process.env.NODE_ENV_LABEL' : '""',
       'process.env.YADA' : {
-        protocol: '"https"',
-        host: '"yada.qdss.io"',
+        protocol: '""',
+        host: '""',
         port: '""'
       }
     }),
