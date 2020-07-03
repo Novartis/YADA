@@ -767,7 +767,6 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>9.4-1203-jdbc41</version>
       <scope>test</scope>
     </dependency>
     <!-- You'll need to install this jar manually in your maven repo -->
