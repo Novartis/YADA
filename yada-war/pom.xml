@@ -613,6 +613,10 @@
                 -Xnoagent
                 -Djava.compiler=NONE
                 -Dsecurity.token=YADAYADA
+                <!-- -Djavax.net.ssl.keyStore=~/.keystore
+  				-Djavax.net.ssl.keyStorePassword=changeit
+  				-Djavax.net.ssl.trustStore=~/.keystore
+  				-Djavax.net.ssl.trustStorePassword=changeit -->
               </cargo.jvmargs>
               <cargo.standalone.ignoreNonExistingProperties>true</cargo.standalone.ignoreNonExistingProperties>
             </properties>
