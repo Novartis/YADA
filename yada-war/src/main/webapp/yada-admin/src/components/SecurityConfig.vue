@@ -1,9 +1,9 @@
 <template>
   <div class="ui list security config">
     <div class="item">
-      <i class="plug icon"></i>
+      <i class="plug icon"/>
       <div class="content">
-        <div class="header">Security Plugin <i class="question circle outline icon"></i></div>
+        <div class="header">Security Plugin <i class="question circle outline icon"/></div>
         <div class="description hidden">
           A preprocessor plugin is a java class or script accessible to the YADA
           server and compliant with the Plugin API. A preprocessor plugin will
@@ -28,36 +28,38 @@
           The specifics of your security plugin implementation will determine how to enter the configuration data in this form.
         </div>
         <div class="ui input security">
-          <input type="text"
-                 name="plugin"
-                 placeholder="FQCN or local classname, e.g., Gatekeeper, com.novartis.opensource.yada.plugin.Gatekeeper..."
-                 :value="secParam['plugin']"
-                 @input="modify"
-                 @focusout="updateModel"/>
+          <input
+            type="text"
+            name="plugin"
+            placeholder="FQCN or local classname, e.g., Gatekeeper, com.novartis.opensource.yada.plugin.Gatekeeper..."
+            :value="secParam['plugin']"
+            @input="modify"
+            @focusout="updateModel">
         </div>
       </div>
     </div>
     <div class="item">
-      <i class="globe icon"></i>
+      <i class="globe icon"/>
       <div class="content">
-        <div class="header">Authorized URL Pattern <i class="question circle outline icon"></i></div>
+        <div class="header">Authorized URL Pattern <i class="question circle outline icon"/></div>
         <div class="description hidden">
           A regular expression which the requesting URL must match to allow query execution
         </div>
         <div class="ui input security">
-          <input type="text"
-                 name="auth.path.rx"
-                 placeholder="Regular Expression..."
-                 :value="secParam['auth.path.rx']"
-                 @input="modify"
-                 @focusout="updateModel"/>
+          <input
+            type="text"
+            name="auth.path.rx"
+            placeholder="Regular Expression..."
+            :value="secParam['auth.path.rx']"
+            @input="modify"
+            @focusout="updateModel">
         </div>
       </div>
     </div>
     <div class="item">
-      <i class="key icon"></i>
+      <i class="key icon"/>
       <div class="content">
-        <div class="header">Token Validation <i class="question circle outline icon"></i></div>
+        <div class="header">Token Validation <i class="question circle outline icon"/></div>
         <div class="description hidden">
           Validate a user by comparing an authenication token passed covertly in a request
           with a retrieved value, or retrieve such a token using some
@@ -67,9 +69,9 @@
       </div>
     </div>
     <div class="item">
-      <i class="lock icon"></i>
+      <i class="lock icon"/>
       <div class="content">
-        <div class="header">Execution Policy <i class="question circle outline icon"></i></div>
+        <div class="header">Execution Policy <i class="question circle outline icon"/></div>
         <div class="description hidden">
           Execution policies prevent unauthorized execution of queries directly from
           http requests or from user interfaces.
@@ -77,9 +79,9 @@
         <div class="list">
           <!-- AUTHORIZATION POLICY -->
           <div class="item">
-            <i class="user secret icon"></i>
-              <div class="content authorization policy">
-              <div class="header">Authorization Policy <i class="question circle outline icon"></i></div>
+            <i class="user secret icon"/>
+            <div class="content authorization policy">
+              <div class="header">Authorization Policy <i class="question circle outline icon"/></div>
               <div class="description hidden">
                 Authorization policies take the form of qualifier, such as a user role,
                 group membership, or claim from a 3rd-party crendential store. The security
@@ -91,44 +93,53 @@
                 <div class="inline fields">
                   <div class="two wide field">
                     <div class="ui selection dropdown policy authorization-policy">
-                      <input type="hidden" name="authorization.policy.type"  :value="secParam['authorization.policy.type']" @input="modify">
-                      <i class="dropdown icon"></i>
+                      <input
+                        type="hidden"
+                        name="authorization.policy.type"
+                        :value="secParam['authorization.policy.type']"
+                        @input="modify">
+                      <i class="dropdown icon"/>
                       <!-- <div v-if="typeof secParam['authorization.policy.type'] === 'undefined' || secParam['authorization.policy.type'] === ''"
                            class="default text">Policy Type</div> -->
-                      <div class="text">{{secParam['authorization.policy.type']}}</div>
+                      <div class="text">{{ secParam['authorization.policy.type'] }}</div>
                       <div class="menu">
-                        <div class="item"
-                             :class="{active: secParam['authorization.policy.type'] == '',
-                                      disabled: secParam['execution.policy.type'] != '' || secParam['execution.policy.query'] != '' || secParam['execution.policy.config'] != ''}"
-                             data-value=""></div>
-                          <div class="item"
-                               :class="{active: secParam['authorization.policy.type'] == 'whitelist',
-                                        disabled: secParam['execution.policy.type'] != '' || secParam['execution.policy.query'] != '' || secParam['execution.policy.config'] != ''}"
-                               data-value="whitelist">whitelist</div>
-                          <div class="item"
-                               :class="{active: secParam['authorization.policy.type'] == 'blacklist',
-                                        disabled: secParam['execution.policy.type'] != '' || secParam['execution.policy.query'] != '' || secParam['execution.policy.config'] != ''}"
-                               data-value="blacklist">blacklist</div>
+                        <div
+                          class="item"
+                          :class="{active: secParam['authorization.policy.type'] === '',
+                                   disabled: secParam['execution.policy.type'] !== '' || secParam['execution.policy.query'] !== '' || secParam['execution.policy.config'] !== ''}"
+                          data-value=""/>
+                        <div
+                          class="item"
+                          :class="{active: secParam['authorization.policy.type'] === 'whitelist',
+                                   disabled: secParam['execution.policy.type'] !== '' || secParam['execution.policy.query'] !== '' || secParam['execution.policy.config'] !== ''}"
+                          data-value="whitelist">whitelist</div>
+                        <div
+                          class="item"
+                          :class="{active: secParam['authorization.policy.type'] === 'blacklist',
+                                   disabled: secParam['execution.policy.type'] !== '' || secParam['execution.policy.query'] !== '' || secParam['execution.policy.config'] !== ''}"
+                          data-value="blacklist">blacklist</div>
                       </div>
                     </div>
                   </div>
                   <div class="seven wide field">
                     <div class="ui input policy">
-                      <input v-if="secParam['execution.policy.type'] == '' && secParam['execution.policy.query'] == '' && secParam['execution.policy.config'] == ''"
-                             type="text"
-                             name="authorization.policy.grant"
-                             placeholder="Qualifier..."
-                             :value="secParam['authorization.policy.grant']"
-                             @input="modify"
-                             @focusout="updateModel"/>
-                      <input v-else
-                             readonly
-                             type="text"
-                             name="authorization.policy.grant"
-                             placeholder="Qualifier..."
-                             :value="secParam['authorization.policy.grant']"
-                             @input="modify"
-                             @focusout="updateModel"/>
+                      <input
+                        v-if="secParam['execution.policy.type'] === '' && secParam['execution.policy.query'] === '' && secParam['execution.policy.config'] === ''"
+                        type="text"
+                        name="authorization.policy.grant"
+                        placeholder="Qualifier..."
+                        :value="secParam['authorization.policy.grant']"
+                        @input="modify"
+                        @focusout="updateModel">
+                      <input
+                        v-else
+                        readonly
+                        type="text"
+                        name="authorization.policy.grant"
+                        placeholder="Qualifier..."
+                        :value="secParam['authorization.policy.grant']"
+                        @input="modify"
+                        @focusout="updateModel">
                     </div>
                   </div>
                 </div>
@@ -137,9 +148,9 @@
           </div>
           <!-- ExECUTION POLICY -->
           <div class="item">
-            <i class="user secret icon"></i>
+            <i class="user secret icon"/>
             <div class="content protector policy">
-              <div class="header">Protector Policy <i class="question circle outline icon"></i></div>
+              <div class="header">Protector Policy <i class="question circle outline icon"/></div>
               <div class="description hidden">
                 Protector policies map YADA queries to 'protector' queries. These
                 protector queries should return at least one row when used for a
@@ -159,67 +170,76 @@
                 <div class="inline fields">
                   <div class="two wide field">
                     <div class="ui selection dropdown policy execution-policy">
-                      <input type="hidden" name="execution.policy.type" :value="secParam['execution.policy.type']" @input="modify">
-                      <i class="dropdown icon"></i>
+                      <input
+                        type="hidden"
+                        name="execution.policy.type"
+                        :value="secParam['execution.policy.type']"
+                        @input="modify">
+                      <i class="dropdown icon"/>
                       <!-- <div v-if="typeof secParam['execution.policy.type'] === 'undefined' || secParam['execution.policy.type'] === ''"
                            class="default text">Policy Type</div> -->
-                      <div class="text">{{secParam['execution.policy.type']}}</div>
+                      <div class="text">{{ secParam['execution.policy.type'] }}</div>
                       <div class="menu">
-                        <div class="item"
-                          :class="{active: secParam['execution.policy.type'] == '', disabled: secParam['authorization.policy.grant'] !== ''}"
-                          data-value=""></div>
-                        <div class="item"
-                          :class="{active: secParam['execution.policy.type'] == 'whitelist', disabled: secParam['authorization.policy.grant'] !== ''}"
+                        <div
+                          class="item"
+                          :class="{active: secParam['execution.policy.type'] === '', disabled: secParam['authorization.policy.grant'] !== ''}"
+                          data-value=""/>
+                        <div
+                          class="item"
+                          :class="{active: secParam['execution.policy.type'] === 'whitelist', disabled: secParam['authorization.policy.grant'] !== ''}"
                           data-value="whitelist">whitelist</div>
-                        <div class="item"
-                          :class="{active: secParam['execution.policy.type'] == 'blacklist',  disabled: secParam['authorization.policy.grant'] !== ''}"
+                        <div
+                          class="item"
+                          :class="{active: secParam['execution.policy.type'] === 'blacklist', disabled: secParam['authorization.policy.grant'] !== ''}"
                           data-value="blacklist">blacklist</div>
                       </div>
                     </div>
                   </div>
                   <div class="seven wide field">
                     <div class="ui input policy">
-                      <input v-if="secParam['authorization.policy.grant'] == '' || !secParam.hasOwnProperty('authorization.policy.grant')"
-                             type="text"
-                             name="execution.policy.query"
-                             placeholder="Protector Query..."
-                             :value="secParam['execution.policy.query']"
-                             @input="modify"
-                             @focusout="updateModel"/>
-                      <input v-else
-                             readonly
-                             class="disabled"
-                             type="text"
-                             name="execution.policy.query"
-                             placeholder="Protector Query..."
-                             :value="secParam['execution.policy.query']"
-                             @input="modify"
-                             @focusout="updateModel"/>
+                      <input
+                        v-if="secParam['authorization.policy.grant'] === '' || !secParam.hasOwnProperty('authorization.policy.grant')"
+                        type="text"
+                        name="execution.policy.query"
+                        placeholder="Protector Query..."
+                        :value="secParam['execution.policy.query']"
+                        @input="modify"
+                        @focusout="updateModel">
+                      <input
+                        v-else
+                        readonly
+                        class="disabled"
+                        type="text"
+                        name="execution.policy.query"
+                        placeholder="Protector Query..."
+                        :value="secParam['execution.policy.query']"
+                        @input="modify"
+                        @focusout="updateModel">
                     </div>
                   </div>
                 </div>
                 <!-- EXECUTION POLICY CONFIG -->
                 <div class="inline fields">
-                  <div class="two wide field">
-
-                  </div>
+                  <div class="two wide field"/>
                   <div class="seven wide field right floated protector query config ">
                     <div class="ui input policy">
-                      <input v-if="secParam['authorization.policy.grant'] == '' || !secParam.hasOwnProperty('authorization.policy.grant')"
-                             type="text"
-                             name="execution.policy.config"
-                             placeholder="Protecor Query Config..."
-                             :value="secParam['execution.policy.config']"
-                             @input="modify"
-                             @focusout="updateModel"/>
-                      <input v-else
-                             readonly
-                             type="text"
-                             name="execution.policy.config"
-                             placeholder="Protecor Query Config..."
-                             :value="secParam['execution.policy.config']"
-                             @input="modify"
-                             @focusout="updateModel"/>
+                      <input
+                        v-if="secParam['authorization.policy.grant'] === '' || !secParam.hasOwnProperty('authorization.policy.grant')"
+                        type="text"
+                        name="execution.policy.config"
+                        placeholder="Protecor Query Config..."
+                        :value="secParam['execution.policy.config']"
+                        @input="modify"
+                        @focusout="updateModel">
+                      <input
+                        v-else
+                        readonly
+                        type="text"
+                        name="execution.policy.config"
+                        placeholder="Protecor Query Config..."
+                        :value="secParam['execution.policy.config']"
+                        @input="modify"
+                        @focusout="updateModel">
                     </div>
                   </div>
                 </div>
@@ -230,9 +250,9 @@
       </div>
     </div>
     <div class="item">
-      <i class="file code icon"></i>
+      <i class="file code icon"/>
       <div class="content">
-        <div class="header">Content Policy <i class="question circle outline icon"></i></div>
+        <div class="header">Content Policy <i class="question circle outline icon"/></div>
         <div class="description hidden">
           Content policies are the YADA way to implement row-level security for
           any authorized query execution.  A user may be permitted to execute a
@@ -248,24 +268,24 @@
           standardized way.
         </div>
         <div class="ui input security">
-          <input type="text"
-                 name="content.policy.predicate"
-                 placeholder="Content policy..."
-                 :value="secParam['content.policy.predicate']"
-                 @input="modify"
-                 @focusout="updateModel"/>
+          <input
+            type="text"
+            name="content.policy.predicate"
+            placeholder="Content policy..."
+            :value="secParam['content.policy.predicate']"
+            @input="modify"
+            @focusout="updateModel">
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import Vue from 'vue'
 import * as types from '../store/vuex-types'
-import { mapState } from 'vuex';
+import { mapState } from 'vuex'
 export default {
-  props: ['rowData'],
-  data() {
+  // props: ['rowData'],
+  data () {
     return {
 
     }
@@ -277,7 +297,6 @@ export default {
       // this.updateModel(e)
     },
     updateModel: function (e) {
-      let that   = this
       let plugin = document.querySelector('input[name="plugin"]').value
       let authUrl = document.querySelector('input[name="auth.path.rx"]').value
       let authPolType = document.querySelector('input[name="authorization.policy.type"]').value
@@ -287,35 +306,32 @@ export default {
       let execPolicyConf   = document.querySelector('input[name="execution.policy.config"]').value
       let contentPolicy    = document.querySelector('input[name="content.policy.predicate"]').value
       let conf = {
-        "plugin": plugin,
-        "auth.path.rx" : authUrl,
-        "authorization.policy.grant" : authPolicy,
-        "authorization.policy.type" : authPolType,
-        "execution.policy.query" : execPolicyQuery,
-        "execution.policy.config" : execPolicyConf,
-        "execution.policy.type" : execPolType,
-        "content.policy.predicate" : contentPolicy
+        'plugin': plugin,
+        'auth.path.rx': authUrl,
+        'authorization.policy.grant': authPolicy,
+        'authorization.policy.type': authPolType,
+        'execution.policy.query': execPolicyQuery,
+        'execution.policy.config': execPolicyConf,
+        'execution.policy.type': execPolType,
+        'content.policy.predicate': contentPolicy
       }
       this.$store.commit(types.SET_SECCONF, conf)
       if (!this.hasSecurityPlugin()
           && !!plugin)
-          // && this.secconf !== null
-          // && Object.entries(conf).toString() !== Object.entries(this.secconf).toString() )
+      // && this.secconf !== null
+      // && Object.entries(conf).toString() !== Object.entries(this.secconf).toString() )
       {
         this.$store.dispatch(types.ADD_SECPARAM)
-        .then(() => {
-          this.$store.dispatch(types.MOD_SECPARAM)
-          console.log(`create: ${JSON.stringify(this.secconf)}`)
-        })
+          .then(() => {
+            this.$store.dispatch(types.MOD_SECPARAM)
+            console.log(`create: ${JSON.stringify(this.secconf)}`)
+          })
       }
       else
       {
         this.$store.dispatch(types.MOD_SECPARAM)
         console.log(`update: ${JSON.stringify(this.secconf)}`)
       }
-
-
-
     },
     isSecurityPlugin: function (param) {
       return param.SPP === 'true'
@@ -340,23 +356,23 @@ export default {
         return spp[0]
 
       return spp
-    },
+    }
     // hasExecutionPolicy: function (secPl) {
-    //   return secPl['POLICY'] == 'E'
+    //   return secPl['POLICY'] === 'E'
     //         || secPl.hasOwnProperty('execution.policy.columns')
     //         || secPl.hasOwnProperty('execution.policy.indices')
     //         || secPl.hasOwnProperty('execution.policy.type')
     // },
     // hasAuthorizationPolicy: function (secPl) {
-    //   return secPl['POLICY'] == 'A'
+    //   return secPl['POLICY'] === 'A'
     //         || secPl.hasOwnProperty('authorization.policy.grant')
     //         || secPl.hasOwnProperty('authorization.policy.type')
     // }
   },
   computed: {
     ...mapState(['paramlist', 'renderedParams', 'qname', 'unsavedChanges', 'confirmAction', 'unsavedParams', 'secconf']),
-    params() { return this.renderedParams },
-    secParam() {
+    params () { return this.renderedParams },
+    secParam () {
       if (this.secconf !== null)
       {
         return this.secconf
@@ -364,14 +380,14 @@ export default {
       else
       {
         return {
-          "plugin": "",
-          "auth.path.rx": "",
-          "authorization.policy.type": "",
-          "authorization.policy.grant": "",
-          "execution.policy.type": "",
-          "execution.policy.query": "",
-          "execution.policy.config": "",
-          "content.policy.predicate": ""
+          'plugin': '',
+          'auth.path.rx': '',
+          'authorization.policy.type': '',
+          'authorization.policy.grant': '',
+          'execution.policy.type': '',
+          'execution.policy.query': '',
+          'execution.policy.config': '',
+          'content.policy.predicate': ''
         }
       }
     }
@@ -396,7 +412,7 @@ export default {
     //       conf['execution.policy.type'] = secPl['TYPE']
     //       conf['execution.policy.query'] = secPl['QNAME']
     //     }
-    //     else if (secPl['POLICY'] == 'A')
+    //     else if (secPl['POLICY'] === 'A')
     //     {
     //       conf['authorization.policy.type'] = secPl['TYPE']
     //       conf['authorization.policy.grant'] = secPl['QNAME']
@@ -414,25 +430,25 @@ export default {
   },
   updated () {
   },
-  beforeUpdate() {
+  beforeUpdate () {
 
   },
   mounted () {
-    $('.ui.dropdown.execution-policy').dropdown({'debug':true,
-      onChange:function (v,t,c) {
-        console.log(v,t,c)
+    $('.ui.dropdown.execution-policy').dropdown({'debug': true,
+      onChange: function (v, t, c) {
+        console.log(v, t, c)
         $('.ui.dropdown.authorization-policy').dropdown('clear')
       }
     })
-    $('.ui.dropdown.authorization-policy').dropdown({'debug':true,
-      onChange:function (v,t,c) {
-        console.log(v,t,c)
+    $('.ui.dropdown.authorization-policy').dropdown({'debug': true,
+      onChange: function (v, t, c) {
+        console.log(v, t, c)
         $('.ui.dropdown.execution-policy').dropdown('clear')
       }
     })
 
     Array.from(document.querySelectorAll('.security.config .header i')).forEach(el => {
-      el.addEventListener('click',e => {
+      el.addEventListener('click', e => {
         let descr = el.parentElement.nextElementSibling
         if (descr.classList.contains('hidden'))
           descr.classList.remove('hidden')

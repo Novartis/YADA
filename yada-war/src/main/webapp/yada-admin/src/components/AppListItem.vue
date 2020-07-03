@@ -1,42 +1,41 @@
 <template>
-  <div class="item applistitem"
+  <div
+    class="item applistitem"
     :id="app"
     role="tab"
     :data-app="app"
     data-toggle="list"
     @click="loadApp"
-    @mouseenter="killpopups">{{app}}
+    @mouseenter="killpopups">{{ app }}
     <!-- @contextmenu="contextMenu" disabling this for now-->
   </div>
 </template>
 
 <script>
-//import store from '../store'
 import * as types from '../store/vuex-types'
 import { mapState } from 'vuex'
 
 export default {
   name: 'AppListItem',
-  props: ['app'],
+  props: { app: { type: String, required: true } },
   data () {
     return {
       contextmenuitems: ['Delete App']
     }
   },
   methods: {
-    loadApp(e) {
-      this.$store.dispatch(types.LOAD_APP,e.target.dataset.app)
+    loadApp (e) {
+      this.$store.dispatch(types.LOAD_APP, e.target.dataset.app)
     },
-    contextMenu(e) {
+    contextMenu (e) {
       e.preventDefault()
-      let that = this
       this.$el.classList.add('selected')
       this.$store.commit(types.SET_CONTEXTMENU, [])
       this.$store.commit(types.SET_CONTEXTMENU, [`Delete ${this.app}`])
       this.$store.commit(types.SET_COORDS, [e.pageX, e.pageY])
       console.log(e, this)
     },
-    killpopups(e) {
+    killpopups (e) {
       Array.from(document.querySelectorAll('.selected')).forEach(el => {
         el.classList.remove('selected')
       })

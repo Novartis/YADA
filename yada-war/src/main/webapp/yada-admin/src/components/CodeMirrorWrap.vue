@@ -5,17 +5,18 @@
     </button> -->
     <div class="codemirror-info">
       <span class="instructions">Press 'F2' to enter/exit fullscreen editor (when code has focus)</span>
-      <span class="chars">Characters: {{charcount}}</span>
+      <span class="chars">Characters: {{ charcount }}</span>
     </div>
 
-    <div id="query-editor"></div>
-    <div id="query-editor-ghost" style="height:1px;width:1px;overflow:hidden;"/>
+    <div id="query-editor"/>
+    <div
+      id="query-editor-ghost"
+      style="height:1px;width:1px;overflow:hidden;"/>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import * as types from '../store/vuex-types'
 import CodeMirror from 'codemirror'
 // language js
 import 'codemirror/mode/sql/sql.js'
@@ -36,22 +37,22 @@ export default {
     }
   },
   methods: {
-    setValue(o) {
+    setValue (o) {
       this.codemirror.setValue(o.QUERY)
     }
   },
-  computed:  {
+  computed: {
     ...mapState(['query', 'unsavedChanges', 'switching'])
   },
   mounted () {
 
   },
   watch: {
-    query(neo,old) {
+    query (neo, old) {
       let that = this
       if (neo !== null)
       {
-        if (!!!old || (!!old && Object.keys(old).length == 0))
+        if (!!!old || (!!old && Object.keys(old).length === 0))
         // this check protects against infiniloop
         // it will only exec the first time query loads
         {
@@ -71,11 +72,11 @@ export default {
               theme: 'eclipse',
               fullscreen: true,
               extraKeys: {
-                "F2": function (cm) {
-                  cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                'F2': function (cm) {
+                  cm.setOption('fullScreen', !cm.getOption('fullScreen'))
                 },
-                "Shift-F2": function (cm) {
-                  if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+                'Shift-F2': function (cm) {
+                  if (cm.getOption('fullScreen')) cm.setOption('fullScreen', false)
                 }
               }
             })
@@ -93,14 +94,14 @@ export default {
               mode = 'application/xml'
             }
             this.codemirror.setOption('mode', mode)
-            this.codemirror.on('change', (i,obj) => {
+            this.codemirror.on('change', (i, obj) => {
               let val = this.codemirror.getValue()
               if (obj.origin !== 'setValue')  // avoids marking unsaved when switching queries
               {
-                that.unsaved(i,obj)
+                that.unsaved(i, obj)
               }
-              this.$set(this.query,'QUERY',val)
-              this.charcount = val.length;
+              this.$set(this.query, 'QUERY', val)
+              this.charcount = val.length
               $('#query-editor-ghost').html(`<pre>${val}</pre>`)
             })
             this.charcount = this.codemirror.getValue().length
@@ -158,6 +159,5 @@ export default {
   #query-code-copy:before {
     background-size: 16px;
   }
-
 
 </style>

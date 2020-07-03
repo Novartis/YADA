@@ -329,7 +329,7 @@ context('Security Parameters', function() {
 
       util.createMultipleParams(count,names)
       .then((val) => {
-        if(val != -1)
+        if (val !== -1)
         {
           util.getQueryEditPanel().then(() => {
             util.getDefaultSecParamPanel().click()

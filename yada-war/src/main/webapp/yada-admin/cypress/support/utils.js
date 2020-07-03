@@ -6,7 +6,7 @@ export const visit = () => {
 export const login = (u,p) => {
   cy.getCookies().then((cooks) => {
     // console.log(cooks)
-    if(cooks.reduce((a,c) => {
+    if (cooks.reduce((a,c) => {
         // console.log(c.name)
         return a += /yada(?:groups|jwt)/.test(c.name) ? 1 : 0
       },0) < 2)
@@ -15,15 +15,15 @@ export const login = (u,p) => {
       cy.clearCookie('yadagroups')
       let username = Cypress.env('YADA_USER')
       let password = Cypress.env('YADA_PASS')
-      if(typeof u !== 'undefined')
+      if (typeof u !== 'undefined')
         username = u
-      if(typeof p !== 'undefined')
+      if (typeof p !== 'undefined')
         password = p
 
       cy.visit('https://yada-test.qdss.io/yada-admin/')
 
       cy.get('body').then($body => {
-        if($body.find('#username').length)
+        if ($body.find('#username').length)
         {
           cy.get('#username').type(username)
           cy.get('#password').type(password)
@@ -47,19 +47,19 @@ export const login = (u,p) => {
   //   console.log(yadagroups)
   //   cy.getCookie('yadajwt').then((yadajwt) => {
   //     console.log(yadajwt)
-  //     if(yadagroups == null || yadajwt == null)
+  //     if (yadagroups === null || yadajwt === null)
   //     {
   //       let username = Cypress.env('YADA_USER')
   //       let password = Cypress.env('YADA_PASS')
-  //       if(typeof u !== 'undefined')
+  //       if (typeof u !== 'undefined')
   //         username = u
-  //       if(typeof p !== 'undefined')
+  //       if (typeof p !== 'undefined')
   //         password = p
   //
   //       cy.visit('https://yada-test.qdss.io/yada-admin/')
   //
   //       cy.get('body').then($body => {
-  //         if($body.find('#username').length)
+  //         if ($body.find('#username').length)
   //         {
   //           cy.get('#username').type(username)
   //           cy.get('#password').type(password)
@@ -130,7 +130,7 @@ export const createApp = (count,edit) => {
     getQueryListTab().should('have.class','disabled')
     getQueryEditTab().should('have.class','disabled')
     cy.get('input[name="app"]').clear().type(`CYP${count}`)
-    if(typeof edit === 'undefined' || edit === null || edit)
+    if (typeof edit === 'undefined' || edit === null || edit)
     {
       cy.get('#conf-panel .CodeMirror textarea').type(`#CYP${count} Configuration content test`,{force:true})
       cy.get('input[name="name"]').clear().type(`CYP${count} Name content`)
@@ -230,7 +230,7 @@ export const _setParameter = (count,row,type,name,value,dfault) => {
       cy.getState().its('unsavedParams').should('be.gt',0)
 
       cy.get(`.params>table>tbody>tr:nth-child(${row})>td.param-val`).click().then(td => {
-        if(type !== 'boolean')
+        if (type !== 'boolean')
         {
           cy.wrap(td).find('input').type(value).blur()
         }
@@ -259,11 +259,11 @@ export const setInvalidParameter = (count,row,type,name,value,dfault) => {
       })
     })
     cy.get(`.params>table>tbody>tr:nth-child(${row})>td.param-val`).click().then(td => {
-      if(type == 'number')
+      if (type === 'number')
       {
         cy.wrap(td).find('input').type(value).blur()
       }
-      else if(type == 'string')
+      else if (type === 'string')
       {
         cy.wrap(td).find('input').blur()
       }
@@ -288,7 +288,7 @@ export const setInvalidParameter = (count,row,type,name,value,dfault) => {
 
 export const createMultipleParams = (count,names) => {
   return cy.get(`.params>table>tbody>tr`).its('length').then((rows) => {
-    if(rows == names.length)
+    if (rows === names.length)
     {
       setOneOfManyParameter(count,1,'boolean',names[0],'false','false')
       .then(() => {
@@ -311,10 +311,10 @@ export const testParameterDeletion = (count,names,row) => {
         cy.get('.confirm .ui.positive.button').click().then(() => {
           cy.get('.params>table>tbody>tr').then(trs => {
             cy.wrap(trs).should('have.length',2)
-            cy.wrap(trs[0]).find('td.param-id').should('contain', row != 1 ? 1 : 2)
-            cy.wrap(trs[0]).find('td.param-name').should('contain',row != 1 ? names[0] : names[1])
-            cy.wrap(trs[1]).find('td.param-id').should('contain', row != 3 ? 3 : 2)
-            cy.wrap(trs[1]).find('td.param-name').should('contain',row != 3 ? names[2] : names[1])
+            cy.wrap(trs[0]).find('td.param-id').should('contain', row !== 1 ? 1 : 2)
+            cy.wrap(trs[0]).find('td.param-name').should('contain',row !== 1 ? names[0] : names[1])
+            cy.wrap(trs[1]).find('td.param-id').should('contain', row !== 3 ? 3 : 2)
+            cy.wrap(trs[1]).find('td.param-name').should('contain',row !== 3 ? names[2] : names[1])
             cy.save().then(() => {
               cy.confirmParamSave(count).then(result => {
                 const reso = result.stdout.replace(/\n/g,',')
@@ -322,8 +322,8 @@ export const testParameterDeletion = (count,names,row) => {
                 cy.wrap(Array.isArray(array)).should('eq',true)
                 console.log(array)
                 cy.wrap(array).should('have.length',2)
-                cy.wrap(array[0].name).should('eq',row != 1 ? names[0] : names[1])
-                cy.wrap(array[1].name).should('eq',row != 3 ? names[2] : names[1])
+                cy.wrap(array[0].name).should('eq',row !== 1 ? names[0] : names[1])
+                cy.wrap(array[1].name).should('eq',row !== 3 ? names[2] : names[1])
               })
             })
           })
@@ -343,41 +343,41 @@ export const testParamDnD = (count,names,src,tgt) => {
         const array  = JSON.parse(`[${reso}]`)
         cy.wrap(Array.isArray(array)).should('eq',true)
         cy.wrap(array).should('have.length',3)
-        if(src == 1 && tgt == 2)
+        if (src === 1 && tgt === 2)
         {
-          cy.wrap(array.filter(o => o.id == 1)[0].name).should('eq',names[1])
-          cy.wrap(array.filter(o => o.id == 2)[0].name).should('eq',names[0])
-          cy.wrap(array.filter(o => o.id == 3)[0].name).should('eq',names[2])
+          cy.wrap(array.filter(o => o.id === 1)[0].name).should('eq',names[1])
+          cy.wrap(array.filter(o => o.id === 2)[0].name).should('eq',names[0])
+          cy.wrap(array.filter(o => o.id === 3)[0].name).should('eq',names[2])
         }
-        else if(src == 1 && tgt == 3)
+        else if (src === 1 && tgt === 3)
         {
-          cy.wrap(array.filter(o => o.id == 1)[0].name).should('eq',names[2])
-          cy.wrap(array.filter(o => o.id == 2)[0].name).should('eq',names[1])
-          cy.wrap(array.filter(o => o.id == 3)[0].name).should('eq',names[0])
+          cy.wrap(array.filter(o => o.id === 1)[0].name).should('eq',names[2])
+          cy.wrap(array.filter(o => o.id === 2)[0].name).should('eq',names[1])
+          cy.wrap(array.filter(o => o.id === 3)[0].name).should('eq',names[0])
         }
-        else if(src == 2 && tgt == 1)
+        else if (src === 2 && tgt === 1)
         {
-          cy.wrap(array.filter(o => o.id == 1)[0].name).should('eq',names[1])
-          cy.wrap(array.filter(o => o.id == 2)[0].name).should('eq',names[0])
-          cy.wrap(array.filter(o => o.id == 3)[0].name).should('eq',names[2])
+          cy.wrap(array.filter(o => o.id === 1)[0].name).should('eq',names[1])
+          cy.wrap(array.filter(o => o.id === 2)[0].name).should('eq',names[0])
+          cy.wrap(array.filter(o => o.id === 3)[0].name).should('eq',names[2])
         }
-        else if(src == 2 && tgt == 3)
+        else if (src === 2 && tgt === 3)
         {
-          cy.wrap(array.filter(o => o.id == 1)[0].name).should('eq',names[0])
-          cy.wrap(array.filter(o => o.id == 2)[0].name).should('eq',names[2])
-          cy.wrap(array.filter(o => o.id == 3)[0].name).should('eq',names[1])
+          cy.wrap(array.filter(o => o.id === 1)[0].name).should('eq',names[0])
+          cy.wrap(array.filter(o => o.id === 2)[0].name).should('eq',names[2])
+          cy.wrap(array.filter(o => o.id === 3)[0].name).should('eq',names[1])
         }
-        else if(src == 3 && tgt == 1)
+        else if (src === 3 && tgt === 1)
         {
-          cy.wrap(array.filter(o => o.id == 1)[0].name).should('eq',names[2])
-          cy.wrap(array.filter(o => o.id == 2)[0].name).should('eq',names[1])
-          cy.wrap(array.filter(o => o.id == 3)[0].name).should('eq',names[0])
+          cy.wrap(array.filter(o => o.id === 1)[0].name).should('eq',names[2])
+          cy.wrap(array.filter(o => o.id === 2)[0].name).should('eq',names[1])
+          cy.wrap(array.filter(o => o.id === 3)[0].name).should('eq',names[0])
         }
-        else if(src == 3 && tgt == 2)
+        else if (src === 3 && tgt === 2)
         {
-          cy.wrap(array.filter(o => o.id == 1)[0].name).should('eq',names[0])
-          cy.wrap(array.filter(o => o.id == 2)[0].name).should('eq',names[2])
-          cy.wrap(array.filter(o => o.id == 3)[0].name).should('eq',names[1])
+          cy.wrap(array.filter(o => o.id === 1)[0].name).should('eq',names[0])
+          cy.wrap(array.filter(o => o.id === 2)[0].name).should('eq',names[2])
+          cy.wrap(array.filter(o => o.id === 3)[0].name).should('eq',names[1])
         }
       })
     })
@@ -399,12 +399,12 @@ export const addSecPolicy = (policy,type,query,config) => {
   cy.get(`.security .${policy}-policy`).click()
   cy.get(`.security .${policy}-policy .item`).contains(type).click()
   let prop = `query`
-  if (policy == 'authorization')
+  if (policy === 'authorization')
   {
     prop = `grant`
   }
   cy.get(`.security input[name="${policy}.policy.${prop}"]`).type(query)
-  if(typeof config !== 'undefined' && config !== null)
+  if (typeof config !== 'undefined' && config !== null)
   {
     cy.get(`.security input[name="${policy}.policy.config"]`).type(config)
   }
@@ -414,12 +414,12 @@ export const addSecPolicy = (policy,type,query,config) => {
 export const confirmSecPolicyRO = (policy) => {
   cy.log(`Confirming ${policy} policy is read-only...`)
   let prop = 'query'
-  if(policy == 'authorization')
+  if (policy === 'authorization')
     prop = 'grant'
   cy.get(`.security .${policy}-policy`).click()
   cy.get(`.security .${policy}-policy .item`).contains('whitelist').should('have.class','disabled')
   cy.get(`.security input[name="${policy}.policy.${prop}"]`).should('have.attr','readonly')
-  if(policy == 'execution')
+  if (policy === 'execution')
     cy.get(`.security input[name="${policy}.policy.config"]`).should('have.attr','readonly')
 }
 
@@ -440,7 +440,7 @@ export const confirmSecPlugin = (count, param, value, policy, type, qname) => {
       cy.wrap(typeof reso).should('eq','object')
       cy.wrap(reso).its('value').should('eq',value)
     })
-    if(typeof policy !== 'undefined')
+    if (typeof policy !== 'undefined')
     {
       cy.confirmA11nSave(count,policy, type, qname)
     }
@@ -464,17 +464,17 @@ export const confirmSecLoadAfterSave = (count,param,value) => {
                 let value   = val[param].VALUE
                 let secconf = value.split(/,/).reduce((a,c) => {
                   let pair = c.split(/=/)
-                  if(pair.length == 1)
+                  if (pair.length === 1)
                     a['plugin'] = pair[0]
                   else
                     a[pair[0]] = pair[1]
                   return a
                 },{})
                 cy.get('input[name="plugin"]').should('have.value',secconf['plugin'])
-                if('auth.path.rx' in secconf)
+                if ('auth.path.rx' in secconf)
                   cy.get('input[name="auth.path.rx"]').should('have.value',secconf['auth.path.rx'])
                 console.log(secconf)
-                if('authorization.policy.grant' in secconf)
+                if ('authorization.policy.grant' in secconf)
                 {
                   cy.wrap(val[param]).its('POLICY').should('eq','A')
                   cy.get('input[name="authorization.policy.type"]').should('have.value',val[param].TYPE)
@@ -494,7 +494,7 @@ export const confirmSecLoadAfterSave = (count,param,value) => {
                   cy.get('.authorization-policy>div:first').should('be.empty')
                   cy.get('input[name="authorization.policy.grant"]').should('be.empty')
                 }
-                if('execution.policy' in secconf)
+                if ('execution.policy' in secconf)
                 {
                   // cy.wrap(val[param]).its('POLICY').should('eq','E')
                   cy.wrap(value).should('contain','execution.policy=void')
@@ -503,7 +503,7 @@ export const confirmSecLoadAfterSave = (count,param,value) => {
                   cy.get('input[name="execution.policy.query"]').should('be.empty')
                   cy.get('input[name="execution.policy.config"]').should('be.empty')
                 }
-                if('execution.policy.columns' in secconf)
+                if ('execution.policy.columns' in secconf)
                 {
                   cy.wrap(val[param]).its('POLICY').should('eq','E')
                   cy.wrap(value).should('contain','execution.policy.columns')
