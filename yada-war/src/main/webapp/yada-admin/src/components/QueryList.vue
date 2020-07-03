@@ -33,7 +33,7 @@ export default {
   watch: {
 
   },
-  mounted() {
+  mounted () {
     $(this.$el).on("shown.bs.modal", this.refreshCodeMirror)
     $(this.$el).on("hidden.bs.modal", this.clearCodeMirror)
   }

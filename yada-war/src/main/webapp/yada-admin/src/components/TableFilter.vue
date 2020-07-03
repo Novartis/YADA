@@ -25,28 +25,28 @@ export default {
     }
   },
   methods: {
-    clearFilter: function() {
+    clearFilter: function () {
       let filter = document.querySelector(this.filterSel)
       filter.value = ''
       Array.from(document.querySelectorAll('.filtered-out'))
       .forEach(row => {
-        row.classList.remove('filtered-out','stripe')
+        row.classList.remove('filtered-out', 'stripe')
       })
       filter.dispatchEvent(new Event('clear'))
     },
-    filtering: function(e) {
+    filtering: function (e) {
       // console.log(e.currentTarget.value)
       try
       {
         let rx = new RegExp(e.currentTarget.value,this.filter.rxflags)
         this.rows = Array.from(document.querySelectorAll(this.filter.selector))
         this.rows.forEach(row => {
-          row.classList.remove('filtered-out','stripe')
+          row.classList.remove('filtered-out', 'stripe')
         })
         this.rows
         .filter(row => !rx.test(row.textContent))
         .forEach(row => row.classList.add('filtered-out'))
-        if(this.filter.stripe)
+        if (this.filter.stripe)
           this.stripe()
         this.filterLabel = this.getFilterLabel()
       }
@@ -55,29 +55,29 @@ export default {
         console.log(err)
       }
     },
-    stripe: function() {
+    stripe: function () {
       let filtered = Array.from(document.querySelectorAll(`${this.filter.selector}:not(.filtered-out)`))
       for(let i=0;i<filtered.length;i++)
       {
-        if(i%2==1)
+        if (i%2==1)
           filtered[i].classList.add('stripe')
       }
     },
-    getFilterLabel: function() {
+    getFilterLabel: function () {
       let filtered = document.querySelectorAll('.filtered-out').length
       let all = this.rows.length
       // console.log(filtered,all)
       let label = `${all}`
-      if(filtered > 0)
+      if (filtered > 0)
         label = `${this.rows.length - filtered} of ${this.rows.length} (${filtered})`
       return label
     },
   },
   computed: {
-    ...mapState(['filter','activeTab','tabs','apps','queries']),
+    ...mapState(['filter', 'activeTab', 'tabs', 'apps', 'queries']),
     hide() {return this.filter.selector === ''},
   },
-  mounted() {
+  mounted () {
     let vm = this
     // filter keyup handler
     let filter = document.querySelector(this.filterSel)
@@ -92,16 +92,16 @@ export default {
       this.filterLabel = this.getFilterLabel()
     },
     apps (neo, old) {
-      if(this.filter.selector !== '')
+      if (this.filter.selector !== '')
         this.rows = Array.from(document.querySelectorAll(this.filter.selector))
     },
     queries (neo, old) {
-      if(this.filter.selector !== '')
+      if (this.filter.selector !== '')
         this.rows = Array.from(document.querySelectorAll(this.filter.selector))
     },
     activeTab (neo, old) {
       this.$store.commit(types.SET_FILTER, this.tabs[`${this.activeTab.replace(/-tab/,'')}`].filter)
-      if(this.filter.selector === '')
+      if (this.filter.selector === '')
         this.rows = []
       else
       {

@@ -30,7 +30,7 @@ export default {
     return {
       idle: false,
       auth: true,
-      events: ['load','mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'],
+      events: ['load', 'mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'],
       timeout: 1000*60*30,   // 30 minutes
       authTimeout: 1000*31 , // 31 seconds
       authInterval: null,
@@ -56,7 +56,7 @@ export default {
         // console.log(document.cookie)
         // console.log(rx_cookie.test(document.cookie))
         // console.log(new Date().getTime()/1000 - date)
-        if(!rx_cookie.test(document.cookie))// && !rx_domain.test(document.domain))
+        if (!rx_cookie.test(document.cookie))// && !rx_domain.test(document.domain))
         {
           this.idle = true
           this.auth = false
@@ -90,7 +90,7 @@ export default {
       // countdown timer
       let secs = this.countdown
       // test countdown status
-      if(secs > 0)
+      if (secs > 0)
       {
         // decrement
         secs--

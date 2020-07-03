@@ -116,26 +116,26 @@ export default {
   },
   methods: {
     // toggles delete button on mouse over
-    // editing: function(idx) {
+    // editing: function (idx) {
     //   return this.params[idx].MODE
     // },
-    toggleButton: function(e) {
+    toggleButton: function (e) {
       let button = e.currentTarget.querySelector('button.delete')
-      if(button.classList.contains('hidden'))
+      if (button.classList.contains('hidden'))
         button.classList.remove('hidden')
       else
         button.classList.add('hidden')
     },
 
-    // storeIndex: function(idx) {
+    // storeIndex: function (idx) {
     //   this.currentRowIdx = idx
     // },
-    // addRow: function() {
-    //   let row = {'TARGET':this.qname,'ID': (this.getMaxId() + 1), 'NAME':'','VALUE':'','RULE':1}
+    // addRow: function () {
+    //   let row = {'TARGET':this.qname,'ID': (this.getMaxId() + 1), 'NAME':'', 'VALUE':'', 'RULE':1}
     //   this.neoRow = row
     //   this.params.push(row)
     // },
-    deleteRow: function(idx) {
+    deleteRow: function (idx) {
 
       let param = this.params[idx]
       console.log(`deleting row ${idx} with ${JSON.stringify(param)}...`)
@@ -150,9 +150,9 @@ export default {
     //*** DND METHODS
     // sets directional arrows and cursor for dragging
     // makes rows draggable
-    toggleDraggers: function() {
+    toggleDraggers: function () {
       Array.from(document.querySelectorAll('.paramtab tbody > tr > td:first-child .icon')).forEach(el => {
-        if(el.classList.contains('hidden'))
+        if (el.classList.contains('hidden'))
         {
           el.classList.remove('hidden')
           // el.closest('tr').setAttribute('draggable',true)
@@ -164,25 +164,25 @@ export default {
       })
     },
     // updates icons in dragged rows to keep directions sane
-    updateDraggers: function() {
+    updateDraggers: function () {
       Array.from(document.querySelectorAll('.paramtab tbody > tr > td:first-child i.icon')).forEach(el => {
-        el.classList.remove('sort','down','up')
+        el.classList.remove('sort', 'down', 'up')
         let idx  = el.closest('tr').rowIndex
         let icon = idx == 1 ? 'sort down' : idx == this.params.length ? 'sort up' : 'sort'
         el.classList.add(...icon.split(' '))
       })
     },
 
-    dragover: function(e) {
+    dragover: function (e) {
       let row = e.target.closest('tr')
-      if(!row.classList.contains('dropzone'))
+      if (!row.classList.contains('dropzone'))
       {
         row.classList.add('dropzone')
       }
     },
 
     // updates row css on exit
-    dragleave: function(e) {
+    dragleave: function (e) {
       console.log('dragleave')
       e.preventDefault()
       let row = e.target.closest('tr')
@@ -190,11 +190,11 @@ export default {
     },
 
     // updates row css on enter, 'id' and 'did' are set but have not impact currently
-    dragenter: function(e) {
+    dragenter: function (e) {
       console.log('dragenter')
     //   this.dragging = true
     //   let row = e.target.closest('tr')
-    //   // if(!!!this.draggedRow)
+    //   // if (!!!this.draggedRow)
     //   // {
     //   //   this.draggedRow = row
     //   // }
@@ -204,7 +204,7 @@ export default {
     //   let did = parseInt(this.draggedRow.querySelector('td:first-child').textContent)
     },
     // sets 'row' and 'id' vars but does nothing with them
-    dragstart: function(e) {
+    dragstart: function (e) {
       let row = e.target.closest('tr')
       this.draggedRow = row
       this.dragging = true
@@ -213,7 +213,7 @@ export default {
       console.log(row.rowIndex, id)
     },
     // disables dnd,
-    dragdrop: function(e) {
+    dragdrop: function (e) {
       let row   = e.target.closest('tr')
       // row.removeAttribute('draggable')
       this.draggedRow.classList.remove('dragging')
@@ -221,7 +221,7 @@ export default {
       let id    = row.rowIndex //parseInt(row.querySelector('td:first-child').textContent)
       let did   = this.draggedRow.rowIndex //parseInt(this.draggedRow.querySelector('td:first-child').textContent)
       let tbody = document.querySelector('table.paramtab tbody')
-      if(id < did)
+      if (id < did)
         row.insertAdjacentElement('beforebegin',this.draggedRow)
       else
         row.insertAdjacentElement('afterend',this.draggedRow)
@@ -233,7 +233,7 @@ export default {
       this.$store.commit(types.SET_UNSAVEDPARAMS,this.unsavedParams+1)
     },
     // resets ids in params objects to row indexes
-    updateIds: function() {
+    updateIds: function () {
       let vm = this
       let rowDict = Array.from(document.querySelectorAll('.params tbody > tr')).reduce((a,c) => {
         a[parseInt(c.querySelector('td:first-child').textContent)] = c.rowIndex
@@ -243,7 +243,7 @@ export default {
       vm.params.forEach((param,idx) => {
         console.log(param.ID,idx)
         param['OLDID'] = param['ID']
-        if(vm.dragging)
+        if (vm.dragging)
           param['ID'] = rowDict[param['ID']]
         else
           param['ID'] = idx
@@ -253,21 +253,21 @@ export default {
       this.unsaved()
     },
 
-    setMode: function(event,param,idx) {
+    setMode: function (event,param,idx) {
       let vm = this
       // if mode == 'EDIT', current target will be INPUT
-      if(event.currentTarget.tagName == 'INPUT')
+      if (event.currentTarget.tagName == 'INPUT')
       {
         let input = event.currentTarget
         // if edit just occurred and tabbing out, event.type == 'blur'
-        if(event.type == 'blur')
+        if (event.type == 'blur')
         {
-          if(input.validity.valid)
+          if (input.validity.valid)
           {
             input.parentElement.classList.remove('error')
             delete param.MODE
             // change stored value and set flags for saving
-            if(param.VALUE != input.value)
+            if (param.VALUE != input.value)
             {
               param.VALUE = input.value
               // global unsavedChanges flag
@@ -276,7 +276,7 @@ export default {
               vm.$store.commit(types.SET_UNSAVEDPARAMS,vm.unsavedParams+1)
               vm.$set(vm.params,idx,param)
             }
-            if(document.querySelector('.error') == null)
+            if (document.querySelector('.error') == null)
               vm.$store.commit(types.SET_ERRORS, false)
           }
           else
@@ -286,7 +286,7 @@ export default {
           }
 
         }
-        else if(event.type == 'click' )
+        else if (event.type == 'click' )
         {
           return false
         }
@@ -297,14 +297,14 @@ export default {
         let index = event.currentTarget.cellIndex
         let td = event.currentTarget
         // do nothing for sec param
-        if(this.isSecurityParam(param))
+        if (this.isSecurityParam(param))
           return false
         // toggle MODE
-        if(index == 2)
+        if (index == 2)
         {
-          if(param.MODE == 'edit')
+          if (param.MODE == 'edit')
           {
-            if(event.type == 'click' && this.getParamType(param) == 'Boolean')
+            if (event.type == 'click' && this.getParamType(param) == 'Boolean')
             {
               return false
             }
@@ -316,7 +316,7 @@ export default {
           this.$set(this.params,idx,param)
 
           Vue.nextTick(() => {
-            if(!!param.MODE)
+            if (!!param.MODE)
             {
               let input = td.querySelector('input')
               input.select()
@@ -329,15 +329,15 @@ export default {
           })
         }
         // change parameter column to input for editing
-        else if(index == 1)
+        else if (index == 1)
         {
           let els, tgt = event.currentTarget
-          if(tgt.tagName === 'TD')
+          if (tgt.tagName === 'TD')
             els = tgt.closest('td').querySelectorAll('div')
           else
             els = tgt.querySelectorAll('div')
           Array.from(els).forEach(el => {
-            if(el.classList.contains('hide'))
+            if (el.classList.contains('hide'))
             {
               el.classList.remove('hide')
               $(el.querySelector('.parameter-selector')).dropdown(
@@ -362,63 +362,63 @@ export default {
         }
       }
     },
-    isSecurityParam: function(param) {
+    isSecurityParam: function (param) {
       return (param.SPP === 'true')
     },
-    mutable: function(param) {
+    mutable: function (param) {
       return !!param.RULE ? 'toggle off black' : 'toggle on red'
     },
-    getParamSpec: function(param) {
+    getParamSpec: function (param) {
       return this.paramlist.filter(p => param.NAME == p.alias)[0]
     },
-    getParamType: function(param) {
+    getParamType: function (param) {
       return typeof this.getParamSpec(param) !== 'undefined' ? this.getParamSpec(param).type : 'choose a parameter'
     },
-    getParamDefault: function(param) {
+    getParamDefault: function (param) {
       return typeof this.getParamSpec(param) !== 'undefined' ? this.getParamSpec(param).default : 'choose a parameter'
     },
-    getTooltip: function(param) {
+    getTooltip: function (param) {
       return this.isSecurityParam(param)
               ? `Security parameters must be edited in the Security Configuration panel above`
               : typeof this.getParamSpec(param) !== 'undefined' ? this.getParamSpec(param).tip : 'choose a parameter'
     },
-    getParamName: function(param) {
+    getParamName: function (param) {
       return typeof this.getParamSpec(param) !== 'undefined' ? this.getParamSpec(param).name : 'choose a parameter'
     },
   },
   computed: {
-    ...mapState(['paramlist','renderedParams','qname','unsavedChanges','confirmAction','unsavedParams']),  //,'secconf'
+    ...mapState(['paramlist', 'renderedParams', 'qname', 'unsavedChanges', 'confirmAction', 'unsavedParams']),  //,'secconf'
     mode() { return this.params.map(p => {return p.MODE}) },
     sortedParams() { return this.params.sort((a,b) => {return parseInt(a.ID) - parseInt(b.ID)})},
     params() { return this.renderedParams }
   },
   watch: {
     // secconf(neo,old) {
-    //   if(JSON.stringify(neo) != JSON.stringify(old))
+    //   if (JSON.stringify(neo) != JSON.stringify(old))
     //   {
     //     let secparams = this.params.filter(param => {return this.isSecurityParam(param)})
     //     let param
-    //     if(secparams.length > 0)
+    //     if (secparams.length > 0)
     //       param = secparams[0]
     //
     //
     //   }
     // },
     confirmAction(neo,old) {
-      if(neo === null)
+      if (neo === null)
       {
         // this.updateIds()
       }
     },
   },
-  mounted() {
+  mounted () {
 
   },
-  updated() {
+  updated () {
     let vm = this
     $('[data-content]').popup()
     $('.params .ui.tiny.modal').modal('attach events', 'button.delete', 'show')
-    $('.checkbox.mutability').checkbox({onChange: function() {
+    $('.checkbox.mutability').checkbox({onChange: function () {
       let rule = this.checked ? 0 : 1
       let idx  = this.closest('tr').rowIndex-1
       let param = vm.params[idx]
@@ -428,7 +428,7 @@ export default {
       vm.$store.commit(types.SET_UNSAVEDPARAMS,vm.unsavedParams+1)
     }})
     $('.checkbox.paramval').checkbox({
-        onChange: function() {
+        onChange: function () {
         let value = !!this.checked ? 'true' : 'false'
         let idx  = this.closest('tr').rowIndex-1
         let param = vm.params[idx]

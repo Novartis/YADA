@@ -22,19 +22,19 @@ export default {
   methods: {
     makeActive: (e) => {
       let el = e.currentTarget
-      if(el.classList.contains('active'))
+      if (el.classList.contains('active'))
         el.classList.remove('active')
       else
         el.classList.add('active')
     },
   },
-  computed: mapState(['unsavedChanges','tabs','activeTab']),
+  computed: mapState(['unsavedChanges', 'tabs', 'activeTab']),
   watch: {
     activeTab (neo,old) {
       this.$store.commit(types.SET_MENUITEMS, this.tabs[this.activeTab.replace(/-tab/,'')].menuitems)
     }
   },
-  mounted() {
+  mounted () {
     $('.main-menu .ui.dropdown').dropdown()
     $('.main-menu.sticky').sticky({context:'body',silent:true})
   }

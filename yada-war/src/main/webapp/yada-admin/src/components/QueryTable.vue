@@ -25,17 +25,17 @@ import { mapState } from 'vuex'
 
 const CodeMirror = require('codemirror')
 export default {
-  components: {QueryDetails},
+  components: { QueryDetails },
   props: [],
-  data() {
+  data () {
     return {
-      filterLabel: 0,
+      filterLabel: 0
     }
   },
   methods: {
     // click handler for table row
-    setSelectedQuery: function(e,row) {
-      if(e.target.className != 'copy btn') // exclude clippy clickss
+    setSelectedQuery: function (e, row) {
+      if (e.target.className != 'copy btn') // exclude clippy clickss
       {
         let qname = `${row.QNAME}`
         let query = `${row.QUERY}`
@@ -50,10 +50,10 @@ export default {
       }
     },
 
-    showCode: function(e) {
+    showCode: function (e) {
       setTimeout(() => {
         let td, code
-        if(e.target.tagName == 'TD') // click is outside code area
+        if (e.target.tagName == 'TD') // click is outside code area
         {
           td = e.target
           code = e.target.firstChild
@@ -64,10 +64,10 @@ export default {
           code = e.target
         }
         const hidden = $('.hidden')
-        if(!!code) // && !this.adjusting)
+        if (!!code) // && !this.adjusting)
         {
           // if syntax highlighting is present, allow selection
-          if(code.closest('.CodeMirror') !== null
+          if (code.closest('.CodeMirror') !== null
             || code.parentElement.querySelector('.CodeMirror') !== null)
           {
             code.focus()
@@ -75,52 +75,48 @@ export default {
           else // toggle syntax
           {
             const onComplete = () => {
-
               // clean up
               Array.from(document.querySelectorAll('#query-list-panel .CodeMirror')).forEach(cm => {
                 cm.parentElement.removeChild(cm)
               })
-              hidden.transition({animation:'fade in',duration:'1s'})
+              hidden.transition({ animation: 'fade in', duration: '1s' })
 
               // create anew
               const query  = code.textContent
-              let width = td.offsetWidth
-              CodeMirror(td,{value:query,
-                              mode:'text/x-sql',
-                              lineNumbers:true,
-                              lineWrapping:true,
-                              readOnly:true,
-                              theme: 'eclipse',
-                              workDelay:50,
-                              scrollbarStyle: 'null'})
+              // let width = td.offsetWidth
+              CodeMirror(td,{value: query,
+                mode: 'text/x-sql',
+                lineNumbers: true,
+                lineWrapping: true,
+                readOnly: true,
+                theme: 'eclipse',
+                workDelay: 50,
+                scrollbarStyle: 'null'})
               let cmEl = document.querySelector('#query-list-panel .CodeMirror-scroll')
-              cmEl.style.maxWidth = td.offsetWidth-27
-              $(cmEl).transition({animation:'fade in',duration:'.5s'})
-
+              cmEl.style.maxWidth = td.offsetWidth - 27
+              $(cmEl).transition({ animation: 'fade in', duration: '.5s' })
             }
-            $(code).transition({animation:'fade out',
-                                duration:'.5s',
-                                onComplete:onComplete})
+            $(code).transition({ animation: 'fade out', duration: '.5s', onComplete: onComplete })
           }
         }
-      },100)
+      }, 100)
     },
-    tooltip: (title,content) => {
+    tooltip: (title, content) => {
       return `<span class="ui" data-tooltip="${title}">${content}</span>`
     }
   },
   computed: {
-    ...mapState(['queries','query','app','qname'])
+    ...mapState(['queries', 'query', 'app', 'qname'])
   },
   watch: {
     queries (neo, old) {
       this.filterLabel = this.queries.length
     }
   },
-  updated() {
+  updated () {
 
   },
-  mounted() {
+  mounted () {
 
   }
 }

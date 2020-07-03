@@ -271,12 +271,12 @@ export default {
     }
   },
   methods: {
-    modify: function(e) {
+    modify: function (e) {
       this.unsaved()
       // this.$store.commit(types.SET_UNSAVEDPARAMS,this.unsavedParams+1)
       // this.updateModel(e)
     },
-    updateModel: function(e) {
+    updateModel: function (e) {
       let that   = this
       let plugin = document.querySelector('input[name="plugin"]').value
       let authUrl = document.querySelector('input[name="auth.path.rx"]').value
@@ -297,7 +297,7 @@ export default {
         "content.policy.predicate" : contentPolicy
       }
       this.$store.commit(types.SET_SECCONF, conf)
-      if(!this.hasSecurityPlugin()
+      if (!this.hasSecurityPlugin()
           && !!plugin)
           // && this.secconf !== null
           // && Object.entries(conf).toString() !== Object.entries(this.secconf).toString() )
@@ -317,47 +317,47 @@ export default {
 
 
     },
-    isSecurityPlugin: function(param) {
+    isSecurityPlugin: function (param) {
       return param.SPP === 'true'
     },
-    hasSecurityPlugin: function() {
+    hasSecurityPlugin: function () {
       return this.params.some(p => this.isSecurityPlugin(p))
         || this.renderedParams.some(p => this.isSecurityPlugin(p))
     },
-    securityPlugin: function() {
+    securityPlugin: function () {
       let spp
-      if(typeof this.params !== 'undefined' && this.params.length > 0)
+      if (typeof this.params !== 'undefined' && this.params.length > 0)
       {
         spp = this.params.filter(p => this.isSecurityPlugin(p))
       }
-      if(typeof spp === 'undefined'
+      if (typeof spp === 'undefined'
          && typeof this.renderedParams !== 'undefined'
          && this.renderedParams.length > 0)
       {
         spp = this.renderedParams.filter(p => this.isSecurityPlugin(p))[0]
       }
-      if(typeof spp !== 'undefined')
+      if (typeof spp !== 'undefined')
         return spp[0]
 
       return spp
     },
-    // hasExecutionPolicy: function(secPl) {
+    // hasExecutionPolicy: function (secPl) {
     //   return secPl['POLICY'] == 'E'
     //         || secPl.hasOwnProperty('execution.policy.columns')
     //         || secPl.hasOwnProperty('execution.policy.indices')
     //         || secPl.hasOwnProperty('execution.policy.type')
     // },
-    // hasAuthorizationPolicy: function(secPl) {
+    // hasAuthorizationPolicy: function (secPl) {
     //   return secPl['POLICY'] == 'A'
     //         || secPl.hasOwnProperty('authorization.policy.grant')
     //         || secPl.hasOwnProperty('authorization.policy.type')
     // }
   },
   computed: {
-    ...mapState(['paramlist','renderedParams','qname','unsavedChanges','confirmAction','unsavedParams','secconf']),
+    ...mapState(['paramlist', 'renderedParams', 'qname', 'unsavedChanges', 'confirmAction', 'unsavedParams', 'secconf']),
     params() { return this.renderedParams },
     secParam() {
-      if(this.secconf !== null)
+      if (this.secconf !== null)
       {
         return this.secconf
       }
@@ -376,10 +376,10 @@ export default {
       }
     }
     //   const secPl = this.securityPlugin()
-    //   if(typeof secPl !== 'undefined')
+    //   if (typeof secPl !== 'undefined')
     //   {
     //     let conf =  secPl['VALUE'].split(/,/).reduce((a,c) => {
-    //       if(/=/.test(c))
+    //       if (/=/.test(c))
     //       {
     //         let pair = c.split(/=/)
     //         a[pair[0]] = pair[1]
@@ -391,12 +391,12 @@ export default {
     //       return a
     //     },{})
     //
-    //     if(this.hasExecutionPolicy(conf))
+    //     if (this.hasExecutionPolicy(conf))
     //     {
     //       conf['execution.policy.type'] = secPl['TYPE']
     //       conf['execution.policy.query'] = secPl['QNAME']
     //     }
-    //     else if(secPl['POLICY'] == 'A')
+    //     else if (secPl['POLICY'] == 'A')
     //     {
     //       conf['authorization.policy.type'] = secPl['TYPE']
     //       conf['authorization.policy.grant'] = secPl['QNAME']
@@ -412,20 +412,20 @@ export default {
   watch: {
 
   },
-  updated() {
+  updated () {
   },
   beforeUpdate() {
 
   },
-  mounted() {
+  mounted () {
     $('.ui.dropdown.execution-policy').dropdown({'debug':true,
-      onChange:function(v,t,c) {
+      onChange:function (v,t,c) {
         console.log(v,t,c)
         $('.ui.dropdown.authorization-policy').dropdown('clear')
       }
     })
     $('.ui.dropdown.authorization-policy').dropdown({'debug':true,
-      onChange:function(v,t,c) {
+      onChange:function (v,t,c) {
         console.log(v,t,c)
         $('.ui.dropdown.execution-policy').dropdown('clear')
       }
@@ -434,7 +434,7 @@ export default {
     Array.from(document.querySelectorAll('.security.config .header i')).forEach(el => {
       el.addEventListener('click',e => {
         let descr = el.parentElement.nextElementSibling
-        if(descr.classList.contains('hidden'))
+        if (descr.classList.contains('hidden'))
           descr.classList.remove('hidden')
         else
           descr.classList.add('hidden')

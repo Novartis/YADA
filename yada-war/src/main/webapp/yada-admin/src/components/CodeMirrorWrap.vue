@@ -41,24 +41,24 @@ export default {
     }
   },
   computed:  {
-    ...mapState(['query','unsavedChanges','switching'])
+    ...mapState(['query', 'unsavedChanges', 'switching'])
   },
-  mounted() {
+  mounted () {
 
   },
   watch: {
     query(neo,old) {
       let that = this
-      if(neo !== null)
+      if (neo !== null)
       {
-        if(!!!old || (!!old && Object.keys(old).length == 0))
+        if (!!!old || (!!old && Object.keys(old).length == 0))
         // this check protects against infiniloop
         // it will only exec the first time query loads
         {
           Array.from(document.querySelectorAll('#query-list-panel .CodeMirror')).forEach(cm => {
             cm.parentElement.removeChild(cm)
           })
-          if(this.codemirror !== null)
+          if (this.codemirror !== null)
           {
             this.setValue(neo)
           }
@@ -71,10 +71,10 @@ export default {
               theme: 'eclipse',
               fullscreen: true,
               extraKeys: {
-                "F2": function(cm) {
+                "F2": function (cm) {
                   cm.setOption("fullScreen", !cm.getOption("fullScreen"));
                 },
-                "Shift-F2": function(cm) {
+                "Shift-F2": function (cm) {
                   if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
                 }
               }
@@ -95,7 +95,7 @@ export default {
             this.codemirror.setOption('mode', mode)
             this.codemirror.on('change', (i,obj) => {
               let val = this.codemirror.getValue()
-              if(obj.origin !== 'setValue')  // avoids marking unsaved when switching queries
+              if (obj.origin !== 'setValue')  // avoids marking unsaved when switching queries
               {
                 that.unsaved(i,obj)
               }
@@ -106,7 +106,7 @@ export default {
             this.charcount = this.codemirror.getValue().length
             $('#query-editor-ghost').html(`<pre>${this.codemirror.getValue()}</pre>`)
             $('#query-editor').data('codemirror', this.codemirror)
-            if(window.Cypress && process.env.NODE_ENV_LABEL !== 'PROD')
+            if (window.Cypress && process.env.NODE_ENV_LABEL !== 'PROD')
             {
               window.cm = this.codemirror
             }

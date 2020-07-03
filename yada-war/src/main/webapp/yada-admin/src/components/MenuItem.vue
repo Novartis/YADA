@@ -15,7 +15,7 @@ export default {
   name: 'MenuItem',
   props: [ 'item' ],
   methods: {
-     menuClickHandler: function(e,t) {
+     menuClickHandler: function (e,t) {
        this.$store.dispatch(t.fn,{})
      }
   }

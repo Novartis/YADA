@@ -24,7 +24,7 @@ import {utils} from './mixins/utils'
 
 Vue.use(Vuex)
 Vue.use(DateUtils)
-Vue.use(YADAUtils,{debug:true})
+Vue.use(YADAUtils, { debug: true})
 Vue.use(new Clipboard('button.copy.btn'))
 Vue.use(semantic)
 Vue.mixin(utils)
@@ -41,7 +41,7 @@ const vue = new Vue({
   template: '<App/>'
 })
 
-if(window.Cypress && process.env.NODE_ENV_LABEL !== 'PROD')
+if (window.Cypress && process.env.NODE_ENV_LABEL !== 'PROD')
 {
   window.vue = vue
 }

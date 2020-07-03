@@ -30,7 +30,7 @@ export default {
     this.$nextTick(() => this.login())
   },
   computed: {
-    ...mapState(['loggeduser','apps','app'])
+    ...mapState(['loggeduser', 'apps', 'app'])
   },
   watch: {
 
@@ -39,8 +39,8 @@ export default {
 </script>
 
 <style scoped>
-  #app-list div.applistitem:first-child {
-    padding-top: 7px;
-    margin-top: 15px;
-  }
+#app-list div.applistitem:first-child {
+  padding-top: 7px;
+  margin-top: 15px;
+}
 </style>

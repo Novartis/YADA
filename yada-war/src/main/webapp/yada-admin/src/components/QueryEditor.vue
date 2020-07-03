@@ -88,7 +88,7 @@ export default {
   },
   methods: {
 
-    rename: function(e) {
+    rename: function (e) {
       // set the local qname property to the new field content
       this.qname = document.querySelector('input[name="qname"]').value
       // set a local var
@@ -99,20 +99,20 @@ export default {
       // increment unsaved count
       this.unsaved()
     },
-    addRow: function(e) {
+    addRow: function (e) {
       this.$refs.paramtab.addRow(e)
     },
-    cancel: function(event) {
+    cancel: function (event) {
 
     },
-    setMode: function(event) {
+    setMode: function (event) {
       // change comment property
       // let ta = document.querySelector('textarea.comment')
       // this.$set(this.query,'COMMENT',ta!==null?ta.value:this.query.COMMENT)
       // console.log(ta !== null ? ta.value : this.query.COMMENT)
 
       // toggle MODE
-      if(!!!this.editComment)
+      if (!!!this.editComment)
       {
         this.editComment = true
         Vue.nextTick(() => {
@@ -126,19 +126,19 @@ export default {
     }
   },
   computed: {
-    ...mapState(['qnameOrig','query','app','renaming','creating','cloning','unsavedChanges','unsavedParams','activeTab','loggeduser','queries']),
+    ...mapState(['qnameOrig', 'query' ,'app', 'renaming', 'creating' ,'cloning', 'unsavedChanges', 'unsavedParams', 'activeTab', 'loggeduser','queries']),
     escComment() { return this.comment.replace(/\n/g,'<br/>')}
   },
-  mounted() {
+  mounted () {
     $('.ui.accordion').accordion()
   },
-  updated() {
+  updated () {
 
   },
   watch: {
     unsavedChanges(neo,old) {
       // only process if we're viewing the edit form
-      if(this.activeTab == 'query-edit-tab')
+      if (this.activeTab == 'query-edit-tab')
       {
         let app   = this.app
         let qname = document.querySelector('input[name="qname"]').value
@@ -157,19 +157,19 @@ export default {
           CREATED: this.query.CREATED,
           CREATED_BY: this.query.CREATED_BY
         }
-        // if(this.renaming)
+        // if (this.renaming)
         // {
         //   query.ACCESS_COUNT = this.query.ACCESS_COUNT
         //   query.CREATED = this.query.CREATED
         //   query.CREATED_BY = this.query.CREATED_BY
         // }
         // only process if unsaved changes exist and NOT in creation mode (renaming, standard edit)
-        if(!this.creating)
+        if (!this.creating)
         {
           this.$store.commit(types.SET_QUERY, query)
           let index = this.queries.findIndex(q => {return q.QNAME == `${app} ${qname}`})
 
-          if(index > -1)
+          if (index > -1)
           {
             this.$set(this.queries,index,query)
           }
@@ -177,29 +177,29 @@ export default {
       }
     },
     query(neo,old) {
-      if(neo !== null)
+      if (neo !== null)
       {
 
         this.qname = neo.QNAME.replace(this.app+' ','')
         this.code = neo.QUERY
         this.comment = neo.COMMENTS
-        // if(/^[0-9]+$/.test(this.qname))
+        // if (/^[0-9]+$/.test(this.qname))
         // {
         //   this.$store.commit(types.SET_RENAMING,true)
         // }
-        if(this.creating)
+        if (this.creating)
         {
           this.unsaved()
         }
       }
     },
     renaming(neo,old) {
-      if(!!neo)
+      if (!!neo)
       {
         let input = document.querySelector('.query-editor-view .qname input')
         let rename = 'RENAME '
         // is it a brand new query, named like 'APP 8098712341'?
-        // if(/(.+\s)?[0-9]+$/.test(input.value))
+        // if (/(.+\s)?[0-9]+$/.test(input.value))
         // {
         //   rename = ''
         // }
@@ -211,7 +211,7 @@ export default {
       }
     },
     cloning(neo,old) {
-      if(!!neo)
+      if (!!neo)
       {
         // this.qname = this.qname+' CLONE'
         this.$store.dispatch(types.SAVE_QUERY)
@@ -222,7 +222,7 @@ export default {
     },
     unsavedParams(neo,old) {
       let panel = document.querySelector('.parameters')
-      if(neo > 0 && panel.computedStyleMap().get('display').value == 'none')
+      if (neo > 0 && panel.computedStyleMap().get('display').value == 'none')
       {
         panel.closest('.accordion').querySelector('h5').click()
       }

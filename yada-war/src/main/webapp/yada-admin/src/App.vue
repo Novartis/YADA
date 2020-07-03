@@ -105,7 +105,7 @@ export default {
       })
     },
     setupConfTab() {
-      if(!this.$refs.conftab.classList.contains('disabled'))
+      if (!this.$refs.conftab.classList.contains('disabled'))
         this.$refs.confpanelform.makeCM()
     },
     initTabs() {
@@ -120,7 +120,7 @@ export default {
       })
     }
   },
-  mounted() {
+  mounted () {
     let vm = this
     // set event listener for clicks to inject save prompt before navigation
     Array.from(document.querySelectorAll('.menu > .item')).forEach(el => {
@@ -129,7 +129,7 @@ export default {
         // store clicked tab
         let nextTab = e.target
         // only proceed if click is on different, enabled tab
-        if(/.+-tab/.test(nextTab.id)
+        if (/.+-tab/.test(nextTab.id)
            && !nextTab.classList.contains('disabled')
            && nextTab.id !== vm.activeTab)
         {
@@ -139,13 +139,13 @@ export default {
           //
           //
           const queryEditorView = document.querySelector('.query-editor-view')
-          const securityAccordion = queryEditorView.querySelector('.ui.accordion.security')          
+          const securityAccordion = queryEditorView.querySelector('.ui.accordion.security')
           securityAccordion.querySelectorAll('.active').forEach(el => {
             el.classList.remove('active')
           })
 
           // stuff to do ONLY if something changed:
-          if(vm.unsavedChanges > 0)
+          if (vm.unsavedChanges > 0)
           {
             vm.$store.commit(types.SET_NEXTTAB, nextTab.id)
             // disable tab temporarily to prevent navigation before save
@@ -153,14 +153,14 @@ export default {
             // required for saving
             nextTab.classList.add('disabled')
             let context = 'query-edit'
-            if(/conf/.test(vm.activeTab))
+            if (/conf/.test(vm.activeTab))
             {
               context = 'app'
             }
             // configger and trigger modal only if real mouse click
             // the screenx,screeny coords should only be present when actually clicking
             // we'll see if cypress imposes it
-            if(!!e.screenX && e.screenX != 0 && !!e.screenY && e.screenY != 0)
+            if (!!e.screenX && e.screenX != 0 && !!e.screenY && e.screenY != 0)
               vm.$store.dispatch(types.SAVE_CHANGES_CONFIRM, context)
 
           }
@@ -183,17 +183,17 @@ export default {
       // verbose:true,
       // closable: true,
       inverted: true,
-      onApprove: function() {
+      onApprove: function () {
         vm.$store.commit(types.SET_SHOWWARNING, false)
       }
-      // onApprove: function() {
+      // onApprove: function () {
       //   vm.$store.dispatch(types[vm.confirmAction]).then((r) => {
       //     // unsetting flag now _seems_ early but necessary to support prompt
       //     // plus it's happening after the promise resolves.
       //     // TODO check for error handling - what happens if 'confirmAction' fails?
       //     vm.$store.commit(types.SET_UNSAVEDCHANGES, 0)
       //     vm.$nextTick(() => {
-      //       if(!!vm.nextTab)
+      //       if (!!vm.nextTab)
       //       {
       //         // force hide the modals to enable clicking, then enable it and click
       //         vm.modalSave.modal('hide')
@@ -214,14 +214,14 @@ export default {
       // verbose:true,
       closable: false,
       inverted: true,
-      onApprove: function() {
+      onApprove: function () {
         vm.$store.dispatch(types[vm.confirmAction]).then((r) => {
           // unsetting flag now _seems_ early but necessary to support prompt
           // plus it's happening after the promise resolves.
           // TODO check for error handling - what happens if 'confirmAction' fails?
           vm.$store.commit(types.SET_UNSAVEDCHANGES, 0)
           vm.$nextTick(() => {
-            if(!!vm.nextTab)
+            if (!!vm.nextTab)
             {
               // force hide the modals to enable clicking, then enable it and click
               vm.modalSave.modal('hide')
@@ -234,17 +234,17 @@ export default {
           })
         })
       },
-      onDeny: function(a) {
+      onDeny: function (a) {
         // reset state, renable clicking, and click
-        if(/SAVE/.test(vm.confirmAction))
+        if (/SAVE/.test(vm.confirmAction))
         {
           vm.$store.commit(types.SET_UNSAVEDCHANGES, 0)
         }
         vm.$nextTick(() => {
-          vm.$store.commit(types.SET_CONFIRM,       null)
+          vm.$store.commit(types.SET_CONFIRM, null)
           vm.$store.commit(types.SET_CONFIRMACTION, null)
-          vm.$store.commit(types.SET_PARAM,         null)
-          if(!!vm.nextTab)
+          vm.$store.commit(types.SET_PARAM, null)
+          if (!!vm.nextTab)
           {
             let nextTab = document.querySelector(`#${vm.nextTab}`)
             vm.$store.commit('SET_NEXTTAB',null)
@@ -265,20 +265,20 @@ export default {
       let menu = document.querySelector('.main-menu')
       let filter = document.querySelector('.filter')
       let th, newTop
-      if(vm.activeTab == 'query-list-tab')
+      if (vm.activeTab == 'query-list-tab')
       {
         th = document.querySelector('.query.list table thead th')
-        if(window.scrollY == 0)
+        if (window.scrollY == 0)
         {
           menu.style.top = 63
           filter.style.top = 75
         }
-        else if(window.scrollY < 63)
+        else if (window.scrollY < 63)
         {
           menu.style.top =  63 - window.scrollY
           filter.style.top =  75 - window.scrollY
         }
-        else if(window.scrollY < 123)//if(window.scrollY < newTop)
+        else if (window.scrollY < 123)//if (window.scrollY < newTop)
         {
           menu.style.top = (123 + th.offsetHeight) - window.scrollY
           filter.style.top = (123 + th.offsetHeight) - window.scrollY
@@ -289,14 +289,14 @@ export default {
           filter.style.top = th.offsetHeight
         }
       }
-      else if(vm.activeTab == 'query-edit-tab' || vm.activeTab == 'apps-tab')
+      else if (vm.activeTab == 'query-edit-tab' || vm.activeTab == 'apps-tab')
       {
-        if(window.scrollY == 0)
+        if (window.scrollY == 0)
         {
           menu.style.top = 63
           filter.style.top = 75
         }
-        else if(window.scrollY < 63)
+        else if (window.scrollY < 63)
         {
           menu.style.top = 63 - window.scrollY
           filter.style.top =  75 - window.scrollY
@@ -310,16 +310,16 @@ export default {
     })
 
     document.addEventListener('keydown',(e) => {
-      if(/(?:query-edit|conf)-tab/.test(vm.activeTab) && e.keyCode == 83 && e.metaKey) // Cmd-s
+      if (/(?:query-edit|conf)-tab/.test(vm.activeTab) && e.keyCode == 83 && e.metaKey) // Cmd-s
       {
         e.preventDefault()
         this.$store.dispatch(types.SAVE,{})
       }
-      else if(/(?:query-edit|conf)-tab/.test(vm.activeTab) && e.keyCode == 113) //F2
+      else if (/(?:query-edit|conf)-tab/.test(vm.activeTab) && e.keyCode == 113) //F2
       {
         e.preventDefault()
         let el = document.querySelector('.CodeMirror-scroll')
-        if(el.closest('.CodeMirror-fullscreen') !== null)
+        if (el.closest('.CodeMirror-fullscreen') !== null)
         {
           el.style.maxHeight = window.visualViewport.height - 100
         }
@@ -328,7 +328,7 @@ export default {
           el.style.maxHeight = '200px'
         }
         let menu = document.querySelector('.main-menu.ui.sticky')
-        if(menu.classList.contains('hidden'))
+        if (menu.classList.contains('hidden'))
         {
           menu.classList.remove('hidden')
         }
@@ -337,31 +337,31 @@ export default {
           menu.classList.add('hidden')
         }
       }
-      else if(/(?:query-list|apps)-tab/.test(vm.activeTab) && e.keyCode == 70 && e.metaKey) //Cmd-f
+      else if (/(?:query-list|apps)-tab/.test(vm.activeTab) && e.keyCode == 70 && e.metaKey) //Cmd-f
       {
         e.preventDefault()
         let el = document.querySelector('div.filter > div.ui.input > input')
         el.focus()
         setTimeout(() => {
-          if(el.value.length < 4)
+          if (el.value.length < 4)
             el.value = ''
         },50)
       }
     })
   },
   computed: {
-    ...mapState(['showWarning','nextTab','contextmenu','coords','unsavedChanges','app','menuitems','filter','activeTab','qname','query','saving','creating','confirm','confirmAction'])
+    ...mapState(['showWarning', 'nextTab', 'contextmenu', 'coords', 'unsavedChanges', 'app', 'menuitems', 'filter', 'activeTab', 'qname', 'query', 'saving', 'creating', 'confirm', 'confirmAction'])
   },
   watch: {
     showWarning(neo, old) {
-      if(neo)
+      if (neo)
       {
         this.modalWarn.modal('show')
       }
     },
     unsavedChanges(neo,old) {
       let bg = document.querySelector('.background')
-      if(neo > 0)
+      if (neo > 0)
       {
         bg.classList.add('unsaved')
         bg.querySelector('span').innerText = 'Unsaved Changes'
@@ -373,19 +373,19 @@ export default {
       }
     },
     confirm(neo,old) {
-      if(neo)
+      if (neo)
         this.modalConfirm.modal('show')
       else
         this.modalConfirm.modal('hide')
     },
     saving(neo,old) {
-      if(neo)
+      if (neo)
         this.modalSave.modal('show')
       else
         this.modalSave.modal('hide')
     },
     contextmenu(neo,old) {
-      if(neo.length > 0)
+      if (neo.length > 0)
       {
           this.$nextTick(() => {
           let el = document.querySelector('.contextmenu')
@@ -396,7 +396,7 @@ export default {
       }
     },
     app(val, oldVal) {
-      if(!!val)
+      if (!!val)
       {
         [this.$refs.conftab,
          this.$refs.querylisttab
@@ -404,9 +404,9 @@ export default {
             el.setAttribute('data-tab',el.id.replace(/panel/,'tab'))
             // go to config tab if app code matches new app rx
             // otherwise go to queries tab
-            if(!!!this.nextTab)
+            if (!!!this.nextTab)
             {
-              if(rx_neoapp.test(val) && /(?:conf)-tab/.test(el.id))
+              if (rx_neoapp.test(val) && /(?:conf)-tab/.test(el.id))
               {
                 el.classList.remove('disabled')
                 el.click()
@@ -415,13 +415,13 @@ export default {
               else if (!rx_neoapp.test(val))
               {
                 el.classList.remove('disabled')
-                if(/query-list-tab/.test(el.id))
+                if (/query-list-tab/.test(el.id))
                   el.click()
               }
             }
             else
             {
-              if(/(?:conf)-tab/.test(el.id))
+              if (/(?:conf)-tab/.test(el.id))
                 el.classList.remove('disabled')
               document.querySelector(`#${this.nextTab}`).click()
             }
@@ -429,7 +429,7 @@ export default {
       }
     },
     query (neo, old) {
-      if(neo !== null)
+      if (neo !== null)
       {
         let el = document.querySelector('#query-edit-tab')
         el.classList.remove('disabled')
@@ -445,7 +445,7 @@ export default {
     qname (neo, old) {
       // delete query will set qname to empty string, triggering
       // switch to querylist tab
-      if(neo === '')
+      if (neo === '')
       {
         this.$store.dispatch(types.LOAD_APP,this.app)
         .then(() => {

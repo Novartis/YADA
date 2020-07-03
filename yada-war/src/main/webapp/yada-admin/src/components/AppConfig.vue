@@ -64,7 +64,7 @@ export default {
       let vm = this
       setTimeout(() => {
         let ta = document.getElementById('conf')
-        if(vm.cm == null)
+        if (vm.cm == null)
         {
           vm.cm = CodeMirror.fromTextArea(ta,{
             lineNumbers: true,
@@ -72,7 +72,7 @@ export default {
             mode: 'text/x-sh',
           })
           vm.cm.on('change',(i,obj) => {
-            if(obj.origin !== 'setValue')
+            if (obj.origin !== 'setValue')
             {
               vm.unsaved()
             }
@@ -87,21 +87,21 @@ export default {
     }
   },
   computed:{
-    ...mapState(['loading','saving','config','creating']),
+    ...mapState(['loading', 'saving', 'config', 'creating']),
     checked() { return typeof this.config === 'undefined' || this.config == null ? '' : this.config.ACTIVE == "1" ? 'checked' : '' }
   },
-  updated() {
+  updated () {
 
   },
-  mounted() {
+  mounted () {
     $('[type = "checkbox"]').checkbox()
   },
   watch: {
     config(neo,old) {
-      this.debounce(250,function() {
-        if(typeof neo !== 'undefined' && neo !== null)
+      this.debounce(250,function () {
+        if (typeof neo !== 'undefined' && neo !== null)
         {
-          if(this.cm != null)
+          if (this.cm != null)
           {
             this.cm.setValue(neo.CONF)
             setTimeout(() => {
@@ -117,17 +117,17 @@ export default {
 }
 </script>
 <style>
-  .app.config .CodeMirror {
-    height: 370 !important;
-  }
-  .app.config label {
-    text-align: left;
-  }
-  .app.config {
-    height: 600px;
-    text-align: left !important;
-  }
-  input[readonly=readonly] {
-    background-color: #EEE !important;
-  }
+.app.config .CodeMirror {
+  height: 370 !important;
+}
+.app.config label {
+  text-align: left;
+}
+.app.config {
+  height: 600px;
+  text-align: left !important;
+}
+input[readonly=readonly] {
+  background-color: #EEE !important;
+}
 </style>
