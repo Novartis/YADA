@@ -109,7 +109,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	 *      java.lang.String)
 	 */
 	@Override
-	public String engage(YADARequest yadaReq, String result) throws YADAPluginException {
+	public String engage(YADARequest yadaReq, String result) throws YADAPluginException, YADASecurityException {
 
 		setResult(result);
 		this.setYADARequest(yadaReq);
