@@ -408,7 +408,7 @@ public class Finder
 	 * @throws YADAFinderException when {@code rs} can't be processed
 	 * @throws YADAQueryConfigurationException when default parameters are malformed
 	 */
-	@SuppressWarnings("static-method")
+	
 	private void setDefaultParam(YADAQuery yq, ResultSet rs) throws YADAFinderException, YADAQueryConfigurationException
 	{
 		//TODO should this return null, rather than default 'na' values?

@@ -8,6 +8,11 @@ import org.apache.log4j.Logger;
 import com.novartis.opensource.yada.YADAQuery;
 import com.novartis.opensource.yada.YADARequest;
 
+/**
+ * @author jfinn
+ * @since 8.7.6
+ *
+ */
 public class SourceExchanger extends AbstractPreprocessor{
 	
 	/**

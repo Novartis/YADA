@@ -177,8 +177,6 @@ public abstract class AbstractPostprocessor implements Postprocess, Authorizatio
 	 * Authorization of general use for given context
 	 * {@link Authorization#authorize()} Not implemented in preprocessor
 	 * 
-	 * @return
-	 * @throws YADAPluginException
 	 * @since 8.7.6
 	 */
 	@Override
@@ -197,7 +195,13 @@ public abstract class AbstractPostprocessor implements Postprocess, Authorizatio
 		// nothing to do
 	}
 
-	// TODO: comment on this....
+
+	/**
+	 * @param cookie
+	 * @return the requested <code>cookie</code>
+	 * 
+	 * @since 8.7.6
+	 */
 	public String getCookie(String cookie) {
 		Cookie[] cookies = getYADARequest().getRequest().getCookies();
 		if (cookies != null) {
@@ -238,7 +242,7 @@ public abstract class AbstractPostprocessor implements Postprocess, Authorizatio
 	/**
 	 * Standard accessor for variable
 	 * 
-	 * @return the value of the validated {@code NIBR521} header
+	 * @return the value of the validated header
 	 * @throws YADASecurityException
 	 *           when token retrieval fails
 	 * @since 8.7.6
@@ -248,7 +252,13 @@ public abstract class AbstractPostprocessor implements Postprocess, Authorizatio
 		return this.token;
 	}
 
-	// TODO: comment on this....
+
+	/**
+	 * @param header
+	 * @return the requested <code>header</code>
+	 * 
+	 * @since 8.7.6
+	 */
 	public String getHeader(String header) {
 		return getYADARequest().getRequest().getHeader(header);
 	}

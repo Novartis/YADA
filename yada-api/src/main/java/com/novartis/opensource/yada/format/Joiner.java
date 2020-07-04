@@ -48,10 +48,7 @@ public class Joiner {
    * Local logger handle
    */
   private static Logger     l     = Logger.getLogger(Joiner.class);
-  /**
-   * Flag indicating whether to perform an outer join.
-   */
-  private boolean           outer = false;
+  
   /**
    * The array of {@link YADAQueryResult} objects currently processed by the {@link Response}
    */

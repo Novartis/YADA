@@ -209,17 +209,21 @@ public interface Authorization {
 	 * Authorization of general use for given context
 	 * 
 	 * @param payload
-	 * @throws YADAPluginException
+	 * @throws YADASecurityException
 	 */
 	public void authorize(String payload) throws YADASecurityException;
 
 	/**
 	 * Authorization of query use for given context
+	 * @throws YADASecurityException
 	 */
 	public void authorize() throws YADASecurityException;
 
 	/**
 	 * Confirm token is valid and user possesses necessary grants
+	 * @param yadaReq 
+	 * @param result 
+	 * @throws YADASecurityException 
 	 */
 	public void authorizeYADARequest(YADARequest yadaReq, String result) throws YADASecurityException;
 

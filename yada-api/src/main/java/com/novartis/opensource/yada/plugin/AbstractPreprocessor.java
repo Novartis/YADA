@@ -879,6 +879,7 @@ public abstract class AbstractPreprocessor
 
 	/**
 	 * Default credential check to YADA
+	 * @return 
 	 */
 	public Boolean checkCredentials() {
 		// check credentials
@@ -888,6 +889,7 @@ public abstract class AbstractPreprocessor
 
 	/**
 	 * Generate YADA token
+	 * @return 
 	 */
 	public String generateToken() {
 		// make a token

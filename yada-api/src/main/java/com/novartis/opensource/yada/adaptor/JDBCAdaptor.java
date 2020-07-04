@@ -445,7 +445,7 @@ public abstract class JDBCAdaptor extends Adaptor{
 						String msg = "There was a problem iterating through the CallableStatement's ResultSet for row count.";
 						throw new YADAAdaptorExecutionException(msg,e);
 					}
-					yqr.addCountResult(row, new Integer(countResult));
+					yqr.addCountResult(row, Integer.valueOf(countResult));
 				}
 			}
 			else // SELECT, UPDATE, INSERT, DELETE
@@ -522,7 +522,7 @@ public abstract class JDBCAdaptor extends Adaptor{
 							String msg = "There was a problem iterating over ResultSet for row count.";
 							throw new YADAAdaptorExecutionException(msg,e);
 						}
-						yqr.addCountResult(row, new Integer(countResult));
+						yqr.addCountResult(row, Integer.valueOf(countResult));
 					}
 				}
 				else // UPDATE, INSERT, DELETE
@@ -536,7 +536,7 @@ public abstract class JDBCAdaptor extends Adaptor{
 						String msg = "Prepared statement for update failed to execute";
 						throw new YADAAdaptorExecutionException(msg,e);
 					}
-					yqr.addCountResult(row, new Integer(countResult));
+					yqr.addCountResult(row, Integer.valueOf(countResult));
 				}
 			}
 		}

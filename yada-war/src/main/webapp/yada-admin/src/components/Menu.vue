@@ -1,11 +1,19 @@
 <template>
-  <div class="main-menu ui sticky" tabindex="-1">
-    <div class="ui vertical mini grey menu inverted menu-button" tabindex="-1" @click="makeActive">
-        <div class="ui fluid selection dropdown item">
+  <div
+    class="main-menu ui sticky"
+    tabindex="-1">
+    <div
+      class="ui vertical mini grey menu inverted menu-button"
+      tabindex="-1"
+      @click="makeActive">
+      <div class="ui fluid selection dropdown item">
         Actions
-        <i class="bars icon"></i>
+        <i class="bars icon"/>
         <div class="menu">
-          <MenuItem v-for="item in menuitems" :item="item"/>
+          <MenuItem
+            v-for="item in menuitems"
+            :key="item"
+            :item="item">
         </div>
       </div>
     </div>
@@ -14,29 +22,29 @@
 <script>
 import MenuItem from './MenuItem.vue'
 import * as types from '../store/vuex-types'
-import { mapState } from 'vuex';
+import { mapState } from 'vuex'
 export default {
   name: 'Menu',
-  props: ['menuitems'],
+  props: { menuitems: { type: Array, required: true } },
   components: { MenuItem },
   methods: {
     makeActive: (e) => {
       let el = e.currentTarget
-      if(el.classList.contains('active'))
+      if (el.classList.contains('active'))
         el.classList.remove('active')
       else
         el.classList.add('active')
-    },
-  },
-  computed: mapState(['unsavedChanges','tabs','activeTab']),
-  watch: {
-    activeTab (neo,old) {
-      this.$store.commit(types.SET_MENUITEMS, this.tabs[this.activeTab.replace(/-tab/,'')].menuitems)
     }
   },
-  mounted() {
+  computed: mapState(['unsavedChanges', 'tabs', 'activeTab']),
+  watch: {
+    activeTab (neo, old) {
+      this.$store.commit(types.SET_MENUITEMS, this.tabs[this.activeTab.replace(/-tab/, '')].menuitems)
+    }
+  },
+  mounted () {
     $('.main-menu .ui.dropdown').dropdown()
-    $('.main-menu.sticky').sticky({context:'body',silent:true})
+    $('.main-menu.sticky').sticky({ context: 'body', silent: true })
   }
 }
 </script>
@@ -102,6 +110,5 @@ export default {
 .main-menu.hidden {
   display: none;
 }
-
 
 </style>

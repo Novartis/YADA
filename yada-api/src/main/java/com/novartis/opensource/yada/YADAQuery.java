@@ -445,9 +445,9 @@ public class YADAQuery {
 	 */
 	public void addParamCount(int row, int paramCountToAdd) { 
 		if(this.paramCount.isEmpty() || row >= this.paramCount.size())
-			this.paramCount.add(row, new Integer(paramCountToAdd));
+			this.paramCount.add(row, Integer.valueOf(paramCountToAdd));
 		else
-			this.paramCount.set(row, new Integer(paramCountToAdd));
+			this.paramCount.set(row, Integer.valueOf(paramCountToAdd));
 	}
 	
 	/**

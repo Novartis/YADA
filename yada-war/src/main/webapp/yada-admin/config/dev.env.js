@@ -10,8 +10,8 @@ module.exports = merge(prodEnv, {
   // label is used in header, to inform developer/tester, or suppress itself in PROD
   NODE_ENV_LABEL: '"DEV"',
   YADA: {
-    protocol: '"https"',
-    host: '"yada-test.qdss.io"',
-    port: '""',
+    protocol: '""',
+    host: '""',
+    port: '8082',
   }
 })

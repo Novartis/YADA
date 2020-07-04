@@ -28,20 +28,20 @@ import '@4tw/cypress-drag-drop'
 const stateChecker = ($val, obj, key, defval, deep) => {
   // debugger
   let k = key, match = /(.+)\.(.+)/.exec(key), attr = false
-  if(match !== null)
+  if (match !== null)
   {
     k = match[1]
     attr = match[2]
   }
-  if(typeof obj !== 'undefined' && typeof obj[k] !== 'undefined')
+  if (typeof obj !== 'undefined' && typeof obj[k] !== 'undefined')
   {
-    if(deep)
+    if (deep)
     {
       expect($val).to.deep.equal(obj[k])
     }
     else
     {
-      if(!!attr)
+      if (!!attr)
       {
         expect($val).to.equal(obj[k][attr])
       }
@@ -54,7 +54,7 @@ const stateChecker = ($val, obj, key, defval, deep) => {
   else
   {
     // defaults
-    if(deep)
+    if (deep)
     {
       expect($val).to.deep.equal(defval)
     }
@@ -109,9 +109,9 @@ Cypress.Commands.add("cleanYADAIndex",() => {
 Cypress.Commands.add("confirmQuerySave", (count,column,value) => {
   cy.log('Confirming save...')
   let sql = `select row_to_json(yada_query) from yada_query where qname = 'CYP0 QNAME${count}'`
-  if(typeof column !== 'undefined')
+  if (typeof column !== 'undefined')
   {
-    if(typeof value === 'undefined')
+    if (typeof value === 'undefined')
       value = ''
     sql = `${sql} AND ${column} = '${value}'`
   }
@@ -144,7 +144,7 @@ Cypress.Commands.add("confirmCloneSave", (count,old,neo) => {
 Cypress.Commands.add("confirmParamSave", (count,name,value,rule,id) => {
   cy.log('Confirming parameters saved...')
   let sql = `select row_to_json(yada_param) from yada_param where target like 'CYP0 QNAME${count}%'`
-  if(typeof name !== 'undefined')
+  if (typeof name !== 'undefined')
   {
     sql = `${sql} AND name = '${name}' AND value = '${value}' AND rule = '${rule}' AND id = '${parseInt(id)}'`
   }
@@ -155,7 +155,7 @@ Cypress.Commands.add("confirmParamSave", (count,name,value,rule,id) => {
 Cypress.Commands.add("confirmA11nSave", (count,policy,type,qname) => {
   cy.log('Confirming authorization data saved...')
   let sql = `select row_to_json(yada_a11n) from yada_a11n where target like 'CYP0 QNAME${count}%'`
-  if(typeof policy !== 'undefined')
+  if (typeof policy !== 'undefined')
   {
     sql = `${sql} AND policy = '${policy}' AND type = '${type}' AND qname = '${qname}'`
   }

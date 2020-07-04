@@ -137,18 +137,17 @@ public class JSONResponse extends AbstractResponse {
 			}
 		}
     //TODO there will be memory issues with multiple users and large result sets
-		//TODO implement a caching strategy for the format package
-		//TODO implement a server-level caching/queuing strategy to handle multi-user, large-request scenarios
-		
-		// process converted headers into unique ordered Set
+	//TODO implement a caching strategy for the format package
+	//TODO implement a server-level caching/queuing strategy to handle multi-user, large-request scenarios
+	
+	// process converted headers into unique ordered Set
     
-		boolean    join      = this.yqr.hasJoin();
-    boolean    outer     = this.yqr.hasOuterJoin();
+	boolean    join      = this.yqr.hasJoin();
     if(join)
     {
       JSONArray qname = new JSONArray();
       JSONArray resultSets = this.jsonResponse.getJSONArray(RESULTSETS);
-      int total = 0;
+      
       for(int i=0;i<resultSets.length();i++)
       {
         JSONObject j = resultSets.getJSONObject(i); 
