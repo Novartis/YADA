@@ -442,7 +442,8 @@ public class RESTAdaptor extends Adaptor {
 	 * and adds them to the {@link HttpRequest}
 	 * @param yq the {@link YADAQuery} object
 	 * @param request the HttpRequest object
-	 * @throws YADAQueryConfigurationException 
+	 * @throws YADAQueryConfigurationException when a header can not be set due to encapsulation, 
+	 * bad arguments or other invocation target error 
 	 * @since 8.7.0
 	 */
 	private void setHeaders(YADAQuery yq, HttpRequest request) throws YADAQueryConfigurationException
