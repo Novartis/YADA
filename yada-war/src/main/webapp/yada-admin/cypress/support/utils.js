@@ -1,6 +1,6 @@
 
 export const visit = () => {
-  cy.visit('https://localhost.qdss.io:8082/')
+  cy.visit('/yada-admin/')
 }
 
 export const login = (u,p) => {
@@ -20,26 +20,27 @@ export const login = (u,p) => {
       if (typeof p !== 'undefined')
         password = p
 
-      cy.visit('https://yada-test.qdss.io/yada-admin/')
+      cy.visit(Cypress.env('PROD_URL')+'login.html')
+      .then((x) => { console.log(x)
+        cy.get('body').then($body => {
+          if ($body.find('#username').length)
+          {
+            cy.get('#username').type(username)
+            cy.get('#password').type(password)
+            cy.get('.login-form .ui.button').click()
 
-      cy.get('body').then($body => {
-        if ($body.find('#username').length)
-        {
-          cy.get('#username').type(username)
-          cy.get('#password').type(password)
-          cy.get('.login-form .ui.button').click()
-
-          cy.location().should(loc => {
-            expect(loc.pathname).to.eq('/yada-admin/index.html')
-          })
-        }
-        else
-        {
-          cy.location().should(loc => {
-            expect(loc.pathname).to.eq('/yada-admin/')
-          })
-          cy.get('#app').should('exist')
-        }
+            cy.location().should(loc => {
+              expect(loc.pathname).to.eq('/yada-admin/index.html')
+            })
+          }
+          else
+          {
+            cy.location().should(loc => {
+              expect(loc.pathname).to.eq('/yada-admin/')
+            })
+            cy.get('#app').should('exist')
+          }
+        })
       })
     }
   })

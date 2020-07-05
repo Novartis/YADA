@@ -5,7 +5,7 @@
   "author": "Dave Varon",
   "private": true,
   "scripts": {
-    "dev": "webpack-dev-server --https --cert ./config/STAR_qdss_io.crt --key ./config/STAR_qdss_io.key --inline --progress --config build/webpack.dev.conf.js",
+    "dev": "webpack-dev-server --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
     "e2e": "node test/e2e/runner.js",
@@ -57,6 +57,7 @@
     "cross-env": "^5.0.1",
     "cross-spawn": "^5.0.1",
     "css-loader": "^0.28.0",
+    "cypress": "^4.9.0",
     "eslint": "^4.19.1",
     "eslint-config-standard": "^10.2.1",
     "eslint-friendly-formatter": "^3.0.0",
@@ -104,7 +105,7 @@
     "vue-template-compiler": "^2.5.2",
     "webpack": "^3.6.0",
     "webpack-bundle-analyzer": "^3.3.2",
-    "webpack-dev-server": "^3.1.11",
+    "webpack-dev-server": "2.9.1",
     "webpack-merge": "^4.1.0"
   },
   "engines": {

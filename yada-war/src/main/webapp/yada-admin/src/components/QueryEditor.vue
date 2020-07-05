@@ -22,7 +22,7 @@
           v-else
           class="ui fluid labeled icon input disabled">
           <div class="ui label">
-            {{ $1 }}
+            {{ qname }}
           </div>
           <input
             name="qname"

@@ -13,7 +13,7 @@
           <MenuItem
             v-for="item in menuitems"
             :key="item"
-            :item="item">
+            :item="item"/>
         </div>
       </div>
     </div>

@@ -270,7 +270,7 @@ public class Gatekeeper extends AbstractPreprocessor {
 		try {
 			JWT.require(Algorithm.HMAC512(System.getProperty(JWSKEY))).withIssuer(System.getProperty(JWTISS)).build()
 					.verify((String) this.getToken());
-		} catch (JWTVerificationException exception) {
+		} catch (JWTVerificationException | IllegalArgumentException exception) {
 			// UTF-8 encoding not supported
 			String msg = "Validation Error ";
 			throw new YADASecurityException(msg, exception);

@@ -323,7 +323,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 			token = JWT.create().withSubject(userid).withExpiresAt(Date.from(expirationDate))
 			    .withIssuer(System.getProperty(JWTISS)).withIssuedAt(Date.from(issueDate))
 			    .sign(Algorithm.HMAC512(System.getProperty(JWSKEY)));
-		} catch (IllegalArgumentException | JWTCreationException e) {
+		} catch (IllegalArgumentException | JWTCreationException e ) {
 			String msg = "User is not authorized";
 			throw new YADASecurityException(msg);
 		}
@@ -346,10 +346,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 	}
 
 	/**
-	 * Overrides {@link TokenValidator#validateToken()}.
-	 *
-	 * @throws YADASecurityException
-	 *           when the {@link #DEFAULT_AUTH_TOKEN_PROPERTY} is not set
+	 * Overrides {@link TokenValidator#validateToken()}. Validates JWT.
 	 */
 
 	@Override
@@ -359,7 +356,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 			try {
 				JWT.require(Algorithm.HMAC512(System.getProperty(JWSKEY))).withIssuer(System.getProperty(JWTISS)).build()
 				    .verify((String) this.getToken());
-			} catch (JWTVerificationException exception) {
+			} catch (JWTVerificationException | IllegalArgumentException exception) {
 				// UTF-8 encoding not supported
 				String msg = "Validation Error ";
 				throw new YADASecurityException(msg, exception);
