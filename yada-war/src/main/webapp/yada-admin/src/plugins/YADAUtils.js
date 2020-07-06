@@ -11,7 +11,9 @@ export default {
       timeout: 0,
       maxContentLength: 2000000,
       withCredentials: true,
-      headers: {'Content-Type': 'application/json'}
+      headers: {'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': window.YADA.sec['X-CSRF-TOKEN'],
+        'Authorization': `Bearer ${window.YADA.sec['Bearer']}`}      
     })
 
     function hash (str) {

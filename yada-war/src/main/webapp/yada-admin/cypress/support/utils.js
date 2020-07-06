@@ -21,7 +21,8 @@ export const login = (u,p) => {
         password = p
 
       cy.visit(Cypress.env('PROD_URL')+'login.html')
-      .then((x) => { console.log(x)
+      .then((x) => {
+        console.log(x)
         cy.get('body').then($body => {
           if ($body.find('#username').length)
           {
