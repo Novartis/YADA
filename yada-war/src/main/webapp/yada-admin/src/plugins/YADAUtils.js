@@ -1,8 +1,8 @@
 import axios from 'axios'
-const YADA_HOST = process.env.YADA.host
-const YADA_PORT = process.env.YADA.port
-const YADA_PROT = process.env.YADA.protocol
-const YADA_URL  = YADA_PROT + ': //' + YADA_HOST + (!!YADA_PORT && YADA_PORT !== '' ? ': ' + YADA_PORT : '')
+// const YADA_HOST = process.env.YADA.host
+// const YADA_PORT = process.env.YADA.port
+// const YADA_PROT = process.env.YADA.protocol
+// const YADA_URL  = YADA_PROT + ': //' + YADA_HOST + (!!YADA_PORT && YADA_PORT !== '' ? ': ' + YADA_PORT : '')
 
 export default {
   install: function (Vue, options) {
