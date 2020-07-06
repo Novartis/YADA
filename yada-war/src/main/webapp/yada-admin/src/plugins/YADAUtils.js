@@ -6,14 +6,15 @@ const YADA_URL  = YADA_PROT + ': //' + YADA_HOST + (!!YADA_PORT && YADA_PORT !==
 
 export default {
   install: function (Vue, options) {
+    const YADA = JSON.parse(window.sessionStorage.getItem('YADA'))
     Vue.prototype.$yada = axios.create({
       baseURL: YADA_URL,
       timeout: 0,
       maxContentLength: 2000000,
       withCredentials: true,
       headers: {'Content-Type': 'application/json',
-        'X-CSRF-Token': window.YADA.sec['X-CSRF-Token'],
-        'Authorization': `Bearer ${window.YADA.sec['Bearer']}`}
+        'X-CSRF-Token': YADA.sec['X-CSRF-Token'],
+        'Authorization': `Bearer ${YADA.sec['Bearer']}`}
     })
 
     function hash (str) {
