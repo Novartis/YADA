@@ -7,8 +7,8 @@ NODE_ENV: '"testing"',
   // label is used in header, to inform developer/tester, or suppress itself in PROD
   NODE_ENV_LABEL: '"TEST"',
   YADA: {
-    protocol: '"https"',
-    host: '"yada-test.qdss.io"',
+    protocol: '""',
+    host: '""',
     port: '""'
   }
 })
