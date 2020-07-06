@@ -37,11 +37,11 @@ const webpackConfig = merge(baseWebpackConfig, {
       'process.env.TRACE_STATE' : 'false',
       'process.env.TRACE_COLLAPSE': 'true',
       'process.env.NODE_ENV_LABEL' : '""',
-      'process.env.YADA' : {
-        protocol: '""',
-        host: '""',
-        port: '""'
-      }
+      // 'process.env.YADA' : {
+      //   protocol: '""',
+      //   host: '""',
+      //   port: '""'
+      // }
     }),
     new UglifyJsPlugin({
       uglifyOptions: {

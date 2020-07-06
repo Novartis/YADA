@@ -9,9 +9,9 @@ module.exports = merge(prodEnv, {
   NODE_ENV: '"development"',
   // label is used in header, to inform developer/tester, or suppress itself in PROD
   NODE_ENV_LABEL: '"DEV"',
-  YADA: {
-    protocol: '""',
-    host: '""',
-    port: '8082',
-  }
+  // YADA: {
+  //   protocol: '""',
+  //   host: '""',
+  //   port: '8082',
+  // }
 })

@@ -1,10 +1,10 @@
 'use strict'
 module.exports = {
   NODE_ENV: '"production"',
-  NODE_ENV_LABEL: '"PROD"',
-  YADA: {
-    protocol: '"http"',
-    host: '""',
-    port: '""',
-  }
+  // NODE_ENV_LABEL: '"PROD"',
+  // YADA: {
+  //   protocol: '""',
+  //   host: '""',
+  //   port: '""',
+  // }
 }

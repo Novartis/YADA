@@ -8,7 +8,7 @@ export default {
   install: function (Vue, options) {
     const YADA = JSON.parse(window.sessionStorage.getItem('YADA'))
     Vue.prototype.$yada = axios.create({
-      baseURL: YADA_URL,
+      // baseURL: YADA_URL,
       timeout: 0,
       maxContentLength: 2000000,
       withCredentials: true,
