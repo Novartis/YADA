@@ -128,7 +128,7 @@ export default {
 
     // nav to login page
     logout () {
-      document.location = '/login.html'
+      document.location = '/yada-admin/login.html'
     },
 
     // cleanup
