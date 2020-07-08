@@ -22,6 +22,3 @@ selenium-debug.log
 
 # cypress artifacts
 *.mp4
-
-# proprietary
-login.html
