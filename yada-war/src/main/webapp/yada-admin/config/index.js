@@ -14,7 +14,7 @@ module.exports = {
     // },
     // Paths
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: '/yada-admin/',
     proxyTable: {},
 
     // Various Dev Server settings
