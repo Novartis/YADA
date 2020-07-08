@@ -33,7 +33,14 @@ const webpackConfig = merge(baseWebpackConfig, {
   plugins: [
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
-      'process.env': require('../config/prod.env')
+      TRACE : 'false',
+      TRACE_STATE : 'false',
+      TRACE_COLLAPSE : 'true',
+      NODE_ENV: '"production"',
+      NODE_ENV_LABEL: '"PROD"',
+      NODE_ENV_LABEL : '""',
+      YADA_BASEURL : '""',
+      YADA_ADMIN_BASEURL : '""',
     }),
     new UglifyJsPlugin({
       uglifyOptions: {

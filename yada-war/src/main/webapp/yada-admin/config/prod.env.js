@@ -1,10 +1,6 @@
 'use strict'
+
 module.exports = {
-  NODE_ENV: '"production"',
-  // NODE_ENV_LABEL: '"PROD"',
-  // YADA: {
-  //   protocol: '""',
-  //   host: '""',
-  //   port: '""',
-  // }
+  YADA_BASEURL : '"http://yada.fog-inter.com"',
+  YADA_ADMIN_BASEURL : '"http://yada.fog-inter.com"',
 }
