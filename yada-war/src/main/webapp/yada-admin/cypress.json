@@ -1,9 +1,5 @@
 {
   "viewportHeight": 800,
   "viewportWidth": 1200,
-  "ignoreTestFiles": "**/examples/*.*",
-  "baseUrl": "http://localhost:8082",
-  "env": {
-    "PROD_URL": "http://yada.fog-inter.com/yada-admin/"
-  }
+  "ignoreTestFiles": "**/examples/*.*"
 }

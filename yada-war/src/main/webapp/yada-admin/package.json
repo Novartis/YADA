@@ -5,13 +5,13 @@
   "author": "Dave Varon",
   "private": true,
   "scripts": {
-    "dev": "webpack-dev-server --progress --config build/webpack.dev.conf.js",
+    "dev": "webpack-dev-server --disable-host-check --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",
-    "lint": "eslint --ext .js,.vue src",
-    "lint-fix": "eslint --fix --ext .js,.vue src",
+    "lint": "eslint --ext .js,.vue src cypress",
+    "lint-fix": "eslint --fix --ext .js,.vue src cypress",
     "build": "node build/build.js",
     "build-test": "node build/build-test.js"
   },
