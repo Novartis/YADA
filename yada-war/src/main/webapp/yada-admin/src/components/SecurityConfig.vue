@@ -434,13 +434,13 @@ export default {
 
   },
   mounted () {
-    $('.ui.dropdown.execution-policy').dropdown({'debug': true,
+    $('.ui.dropdown.execution-policy').dropdown({'debug': false,
       onChange: function (v, t, c) {
         console.log(v, t, c)
         $('.ui.dropdown.authorization-policy').dropdown('clear')
       }
     })
-    $('.ui.dropdown.authorization-policy').dropdown({'debug': true,
+    $('.ui.dropdown.authorization-policy').dropdown({'debug': false,
       onChange: function (v, t, c) {
         console.log(v, t, c)
         $('.ui.dropdown.execution-policy').dropdown('clear')

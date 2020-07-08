@@ -17,7 +17,7 @@ import {utils} from './mixins/utils'
 
 Vue.use(Vuex)
 Vue.use(DateUtils)
-Vue.use(YADAUtils, { debug: true })
+Vue.use(YADAUtils, { debug: false })
 Vue.use(new Clipboard('button.copy.btn'))
 Vue.use(semantic)
 Vue.mixin(utils)
