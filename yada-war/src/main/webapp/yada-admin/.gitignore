@@ -11,6 +11,7 @@ selenium-debug.log
 /cypress/screenshots/
 /cypress/fixtures/profile.json
 /cypress/fixtures/users.json
+/config/*.env.js
 
 # Editor directories and files
 .idea
