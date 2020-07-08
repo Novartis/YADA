@@ -8,7 +8,7 @@ export default {
   install: function (Vue, options) {
     const YADA = JSON.parse(window.sessionStorage.getItem('YADA'))
     Vue.prototype.$yada = axios.create({
-      // baseURL: YADA_URL,
+      baseURL: process.env.YADA_BASEURL,
       timeout: 0,
       maxContentLength: 2000000,
       withCredentials: true,
@@ -40,9 +40,6 @@ export default {
         const msg = `YADA ${error.config.method.toUpperCase()} Error: %c ${error.response.status} %c  \u21D2`
         console.log(msg, 'background: red;color: white', 'background: white;color: black')
         console.dir(error.response, {depth: null})
-        // console.log(error.response.data)
-        // console.log(error.response.status)
-        // console.log(error.response.headers)
       }
       else if (error.request)
       {
@@ -56,15 +53,12 @@ export default {
         // Something happened in setting up the request that triggered an Error
         console.log('Error', error.message)
       }
-      // console.log(error.config)
     }
 
     function paramSerializer (yadaOptions) {
       const parts        = []
       const jsonparams   = yadaOptions['j']
-      // const qname        = typeof jsonparams === 'object' ? jsonparams[0]['qname'] : yadaOptions['q']
       let changeSource   = true
-      // let   app          = qname.split(/\s/)[0]
 
       // add jsonparams to param array if present
       if (typeof jsonparams === 'object')
@@ -86,7 +80,7 @@ export default {
               for (let i = 0; i < yadaOptions[k].length; i++)
               {
                 let paramStr = yadaOptions[k][i]
-                if ((k === 'pl' || k === 'plugin')               // plugin
+                if ((k === 'pl' || k === 'plugin')            // plugin
                    && process.env.NODE_ENV !== 'production'   // DEV or TEST
                    && changeSource                            // SourceExchanger not set
                    && /SourceExchanger/.test(paramStr))       // its got the param
@@ -111,7 +105,6 @@ export default {
             {
               changeSource = false
               // Removing for now, for yada
-              // parts.push('pl=' + encodeURIComponent('SourceExchanger,' + app + process.env.NODE_ENV_LABEL))
               parts.push(k + '=' + encodeURIComponent(yadaOptions[k]))
             }
             else
@@ -127,7 +120,6 @@ export default {
     Vue.prototype.$yada.jp = function () {
       // set jsonparams
       const jsonparams   = arguments[0]
-      // const qname        = jsonparams[0].qname
       const axiosOptions = {}
 
       // set yada options and method
@@ -160,7 +152,6 @@ export default {
         let v = yadaOptions['j'][0]['DATA'][0]
         for (let k in v)
           console.log(k + ':     ' + v[k])
-          // console.log('params: ', JSON.stringify(yadaOptions['j'][0]['DATA'][0]))
         console.groupEnd()
 
         console.count(hash(yadaOptions['j'][0]['qname']))
@@ -176,7 +167,6 @@ export default {
     Vue.prototype.$yada.std = function () {
       const qname  = arguments[0]
       const params = arguments[1]
-      // const config = {}
       const axiosOptions = {}
 
       let method, yadaOptions
