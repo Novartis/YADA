@@ -30,7 +30,6 @@ module.exports = {
   ],
   // add your custom rules here
   rules: {
-
     'curly': [0, "multi-or-nest" ],
     'brace-style': 0,
     'brace-rules/brace-on-same-line': ["error", {

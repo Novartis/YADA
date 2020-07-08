@@ -25,7 +25,7 @@
 <script>
 export default {
   name: 'MenuItem',
-  props: { item: { type: String, required: true } },
+  props: { item: { type: Object, required: true } },
   methods: {
     menuClickHandler: function (e, t) {
       this.$store.dispatch(t.fn, {})

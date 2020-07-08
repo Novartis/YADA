@@ -1,4 +1,5 @@
 <template>
+  <!-- eslint-disable vue/html-self-closing -->
   <div
     class="main-menu ui sticky"
     tabindex="-1">
@@ -12,7 +13,7 @@
         <div class="menu">
           <MenuItem
             v-for="item in menuitems"
-            :key="item"
+            :key="item.value"
             :item="item"/>
         </div>
       </div>
