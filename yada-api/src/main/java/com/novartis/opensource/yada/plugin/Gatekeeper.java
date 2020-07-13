@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.auth0.jwt.JWT;
@@ -809,18 +810,24 @@ public class Gatekeeper extends AbstractPreprocessor {
 	 * Utility function for content policy
 	 * 
 	 * @return the auth token wrapped in single quotes
+	 * @throws YADASecurityException 
 	 * @since 8.1.0
 	 */
 
-	public String getQLoggedUser() {
-		String user = ((JSONArray) getSessionAttribute("YADA.user.privs")).getJSONObject(0).getString("USERID");
+	public String getQLoggedUser() throws YADASecurityException {
+		String user = "";
+		try 
+		{
+			user = ((JSONObject) obtainIdentity()).getString(Authorization.YADA_IDENTITY_SUB);
+		} 
+		catch (YADASecurityException | JSONException | YADARequestException | YADAExecutionException e)
+		{
+			String msg = "There was a problem obtaining the user identity.";
+			throw new YADASecurityException(msg, e);
+		}
 		String quote = "'";
 		return quote + user + quote;
 	}
-
-	/**
-	 * Utility function for content policy
-	 */
 
 	/**
 	 * Utility function for content policy

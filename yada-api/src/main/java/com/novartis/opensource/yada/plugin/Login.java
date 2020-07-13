@@ -36,7 +36,9 @@ import com.novartis.opensource.yada.YADASecurityException;
  *
  * @author David Varon
  * @since 8.1.0
+ * @deprecated since 8.7.6
  */
+@Deprecated
 public class Login extends AbstractPostprocessor implements Preprocess{
 
   /**
