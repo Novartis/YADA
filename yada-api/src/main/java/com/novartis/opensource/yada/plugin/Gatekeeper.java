@@ -818,7 +818,7 @@ public class Gatekeeper extends AbstractPreprocessor {
 		String user = "";
 		try 
 		{
-			user = ((JSONObject) obtainIdentity()).getString(Authorization.YADA_IDENTITY_SUB);
+			user = new JSONObject(obtainIdentity()).getString(Authorization.YADA_IDENTITY_SUB);
 		} 
 		catch (YADASecurityException | JSONException | YADARequestException | YADAExecutionException e)
 		{
