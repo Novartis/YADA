@@ -459,8 +459,9 @@ public abstract class AbstractPreprocessor
 	 * 
 	 * @return a json string containing the {@code UID} value stored in the
 	 *         {@code YADA.user.privs} session attribute
+	 * @throws YADASecurityException 
 	 */
-	public String getLoggedUser() {
+	public String getLoggedUser() throws YADASecurityException {
 		return ((JSONArray) getSessionAttribute("YADA.user.privs")).getJSONObject(0).getString("USERID");
 	}
 

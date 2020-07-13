@@ -805,6 +805,24 @@ public class Gatekeeper extends AbstractPreprocessor {
 		String quote = "'";
 		return quote + getToken() + quote;
 	}
+	
+	/*
+	 * @since 8.7.6
+	 */
+	@Override
+	public String getLoggedUser() throws YADASecurityException {
+		String user = "";
+		try 
+		{
+			user = new JSONObject(obtainIdentity().toString()).getString(Authorization.YADA_IDENTITY_SUB);
+		} 
+		catch (YADASecurityException | JSONException | YADARequestException | YADAExecutionException e)
+		{
+			String msg = "There was a problem obtaining the user identity.";
+			throw new YADASecurityException(msg, e);
+		}
+		return user;
+	}
 
 	/**
 	 * Utility function for content policy
@@ -818,9 +836,9 @@ public class Gatekeeper extends AbstractPreprocessor {
 		String user = "";
 		try 
 		{
-			user = new JSONObject(obtainIdentity().toString()).getString(Authorization.YADA_IDENTITY_SUB);
+			user = getLoggedUser();
 		} 
-		catch (YADASecurityException | JSONException | YADARequestException | YADAExecutionException e)
+		catch (YADASecurityException e)
 		{
 			String msg = "There was a problem obtaining the user identity.";
 			throw new YADASecurityException(msg, e);
