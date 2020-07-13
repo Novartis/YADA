@@ -455,14 +455,14 @@ public abstract class AbstractPreprocessor
 	}
 
 	/**
-	 * Convenience method to get the user id value for security policy application
+	 * Convenience method to get the user id value for security policy application.
+	 * Base implementation returns {@code null}
 	 * 
-	 * @return a json string containing the {@code UID} value stored in the
-	 *         {@code YADA.user.privs} session attribute
-	 * @throws YADASecurityException 
+	 * @return the current user id
+	 * @throws YADASecurityException 	 
 	 */
 	public String getLoggedUser() throws YADASecurityException {
-		return ((JSONArray) getSessionAttribute("YADA.user.privs")).getJSONObject(0).getString("USERID");
+		return null;
 	}
 
 	@Override
