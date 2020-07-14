@@ -71,11 +71,10 @@ public class SecurityPluginDetector extends AbstractPostprocessor {
 	@Override
 	public void engage(YADAQuery yq) throws YADAPluginException, YADASecurityException
 	{
-		super.engage(yq);
-
+		super.engage(yq);		
 		try 
 		{
-			ResultSet    rs  = (ResultSet) yq.getResult().getResult(0);
+			ResultSet    rs  = (ResultSet) yq.getResult().getResult(0);			
 			CachedRowSet crs = RowSetProvider.newFactory().createCachedRowSet();
 			String name = NAME_U, 
 					   value = VALUE_U, 
@@ -85,7 +84,7 @@ public class SecurityPluginDetector extends AbstractPostprocessor {
 			// update metadata
 			RowSetMetaDataImpl crsmd = (RowSetMetaDataImpl) crs.getMetaData();
 			crsmd.setColumnCount(rs.getMetaData().getColumnCount());			
-			for(int i=1;i<crsmd.getColumnCount();i++)
+			for(int i=1;i<=crsmd.getColumnCount();i++)
 			{
 				crsmd.setColumnName(i, rs.getMetaData().getColumnName(i));
 				crsmd.setColumnType(i, rs.getMetaData().getColumnType(i));
