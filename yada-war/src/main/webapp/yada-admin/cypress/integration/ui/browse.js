@@ -1,13 +1,9 @@
 import * as util from '../../support/utils.js'
 
-describe('Login', function () {
-  it('logs in and sets credentials', function () {
-    util.login()
-  })
-})
-
 context('Browse', function () {
   before(() => {
+    util.login()
+    cy.cleanYADAIndex()
     util.visit()
   })
 
@@ -101,7 +97,9 @@ context('Browse', function () {
       beforeEach(() => {
         util.visit()
         cy.isInState({activeTab: 'apps-tab'})
-          .then(() => util.getAppListItems().then($items => $items[2].click()))
+          .then(() => {
+            util.getAppListItems().filter(':contains("RESTTEST")').click()
+          })
       })
 
       describe('Confirm query list tab state', function () {
@@ -110,13 +108,13 @@ context('Browse', function () {
             activeTab: 'query-list-tab',
             // nextTab:'query-list-tab',
             app: 'RESTTEST',
-            queries: [0, 1, 2],
+            queries: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
             config: {
               APP: 'RESTTEST',
               ACTIVE: '1',
-              NAME: 'BitBucket',
-              DESCR: 'BitBucket API',
-              CONF: 'https://api.bitbucket.org/2.0'
+              NAME: '',
+              DESCR: '',
+              CONF: 'http://jsonplaceholder.typicode.com'
             }
           })
         })
@@ -170,13 +168,13 @@ context('Browse', function () {
             activeTab: 'conf-tab',
             // nextTab:'conf-tab',
             app: 'RESTTEST',
-            queries: [0, 1, 2],
+            queries: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
             config: {
               APP: 'RESTTEST',
               ACTIVE: '1',
-              NAME: 'BitBucket',
-              DESCR: 'BitBucket API',
-              CONF: 'https://api.bitbucket.org/2.0'
+              NAME: '',
+              DESCR: '',
+              CONF: 'http://jsonplaceholder.typicode.com'
             }
           })
         })
@@ -199,11 +197,11 @@ context('Browse', function () {
         })
 
         it('has name', function () {
-          util.getConfPanel().find('input[name="name"]').invoke('val').should('eq', 'BitBucket')
+          util.getConfPanel().find('input[name="name"]').invoke('val').should('eq', '')
         })
 
         it('has description', function () {
-          util.getConfPanel().find('input[name="descr"]').invoke('val').should('eq', 'BitBucket API')
+          util.getConfPanel().find('input[name="descr"]').invoke('val').should('eq', '')
         })
 
         it('has a single configuration editor', function () {
@@ -217,13 +215,13 @@ context('Browse', function () {
             activeTab: 'query-list-tab',
             // nextTab:'query-list-tab',
             app: 'RESTTEST',
-            queries: [0, 1, 2],
+            queries: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
             config: {
               APP: 'RESTTEST',
               ACTIVE: '1',
-              NAME: 'BitBucket',
-              DESCR: 'BitBucket API',
-              CONF: 'https://api.bitbucket.org/2.0'
+              NAME: '',
+              DESCR: '',
+              CONF: 'http://jsonplaceholder.typicode.com'
             }
           })
         })
@@ -240,13 +238,13 @@ context('Browse', function () {
             activeTab: 'query-list-tab',
             // nextTab:'query-list-tab',
             app: 'RESTTEST',
-            queries: [0, 1, 2],
+            queries: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
             config: {
               APP: 'RESTTEST',
               ACTIVE: '1',
-              NAME: 'BitBucket',
-              DESCR: 'BitBucket API',
-              CONF: 'https://api.bitbucket.org/2.0'
+              NAME: '',
+              DESCR: '',
+              CONF: 'http://jsonplaceholder.typicode.com'
             }
           })
         })
@@ -281,8 +279,7 @@ context('Browse', function () {
 
       beforeEach(() => {
         util.visit()
-        util.getAppListItems()
-          .then($items => $items[2].click())
+        util.getAppListItems().filter(':contains("RESTTEST")').click()
         util.getQueryListItems()
           .then($items => cy.wrap($items[1]).find('td:eq(0)').click().wait(500))
       })
@@ -293,20 +290,20 @@ context('Browse', function () {
             activeTab: 'query-edit-tab',
             // nextTab:'query-edit-tab',
             app: 'RESTTEST',
-            queries: [0, 1, 2],
-            qname: 'RESTTEST Repository',
-            qnameOrig: 'RESTTEST Repository',
+            queries: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+            qname: 'RESTTEST DELETE with param',
+            qnameOrig: 'RESTTEST DELETE with param',
             params: [],
             renderedParams: [],
             props: [],
             protectors: [],
-            query: {'CREATED_BY': 'UNKNOWN1', 'APP': 'RESTTEST', 'CREATED': '2018-09-15 21:44:34', 'MODIFIED_BY': 'UNKNOWN1', 'QNAME': 'RESTTEST Repository', 'QUERY': '/repositories/analgesicsolutions/?v?page=?v', 'LAST_ACCESS': '2019-05-16 15:35:37.049000', 'DEFAULT_PARAMS': '0', 'COMMENTS': '', 'MODIFIED': '2018-09-18 18:41:42', 'ACCESS_COUNT': '1', 'IS_SECURE': 'f'},
+            query: {'CREATED_BY': 'UNKNOWN1', 'APP': 'RESTTEST', 'CREATED': '2018-09-15 21:44:34', 'MODIFIED_BY': 'UNKNOWN1', 'QNAME': 'RESTTEST Repository', 'QUERY': '/posts/?v', 'LAST_ACCESS': '2019-05-16 15:35:37.049000', 'DEFAULT_PARAMS': '0', 'COMMENTS': '', 'MODIFIED': '2018-09-18 18:41:42', 'ACCESS_COUNT': '1', 'IS_SECURE': 'f'},
             config: {
               APP: 'RESTTEST',
               ACTIVE: '1',
-              NAME: 'BitBucket',
-              DESCR: 'BitBucket API',
-              CONF: 'https://api.bitbucket.org/2.0'
+              NAME: '',
+              DESCR: '',
+              CONF: 'http://jsonplaceholder.typicode.com'
             }
           })
         })
@@ -325,7 +322,7 @@ context('Browse', function () {
         })
         // comments
         it('has read only comments field', function () {
-          util.getQueryEditPanel().find('.comment div').should('have.text', 'testing again')
+          util.getQueryEditPanel().find('.comment div').should('have.text', 'This is a comment')
         })
         // params
         it('has params table', function () {
@@ -357,13 +354,13 @@ context('Browse', function () {
             activeTab: 'query-list-tab',
             // nextTab:'query-list-tab',
             app: 'RESTTEST',
-            queries: [0, 1, 2],
+            queries: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
             config: {
               APP: 'RESTTEST',
               ACTIVE: '1',
-              NAME: 'BitBucket',
-              DESCR: 'BitBucket API',
-              CONF: 'https://api.bitbucket.org/2.0'
+              NAME: '',
+              DESCR: '',
+              CONF: 'http://jsonplaceholder.typicode.com'
             }
           })
         })
@@ -392,13 +389,13 @@ context('Browse', function () {
             activeTab: 'conf-tab',
             // nextTab:'conf-tab',
             app: 'RESTTEST',
-            queries: [0, 1, 2],
+            queries: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
             config: {
               APP: 'RESTTEST',
               ACTIVE: '1',
-              NAME: 'BitBucket',
-              DESCR: 'BitBucket API',
-              CONF: 'https://api.bitbucket.org/2.0'
+              NAME: '',
+              DESCR: '',
+              CONF: 'http://jsonplaceholder.typicode.com'
             }
           })
         })
