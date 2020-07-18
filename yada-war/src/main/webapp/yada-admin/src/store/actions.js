@@ -133,7 +133,7 @@ export default {
     // store the selected app name
     commit(types.SET_APP, app)
 
-    if (!!app)
+    if (typeof app !== 'undefined')
     {
       // the queries to execute and the events to emit on response
       const selects = ['YADA select app config', 'YADA queries']
@@ -176,7 +176,7 @@ export default {
       j.push({qname: 'YADA new app admin', DATA: [{APP: app, USERID: state.loggeduser}]})
 
       return this._vm.$yada.jp(j)
-        .then(() => { dispatch(types.LOAD_APP, null) })
+        // .then(() => { dispatch(types.LOAD_APP, null) })
         .then(() => { dispatch(types.LOAD_APP, app) })
         .finally(function (resp) {
           commit(types.SET_UNSAVEDCHANGES, 0)
@@ -300,25 +300,27 @@ export default {
       },
 
       // prop
-      state.props.map(p => {
-        return {
-          TARGET: state.qname,
-          NAME: p.NAME,
-          VALUE: p.VALUE,
-          APP: state.app
-        }
-      }),
+      typeof state.props !== 'undefined' && state.props !== null
+        ? state.props.map(p => {
+          return {
+            TARGET: state.qname,
+            NAME: p.NAME,
+            VALUE: p.VALUE,
+            APP: state.app
+          }
+        }) : [],
 
       // protector
-      state.protectors.map(p => {
-        return {
-          TARGET: state.qname,
-          POLICY: p.POLICY,
-          QNAME: p.QNAME,
-          TYPE: p.TYPE,
-          APP: state.app
-        }
-      })
+      typeof state.protectors !== 'undefined' && state.protectors !== null
+        ? state.protectors.map(p => {
+          return {
+            TARGET: state.qname,
+            POLICY: p.POLICY,
+            QNAME: p.QNAME,
+            TYPE: p.TYPE,
+            APP: state.app
+          }
+        }) : []
     ]
 
     if (state.unsavedParams > 0)
@@ -462,7 +464,7 @@ export default {
       let insertProtectors = j.filter(q => q.qname === 'YADA insert protector for target')
       return dispatch(types.CHECK_UNIQ, qname)
         .then((r) => {
-          if (r.data.RESULTSET.ROWS[0].count === 0)
+          if (parseInt(r.data.RESULTSET.ROWS[0].count) === 0)
           {
             promises.push(this._vm.$yada.jp(insertQuery))
             if (typeof insertParams !== 'undefined' && insertParams.length > 0)

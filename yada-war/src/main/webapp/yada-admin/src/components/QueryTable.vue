@@ -14,7 +14,7 @@
     <tbody class="data">
       <tr
         v-for="row in queries"
-        :key="row">
+        :key="row.QNAME">
         <td @click="setSelectedQuery($event,row)">{{ row.QNAME.replace(app+' ','') }}</td>
         <td
           class="trigger-codemirror"
@@ -23,8 +23,8 @@
           :qname="row.QNAME.toLowerCase().replace(/\s+/g,'-')"
           :info="[row.LAST_ACCESS,row.ACCESS_COUNT,row.CREATED,row.CREATED_BY,row.MODIFIED,row.MODIFIED_BY]"
           :comments="row.COMMENTS"
-          :settings="row.DEFAULT_PARAMS"
-          :security="row.IS_SECURE"/>
+          :settings="typeof row.DEFAULT_PARAMS === 'undefined' ? '' : row.DEFAULT_PARAMS"
+          :security="typeof row.IS_SECURE === 'undefined' ? '' : row.IS_SECURE"/>
       </tr>
     </tbody>
   </table>
@@ -39,7 +39,8 @@ export default {
   components: { QueryDetails },
   data () {
     return {
-      filterLabel: 0
+      filterLabel: 0,
+      hiddenCode: null
     }
   },
   methods: {
@@ -72,8 +73,9 @@ export default {
           td = e.target.parentElement
           code = e.target
         }
-        const hidden = $('.hidden')
-        if (!!code) // && !this.adjusting)
+        // the original (non-formatted-code) to transition back in on clicks outside
+        this.hiddenCode = $('.code.hidden')
+        if (typeof code !== 'undefined')
         {
           // if syntax highlighting is present, allow selection
           if (code.closest('.CodeMirror') !== null
@@ -88,7 +90,7 @@ export default {
               Array.from(document.querySelectorAll('#query-list-panel .CodeMirror')).forEach(cm => {
                 cm.parentElement.removeChild(cm)
               })
-              hidden.transition({ animation: 'fade in', duration: '1s' })
+              this.hiddenCode.transition({ animation: 'fade in', duration: '1s' })
 
               // create anew
               const query = code.textContent

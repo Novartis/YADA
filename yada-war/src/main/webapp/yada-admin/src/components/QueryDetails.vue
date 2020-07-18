@@ -26,7 +26,7 @@
 const octicons = require('octicons')
 export default {
   props: { qname: { type: String, required: true },
-    info: { type: String, required: true },
+    info: { type: Array, required: true },
     comments: { type: String, required: true },
     settings: { type: String, required: true },
     security: { type: String, required: true } },

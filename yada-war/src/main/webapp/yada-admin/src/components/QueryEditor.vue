@@ -22,7 +22,7 @@
           v-else
           class="ui fluid labeled icon input disabled">
           <div class="ui label">
-            {{ qname }}
+            {{ app }}
           </div>
           <input
             name="qname"
@@ -55,7 +55,7 @@
       </h5>
       <div
         class="ui form content comment"
-        :class="{active:!!comment}">
+        :class="{active:typeof comment !== 'undefined' && comment !== null && comment !== ''}">
         <div
           v-if="!!comment && !!!editComment"
           @click="setMode($event)"
@@ -138,7 +138,7 @@ export default {
       // console.log(ta !== null ? ta.value : this.query.COMMENT)
 
       // toggle MODE
-      if (!!!this.editComment)
+      if (typeof this.editComment === 'undefined' || this.editComment === false)
       {
         this.editComment = true
         Vue.nextTick(() => {
@@ -219,7 +219,7 @@ export default {
       }
     },
     renaming (neo, old) {
-      if (!!neo)
+      if (typeof neo !== 'undefined')
       {
         let input = document.querySelector('.query-editor-view .qname input')
         let rename = 'RENAME '
@@ -236,7 +236,7 @@ export default {
       }
     },
     cloning (neo, old) {
-      if (!!neo)
+      if (typeof neo !== 'undefined')
       {
         // this.qname = this.qname+' CLONE'
         this.$store.dispatch(types.SAVE_QUERY)

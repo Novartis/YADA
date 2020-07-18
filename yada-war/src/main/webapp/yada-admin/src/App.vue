@@ -168,6 +168,7 @@ export default {
         e.preventDefault()
         // store clicked tab
         let nextTab = e.target
+        let nextTabPanel = document.getElementById(nextTab.id.replace(/tab/, 'panel'))
         // only proceed if click is on different, enabled tab
         if (/.+-tab/.test(nextTab.id)
            && !nextTab.classList.contains('disabled')
@@ -176,22 +177,24 @@ export default {
           // do stuff even if nothing changed:
           //   close 'Security' section on query edit
           //   done with pure js -- semantic api doesn't work here
-          //
-          //
           const queryEditorView = document.querySelector('.query-editor-view')
           const securityAccordion = queryEditorView.querySelector('.ui.accordion.security')
           securityAccordion.querySelectorAll('.active').forEach(el => {
             el.classList.remove('active')
           })
+          // transition all code in querytable back to default format (remove code editors)
+          $('.code.hidden').transition({ animation: 'fade in', duration: '1s' })
 
           // stuff to do ONLY if something changed:
           if (vm.unsavedChanges > 0)
           {
             vm.$store.commit(types.SET_NEXTTAB, nextTab.id)
-            // disable tab temporarily to prevent navigation before save
-            // this is necessary to delay 'onVisible' handler which clears state
-            // required for saving
-            nextTab.classList.add('disabled')
+            // temporary workaround for semantic-ui click handler.
+            // setting the tab-panel to 'active' will fake-out the click handler and prevent
+            // calling 'onVisible', which clears state required for saving
+            // 'hidden' is necessary to avoid displaying both the 'conf' and 'apps' tabs while
+            // the modal is showing.  These workarounds are 'undone' in the model button handlers
+            nextTabPanel.classList.add('active', 'hidden')
             let context = 'query-edit'
             if (/conf/.test(vm.activeTab))
             {
@@ -200,8 +203,21 @@ export default {
             // configger and trigger modal only if real mouse click
             // the screenx, screeny coords should only be present when actually clicking
             // we'll see if cypress imposes it
-            if (!!e.screenX && e.screenX !== 0 && !!e.screenY && e.screenY !== 0)
+            if (typeof e.screenX !== 'undefined'
+                && e.screenX !== 0
+                && typeof e.screenY !== 'undefined'
+                && e.screenY !== 0)
+            {
               vm.$store.dispatch(types.SAVE_CHANGES_CONFIRM, context)
+                .then(() => {
+
+                })
+            }
+          }
+          else
+          {
+            nextTabPanel.classList.remove('active', 'hidden')
+            nextTab.click()
           }
         }
         return false
@@ -260,14 +276,16 @@ export default {
           // TODO check for error handling - what happens if 'confirmAction' fails?
           vm.$store.commit(types.SET_UNSAVEDCHANGES, 0)
           vm.$nextTick(() => {
-            if (!!vm.nextTab)
+            if (typeof vm.nextTab !== 'undefined')
             {
               // force hide the modals to enable clicking, then enable it and click
               vm.modalSave.modal('hide')
               vm.modalConfirm.modal('hide')
               let nextTab = document.querySelector(`#${vm.nextTab}`)
               vm.$store.commit(types.SET_NEXTTAB, null)
-              nextTab.classList.remove('disabled')
+              // undo workarounds for semantic-ui click handler
+              document.getElementById(nextTab.id.replace(/tab/, 'panel')).classList.remove('active', 'hidden')
+              // TODO reload apps to enable presentation of updated query code in query-list after edit
               nextTab.click()
             }
           })
@@ -283,16 +301,18 @@ export default {
           vm.$store.commit(types.SET_CONFIRM, null)
           vm.$store.commit(types.SET_CONFIRMACTION, null)
           vm.$store.commit(types.SET_PARAM, null)
-          if (!!vm.nextTab)
+          if (typeof vm.nextTab !== 'undefined')
           {
             let nextTab = document.querySelector(`#${vm.nextTab}`)
             vm.$store.commit('SET_NEXTTAB', null)
-            nextTab.classList.remove('disabled')
+            // undo workarounds for semantic-ui click handler
+            document.getElementById(nextTab.id.replace(/tab/, 'panel')).classList.remove('active', 'hidden')
             nextTab.click()
           }
         })
       }
     })
+
     this.$store.commit(types.SET_ACTIVETAB, 'apps-tab')
 
     // scroll handler
@@ -435,34 +455,39 @@ export default {
       }
     },
     app (val, oldVal) {
-      if (!!val)
+      const that = this
+      if (typeof val !== 'undefined' && val !== null)
       {
-        [this.$refs.conftab,
-          this.$refs.querylisttab
+        [that.$refs.conftab,
+          that.$refs.querylisttab
         ].forEach(el => {
           el.setAttribute('data-tab', el.id.replace(/panel/, 'tab'))
           // go to config tab if app code matches new app rx
           // otherwise go to queries tab
-          if (!!!this.nextTab)
+          if (typeof that.nextTab === 'undefined' || that.nextTab === null)
           {
             if (rx_neoapp.test(val) && /(?:conf)-tab/.test(el.id))
             {
               el.classList.remove('disabled')
               el.click()
-              this.unsaved()
+              that.unsaved()
             }
             else if (!rx_neoapp.test(val))
             {
               el.classList.remove('disabled')
               if (/query-list-tab/.test(el.id))
+              {
                 el.click()
+              }
             }
           }
           else
           {
             if (/(?:conf)-tab/.test(el.id))
+            {
               el.classList.remove('disabled')
-            document.querySelector(`#${this.nextTab}`).click()
+            }
+            document.querySelector(`#${that.nextTab}`).click()
           }
         })
       }
@@ -518,6 +543,10 @@ export default {
 
 .meaty-bit > .ui.top.attached.tabular.menu {
   margin-top: -1px;
+}
+
+.hidden {
+  display: none !important;
 }
 
 .copy.btn {

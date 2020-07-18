@@ -52,7 +52,8 @@ export default {
       let that = this
       if (neo !== null)
       {
-        if (!!!old || (!!old && Object.keys(old).length === 0))
+        if ((typeof old === 'undefined' || old === null)
+            || (typeof old !== 'undefined' && old !== null && Object.keys(old).length === 0))
         // this check protects against infiniloop
         // it will only exec the first time query loads
         {

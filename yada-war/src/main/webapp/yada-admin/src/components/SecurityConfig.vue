@@ -91,7 +91,7 @@
               </div>
               <div class="ui form">
                 <div class="inline fields">
-                  <div class="two wide field">
+                  <div class="field">
                     <div class="ui selection dropdown policy authorization-policy">
                       <input
                         type="hidden"
@@ -121,7 +121,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="seven wide field">
+                  <div class="field">
                     <div class="ui input policy">
                       <input
                         v-if="secParam['execution.policy.type'] === '' && secParam['execution.policy.query'] === '' && secParam['execution.policy.config'] === ''"
@@ -168,7 +168,7 @@
               </div>
               <div class="ui form">
                 <div class="inline fields">
-                  <div class="two wide field">
+                  <div class="field">
                     <div class="ui selection dropdown policy execution-policy">
                       <input
                         type="hidden"
@@ -195,7 +195,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="seven wide field">
+                  <div class="field">
                     <div class="ui input policy">
                       <input
                         v-if="secParam['authorization.policy.grant'] === '' || !secParam.hasOwnProperty('authorization.policy.grant')"
@@ -220,8 +220,12 @@
                 </div>
                 <!-- EXECUTION POLICY CONFIG -->
                 <div class="inline fields">
-                  <div class="two wide field"/>
-                  <div class="seven wide field right floated protector query config ">
+                  <div class="field">
+                    <div class="ui selection dropdown spacer">
+
+                    </div>
+                  </div>
+                  <div class="field right floated protector query config ">
                     <div class="ui input policy">
                       <input
                         v-if="secParam['authorization.policy.grant'] === '' || !secParam.hasOwnProperty('authorization.policy.grant')"
@@ -317,7 +321,7 @@ export default {
       }
       this.$store.commit(types.SET_SECCONF, conf)
       if (!this.hasSecurityPlugin()
-          && !!plugin)
+          && typeof plugin !== 'undefined' && plugin !== null )
       // && this.secconf !== null
       // && Object.entries(conf).toString() !== Object.entries(this.secconf).toString() )
       {
@@ -373,7 +377,7 @@ export default {
     ...mapState(['paramlist', 'renderedParams', 'qname', 'unsavedChanges', 'confirmAction', 'unsavedParams', 'secconf']),
     params () { return this.renderedParams },
     secParam () {
-      if (this.secconf !== null)
+      if (typeof this.secconf !== 'undefined' && this.secconf !== null)
       {
         return this.secconf
       }
@@ -484,6 +488,12 @@ export default {
     border: 1px solid rgba(34, 36, 38, 0.15);
   }
 
+  ui.selection.dropdown.spacer,
+  ui.selection.dropdown.spacer:hover {
+    border: none !important;
+    cursor: default !important;
+  }
+
   .ui.form .field .input.policy {
     padding-left: 10px;
   }
@@ -508,4 +518,6 @@ export default {
   .ui.list > .item .header {
     margin-bottom: 7px !important;
   }
+
+
 </style>

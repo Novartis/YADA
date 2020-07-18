@@ -2,7 +2,7 @@ import axios from 'axios'
 // const YADA_HOST = process.env.YADA.host
 // const YADA_PORT = process.env.YADA.port
 // const YADA_PROT = process.env.YADA.protocol
-// const YADA_URL  = YADA_PROT + ': //' + YADA_HOST + (!!YADA_PORT && YADA_PORT !== '' ? ': ' + YADA_PORT : '')
+// const YADA_URL  = YADA_PROT + ': //' + YADA_HOST + (typeof YADA_PORT && YADA_PORT !== '' ? ': ' + YADA_PORT : '' !== 'undefined')
 
 export default {
   install: function (Vue, options) {
@@ -68,7 +68,7 @@ export default {
       // parts.push('ck=qdssuser,qdssjwt,qdssgroups')
 
       // process remaining params
-      if (!!yadaOptions && Object.keys(yadaOptions).length > 0)
+      if (typeof yadaOptions !== 'undefined' && Object.keys(yadaOptions).length > 0)
       {
         for (let k of Object.keys(yadaOptions))
         {
@@ -140,7 +140,7 @@ export default {
       axiosOptions['params'] = yadaOptions
       axiosOptions['paramsSerializer'] = paramSerializer
 
-      if (!!!method || method.toLowerCase() === 'post')
+      if (typeof method === 'undefined' || method.toLowerCase() === 'post')
       {
         method = 'post'
       }
@@ -184,7 +184,7 @@ export default {
       }
       // deconstruct param string
       yadaOptions['q'] = qname
-      if (!!params)
+      if (typeof params !== 'undefined')
       {
         yadaOptions['p'] = params
       }
@@ -193,7 +193,7 @@ export default {
       axiosOptions['paramsSerializer'] = paramSerializer
 
       // its a get
-      if (!!!method || method.toLowerCase() === 'get')
+      if (typeof method === 'undefined' || method.toLowerCase() === 'get')
       {
         method = 'get'
       }

@@ -15,10 +15,11 @@
       </thead>
       <tbody>
         <!-- @dragenter="dragenter($event)"  -->
+        <!-- typeof state.props !== 'undefined' && state.props !== null -->
         <tr
           draggable="true"
           v-for="(param, idx) in params"
-          :key="param"
+
           @dragover="dragover($event)"
           @dragleave="dragleave($event)"
           @dragstart="dragstart($event)"
@@ -51,7 +52,7 @@
                 <div class="menu">
                   <div
                     v-for="param in paramlist"
-                    :key="param"
+                    :key="param.alias"
                     class="item"
                     :data-value="param.alias"
                     :data-content="param.tip"
@@ -242,6 +243,7 @@ export default {
     },
 
     dragover: function (e) {
+      e.preventDefault()
       let row = e.target.closest('tr')
       if (!row.classList.contains('dropzone'))
       {
@@ -259,10 +261,11 @@ export default {
 
     // updates row css on enter, 'id' and 'did' are set but have not impact currently
     dragenter: function (e) {
+      e.preventDefault()
       console.log('dragenter')
     //   this.dragging = true
     //   let row = e.target.closest('tr')
-    //   // if (!!!this.draggedRow)
+    //   // if (typeof !this.draggedRow !== 'undefined')
     //   // {
     //   //   this.draggedRow = row
     //   // }
@@ -383,7 +386,7 @@ export default {
           this.$set(this.params, idx, param)
 
           Vue.nextTick(() => {
-            if (!!param.MODE)
+            if (typeof param.MODE !== 'undefined')
             {
               let input = td.querySelector('input')
               input.select()
@@ -433,7 +436,7 @@ export default {
       return (param.SPP === 'true')
     },
     mutable: function (param) {
-      return !!param.RULE ? 'toggle off black' : 'toggle on red'
+      return typeof param.RULE !== 'undefined' ? 'toggle off black' : 'toggle on red'
     },
     getParamSpec: function (param) {
       return this.paramlist.filter(p => param.NAME === p.alias)[0]
@@ -496,7 +499,7 @@ export default {
     }})
     $('.checkbox.paramval').checkbox({
       onChange: function () {
-        let value = !!this.checked ? 'true' : 'false'
+        let value = typeof this.checked !== 'undefined' ? 'true' : 'false'
         let idx  = this.closest('tr').rowIndex - 1
         let param = vm.params[idx]
         param.VALUE = value
