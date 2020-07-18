@@ -49,7 +49,7 @@ module.exports = {
     'generator-star-spacing': 'off',
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-extra-boolean-cast': 0,
+    'no-extra-boolean-cast': 2,
     "no-mixed-spaces-and-tabs": [2],
     'no-multi-spaces': ["error", { "ignoreEOLComments": true, "exceptions": { "VariableDeclarator": true } }],
     "no-tabs": 2,
