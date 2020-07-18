@@ -39,7 +39,8 @@ INSERT INTO YADA_PROP (target,name,value) VALUES ('system','adaptor/com.microsof
 INSERT INTO YADA_PROP (target,name,value) VALUES ('system','login','default');
 
 -- sanity check
--- INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA default','select ''YADA is alive''','YADABOT','YADA');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA default','select ''YADA is alive'' as status','YADABOT','YADA');
+
 -- parameter dml
 INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA select default params','SELECT id as "ID", target as "TARGET", name as "NAME", value as "VALUE", rule as "RULE" FROM YADA_PARAM where target in (?v) and target not in (''YADA apps'',''YADA queries'',''YADA new query'',''YADA delete query'',''YADA insert usage log'',''YADA update query'')','YADABOT','YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select default params','pl',1,'Gatekeeper,content.policy=void,execution.policy.columns=app:getValue(TARGET) userid:getLoggedUser()');
