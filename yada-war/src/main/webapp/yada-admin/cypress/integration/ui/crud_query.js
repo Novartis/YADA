@@ -1,15 +1,10 @@
 import * as util from '../../support/utils.js'
 
-describe('Login', function () {
-  it('logs in and sets cookies', function () {
-    util.login()
-  })
-})
-
 context('Create Query', function () {
   let count = 0
 
   before(() => {
+    util.login()
     cy.cleanYADAIndex()
     util.visit()
     util.createApp(0).then(() => {
@@ -166,6 +161,7 @@ context('Edit Query', function () {
   let count = 0
 
   before(() => {
+    util.login()
     cy.cleanYADAIndex()
     util.visit()
     util.createApp(0, false)
@@ -328,6 +324,7 @@ context('Edit Query', function () {
             cy.getState().its('creating').should('eq', true)
             cy.getState().its('unsavedChanges').should('be.gt', 0)
             // cy.save().then(() => {
+            cy.wait(2000)
             cy.confirmCloneSave(count, `QNAME${count}`, `QNAME${count} CLONE`).then(result => {
               const reso = result.stdout.replace(/\n/g, ',')
               const array  = JSON.parse(`[${reso}]`)

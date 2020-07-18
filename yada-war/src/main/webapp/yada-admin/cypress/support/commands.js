@@ -24,7 +24,7 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 import '@4tw/cypress-drag-drop'
-
+const connect = Cypress.env('YADA_PSQL_CONNECT')
 const stateChecker = ($val, obj, key, defval, deep) => {
   // debugger
   let k = key
@@ -43,7 +43,7 @@ const stateChecker = ($val, obj, key, defval, deep) => {
     }
     else
     {
-      if (!!attr)
+      if (typeof attr !== 'undefined' && attr)
       {
         expect($val).to.equal(obj[k][attr])
       }
@@ -98,13 +98,13 @@ Cypress.Commands.add('isInState', (obj) => {
 
 Cypress.Commands.add('cleanYADAIndex', () => {
   cy.log('Cleaning YADA index...')
-  cy.exec(`psql -U yada -w -h signals-test.qdss.io -c \
-          "delete from yada_query_conf where app like 'CYP%';\
+  let sql = `"delete from yada_query_conf where app like 'CYP%';\
            delete from yada_ug where app like 'CYP%';\
            delete from yada_query where app like 'CYP%';\
            delete from yada_param where target like 'CYP%';\
            delete from yada_prop where target like 'CYP%';\
-           delete from yada_a11n where target like 'CYP%';"`)
+           delete from yada_a11n where target like 'CYP%';"`
+  cy.exec(`${connect} -c ${sql}`)
 })
 
 Cypress.Commands.add('confirmQuerySave', (count, column, value) => {
@@ -112,34 +112,31 @@ Cypress.Commands.add('confirmQuerySave', (count, column, value) => {
   let sql = `select row_to_json(yada_query) from yada_query where qname = 'CYP0 QNAME${count}'`
   if (typeof column !== 'undefined')
   {
-    if (typeof value === 'undefined')
+    if (typeof value === 'undefined' || value === null)
       value = ''
     sql = `${sql} AND ${column} = '${value}'`
   }
-  let connect = `psql -U ${Cypress.env('YADA_INDEX_USER')} -w -h ${Cypress.env('YADA_INDEX_HOST')} -t -c "${sql};"`
-  cy.exec(connect)
+  cy.exec(`${connect} -c "${sql}"`)
 })
 
 Cypress.Commands.add('confirmRenameSave', (count, old, neo) => {
   cy.log('Confirming rename saved...')
-  let sql = `select row_to_json(row) from
+  let sql = `"select row_to_json(row) from
   (select *
    From yada_query a
    join yada_param b on a.qname = b.target
-   where a.app = 'CYP0' and a.qname in ('CYP0 ${old}','CYP0 ${neo}')) row`
-  let connect = `psql -U ${Cypress.env('YADA_INDEX_USER')} -w -h ${Cypress.env('YADA_INDEX_HOST')} -t -c "${sql};"`
-  cy.exec(connect)
+   where a.app = 'CYP0' and a.qname in ('CYP0 ${old}','CYP0 ${neo}')) row"`
+  cy.exec(`${connect} -c ${sql}`)
 })
 
 Cypress.Commands.add('confirmCloneSave', (count, old, neo) => {
   cy.log('Confirming clone saved...')
-  let sql = `select row_to_json(row) from
+  let sql = `"select row_to_json(row) from
   (select *
    From yada_query a
    join yada_param b on a.qname = b.target
-   where a.app = 'CYP0' and a.qname in ('CYP0 ${old}','CYP0 ${neo}')) row`
-  let connect = `psql -U ${Cypress.env('YADA_INDEX_USER')} -w -h ${Cypress.env('YADA_INDEX_HOST')} -t -c "${sql};"`
-  cy.exec(connect)
+   where a.app = 'CYP0' and a.qname in ('CYP0 ${old}','CYP0 ${neo}')) row"`
+  cy.exec(`${connect} -c ${sql}`)
 })
 
 Cypress.Commands.add('confirmParamSave', (count, name, value, rule, id) => {
@@ -149,26 +146,23 @@ Cypress.Commands.add('confirmParamSave', (count, name, value, rule, id) => {
   {
     sql = `${sql} AND name = '${name}' AND value = '${value}' AND rule = '${rule}' AND id = '${parseInt(id)}'`
   }
-  let connect = `psql -U ${Cypress.env('YADA_INDEX_USER')} -w -h ${Cypress.env('YADA_INDEX_HOST')} -t -c "${sql};"`
-  cy.exec(connect)
+  cy.exec(`${connect} -c "${sql}"`)
 })
 
 Cypress.Commands.add('confirmA11nSave', (count, policy, type, qname) => {
   cy.log('Confirming authorization data saved...')
-  let sql = `select row_to_json(yada_a11n) from yada_a11n where target like 'CYP0 QNAME${count}%'`
+  let sql = `"select row_to_json(yada_a11n) from yada_a11n where target like 'CYP0 QNAME${count}%'"`
   if (typeof policy !== 'undefined')
   {
     sql = `${sql} AND policy = '${policy}' AND type = '${type}' AND qname = '${qname}'`
   }
-  let connect = `psql -U ${Cypress.env('YADA_INDEX_USER')} -w -h ${Cypress.env('YADA_INDEX_HOST')} -t -c "${sql};"`
-  cy.exec(connect)
+  cy.exec(`${connect} -c ${sql}`)
 })
 
 Cypress.Commands.add('deleteParameters', (count) => {
   cy.log('Deleting parameters...')
-  let sql = `delete from yada_param where target like 'CYP% QNAME${count}%'`
-  let connect = `psql -U ${Cypress.env('YADA_INDEX_USER')} -w -h ${Cypress.env('YADA_INDEX_HOST')} -t -c "${sql};"`
-  cy.exec(connect)
+  let sql = `"delete from yada_param where target like 'CYP% QNAME${count}%'"`
+  cy.exec(`${connect} -c ${sql}`)
 })
 
 Cypress.Commands.add('save', () => {

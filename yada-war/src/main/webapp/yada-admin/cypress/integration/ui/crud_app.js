@@ -1,15 +1,12 @@
 import * as util from '../../support/utils.js'
 
-describe('Login', function () {
-  it('logs in and sets cookies', function () {
-    util.login()
-  })
-})
-
 context('Create App', function () {
   let count = 0
 
-  before(() => { cy.cleanYADAIndex() })
+  before(() => {
+    util.login()
+    cy.cleanYADAIndex()
+  })
 
   beforeEach(() => {
     // reload

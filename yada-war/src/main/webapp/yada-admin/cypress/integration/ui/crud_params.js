@@ -1,16 +1,11 @@
 import * as util from '../../support/utils.js'
 
-describe('Login', function () {
-  it('logs in and sets cookies', function () {
-    util.login()
-  })
-})
-
 // Add parameter
 context('Default Query Parameters', function () {
   let count = 0
 
   before(() => {
+    util.login()
     cy.cleanYADAIndex()
     util.visit()
     util.createApp(0, false)
@@ -48,7 +43,9 @@ context('Default Query Parameters', function () {
 
   afterEach(() => { count++ })
 
-  after(() => { cy.cleanYADAIndex() })
+  after(() => {
+    cy.cleanYADAIndex()
+  })
 
   context('Single Parameter', function () {
     beforeEach(() => { util.addParameter(count) })
@@ -84,16 +81,18 @@ context('Default Query Parameters', function () {
       const name = 'c'
       const value = 'false'
       const dfault = 'false'
+      const tdnamesel = '.params>table>tbody>tr>td.param-name'
+      const tdrulesel = '.params>table>tbody>tr>td.param-rule'
       util.prepParamForEdit(count).then(() => {
-        cy.get('.params>table>tbody>tr>td.param-name').click().then(td => {
+        cy.get(tdnamesel).click().then(td => {
           cy.get(`div[data-value="${name}"]`).click().then(el => {
-            cy.wrap(td).find('.value').should('have.text', name)
-            cy.wrap(td).next().find('.value').should('contain', dfault)
+            cy.get(tdnamesel).find('.value').should('have.text', name)
+            cy.get(tdnamesel).next().find('.value').should('contain', dfault)
             cy.getState().its('unsavedParams').should('be.gt', 0)
           })
         })
         // mutability change
-        cy.get('.params>table>tbody>tr>td.param-rule').click().then(td => {
+        cy.get(tdrulesel).click().then(td => {
           cy.wrap(td).find('input:checked').should('exist')
           cy.getState().its('unsavedParams').should('be.gt', 0)
         })
@@ -113,8 +112,9 @@ context('Default Query Parameters', function () {
       const invalid =  'value will not be typed'
       const valid = 'testing'
       const name = 'ck'
+      const tdvalsel = '.params>table>tbody>tr:first-child>td.param-val'
       util.setInvalidParameter(count, 1, 'string', name, invalid, 'Change me...').then(() => {
-        cy.get('.params>table>tbody>tr:first-child>td.param-val').click().then(td => {
+        cy.get(tdvalsel).click().then(td => {
           cy.wrap(td).find('input').type(valid).blur()
           cy.getState().its('unsavedChanges').should('be.gt', 0)
           cy.getState().its('unsavedParams').should('be.gt', 0)
@@ -205,8 +205,7 @@ context('Default Query Parameters', function () {
                 {
                   util.chooseMenuOption('Add Param')
                 }
-              }
-              )
+              })
               .then(() => {
                 util.createMultipleParams(count, names)
               })
@@ -234,7 +233,7 @@ context('Default Query Parameters', function () {
         })
       })
 
-      context.skip('Swap non-adjacent parameters', function () {
+      context('Swap non-adjacent parameters', function () {
         beforeEach(() => {
           util.getQueryListTab().click().then(() => {
             cy.get('.query-list > tbody > tr').contains('td:first-child()', `QNAME${count}`)

@@ -1,16 +1,11 @@
 import * as util from '../../support/utils.js'
 
-describe('Login', function () {
-  it('logs in and sets cookies', function () {
-    util.login()
-  })
-})
-
 // Add parameter
 context('Security Parameters', function () {
   let count = 0
 
   before(() => {
+    util.login()
     cy.cleanYADAIndex()
     util.visit()
     util.createApp(0, false)
@@ -52,10 +47,10 @@ context('Security Parameters', function () {
     context('Before Save', function () {
       it('creates plugin', function () {
         const pl = 'Gatekeeper'
-        const value = `${pl},execution.policy=void,content.policy=void`
+        const value = `${pl}, execution.policy=void, content.policy=void`
         util.addSecPlugin(pl).then((input) => {
           cy.wrap(input).blur().then(() => {
-            util.saveAndConfirmSecPlugin(count, '0', value)
+            util.confirmSecPlugin(count, '0', value)
           })
         })
       })
@@ -63,14 +58,14 @@ context('Security Parameters', function () {
       it('creates plugin with url validation', function () {
         const pl = 'Gatekeeper'
         const authrx = 'testurl'
-        const value = `${pl},auth.path.rx=${authrx},execution.policy=void,content.policy=void`
+        const value = `${pl}, auth.path.rx=${authrx}, execution.policy=void, content.policy=void`
         util.addSecPlugin(pl).then(() => {
           cy.get('.security input[name="auth.path.rx"]').then(el1 => {
             let input = cy.wrap(el1)
             input.should('have.value', '')
             input.type(authrx)
             input.blur().then(() => {
-              util.saveAndConfirmSecPlugin(count, '0', value)
+              util.confirmSecPlugin(count, '0', value)
             })
           })
         })
@@ -83,7 +78,7 @@ context('Security Parameters', function () {
         const type = 'whitelist'
         const query = 'YADA view protector'
         const config = 'TEST:getTest()'
-        const value = `${pl},auth.path.rx=${authrx},execution.policy.columns=${config},content.policy=void`
+        const value = `${pl}, auth.path.rx=${authrx}, execution.policy.columns=${config}, content.policy=void`
         util.addSecPlugin(pl).then(() => {
           cy.get('.security input[name="auth.path.rx"]').then(el1 => {
             let input = cy.wrap(el1)
@@ -92,7 +87,7 @@ context('Security Parameters', function () {
             input.blur()
             util.addSecPolicy(policy, type, query, config)
             util.confirmSecPolicyRO('authorization')
-            util.saveAndConfirmSecPlugin(count, '0', value, policy, type, query)
+            util.confirmSecPlugin(count, '0', value, policy, type, query)
           })
         })
       })
@@ -104,7 +99,7 @@ context('Security Parameters', function () {
         const type = 'blacklist'
         const query = 'YADA view protector'
         const config = 'TEST:getTest()'
-        const value = `${pl},auth.path.rx=${authrx},execution.policy.columns=${config},content.policy=void`
+        const value = `${pl}, auth.path.rx=${authrx}, execution.policy.columns=${config}, content.policy=void`
         util.addSecPlugin(pl).then(() => {
           cy.get('.security input[name="auth.path.rx"]').then(el1 => {
             let input = cy.wrap(el1)
@@ -113,7 +108,7 @@ context('Security Parameters', function () {
             input.blur()
             util.addSecPolicy(policy, type, query, config)
             util.confirmSecPolicyRO('authorization')
-            util.saveAndConfirmSecPlugin(count, '0', value, policy, type, query)
+            util.confirmSecPlugin(count, '0', value, policy, type, query)
           })
         })
       })
@@ -125,7 +120,7 @@ context('Security Parameters', function () {
         const type = 'whitelist'
         const query = 'YADA view protector'
         const config = '0 1 3'
-        const value = `${pl},auth.path.rx=${authrx},execution.policy.indexes=${config},content.policy=void`
+        const value = `${pl}, auth.path.rx=${authrx}, execution.policy.indexes=${config}, content.policy=void`
         util.addSecPlugin(pl).then(() => {
           cy.get('.security input[name="auth.path.rx"]').then(el1 => {
             let input = cy.wrap(el1)
@@ -134,7 +129,7 @@ context('Security Parameters', function () {
             input.blur()
             util.addSecPolicy(policy, type, query, config)
             util.confirmSecPolicyRO('authorization')
-            util.saveAndConfirmSecPlugin(count, '0', value, policy, type, query)
+            util.confirmSecPlugin(count, '0', value, policy, type, query)
           })
         })
       })
@@ -147,7 +142,7 @@ context('Security Parameters', function () {
         const query = 'YADA view protector'
         const config = 'TEST:getTest()'
         const contentPol = 'FOO BAR'
-        const value = `${pl},auth.path.rx=${authrx},execution.policy.columns=${config},content.policy.predicate=${contentPol}`
+        const value = `${pl}, auth.path.rx=${authrx}, execution.policy.columns=${config}, content.policy.predicate=${contentPol}`
         util.addSecPlugin(pl).then(() => {
           cy.get('.security input[name="auth.path.rx"]').then(el1 => {
             let input = cy.wrap(el1)
@@ -161,7 +156,7 @@ context('Security Parameters', function () {
               input = cy.wrap(el2)
               input.type(contentPol)
               input.blur().then(() => {
-                util.saveAndConfirmSecPlugin(count, '0', value, policy, type, query)
+                util.confirmSecPlugin(count, '0', value, policy, type, query)
               })
             })
           })
@@ -175,7 +170,7 @@ context('Security Parameters', function () {
         const query = 'YADA view protector'
         const config = 'TEST:getTest()'
         const contentPol = 'FOO BAR'
-        const value = `${pl},execution.policy.columns=${config},content.policy.predicate=${contentPol}`
+        const value = `${pl}, execution.policy.columns=${config}, content.policy.predicate=${contentPol}`
         util.addSecPlugin(pl).then(() => {
           util.addSecPolicy(policy, type, query, config)
           util.confirmSecPolicyRO('authorization')
@@ -184,7 +179,7 @@ context('Security Parameters', function () {
             let input = cy.wrap(el2)
             input.type(contentPol)
             input.blur().then(() => {
-              util.saveAndConfirmSecPlugin(count, '0', value, policy, type, query)
+              util.confirmSecPlugin(count, '0', value, policy, type, query)
             })
           })
         })
@@ -196,7 +191,7 @@ context('Security Parameters', function () {
         const type = 'whitelist'
         const grant = 'TESTROLE'
         const contentPol = 'FOO BAR'
-        const value = `${pl},authorization.policy.grant=${grant},execution.policy=void,content.policy.predicate=${contentPol}`
+        const value = `${pl}, authorization.policy.grant=${grant}, execution.policy=void, content.policy.predicate=${contentPol}`
         util.addSecPlugin(pl).then(() => {
           util.addSecPolicy(policy, type, grant)
           util.confirmSecPolicyRO('execution')
@@ -206,7 +201,7 @@ context('Security Parameters', function () {
             let input = cy.wrap(el2)
             input.type(contentPol)
             input.blur().then(() => {
-              util.saveAndConfirmSecPlugin(count, '0', value, policy, type, grant)
+              util.confirmSecPlugin(count, '0', value, policy, type, grant)
             })
           })
         })
@@ -218,7 +213,7 @@ context('Security Parameters', function () {
         const type = 'whitelist'
         const grant = 'TESTROLE'
         const contentPol = 'FOO BAR'
-        const value = `${pl},authorization.policy.grant=${grant},execution.policy=void,content.policy.predicate=${contentPol}`
+        const value = `${pl}, authorization.policy.grant=${grant}, execution.policy=void, content.policy.predicate=${contentPol}`
         util.addSecPlugin(pl).then(() => {
           util.addSecPolicy(policy, type, grant)
           util.confirmSecPolicyRO('execution')
@@ -228,7 +223,7 @@ context('Security Parameters', function () {
             let input = cy.wrap(el2)
             input.type(contentPol)
             input.blur().then(() => {
-              util.saveAndConfirmSecPlugin(count, '0', value, policy, type, grant)
+              util.confirmSecPlugin(count, '0', value, policy, type, grant)
             })
           })
         })
@@ -245,7 +240,7 @@ context('Security Parameters', function () {
         const query = 'YADA view protector'
         const config = 'TEST:getTest()'
         const contentPol = 'FOO BAR'
-        const value = `${pl},auth.path.rx=${authrx},execution.policy.columns=${config},content.policy.predicate=${contentPol}`
+        const value = `${pl}, auth.path.rx=${authrx}, execution.policy.columns=${config}, content.policy.predicate=${contentPol}`
         util.addSecPlugin(pl).then(() => {
           cy.get('.security input[name="auth.path.rx"]').then(el1 => {
             let input = cy.wrap(el1)
@@ -259,7 +254,7 @@ context('Security Parameters', function () {
               input = cy.wrap(el2)
               input.type(contentPol)
               input.blur().then(() => {
-                util.saveAndConfirmSecPlugin(count, '0', value, policy, type, query)
+                util.confirmSecPlugin(count, '0', value, policy, type, query)
                 // confirm load after save
                 util.confirmSecLoadAfterSave(count, '0', value)
               })
@@ -275,7 +270,7 @@ context('Security Parameters', function () {
         const type = 'whitelist'
         const grant = 'TEST'
         const contentPol = 'FOO BAR'
-        const value = `${pl},auth.path.rx=${authrx},authorization.policy.grant=${grant},execution.policy=void,content.policy.predicate=${contentPol}`
+        const value = `${pl}, auth.path.rx=${authrx}, authorization.policy.grant=${grant}, execution.policy=void, content.policy.predicate=${contentPol}`
         util.addSecPlugin(pl).then(() => {
           cy.get('.security input[name="auth.path.rx"]').then(el1 => {
             let input = cy.wrap(el1)
@@ -289,7 +284,7 @@ context('Security Parameters', function () {
               input = cy.wrap(el2)
               input.type(contentPol)
               input.blur().then(() => {
-                util.saveAndConfirmSecPlugin(count, '0', value, policy, type, grant)
+                util.confirmSecPlugin(count, '0', value, policy, type, grant)
                 // confirm load after save
                 util.confirmSecLoadAfterSave(count, '0', value)
               })
@@ -326,10 +321,10 @@ context('Security Parameters', function () {
 
     it('creates plugin', function () {
       const pl = 'Gatekeeper'
-      const value = `${pl},execution.policy=void,content.policy=void`
+      const value = `${pl}, execution.policy=void, content.policy=void`
       util.addSecPlugin(pl).then((input) => {
         cy.wrap(input).blur().then(() => {
-          util.saveAndConfirmSecPlugin(count, 3, value)
+          util.confirmSecPlugin(count, 3, value)
         })
       })
     })
@@ -337,14 +332,14 @@ context('Security Parameters', function () {
     it('creates plugin with url validation', function () {
       const pl = 'Gatekeeper'
       const authrx = 'testurl'
-      const value = `${pl},auth.path.rx=${authrx},execution.policy=void,content.policy=void`
+      const value = `${pl}, auth.path.rx=${authrx}, execution.policy=void, content.policy=void`
       util.addSecPlugin(pl).then(() => {
         cy.get('.security input[name="auth.path.rx"]').then(el1 => {
           let input = cy.wrap(el1)
           input.should('have.value', '')
           input.type(authrx)
           input.blur().then(() => {
-            util.saveAndConfirmSecPlugin(count, 3, value)
+            util.confirmSecPlugin(count, 3, value)
           })
         })
       })
@@ -357,7 +352,7 @@ context('Security Parameters', function () {
       const type = 'whitelist'
       const query = 'YADA view protector'
       const config = 'TEST:getTest()'
-      const value = `${pl},auth.path.rx=${authrx},execution.policy.columns=${config},content.policy=void`
+      const value = `${pl}, auth.path.rx=${authrx}, execution.policy.columns=${config}, content.policy=void`
       util.addSecPlugin(pl).then(() => {
         cy.get('.security input[name="auth.path.rx"]').then(el1 => {
           let input = cy.wrap(el1)
@@ -366,7 +361,7 @@ context('Security Parameters', function () {
           input.blur()
           util.addSecPolicy(policy, type, query, config)
           util.confirmSecPolicyRO('authorization')
-          util.saveAndConfirmSecPlugin(count, 3, value, policy, type, query)
+          util.confirmSecPlugin(count, 3, value, policy, type, query)
         })
       })
     })
@@ -378,7 +373,7 @@ context('Security Parameters', function () {
       const type = 'blacklist'
       const query = 'YADA view protector'
       const config = 'TEST:getTest()'
-      const value = `${pl},auth.path.rx=${authrx},execution.policy.columns=${config},content.policy=void`
+      const value = `${pl}, auth.path.rx=${authrx}, execution.policy.columns=${config}, content.policy=void`
       util.addSecPlugin(pl).then(() => {
         cy.get('.security input[name="auth.path.rx"]').then(el1 => {
           let input = cy.wrap(el1)
@@ -387,7 +382,7 @@ context('Security Parameters', function () {
           input.blur()
           util.addSecPolicy(policy, type, query, config)
           util.confirmSecPolicyRO('authorization')
-          util.saveAndConfirmSecPlugin(count, 3, value, policy, type, query)
+          util.confirmSecPlugin(count, 3, value, policy, type, query)
         })
       })
     })
@@ -399,7 +394,7 @@ context('Security Parameters', function () {
       const type = 'whitelist'
       const query = 'YADA view protector'
       const config = '0 1 3'
-      const value = `${pl},auth.path.rx=${authrx},execution.policy.indexes=${config},content.policy=void`
+      const value = `${pl}, auth.path.rx=${authrx}, execution.policy.indexes=${config}, content.policy=void`
       util.addSecPlugin(pl).then(() => {
         cy.get('.security input[name="auth.path.rx"]').then(el1 => {
           let input = cy.wrap(el1)
@@ -408,7 +403,7 @@ context('Security Parameters', function () {
           input.blur()
           util.addSecPolicy(policy, type, query, config)
           util.confirmSecPolicyRO('authorization')
-          util.saveAndConfirmSecPlugin(count, 3, value, policy, type, query)
+          util.confirmSecPlugin(count, 3, value, policy, type, query)
         })
       })
     })
@@ -421,7 +416,7 @@ context('Security Parameters', function () {
       const query = 'YADA view protector'
       const config = 'TEST:getTest()'
       const contentPol = 'FOO BAR'
-      const value = `${pl},auth.path.rx=${authrx},execution.policy.columns=${config},content.policy.predicate=${contentPol}`
+      const value = `${pl}, auth.path.rx=${authrx}, execution.policy.columns=${config}, content.policy.predicate=${contentPol}`
       util.addSecPlugin(pl).then(() => {
         cy.get('.security input[name="auth.path.rx"]').then(el1 => {
           let input = cy.wrap(el1)
@@ -435,7 +430,7 @@ context('Security Parameters', function () {
             input = cy.wrap(el2)
             input.type(contentPol)
             input.blur().then(() => {
-              util.saveAndConfirmSecPlugin(count, 3, value, policy, type, query)
+              util.confirmSecPlugin(count, 3, value, policy, type, query)
             })
           })
         })
@@ -449,7 +444,7 @@ context('Security Parameters', function () {
       const query = 'YADA view protector'
       const config = 'TEST:getTest()'
       const contentPol = 'FOO BAR'
-      const value = `${pl},execution.policy.columns=${config},content.policy.predicate=${contentPol}`
+      const value = `${pl}, execution.policy.columns=${config}, content.policy.predicate=${contentPol}`
       util.addSecPlugin(pl).then(() => {
         util.addSecPolicy(policy, type, query, config)
         util.confirmSecPolicyRO('authorization')
@@ -458,7 +453,7 @@ context('Security Parameters', function () {
           let input = cy.wrap(el2)
           input.type(contentPol)
           input.blur().then(() => {
-            util.saveAndConfirmSecPlugin(count, 3, value, policy, type, query)
+            util.confirmSecPlugin(count, 3, value, policy, type, query)
           })
         })
       })
@@ -470,7 +465,7 @@ context('Security Parameters', function () {
       const type = 'whitelist'
       const grant = 'TESTROLE'
       const contentPol = 'FOO BAR'
-      const value = `${pl},authorization.policy.grant=${grant},execution.policy=void,content.policy.predicate=${contentPol}`
+      const value = `${pl}, authorization.policy.grant=${grant}, execution.policy=void, content.policy.predicate=${contentPol}`
       util.addSecPlugin(pl).then(() => {
         util.addSecPolicy(policy, type, grant)
         util.confirmSecPolicyRO('execution')
@@ -480,7 +475,7 @@ context('Security Parameters', function () {
           let input = cy.wrap(el2)
           input.type(contentPol)
           input.blur().then(() => {
-            util.saveAndConfirmSecPlugin(count, 3, value, policy, type, grant)
+            util.confirmSecPlugin(count, 3, value, policy, type, grant)
           })
         })
       })
@@ -492,7 +487,7 @@ context('Security Parameters', function () {
       const type = 'whitelist'
       const grant = 'TESTROLE'
       const contentPol = 'FOO BAR'
-      const value = `${pl},authorization.policy.grant=${grant},execution.policy=void,content.policy.predicate=${contentPol}`
+      const value = `${pl}, authorization.policy.grant=${grant}, execution.policy=void, content.policy.predicate=${contentPol}`
       util.addSecPlugin(pl).then(() => {
         util.addSecPolicy(policy, type, grant)
         util.confirmSecPolicyRO('execution')
@@ -502,7 +497,7 @@ context('Security Parameters', function () {
           let input = cy.wrap(el2)
           input.type(contentPol)
           input.blur().then(() => {
-            util.saveAndConfirmSecPlugin(count, 3, value, policy, type, grant)
+            util.confirmSecPlugin(count, 3, value, policy, type, grant)
           })
         })
       })
@@ -516,7 +511,7 @@ context('Security Parameters', function () {
       const query = 'YADA view protector'
       const config = 'TEST:getTest()'
       const contentPol = 'FOO BAR'
-      const value = `${pl},auth.path.rx=${authrx},execution.policy.columns=${config},content.policy.predicate=${contentPol}`
+      const value = `${pl}, auth.path.rx=${authrx}, execution.policy.columns=${config}, content.policy.predicate=${contentPol}`
       util.addSecPlugin(pl).then(() => {
         cy.get('.security input[name="auth.path.rx"]').then(el1 => {
           let input = cy.wrap(el1)
@@ -530,7 +525,7 @@ context('Security Parameters', function () {
             input = cy.wrap(el2)
             input.type(contentPol)
             input.blur().then(() => {
-              util.saveAndConfirmSecPlugin(count, 3, value, policy, type, query)
+              util.confirmSecPlugin(count, 3, value, policy, type, query)
               // confirm load after save
               util.confirmSecLoadAfterSave(count, 3, value)
             })
@@ -546,7 +541,7 @@ context('Security Parameters', function () {
       const type = 'whitelist'
       const grant = 'TEST'
       const contentPol = 'FOO BAR'
-      const value = `${pl},auth.path.rx=${authrx},authorization.policy.grant=${grant},execution.policy=void,content.policy.predicate=${contentPol}`
+      const value = `${pl}, auth.path.rx=${authrx}, authorization.policy.grant=${grant}, execution.policy=void, content.policy.predicate=${contentPol}`
       util.addSecPlugin(pl).then(() => {
         cy.get('.security input[name="auth.path.rx"]').then(el1 => {
           let input = cy.wrap(el1)
@@ -560,7 +555,7 @@ context('Security Parameters', function () {
             input = cy.wrap(el2)
             input.type(contentPol)
             input.blur().then(() => {
-              util.saveAndConfirmSecPlugin(count, 3, value, policy, type, grant)
+              util.confirmSecPlugin(count, 3, value, policy, type, grant)
               // confirm load after save
               util.confirmSecLoadAfterSave(count, 3, value)
             })
@@ -577,7 +572,7 @@ context('Security Parameters', function () {
       const query = 'YADA view protector'
       const config = 'TEST:getTest()'
       const contentPol = 'FOO BAR'
-      const value = `${pl},auth.path.rx=${authrx},execution.policy.columns=${config},content.policy.predicate=${contentPol}`
+      const value = `${pl}, auth.path.rx=${authrx}, execution.policy.columns=${config}, content.policy.predicate=${contentPol}`
       util.addSecPlugin(pl).then(() => {
         cy.get('.security input[name="auth.path.rx"]').then(el1 => {
           let input = cy.wrap(el1)
@@ -591,7 +586,7 @@ context('Security Parameters', function () {
             input = cy.wrap(el2)
             input.type(contentPol)
             input.blur().then(() => {
-              util.saveAndConfirmSecPlugin(count, 3, value, policy, type, query)
+              util.confirmSecPlugin(count, 3, value, policy, type, query)
               // confirm load after save
               util.confirmSecLoadAfterSave(count, 3, value)
 

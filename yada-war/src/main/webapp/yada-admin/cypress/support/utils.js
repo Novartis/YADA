@@ -183,10 +183,11 @@ export const setParameter = (count, row, type, name, value, dfault) => {
 }
 
 export const _setParameter = (count, row, type, name, value, dfault) => {
-  return cy.get(`.params>table>tbody>tr:nth-child(${row})>td.param-name`).click().then(td => {
+  let tdsel = `.params>table>tbody>tr:nth-child(${row})>td.param-name`
+  return cy.get(tdsel).click().then(td => {
     cy.wrap(td).find(`div[data-value="${name}"]`).click().then(el => {
-      cy.wrap(td).find('.value').should('have.text', name)
-      cy.wrap(td).next().find('.value').should('contain', dfault)
+      cy.get(tdsel).find('.value').should('have.text', name)
+      cy.get(tdsel).next().find('.value').should('contain', dfault)
       cy.getState().its('unsavedParams').should('be.gt', 0)
 
       cy.get(`.params>table>tbody>tr:nth-child(${row})>td.param-val`).click().then(td => {
@@ -210,15 +211,17 @@ export const _setParameter = (count, row, type, name, value, dfault) => {
 }
 
 export const setInvalidParameter = (count, row, type, name, value, dfault) => {
+  const tdnamesel = `.params>table>tbody>tr:nth-child(${row})>td.param-name`
+  const tdvalsel = `.params>table>tbody>tr:nth-child(${row})>td.param-val`
   return prepParamForEdit(count).then(() => {
-    cy.get(`.params>table>tbody>tr:nth-child(${row})>td.param-name`).click().then(td => {
+    cy.get(tdnamesel).click().then(td => {
       cy.get(`div[data-value="${name}"]`).click().then(el => {
-        cy.wrap(td).find('.value').should('have.text', name)
-        cy.wrap(td).next().find('.value').should('contain', dfault)
+        cy.get(tdnamesel).find('.value').should('have.text', name)
+        cy.get(tdnamesel).next().find('.value').should('contain', dfault)
         cy.getState().its('unsavedParams').should('be.gt', 0)
       })
     })
-    cy.get(`.params>table>tbody>tr:nth-child(${row})>td.param-val`).click().then(td => {
+    cy.get(tdvalsel).click().then(td => {
       if (type === 'number')
       {
         cy.wrap(td).find('input').type(value).blur()
@@ -253,9 +256,9 @@ export const createMultipleParams = (count, names) => {
       setOneOfManyParameter(count, 1, 'boolean', names[0], 'false', 'false')
         .then(() => {
           setOneOfManyParameter(count, 2, 'string', names[1], 'testing', 'Change me...')
-        })
-        .then(() => {
-          setOneOfManyParameter(count, 3, 'number', names[2], '-1', '20')
+          .then(() => {
+            setOneOfManyParameter(count, 3, 'number', names[2], '-1', '20')
+          })
         })
     }
   })
@@ -295,8 +298,8 @@ export const testParameterDeletion = (count, names, row) => {
 
 export const testParamDnD = (count, names, src, tgt) => {
   let source = `.params>table>tbody>tr:nth-child(${src})>td.param-id`
-  let target = `.params>table>tbody>tr:nth-child(${tgt})>td.param-id`
-  cy.get(source).drag(target).then(() => {
+  let target = `.params>table>tbody>tr:nth-child(${tgt})`
+  cy.get(source).drag(target,{force:true}).then(() => {
     cy.save().then(() => {
       cy.confirmParamSave(count).then(result => {
         const reso = result.stdout.replace(/\n/g, ',')
@@ -423,10 +426,22 @@ export const confirmSecLoadAfterSave = (count, param, value) => {
                       let value   = val[param].VALUE
                       let secconf = value.split(/,/).reduce((a, c) => {
                         let pair = c.split(/=/)
-                        if (pair.length === 1)
-                          a['plugin'] = pair[0]
-                        else
-                          a[pair[0]] = pair[1]
+                        let prop = 'plugin'
+                        let valdex = 0
+                        // if (pair.length === 1)
+                        // {
+                        //   const valdex = 0
+                        //   // const pval = pair[0].replace(/^\s*(.+)\s*$/,"$1")
+                        //   a['plugin'] = pval
+                        // }
+                        // else
+                        if (pair.length === 2)
+                        {
+                          prop = pair[0].replace(/^\s*(.+)\s*$/,"$1")
+                          valdex = 1
+                          // a[prop] = pval
+                        }
+                        a[prop] = pair[valdex].replace(/^\s*(.+)\s*$/,"$1") 
                         return a
                       }, {})
                       cy.get('input[name="plugin"]').should('have.value', secconf['plugin'])
