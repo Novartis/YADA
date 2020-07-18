@@ -22,10 +22,9 @@ export default {
   },
   methods: {
     login () {
-      this.$store.commit(types.SET_LOGGEDUSER, 'YADA')
-      let q = 'YADA check credentials'
-      let p = [ this.loggeduser, 'yada' ].join(',')
-      this.$yada.std(q, p).then(this.$store.dispatch(types.LOAD_APPS, {}))
+      const YADA = JSON.parse(window.sessionStorage.getItem('YADA'))
+      this.$store.commit(types.SET_LOGGEDUSER, atob(YADA.sec.u))
+      this.$store.dispatch(types.LOAD_APPS, {})
     }
   },
   mounted () {
