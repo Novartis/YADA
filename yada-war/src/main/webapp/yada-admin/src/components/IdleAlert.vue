@@ -37,7 +37,7 @@ export default {
       auth: true,
       events: ['load', 'mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'],
       timeout: 1000 * 60 * 30,   // 30 minutes
-      authTimeout: 1000 * 31, // 31 seconds
+      authTimeout: 1000 * 60 * 5, // 5 minutes
       authInterval: null,
       inactivityTimer: null,
       countdown: 10,    // count
@@ -49,29 +49,24 @@ export default {
   },
   methods: {
 
-    // a second authentication-based timeout
+    // a second, authentication-based timeout
     authenticationTime () {
-      /* eslint-disable-next-line camelcase */
-      let rx_cookie = /yadachkr/
-      // let rx_domain = /local/
-      // let login     = '/yada-admin/login.html'
-      // set timeout
-      // let date = new Date().getTime() / 1000
       this.authInterval = window.setInterval(() => {
-        // console.log(document.cookie)
-        // console.log(rx_cookie.test(document.cookie))
-        // console.log(new Date().getTime()/1000 - date)
-        if (!rx_cookie.test(document.cookie))// && !rx_domain.test(document.domain))
-        {
-          this.idle = true
-          this.auth = false
-          this.countdown = 10
-          this.message = 'To protect your data, the system logs you out automatically and requires you to re-authenticate after 4 hours.'
-          this.prompt()
-          // TODO set the path cookie on logout so login takes user right back there
-          // right now it doesn't work bc it creates a loop at least in local dev it does
-          // document.cookie = "qdsspath=;domain=qdss.io;path=/;"
-        }
+        this.$yada.std('YADA select apps', null, {c: false})
+        .then((r) => {
+          // console.log(r)
+        })
+        .catch((err) => {
+          if(err.response
+              && (err.response.status === 401 || err.response.status === 403))
+          {
+            this.idle = true
+            this.auth = false
+            this.countdown = 10
+            this.message = 'To protect your data, the system logs you out automatically and requires you to re-authenticate after 4 hours.'
+            this.prompt()
+          }
+        })
       }, this.authTimeout)
     },
 

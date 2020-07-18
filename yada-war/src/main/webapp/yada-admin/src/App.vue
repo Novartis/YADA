@@ -64,7 +64,7 @@
         :key="item"
         class="item contextmenuitem">{{ item }}</a>
     </div>
-    <!-- <IdleAlert/> -->
+    <IdleAlert/>
     <div class="ui mini modal saving">
       <div class="content">
         <p>Saving...</p>
