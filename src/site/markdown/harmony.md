@@ -1,11 +1,10 @@
 # Harmonizer Guide & Specification
-
 <div style="float:right;margin-top:-43px;">
     <img src="../resources/images/blox250.png"/>
-</div> 
+</div>
 
 
-Harmonizer enables on-the-fly renaming of columns or keys in results returned from a YADA Request. 
+Harmonizer enables on-the-fly renaming of columns or keys in results returned from a YADA Request.
 
 Some uses of harmonizer:
 
@@ -25,7 +24,7 @@ See the [examples] below the specification.
 
 The harmonyMap is a JSON object containing a set of key:value pairs.  Again, parentheses `(` and `)` are used to denote optional content.
 
-## Usage 
+## Usage
 
 ### Embedded
 
@@ -37,7 +36,7 @@ The harmonyMap spec can be includud as a top-level url parameter.
 
 ## Specification
 
-### Base 
+### Base
 
 ```javascript
 {
@@ -48,21 +47,21 @@ The harmonyMap spec can be includud as a top-level url parameter.
 ### key:value
 
 ```javascript
-  key : value 
+  key : value
 ```
 ### key
 
 |Variant|Accepted Values|Description/Usage|  
-|---|---|-----|----------------------|
-|String|`String`|**Description**: A single contiguous character sequence representing a column or key name in the original result<br/>**Use**: to reference single column in a tabular result; to reference a simple key or path element in a JSON result|
-|Path|`String.String(.String…)`|**Description**: A sequence of two or more Strings separated by `.` (dot) characters, indicating descent down a path of nested JSON objects<br/>**Use**: to map a nested value from a JSON object to a new key or column|  
-|Array|`String|Path.[*](.…)`|**Description**: A sequence beginning with a String or Path, followed by a `.` (dot) character, followed by opening and closing square brackets `[` and `]` containing an asterisk `*`.<br/>**Use**: to map all elements of a JSON array to a new key or column|
-|Slice|`String|Path.[lo-hi](.…)`|**Description**: A sequence beginning with a String or Path, followed by a `.` (dot) character, followed by opening and closing square brackets `[` and `]` containing a number representing the lower bound (lo) and a number representing an upper bound (hi) separated by a hyphen `-`. *Note:*  As in javascript's `slice` function, the upper bound in exclusive. Unlike `slice` the upper bound is required and must be a positive integer.<br/>**Use**: to map a slice of a nested JSON array to a new key or column|
-|Select|`String|Path.[n(,n…)](.…)`|**Description**: A sequence beginning with a String or Path, followed by a `.` (dot) character, followed by opening and closing square brackets `[` and `]` containing a comma-delimited list of numbers representing the desired indices of JSON array.<br/>**Use**: to map individual elements of a nested JSON array to a new key or column|
+|---|-----|----------------------|  
+|String|`String`|**Description**: A single contiguous character sequence representing a column or key name in the original result<br/>**Use**: to reference single column in a tabular result; to reference a simple key or path element in a JSON result|  
+|Path|`String.String(.String…)`|**Description**: A sequence of two or more Strings separated by `.` (dot) characters, indicating descent down a path of nested JSON objects<br/>**Use**: to map a nested value from a JSON object to a new key or column|    
+|Array|`String\|Path.[*](.…)`|**Description**: A sequence beginning with a String or Path, followed by a `.` (dot) character, followed by opening and closing square brackets `[` and `]` containing an asterisk `*`.<br/>**Use**: to map all elements of a JSON array to a new key or column|
+|Slice|`String\|Path.[lo-hi](.…)`|**Description**: A sequence beginning with a String or Path, followed by a `.` (dot) character, followed by opening and closing square brackets `[` and `]` containing a number representing the lower bound (lo) and a number representing an upper bound (hi) separated by a hyphen `-`. *Note:*  As in javascript's `slice` function, the upper bound in exclusive. Unlike `slice` the upper bound is required and must be a positive integer.<br/>**Use**: to map a slice of a nested JSON array to a new key or column|
+|Select|`String\|Path.[n(,n…)](.…)`|**Description**: A sequence beginning with a String or Path, followed by a `.` (dot) character, followed by opening and closing square brackets `[` and `]` containing a comma-delimited list of numbers representing the desired indices of JSON array.<br/>**Use**: to map individual elements of a nested JSON array to a new key or column|
 
 ### value
 |Variant|Accepted Values|Description/Usage|  
-|---|---|-----|----------------------|
+|---|-----|----------------------|
 |String|`String`|**Description**: A single contiguous character sequence representing a column or key name in the transformed result<br/>**Use**: to map a source value to a single column simple top-level JSON key|
 |Path|`String.String(.String…)`|**Description**: A sequence of two or more Strings separated by `.` (dot) characters, indicating descent down a path of nested JSON objects<br/>**Use**: to map a source value to a a single column or nested JSON object|  
 
@@ -106,8 +105,8 @@ http://localhost/yada.jsp?q=YADA test harmony map 1
 // query
 http://localhost/yada.jsp?q=YADA test harmony map 1&h={"col1":"STRING","col2":"INT","col3":"FLOAT"}
 
-// JSON result - note the base query was unchanged, 
-// but with the harmonyMap (h) parameter, 
+// JSON result - note the base query was unchanged,
+// but with the harmonyMap (h) parameter,
 // the column names have been changed in the result
 {"RESULTSET":
   {"total":8,
@@ -209,7 +208,7 @@ http://localhost/yada.jsp?q=QGO%20search&p=GO:0005515
 http://localhost/yada.jsp?q=QGO%20search&p=GO:0005515&h={"prune":true,"termInfo.info.name":"name","termInfo.info.code":"code"}
 
 // pruned, and harmonized result
-// note the "keys" in the harmony map refer to nested objects at a 
+// note the "keys" in the harmony map refer to nested objects at a
 // dot-delimited path.
 {
   "RESULTSET": {
