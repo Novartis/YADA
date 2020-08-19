@@ -1,0 +1,3 @@
+{
+  "query": "update yada_test set col3=?n where (col1='A' or col1='Z') and col2 in (?i)"
+}

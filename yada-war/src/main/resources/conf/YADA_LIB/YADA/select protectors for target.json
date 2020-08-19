@@ -1,0 +1,46 @@
+{
+  "query": "select qname as \"QNAME\", type as \"TYPE\" from yada_a11n where target = ?v",
+  "params": [
+    {
+      "name": "pl",
+      "value": "Gatekeeper",
+      "spec": {
+        "columns": [
+          "userid:getLoggedUser()"
+        ],
+        "policy": "E",
+        "protector": "YADA view protector",
+        "type": "allow"
+      },
+      "rule": 1
+    },
+    {
+      "name": "pz",
+      "value": "-1",
+      "rule": 1,
+      "spec": {
+        "qualifier": [
+          "YADA view protector"
+        ],
+        "type": "allow"
+      }
+    },
+    {
+      "name": "c",
+      "value": "false",
+      "rule": 1,
+      "spec": {
+        "qualifier": [
+          "YADA view protector"
+        ],
+        "type": "allow"
+      }
+    }
+  ],
+  "props": [
+    {
+      "name": "protected",
+      "value": "true"
+    }
+  ]
+}

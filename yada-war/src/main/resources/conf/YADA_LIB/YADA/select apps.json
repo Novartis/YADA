@@ -1,0 +1,33 @@
+{
+  "query": "select a.app \"APP\", a.name \"NAME\", a.descr \"DESCR\", CASE WHEN b.role = 'ADMIN' THEN a.conf ELSE 'UNAUTHORIZED' END \"CONF\", a.active \"ACTIVE\" from yada_query_conf a join yada_ug b on a.app = b.app where a.app != 'YADA'",
+  "params": [
+    {
+      "name": "pl",
+      "value": "Gatekeeper",
+      "spec": {
+        "predicate": "userid=getQLoggedUser()",
+        "policy": "E",
+        "protector": "YADA view protector",
+        "type": "allow"
+      },
+      "rule": 1
+    },
+    {
+      "name": "pz",
+      "value": "-1",
+      "rule": 1,
+      "spec": {
+        "qualifier": [
+          "YADA view protector"
+        ],
+        "type": "allow"
+      }
+    }
+  ],
+  "props": [
+    {
+      "name": "protected",
+      "value": "true"
+    }
+  ]
+}

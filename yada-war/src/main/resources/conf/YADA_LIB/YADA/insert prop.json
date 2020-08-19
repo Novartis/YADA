@@ -1,0 +1,45 @@
+{
+  "query": "insert into yada_prop (target, name, value) values (?v,?v,?v)",
+  "params": [
+    {
+      "name": "pl",
+      "value": "Gatekeeper",
+      "spec": {
+        "columns": [
+          "userid:getLoggedUser()"
+        ],
+        "policy": "E",
+        "protector": "YADA crud protector",
+        "type": "allow"
+      },
+      "rule": 1
+    },
+    {
+      "name": "pl",
+      "value": "CachedQueryUpdater",
+      "rule": 1,
+      "spec": {
+        "policy": "E",
+        "protector": "YADA crud protector",
+        "type": "allow"
+      }
+    },
+    {
+      "name": "cv",
+      "value": "RESTResultJSONConverter",
+      "rule": 1,
+      "spec": {
+        "qualifier": [
+          "YADA crud protector"
+        ],
+        "type": "allow"
+      }
+    }
+  ],
+  "props": [
+    {
+      "name": "protected",
+      "value": "true"
+    }
+  ]
+}

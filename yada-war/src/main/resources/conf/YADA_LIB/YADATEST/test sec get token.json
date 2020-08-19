@@ -1,0 +1,14 @@
+{
+  "query": "select * from yada_test",
+  "params": [
+    {
+      "name": "pl",
+      "value": "Gatekeeper",
+      "spec": {
+        "predicate": "token=getQToken()",
+        "policy": "C"
+      },
+      "rule": 1
+    }
+  ]
+}

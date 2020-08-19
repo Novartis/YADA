@@ -1,0 +1,3 @@
+{
+  "query": "update yada_test set col4='2013-04-14' where col1=?v"
+}

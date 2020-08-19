@@ -1,0 +1,3 @@
+{
+  "query": "select 1 from yada_ug where upper(role) = 'ADMIN' and app = (select app from yada_query where qname = ?v) and userid=?v"
+}

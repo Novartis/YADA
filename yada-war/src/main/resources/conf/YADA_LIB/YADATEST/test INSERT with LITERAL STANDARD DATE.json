@@ -1,0 +1,3 @@
+{
+  "query": "insert into yada_test (col1,col2,col3,col4,col5) VALUES (?v,?i,?n,'2013-03-04',?t)"
+}

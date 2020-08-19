@@ -1,0 +1,18 @@
+{
+  "query": "select 'YADA protected static resource' as resource",
+  "params": [
+    {
+      "name": "pl",
+      "value": "Gatekeeper",
+      "spec": {
+        "policy": "A",
+        "qualifier": [
+          "ADMIN",
+          "FOO"
+        ],
+        "type": "allow"
+      },
+      "rule": 1
+    }
+  ]
+}

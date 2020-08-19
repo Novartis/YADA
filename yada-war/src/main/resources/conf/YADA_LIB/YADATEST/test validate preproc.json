@@ -1,0 +1,3 @@
+{
+  "query": "select app APP from yada_query_conf"
+}

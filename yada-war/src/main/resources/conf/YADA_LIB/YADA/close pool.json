@@ -1,0 +1,34 @@
+{
+  "query": "select app \"APP\" from yada_query_conf where app=?v",
+  "params": [
+    {
+      "name": "pl",
+      "value": "Gatekeeper",
+      "spec": {
+        "columns": [
+          "userid:getLoggedUser()"
+        ],
+        "policy": "E",
+        "protector": "YADA view protector",
+        "type": "allow"
+      },
+      "rule": 1
+    },
+    {
+      "name": "pl",
+      "value": "PoolCloser",
+      "rule": 1,
+      "spec": {
+        "policy": "E",
+        "protector": "YADA view protector",
+        "type": "allow"
+      }
+    }
+  ],
+  "props": [
+    {
+      "name": "protected",
+      "value": "true"
+    }
+  ]
+}

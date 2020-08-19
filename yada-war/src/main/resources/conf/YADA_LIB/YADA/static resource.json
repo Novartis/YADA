@@ -1,0 +1,11 @@
+{
+  "query": "select 'YADA static resource' as resource",
+  "params": [
+    {
+      "name": "pl",
+      "value": "Gatekeeper",
+      "spec": {},
+      "rule": 1
+    }
+  ]
+}

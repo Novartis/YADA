@@ -1,0 +1,21 @@
+{
+  "query": "select * from yada_test where col1=?v and col2=?i",
+  "params": [
+    {
+      "name": "pl",
+      "value": "Gatekeeper",
+      "spec": {
+        "policy": "E",
+        "protector": "YADA test sec multi params no polcols protector",
+        "type": "allow"
+      },
+      "rule": 1
+    }
+  ],
+  "props": [
+    {
+      "name": "protected",
+      "value": "true"
+    }
+  ]
+}

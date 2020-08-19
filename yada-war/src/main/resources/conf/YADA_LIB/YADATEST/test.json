@@ -1,0 +1,3 @@
+{
+  "query": "select qname,app from yada_query"
+}

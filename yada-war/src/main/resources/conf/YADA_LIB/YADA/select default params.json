@@ -1,0 +1,47 @@
+{
+  "query": "SELECT id as \"ID\", target as \"TARGET\", name as \"NAME\", value as \"VALUE\", rule as \"RULE\" FROM YADA_PARAM where target in (?v) and target not in ('YADA apps','YADA queries','YADA new query','YADA delete query','YADA insert usage log','YADA update query')",
+  "params": [
+    {
+      "name": "pl",
+      "value": "Gatekeeper",
+      "spec": {
+        "columns": [
+          "app:getValue(TARGET)",
+          "userid:getLoggedUser()"
+        ],
+        "policy": "E",
+        "protector": "YADA view protector",
+        "type": "allow"
+      },
+      "rule": 1
+    },
+    {
+      "name": "c",
+      "value": "false",
+      "rule": 1,
+      "spec": {
+        "qualifier": [
+          "YADA view protector"
+        ],
+        "type": "allow"
+      }
+    },
+    {
+      "name": "pz",
+      "value": "-1",
+      "rule": 1,
+      "spec": {
+        "qualifier": [
+          "YADA view protector"
+        ],
+        "type": "allow"
+      }
+    }
+  ],
+  "props": [
+    {
+      "name": "protected",
+      "value": "true"
+    }
+  ]
+}
