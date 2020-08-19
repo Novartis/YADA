@@ -197,7 +197,10 @@ src.forEach(f => {
             else if(/paramrule/.test(col)) // last param column
             {
               param[col.replace(/param/,'')] = parseInt(c) // omit the 'param' part of the name
-              if(param !== null)
+              if(param !== null
+                && query['params'].filter(p => {
+                  return p['name'] === param['name'] && p['value'] === param['value']
+                }).length == 0)
               {
                 query['params'].push(param)
               }
@@ -227,15 +230,15 @@ src.forEach(f => {
 
                 if('execution.policy.columns' in vals)
                 {
-                  param['spec']['columns'] = vals['execution.policy.columns']
+                  param['spec']['columns'] = vals['execution.policy.columns'].split(/\s/)
                 }
                 else if('execution.policy.indexes' in vals)
                 {
-                  param['spec']['indexes'] = vals['execution.policy.indexes']
+                  param['spec']['indexes'] = vals['execution.policy.indexes'].split(/\s/)
                 }
                 else if('execution.policy.indices' in vals)
                 {
-                  param['spec']['indices'] = vals['execution.policy.indices']
+                  param['spec']['indices'] = vals['execution.policy.indices'].split(/\s/)
                 }
               }
               else
@@ -250,25 +253,42 @@ src.forEach(f => {
           }
           else if(/policy|qualifier|type/.test(col)) // spec columns
           {
+            let existingParams = query['params'].filter(p => {
+              return p['name'] == param['name'] && p['value'] == param['value']
+            })
+            if(existingParams.length == 1)
+            {
+              param = existingParams[0]
+            }
+
             if(/policy/.test(col) && param['name'] === 'pl')
             {
               if(typeof param['spec'] === 'undefined')
                 param['spec'] = {}
               param['spec'][col] = c
             }
-            else
+            else // qualifier or type
             {
               if(typeof param['spec'] === 'undefined') // there's an exception in the data where 'policy' is null but 'type' isn't
               {
                 param['spec'] = {}
               }
 
-              // change the key val if necessary
-              if(param['spec']['policy'] === 'E' && col === 'qualifier')
+              if(col === 'qualifier')
               {
-                col = 'protector'
+                // change the key val if necessary
+                if(param['spec']['policy'] === 'E')
+                {
+                  col = 'protector'
+                  param['spec'][col] = c
+                }
+                else // A: col == 'qualifier'
+                {
+                  if(!(col in param['spec']))
+                    param['spec'][col] = []
+                  param['spec'][col].push(c)
+                }
               }
-
               // conform the type vals
               if(col === 'type')
               {
@@ -276,10 +296,12 @@ src.forEach(f => {
                   c = 'allow'
                 else if(/blacklist/.test(c))
                   c = 'deny'
+                param['spec'][col] = c
               }
 
-              param['spec'][col] = c
+
             }
+
           }
         }
         else if(/prop/.test(col)) // its a prop column
@@ -298,6 +320,8 @@ src.forEach(f => {
             prop[col.replace(/prop/,'')] = c
             if(prop !== null)
             {
+              // check for duplicate prop entries (common in this sql result)
+              // only add if unique
               let propstr = JSON.stringify(prop)
               if(!query['props'].some(p => { return JSON.stringify(p) == propstr }))
                 query['props'].push(prop)
