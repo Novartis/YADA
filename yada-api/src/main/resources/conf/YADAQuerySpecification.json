@@ -34,7 +34,7 @@
         },
         {
           "type": "string",
-          "pattern": "^(((([0-9]+):)?(get[A-Z][a-zA-Z0-9_]+\\([A-Za-z0-9_]*\\))|[\\d]+)\\s?)+$"
+          "pattern": "^(((([0-9]+):)?(get[A-Z][a-zA-Z0-9_]+\\([A-Za-z0-9_]*\\))|[\\d]+))$"
         }
       ],
       "title": "Index"
@@ -590,7 +590,7 @@
           "type": "array",
           "items": {
             "type": "string",
-            "pattern": "^(((([a-zA-Z0-9_]+):)?(get[A-Z][a-zA-Z0-9_]+\\([A-Za-z0-9_]*\\))|[A-Za-z0-9_]+)\\s?)+$"
+            "pattern": "^(((([a-zA-Z0-9_]+):)?(get[A-Z][a-zA-Z0-9_]+\\([A-Za-z0-9_]*\\))|[A-Za-z0-9_]+))$"
           }
         },
         "indices": {
