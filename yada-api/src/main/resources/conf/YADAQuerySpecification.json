@@ -1,0 +1,663 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/YADAQuery",
+  "definitions": {
+    "YADAQuery": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "query": {
+          "type": "string"
+        },
+        "params": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Param"
+          }
+        },
+        "props": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Property"
+          }
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "YADAQuery"
+    },
+    "Index": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string",
+          "pattern": "^(((([0-9]+):)?(get[A-Z][a-zA-Z0-9_]+\\([A-Za-z0-9_]*\\))|[\\d]+)\\s?)+$"
+        }
+      ],
+      "title": "Index"
+    },
+    "Value": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "title": "Value"
+    },
+    "Property": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/definitions/Value"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "title": "Property"
+    },
+    "Filter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "groupOp": {
+          "type": "string",
+          "enum": [
+            "AND",
+            "OR"
+          ]
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Rule"
+          }
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Filter"
+          }
+        }
+      },
+      "required": [
+        "groupOp",
+        "rules"
+      ],
+      "title": "Filter"
+    },
+    "Rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "op": {
+          "type": "string",
+          "enum": [
+            "eq",
+            "ne",
+            "lt",
+            "le",
+            "gt",
+            "ge",
+            "in",
+            "ni",
+            "nu",
+            "nn",
+            "bw",
+            "bn",
+            "ew",
+            "en",
+            "cn",
+            "nc"
+          ]
+        },
+        "data": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "number",
+            "text",
+            "etxt"
+          ]
+        }
+      },
+      "required": [
+        "data",
+        "field",
+        "op"
+      ],
+      "title": "Rule"
+    },
+    "JSONParam": {
+      "type": "object",
+      "properties": {
+        "qname": {
+          "type": "string"
+        },
+        "DATA": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Datum"
+          }
+        }
+      },
+      "required": [
+        "DATA",
+        "qname"
+      ],
+      "title": "JSONParam"
+    },
+    "Datum": {
+      "type": "object",
+      "title": "Datum"
+    },
+    "Mail": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "cc": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "from",
+        "subject",
+        "to"
+      ],
+      "title": "Mail"
+    },
+    "Param": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "enum": [
+            "a",
+            "b",
+            "cq",
+            "cv",
+            "ck",
+            "c",
+            "co",
+            "d",
+            "e",
+            "el",
+            "fi",
+            "f",
+            "h",
+            "H",
+            "ij",
+            "j",
+            "lj",
+            "m",
+            "mail",
+            "o",
+            "pz",
+            "pg",
+            "p",
+            "ps",
+            "pl",
+            "pt",
+            "pa",
+            "pr",
+            "py",
+            "pc",
+            "px",
+            "q",
+            "r",
+            "rd",
+            "s",
+            "so",
+            "us",
+            "u",
+            "vl"
+          ]
+        },
+        "value": {
+          "$ref": "#/definitions/Value"
+        },
+        "rule": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "spec": {
+          "$ref": "#/definitions/Spec"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "name": {
+                "enum": [
+                  "c",
+                  "cq",
+                  "co",
+                  "e",
+                  "py",
+                  "us"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "name": {
+                "enum": [
+                  "el",
+                  "pz"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "integer",
+                "minumum": -1,
+                "not": {
+                  "const": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "name": {
+                "enum": [
+                  "pg"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "integer",
+                "minumum": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "name": {
+                "enum": [
+                  "a",
+                  "b",
+                  "ck",
+                  "d"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "name": {
+                "enum": [
+                  "H"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9_\\-]+(?:,[a-zA-Z0-9_\\-])*$",
+                    "$comment": "header: value"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "name": {
+                "enum": [
+                  "cv",
+                  "pl",
+                  "r"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "string",
+                "pattern": "(?:(?:[a-z0-9]+)\\.(?:[a-z0-9\\.]+)*)*[A-Z][a-zA-Z0-9]+$",
+                "$comment": "classname or fully-qualified class name"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "name": {
+                "enum": [
+                  "m"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "enum": [
+                  "GET",
+                  "POST",
+                  "PUT",
+                  "PATH",
+                  "DELETE",
+                  "OPTIONS",
+                  "HEAD",
+                  "update",
+                  "upload"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "name": {
+                "enum": [
+                  "f"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "enum": [
+                  "json",
+                  "csv",
+                  "tsv",
+                  "tab",
+                  "psv",
+                  "pipe",
+                  "xml",
+                  "html",
+                  "delimited"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "name": {
+                "enum": [
+                  "fi"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "$ref": "#/definitions/Filter"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "name": {
+                "enum": [
+                  "mail"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "$ref": "#/definitions/Mail"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "name": {
+                "enum": [
+                  "h"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "pattern": "^\\{\\s*[\\\"\\']?[a-zA-Z0-9_]+(?:\\.[a-zA-Z0-9]+(?:\\[\\d+(?:(?:\\-\\d+)?|(?:,\\d+)*)\\])?)*[\\\"\\']?\\s*:\\s*[\\\"\\']?[a-zA-Z0-9_]+[\\\"\\']?\\s*(?:,\\s*[\\\"\\']?prune[\\\"\\']?\\s*:\\s*true)?}$"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "name": {
+                "enum": [
+                  "p"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "pattern": "(?:[a-zA-Z0-9\\][\\]]+)(?:,(?:[,a-zA-Z0-9\\[\\]]+))*"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "name": {
+                "enum": [
+                  "j"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/JSONParam"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "required": [
+        "name",
+        "rule",
+        "value"
+      ],
+      "title": "Param"
+    },
+    "Spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "auth.path.rx": {
+          "type": "string"
+        },
+        "token.validator": {
+          "type": "string",
+          "pattern": "(?:(?:[a-z0-9]+)\\.(?:[a-z0-9\\.]+)*)[A-Z][a-zA-Z0-9]+$",
+          "$comment": "fully-qualified class name"
+        },
+        "policy": {
+          "type": "string",
+          "enum": [
+            "A",
+            "E",
+            "C"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "allow",
+            "deny"
+          ]
+        },
+        "qualifier": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "protector": {
+          "type": "string"
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(((([a-zA-Z0-9_]+):)?(get[A-Z][a-zA-Z0-9_]+\\([A-Za-z0-9_]*\\))|[A-Za-z0-9_]+)\\s?)+$"
+          }
+        },
+        "indices": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Index"
+          }
+        },
+        "indexes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Index"
+          }
+        },
+        "predicate": {
+          "type": "string"
+        }
+      },
+      "oneOf": [
+        {
+          "allOf": [
+            {
+              "required": [
+                "type",
+                "qualifier"
+              ],
+              "not": {
+                "anyOf": [
+                  {"required": ["protector"]},
+                  {"required": ["columns"]},
+                  {"required": ["indices"]},
+                  {"required": ["indexes"]}
+                ]
+              },
+              "$comment": "A"
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "required": [
+                "type",
+                "predicate"
+              ],
+              "$comment": "C"
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "required": [
+                "type",
+                "protector"
+              ],
+              "not": {
+                "required": [
+                  "qualifier"
+                ]
+              },
+              "$comment": "E"
+            }
+          ]
+        }
+      ],
+      "title": "Spec"
+    }
+  }
+}
