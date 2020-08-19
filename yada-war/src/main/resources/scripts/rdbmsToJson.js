@@ -213,17 +213,19 @@ src.forEach(f => {
                     p.push(p[0])
                     p[0] = 'plugin'
                   }
-                  a1[p[0]] =  p[1]
+                  a1[p[0]] = p.length > 2 ? p.slice(1).join('=') : p[1]
                   return a1
                 },{})
                 param['value'] = vals['plugin']
                 param['spec'] = {}
+
                 if('content.policy.predicate' in vals)
                 {
                   param['spec']['predicate'] = vals['content.policy.predicate']
                   param['spec']['policy'] = 'C'
                 }
-                else if('execution.policy.columns' in vals)
+
+                if('execution.policy.columns' in vals)
                 {
                   param['spec']['columns'] = vals['execution.policy.columns']
                 }
