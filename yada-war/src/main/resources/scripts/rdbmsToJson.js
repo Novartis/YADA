@@ -2,7 +2,7 @@
 
 const fs = require('fs')
 const del = require('del')
-const YADA_INDEX = '../conf/YADAIndex'
+const YADA_INDEX = '../conf/YADA_LIB'
 const YADA_CONF = 'conf.json'
 
 var argv = require('minimist')(process.argv.slice(2), {
@@ -20,7 +20,7 @@ var argv = require('minimist')(process.argv.slice(2), {
 if(!!argv.h || !!argv.help || !!argv['?'])
 {
   console.log('Usage: rdbmsToJson.js [-r] yadaconf yadaquery')
-  console.log('  Requirements:')
+  console.log('  Requirements:');
   console.log('    yadaconfs      a file containing the contents of the YADA_QUERY_CONF table')
   console.log('    yadaqueries    a file containing the contents of the YADA_QUERY,')
   console.log('                   YADA_PARAM, YADA_PROP, and YADA_A11N tables.')
@@ -178,6 +178,136 @@ src.forEach(f => {
       // set the query object -- will be reused for each query
       let   query = {}
 
+      function processField(fields,col,c,i) {
+        if(/param|policy|qualifier|type/.test(col)) // it's a param or spec column
+        {
+          if(/param/.test(col)) // its a param column
+          {
+
+            if(!('params' in query) ) // it may or may not be the first param for the query
+            {
+              query['params'] = []
+            }
+
+            if(/paramid/.test(col)) // we don't store the id anymore but it marks index
+            {
+              param = {}
+            }
+
+            else if(/paramrule/.test(col)) // last param column
+            {
+              param[col.replace(/param/,'')] = parseInt(c) // omit the 'param' part of the name
+              if(param !== null)
+              {
+                query['params'].push(param)
+              }
+            }
+            else if(/paramvalue/.test(col))
+            {
+              if(/,/.test(c))
+              {
+                let vals = c.split(/,/).reduce((a1,c1) => {
+                  let p = c1.split(/=/)
+                  if(typeof p[1] === 'undefined')
+                  {
+                    p.push(p[0])
+                    p[0] = 'plugin'
+                  }
+                  a1[p[0]] =  p[1]
+                  return a1
+                },{})
+                param['value'] = vals['plugin']
+                param['spec'] = {}
+                if('content.policy.predicate' in vals)
+                {
+                  param['spec']['predicate'] = vals['content.policy.predicate']
+                  param['spec']['policy'] = 'C'
+                }
+                else if('execution.policy.columns' in vals)
+                {
+                  param['spec']['columns'] = vals['execution.policy.columns']
+                }
+                else if('execution.policy.indexes' in vals)
+                {
+                  param['spec']['indexes'] = vals['execution.policy.indexes']
+                }
+                else if('execution.policy.indices' in vals)
+                {
+                  param['spec']['indices'] = vals['execution.policy.indices']
+                }
+              }
+              else
+              {
+                param['value'] = c
+              }
+            }
+            else
+            {
+              param[col.replace(/param/,'')] = c
+            }
+          }
+          else if(/policy|qualifier|type/.test(col)) // spec columns
+          {
+            if(/policy/.test(col) && param['name'] === 'pl')
+            {
+              if(typeof param['spec'] === 'undefined')
+                param['spec'] = {}
+              param['spec'][col] = c
+            }
+            else
+            {
+              if(typeof param['spec'] === 'undefined') // there's an exception in the data where 'policy' is null but 'type' isn't
+              {
+                param['spec'] = {}
+              }
+
+              // change the key val if necessary
+              if(param['spec']['policy'] === 'E' && col === 'qualifier')
+              {
+                col = 'protector'
+              }
+
+              // conform the type vals
+              if(col === 'type')
+              {
+                if(/whitelist/.test(c))
+                  c = 'allow'
+                else if(/blacklist/.test(c))
+                  c = 'deny'
+              }
+
+              param['spec'][col] = c
+            }
+          }
+        }
+        else if(/prop/.test(col)) // its a prop column
+        {
+          if(!('props' in query)) // it may or may not be the first prop for the query
+          {
+            query['props'] = []
+          }
+          if(/name/.test(col))
+          {
+            prop = {}
+            prop[col.replace(/prop/,'')] = c
+          }
+          else
+          {
+            prop[col.replace(/prop/,'')] = c
+            if(prop !== null)
+            {
+              let propstr = JSON.stringify(prop)
+              if(!query['props'].some(p => { return JSON.stringify(p) == propstr }))
+                query['props'].push(prop)
+            }
+          }
+        }
+        else
+        {
+          query[col] = c
+        }
+      }
+
       // iterate over the lines
       lines.slice(1).forEach((line,lineno) => {
         // not blank lies
@@ -232,21 +362,29 @@ src.forEach(f => {
                 sameqname = true // also another row for this qname
               }
 
-              if(!sameqname )
+              if(!sameqname ) // new query on current row, so write the old one
               {
-                appPath = typeof lastapp === 'undefined' || lastapp === app
-                          ? `${YADA_INDEX}/${app}`
-                          : `${YADA_INDEX}/${lastapp}`
+                let rx_prefix
+                if(typeof lastapp === 'undefined' || lastapp === app)
+                {
+                  appPath = `${YADA_INDEX}/${app}`
+                  rx_prefix = new RegExp(`^${app}\\s`)
+                }
+                else
+                {
+                  appPath = `${YADA_INDEX}/${lastapp}`
+                  rx_prefix = new RegExp(`^${lastapp}\\s`)
+                }
                 qPath   = typeof lastqname === 'undefined' || sameqname
-                          ? `${appPath}/${qname}.json`
-                          : `${appPath}/${lastqname}.json`
+                          ? `${appPath}/${qname.replace(rx_prefix,'')}.json`
+                          : `${appPath}/${lastqname.replace(rx_prefix,'')}.json`
                 if(!fs.existsSync(qPath))
                 {
                   fs.writeFileSync(qPath,JSON.stringify(query,null,2));
                 }
+                query = {}
               }
             }
-
 
             // q.query
             // p.id
@@ -259,76 +397,17 @@ src.forEach(f => {
             // n.qname qualifier
             // n.type
 
+
+
             // process the other fields
-            query = fields.slice(2).reduce((a,c,i) => {
+            fields.slice(2).forEach((c,i) => {
               let curHdrIdx = i+2
               let col = hdr[curHdrIdx]
-              if(c !== 'NULL')
+              if(c !== 'NULL' && c !== "")
               {
-                if(/param|policy|qualifier|type/.test(col)) // it's a param or spec column
-                {
-                  if(/param/.test(col)) // its a param column
-                  {
-                    if(!('params' in a)) // it may or may not be the first param for the query
-                    {
-                      a['params'] = []
-                    }
-                    if(/paramid/.test(col)) // we don't store the id anymore but it marks index
-                    {
-                      param = {}
-                    }
-                    else if(/paramrule/.test(col)) // last param column
-                    {
-                      param[col.replace(/param/,'')] = c // omit the 'param' part of the name
-                      a['params'].push(param)
-                    }
-                    else
-                    {
-                      param[col.replace(/param/,'')] = c
-                    }
-                  }
-                  else if(/policy|qualifier|type/.test(col)) // spec columns
-                  {
-                    if(/policy/.test(col))
-                    {
-                      param['spec'] = {}
-                      param['spec'][col] = c
-                    }
-                    else
-                    {
-                      if(typeof param['spec'] === 'undefined') // there's an exception in the data where 'policy' is null but 'type' isn't
-                      {
-                        param['spec'] = {}
-                      }
-                      param['spec'][col] = c
-                    }
-                  }
-                }
-                else if(/prop/.test(col)) // its a prop column
-                {
-                  if(!('props' in a)) // it may or may not be the first prop for the query
-                  {
-                    a['props'] = []
-                  }
-                  if(/name/.test(col))
-                  {
-                    prop = {}
-                    prop[col.replace(/prop/,'')] = c
-                  }
-                  else
-                  {
-                    prop[col.replace(/prop/,'')] = c
-                    a['props'].push(prop)
-                  }
-                }
-                else
-                {
-                  a[col] = c // query column
-                }
+                processField(fields,col,c,i)
               }
-              return a
-            },{})
-
+            })
           }
           // it's the last query fragment followed by other fiedls
           else if(multiLineQueryEnd)
@@ -337,65 +416,13 @@ src.forEach(f => {
             fields.slice(1).forEach((c,i) => {
               let colHdrIndex = i+3
               let col = hdr[colHdrIndex]
-              if(c !== 'NULL')
+              if(c !== 'NULL' && c !== "")
               {
-              if(/param|policy|qualifier|type/.test(col)) // it's a param or spec column
-                {
-                  if(/param/.test(col)) // its a param column
-                  {
-                    if(!('params' in query)) // it may or may not be the first param for the query
-                    {
-                      query['params'] = []
-                    }
-                    if(/paramid/.test(col)) // we don't store the id anymore but it marks index
-                    {
-                      param = {}
-                    }
-                    else if(/paramrule/.test(col)) // last param column
-                    {
-                      param[col.replace(/param/,'')] = c // omit the 'param' part of the name
-                      query['params'].push(param)
-                    }
-                    else
-                    {
-                      param[col.replace(/param/,'')] = c
-                    }
-                  }
-                  else if(/policy|qualifier|type/.test(col)) // spec columns
-                  {
-                    if(/policy/.test(col))
-                    {
-                      param['spec'] = {}
-                      param['spec'][col] = c
-                    }
-                    else
-                    {
-                      param['spec'][col] = c
-                    }
-                  }
-                }
-                else if(/prop/.test(col)) // its a prop column
-                {
-                  if(!('props' in query)) // it may or may not be the first prop for the query
-                  {
-                    query['props'] = []
-                  }
-                  if(/name/.test(col))
-                  {
-                    prop = {}
-                    prop[col.replace(/prop/,'')] = c
-                  }
-                  else
-                  {
-                    prop[col.replace(/prop/,'')] = c
-                    query['props'].push(prop)
-                  }
-                }
+                processField(fields,col,c,i)
               }
             })
           }
-          // it's a query fragment
-          else // if(fields.length == 1)
+          else
           {
             query['query'] = `${query.query}${fields[0]}`
           }
