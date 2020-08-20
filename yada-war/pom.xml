@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.novartis.opensource</groupId>
     <artifactId>YADA</artifactId>
-    <version>8.7.6-SNAPSHOT</version>
+    <version>9.0.0-SNAPSHOT</version>
   </parent>
   <artifactId>yada-war</artifactId>
   <name>yada-war</name>
@@ -19,19 +19,19 @@
   </distributionManagement>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <skip.sqlite.test>true</skip.sqlite.test>
+    <!-- <skip.sqlite.test>true</skip.sqlite.test>
     <skip.oracle.test>true</skip.oracle.test>
     <skip.mysql.test>true</skip.mysql.test>
     <skip.pgsql.test>true</skip.pgsql.test>
-    <skip.hsqldb.test>true</skip.hsqldb.test>
+    <skip.hsqldb.test>true</skip.hsqldb.test> -->
     <skip.deploy.war>true</skip.deploy.war>
-    <skip.proxy.test>true</skip.proxy.test>
-    <skip.noproxy.test>true</skip.noproxy.test>
+    <!-- <skip.proxy.test>true</skip.proxy.test>
+    <skip.noproxy.test>true</skip.noproxy.test> -->
     <deployment.goal>start</deployment.goal>
     <main.basedir>${project.parent.basedir}</main.basedir>
   </properties>
   <profiles>
-    <profile>
+  <!-- <profile>
       <id>test-hsqldb</id>
       <properties>
         <skip.hsqldb.test>false</skip.hsqldb.test>
@@ -58,7 +58,7 @@
 		            <configuration>
 		              <target unless="skip.db.launch">
 		                <property name="compile_classpath" refid="maven.compile.classpath" />
-		                <!-- command-line: java org.hsqldb.Server -database.0 file:${project.basedir}/src/main/webapp/YADADB -dbname.0 YADADB -->
+		                command-line: java org.hsqldb.Server -database.0 file:${project.basedir}/src/main/webapp/YADADB -dbname.0 YADADB
 		                <java classpath="${compile_classpath}" classname="org.hsqldb.Server">
 		                  <arg value="-database.0" />
 		                  <arg value="file:${project.basedir}/src/main/webapp/YADADB" />
@@ -128,8 +128,8 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
+    </profile> -->
+    <!-- <profile>
       <id>test-pgsql</id>
       <properties>
         <skip.pgsql.test>false</skip.pgsql.test>
@@ -258,8 +258,8 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
+    </profile> -->
+    <!-- <profile>
       <id>test-mysql</id>
       <properties>
         <skip.mysql.test>false</skip.mysql.test>
@@ -318,9 +318,9 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
+    </profile> -->
 
-    <profile>
+    <!-- <profile>
       <id>test-sqlite</id>
       <properties>
         <skip.sqlite.test>false</skip.sqlite.test>
@@ -379,8 +379,8 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
+    </profile> -->
+    <!-- <profile>
       <id>test-proxy</id>
       <properties>
         <skip.proxy.test>false</skip.proxy.test>
@@ -391,8 +391,8 @@
         <YADA.index.autoCommit>false</YADA.index.autoCommit>
         <YADA.index.driverClassName>${YADA.hsqldb.index.driverClassName}</YADA.index.driverClassName>
       </properties>
-    </profile>
-    <profile>
+    </profile> -->
+    <!-- <profile>
       <id>test-noproxy</id>
       <properties>
         <skip.noproxy.test>false</skip.noproxy.test>
@@ -403,7 +403,7 @@
         <YADA.index.autoCommit>false</YADA.index.autoCommit>
         <YADA.index.driverClassName>${YADA.hsqldb.index.driverClassName}</YADA.index.driverClassName>
       </properties>
-    </profile>
+    </profile> -->
     <profile>
       <id>deploy-war</id>
       <properties>
@@ -589,12 +589,13 @@
             <id>html-it</id>
             <phase />
           </execution>
-          <execution>
+          <!-- <execution>
             <id>copy-to-quickstart</id>
             <phase />
-          </execution>
+          </execution> -->
         </executions>
       </plugin>
+      
       <plugin>
         <groupId>org.codehaus.cargo</groupId>
         <artifactId>cargo-maven2-plugin</artifactId>
@@ -781,12 +782,6 @@
       <artifactId>sqlite-jdbc</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-dbcp</artifactId>
-      <version>7.0.47</version>
-      <scope>provided</scope>
-    </dependency> -->
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>

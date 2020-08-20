@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.novartis.opensource</groupId>
     <artifactId>YADA</artifactId>
-    <version>8.7.6-SNAPSHOT</version>
+    <version>9.0.0-SNAPSHOT</version>
   </parent>
   <artifactId>yada-api</artifactId>
   <name>yada-api</name>
@@ -31,7 +31,7 @@
     <yada.war.scriptdir>../yada-war/src/main/resources/scripts</yada.war.scriptdir>
   </properties>
   <profiles>
-    <profile>
+    <!-- <profile>
       <id>test-hsqldb</id>
       <properties>
         <YADA.index.url>${YADA.hsqldb.index.url}</YADA.index.url>
@@ -108,8 +108,8 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
+    </profile> -->
+    <!-- <profile>
       <id>test-pgsql</id>
       <properties>
         <YADA.index.url>${YADA.pgsql.index.url}</YADA.index.url>
@@ -186,8 +186,8 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
+    </profile> -->
+    <!-- <profile>
       <id>test-oracle</id>
       <properties>
         <YADA.index.url>${YADA.oracle.index.url}</YADA.index.url>
@@ -244,8 +244,8 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
+    </profile> -->
+    <!-- <profile>
       <id>test-mysql</id>
       <properties>
         <YADA.index.url>${YADA.mysql.index.url}</YADA.index.url>
@@ -301,7 +301,7 @@
                   </properties>
                   <useSystemClassLoader>false</useSystemClassLoader>
                   <reportNameSuffix>mysql</reportNameSuffix>
-                  <!-- <reportFormat>plain</reportFormat> -->
+                  <reportFormat>plain</reportFormat>
                   <trimStackTrace>false</trimStackTrace>
                   <systemPropertyVariables>
                     <java.naming.factory.initial>org.apache.naming.java.javaURLContextFactory</java.naming.factory.initial>
@@ -326,8 +326,8 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
+    </profile> -->
+    <!-- <profile>
       <id>test-sqlite</id>
       <properties>
         <YADA.index.url>${YADA.sqlite.index.url}</YADA.index.url>
@@ -407,8 +407,8 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
+    </profile> -->
+    <!-- <profile>
       <id>test-proxy</id>
       <properties>
         <YADA.index.url>${YADA.hsqldb.index.url}</YADA.index.url>
@@ -465,8 +465,8 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
+    </profile> -->
+    <!-- <profile>
       <id>test-noproxy</id>
       <properties>
         <YADA.index.url>${YADA.hsqldb.index.url}</YADA.index.url>
@@ -523,8 +523,8 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
+    </profile> -->
+    <!-- <profile>
       <id>test-fs</id>
       <properties>
         <YADA.index.url>${YADA.hsqldb.index.url}</YADA.index.url>
@@ -581,7 +581,7 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
+    </profile> -->
   </profiles>
   <build>
     <filters>
@@ -1040,17 +1040,17 @@
       <version>7.1.1-1</version>
       <scope>test</scope>
     </dependency> -->
-    <dependency>
+    <!-- <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>5.1.31</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
+    </dependency> -->
+   <!--  <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <scope>test</scope>
-    </dependency>
+    </dependency> -->
     <!-- restore for oracle 11g -->
     <!-- You may need to install this jar manually in your maven repo -->
     <!-- <dependency>
@@ -1112,11 +1112,11 @@
       <artifactId>urlrewritefilter</artifactId>
       <version>4.0.4</version>
     </dependency>
-    <dependency>
+    <!-- <dependency>
       <groupId>org.xerial</groupId>
       <artifactId>sqlite-jdbc</artifactId>
       <scope>test</scope>
-    </dependency>
+    </dependency> -->
     <!-- <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-dbcp</artifactId>
@@ -1133,16 +1133,16 @@
       <artifactId>elasticsearch</artifactId>
       <version>2.1.1</version>
     </dependency> -->
-    <dependency>
+    <!-- <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
       <version>2.3.4</version>
-    </dependency>
-    <dependency>
+    </dependency> -->
+   <!--  <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>sqltool</artifactId>
       <version>2.3.4</version>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>com.zaxxer</groupId>
       <artifactId>HikariCP</artifactId>
