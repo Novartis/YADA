@@ -1121,6 +1121,9 @@ public class Service {
 	      {
 			    String plugin = plugins[pluginIndex];
 			    // check for default parameter plugin (args) unprocessed by Service.handleRequestParameters
+			    // in other words, the value of the 'pl' parameter is a comma-delimited string 
+			    // e.g.: "Gatekeeper,content.policy=void,execution.policy.columns=COL1 COL2"
+			    // or it's just a single argument, in which case the value of 'plugin' is already set
 			    int firstCommaIndex = plugin.indexOf(',');
 			    String    args = "";
 			    YADAParam yp   = null;
@@ -1128,11 +1131,12 @@ public class Service {
           {
 			      args   = plugin.substring(firstCommaIndex+1);
 			      plugin = plugin.substring(0, firstCommaIndex);
-			      // add a query parameter for the arg list
-			      //yp = new YADAParam(YADARequest.PS_ARGLIST, args, yq.getQname(), YADAParam.NONOVERRIDEABLE, true);
+			      // add a query parameter for the arg list with the plugin class as the target
+			      // this will be detected later in the AbstractPreprocessor.engage method
 			      yp = new YADAParam(YADARequest.PS_ARGLIST, args, plugin, YADAParam.NONOVERRIDEABLE, true);
 			      yq.addParam(yp);
           }
+			    // get the plugin class, instantiate it and engage it
 					l.debug("possible preprocess plugin is["+plugin+"]");
 					if (null != plugin && !"".equals(plugin))
 					{
@@ -1149,7 +1153,10 @@ public class Service {
 								try
 								{
 									Object plugObj = pluginClass.newInstance();
+									
+									// meaty bit
 									((Preprocess)plugObj).engage(getYADARequest(),yq);
+									
 									// reset the query internals
 									try
 									{

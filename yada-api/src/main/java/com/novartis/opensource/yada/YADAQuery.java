@@ -70,7 +70,6 @@ import com.novartis.opensource.yada.util.QueryUtils;
  * @since 4.0.0
  */
 public class YADAQuery {
-
 	
   /**
 	 * Local logger handle
@@ -268,6 +267,65 @@ public class YADAQuery {
 	 * Default constructor
 	 */
 	public YADAQuery() {}
+
+	/**
+	 * JSON string constructor
+	 * @param app 
+	 * @param qname 
+	 * @param json 
+	 * @throws YADAQueryConfigurationException 
+	 * @since 9.0.0
+	 */
+	public YADAQuery(String app, String qname, String qjson) throws YADAQueryConfigurationException
+	{
+	  JSONObject yq = new JSONObject(qjson);
+	  //TODO pull git commit into constructor args
+	  this.setVersion(new String(yq.getString("version")));
+    this.setCoreCode(new String(yq.getString("query")));    
+    this.setQname(qname);
+    this.setApp(app);
+    for(int i=0; i< yq.getJSONArray("params").length(); i++)
+    {
+      YADAParam yp = new YADAParam();
+      JSONObject param = yq.getJSONArray("params").getJSONObject(i);
+      yp.setId(i);
+      yp.setName(param.getString("name"));
+      yp.setValue(String.valueOf(param.get("value")));
+      yp.setTarget(this.getQname());
+      yp.setRule(param.getInt("rule"));
+      yp.setDefault(true);
+      try
+      {
+        JSONObject spec = param.getJSONObject("spec");
+        YADASecuritySpec yss = new YADASecuritySpec(spec);
+        yp.setSecuritySpec(yss);
+      }
+      catch(JSONException e)
+      {
+        l.debug("No sec spec object expressed in param.");
+      }
+      catch (YADAQueryConfigurationException e)
+      {
+        throw e;
+      }
+      this.addParam(yp);
+      
+    }
+    
+    for(int i=0; i< yq.getJSONArray("props").length(); i++)
+    {      
+      try
+      {
+        JSONObject prop = yq.getJSONArray("props").getJSONObject(i);
+        YADAProperty yp = new YADAProperty(qname,prop.getString("name"),prop.getString("value"));
+        this.addProperty(yp);
+      }
+      catch(JSONException e)
+      {
+        l.debug("No props object expressed in param.");
+      }
+    }
+	}
 	
 	/**
 	 * Cloning constructor

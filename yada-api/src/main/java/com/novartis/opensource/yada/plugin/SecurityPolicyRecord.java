@@ -37,7 +37,7 @@ public class SecurityPolicyRecord {
    */
   private String type;
   /**
-   * The qname of the security query to be execution.
+   * The qname of the security query to be executed.
    */
   private String a11nQname;
 

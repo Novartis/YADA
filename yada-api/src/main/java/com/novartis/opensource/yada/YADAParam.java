@@ -25,18 +25,23 @@ public class YADAParam
 	 * Constant with value equal to: {@value}
 	 */
 	public final static int    OVERRIDEABLE = 0;
+	
 	/**
 	 * Constant with value equal to: {@value}
 	 */
 	public final static int    NONOVERRIDEABLE = 1;
+	
 	/**
 	 * Constant with value equal to: {@value}
 	 */
 	public final static String QUERY = "Q";
 	/**
 	 * Constant with value equal to: {@value}
+	 * @deprecated since 9.0.0
 	 */
-	public final static String APP   = "A";
+	@Deprecated
+  public final static String APP   = "A";	
+	
 	/**
 	 * The scope of the parameter, either {@link #QUERY} or {@link #APP}
 	 */
@@ -63,6 +68,22 @@ public class YADAParam
 	 * The parameter id
 	 */
 	private int id;
+	/**
+	 * The security specification, should contain 
+	 *   <ul>
+	 *     <li>{@code target} as a holdover from earlier pre-9.0.0 rdbms-based versions</li>
+   *     <li>{@code policy}</li>   
+   *     <li>{@code type}</li>
+   *     <li>If {@code type} is {@code A}, the spec must contain {@code qualifier}</li>
+   *     <li>Else If {@code type} is {@code C}, the spec must contain {@code predicate}</li>
+   *     <li>Else ({@code type} is {@code E},) the spec must contain both {@code protector} and one of {@code columns},
+   *         {@code indexes}, or {@code indices}.</li>
+   *   </ul>
+   * 
+	 * @since 9.0.0
+	 */
+	private YADASecuritySpec securitySpec = null;
+	
 	/**
 	 * Default constructor
 	 */
@@ -217,6 +238,22 @@ public class YADAParam
 	public void setDefault(boolean isDefault)
 	{
 		this.isDefault = isDefault;
+	}
+	
+	/**
+	 * @param securitySpec
+	 */
+	public void setSecuritySpec(YADASecuritySpec securitySpec)
+	{
+	  this.securitySpec = securitySpec;
+	}
+	
+	/**
+	 * @return
+	 */
+	public YADASecuritySpec getSecuritySpec() 
+	{
+	  return this.securitySpec;
 	}
 	
 	/**
