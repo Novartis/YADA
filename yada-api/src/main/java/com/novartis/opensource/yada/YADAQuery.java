@@ -279,51 +279,60 @@ public class YADAQuery {
 	public YADAQuery(String app, String qname, String qjson) throws YADAQueryConfigurationException
 	{
 	  JSONObject yq = new JSONObject(qjson);
-	  //TODO pull git commit into constructor args
-	  this.setVersion(new String(yq.getString("version")));
+//	  String version = "";
+	  //TODO pull git commit into constructor args and set in 
+
+//	  this.setVersion(version);
     this.setCoreCode(new String(yq.getString("query")));    
     this.setQname(qname);
     this.setApp(app);
-    for(int i=0; i< yq.getJSONArray("params").length(); i++)
+    try
     {
-      YADAParam yp = new YADAParam();
-      JSONObject param = yq.getJSONArray("params").getJSONObject(i);
-      yp.setId(i);
-      yp.setName(param.getString("name"));
-      yp.setValue(String.valueOf(param.get("value")));
-      yp.setTarget(this.getQname());
-      yp.setRule(param.getInt("rule"));
-      yp.setDefault(true);
-      try
+      for(int i=0; i< yq.getJSONArray("params").length(); i++)
       {
-        JSONObject spec = param.getJSONObject("spec");
-        YADASecuritySpec yss = new YADASecuritySpec(spec);
-        yp.setSecuritySpec(yss);
+        YADAParam yp = new YADAParam();
+        JSONObject param = yq.getJSONArray("params").getJSONObject(i);
+        yp.setId(i);
+        yp.setName(param.getString("name"));
+        yp.setValue(String.valueOf(param.get("value")));
+        yp.setTarget(this.getQname());
+        yp.setRule(param.getInt("rule"));
+        yp.setDefault(true);
+        try
+        {
+          JSONObject spec = param.getJSONObject("spec");
+          YADASecuritySpec yss = new YADASecuritySpec(spec);
+          yp.setSecuritySpec(yss);
+        }
+        catch(JSONException e)
+        {
+          l.debug("No sec spec object expressed in param.");
+        }
+        catch (YADAQueryConfigurationException e)
+        {
+          throw e;
+        }
+        this.addParam(yp);      
       }
-      catch(JSONException e)
-      {
-        l.debug("No sec spec object expressed in param.");
-      }
-      catch (YADAQueryConfigurationException e)
-      {
-        throw e;
-      }
-      this.addParam(yp);
-      
+    }
+    catch(JSONException e1)
+    {
+      l.debug("No params array expressed in query.");
     }
     
-    for(int i=0; i< yq.getJSONArray("props").length(); i++)
-    {      
-      try
-      {
+    
+    try
+    {
+      for(int i=0; i< yq.getJSONArray("props").length(); i++)
+      {      
         JSONObject prop = yq.getJSONArray("props").getJSONObject(i);
         YADAProperty yp = new YADAProperty(qname,prop.getString("name"),prop.getString("value"));
         this.addProperty(yp);
       }
-      catch(JSONException e)
-      {
-        l.debug("No props object expressed in param.");
-      }
+    }
+    catch(JSONException e)
+    {
+      l.debug("No props object expressed in param.");
     }
 	}
 	
@@ -333,7 +342,7 @@ public class YADAQuery {
 	 * @since 4.1.0
 	 */
 	public YADAQuery(YADAQuery yq) {
-		this.setVersion(new String(yq.getVersion()));
+//		this.setVersion(new String(yq.getVersion()));
 		this.setCoreCode(new String(yq.getYADACode()));
 		String legacySource = yq.getSource() == null ? "" : yq.getSource();
 		this.setSource(legacySource);
@@ -608,10 +617,6 @@ public class YADAQuery {
 	    {
 	      values[param.getId()] = param.getValue();
 	      hasVal = true;
-	    	//TODO 'id' is used as "rank" or order of execution.  This is bad.  
-      	// Need a sequence field in the model, or a ui gadget (dnd) to change the 
-      	// order (it can only be done in the db directly now). If the same 'id'
-      	// field is reused, it should be renamed to 'seq','ord','rank' etc.      	
 	    }
 	    if(hasVal)
 	      return Arrays.stream(values).filter(Objects::nonNull).toArray(String[]::new);	    
@@ -636,11 +641,6 @@ public class YADAQuery {
         {
         	values[param.getId()] = param.getValue();
         	hasVal = true;
-        	//TODO 'id' is used as "rank" or order of execution.  This is bad.  
-        	// Need a sequence field in the model, or a ui gadget (dnd) to change the 
-        	// order (it can only be done in the db directly now). If the same 'id'
-        	// field is reused, it should be renamed to 'seq','ord','rank' etc.
-        	
         }
       }
       if(hasVal)
@@ -666,10 +666,6 @@ public class YADAQuery {
       {
         if(param.getTarget().equals(target))
         {
-        	//TODO 'id' is used as "rank" or order of execution.  This is bad.  
-        	// Need a sequence field in the model, or a ui gadget (dnd) to change the 
-        	// order (it can only be done in the db directly now). If the same 'id'
-        	// field is reused, it should be renamed to 'seq','ord','rank' etc.        	
         	values[param.getId()] = param.getValue();
         	hasVal = true;
         }
