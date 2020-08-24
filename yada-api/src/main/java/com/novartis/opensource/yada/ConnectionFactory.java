@@ -53,22 +53,30 @@ public class ConnectionFactory {
   /**
    * Constant equal to {@value}
    * @since 8.0.0
+   * @deprecated since 9.0.0
    */
+  @Deprecated
   public  final static String YADA_APP       = "YADA";
   /**
    * Constant equal to {@value}
    * @since 8.0.0
+   * @deprecated since 9.0.0
    */
+  @Deprecated  
   private final static String YADA_DS_APP    = "APP";
   /**
    * Constant equal to {@value}
    * @since 8.0.0
+   * @deprecated since 9.0.0
    */
+  @Deprecated  
   private final static String YADA_DS_SOURCE = "SOURCE";
   /**
    * Constant equal to {@value}
    * @since 8.0.0
+   * @deprecated since 9.0.0
    */
+  @Deprecated  
   private final static String YADA_DS_CONF   = "CONF";
   /**
    * Constant equal to {@value}
@@ -85,7 +93,9 @@ public class ConnectionFactory {
   /**
    * Constant equal to {@value}. Used for retrieving app configs.
    * @since 8.0.0
+   * @deprecated since 9.0.0
    */
+  @Deprecated
   private final static String YADA_DS_SQL = "select "
                                + "a.app "+YADA_DS_APP+ ", "
                                + "a.source "+YADA_DS_SOURCE+ ", "
@@ -95,31 +105,41 @@ public class ConnectionFactory {
   /**
    * Constant equal to {@value}. Used for retrieving config for specific app.
    * @since 8.0.0
+   * @deprecated since 9.0.0
    */
+  @Deprecated
   private final static String YADA_DS_WHERE = "and a.app = ?";               
   
   /**
    * Constant equal to {@value}. Used for retrieving config for specific YADA index.
    * @since 8.0.0
+   * @deprecated since 9.0.0 moved to Finder
    */
+  @Deprecated
   private final static String YADA_PROPERTIES_PATH = "YADA.properties.path";
   
   /**
    * Constant equal to {@value}. Used for retrieving config for specific YADA index.
    * @since 8.3.0
+   * @deprecated since 9.0.0
    */
+  @Deprecated  
   private final static String YADA_PROP_NAME = "N";
   
   /**
    * Constant equal to {@value}. Used for retrieving config for specific YADA index.
    * @since 8.3.0
+   * @deprecated since 9.0.0
    */
+  @Deprecated  
   private final static String YADA_PROP_VALUE = "V";
   
   /**
    * Constant equal to {@value}. Used for retrieving system properties
    * @since 8.3.0
+   * @deprecated since 9.0.0
    */
+  @Deprecated  
   private final static String YADA_SYS_PROP_SQL = "select " 
                               + "a.name "+YADA_PROP_NAME+", "
                               + "a.value "+YADA_PROP_VALUE+" "
@@ -130,7 +150,9 @@ public class ConnectionFactory {
   /**
    * Constant equal to {@value}. Default location for {@code YADA.properties} file, in {@code WEB-INF/classes}
    * @since 8.0.0
+   * @deprecated since 9.0.0 moved to {@link Finder}
    */
+  @Deprecated
   private final static String YADA_DEFAULT_PROP_PATH = "/YADA.properties";
   
   /**
@@ -138,13 +160,6 @@ public class ConnectionFactory {
    * @since 8.0.0
    */
   private final static String COMMENT = "#";
-  
-  
-  /**
-   * Map of {@link Connection} to JNDI {@link String} to facilitate better
-   * logging
-   */
-  //private Map<Connection, String> connectionMap = new HashMap<>();
   
   /**
    * Map of {@link DataSource} objects to their names, as stored in the yada index.
@@ -164,16 +179,29 @@ public class ConnectionFactory {
    */
   private static ConnectionFactory factory = null;
   
-  static {
+  static {    
     try 
     {
-      ConnectionFactory.getConnectionFactory().createDataSources();
-      System.out.println("datasources created successfully");
+      
+      if(Finder.getEnv(Finder.YADA_LIB) != null)
+      {
+        // nothing to do
+      }
+      else
+      {
+        ConnectionFactory.getConnectionFactory().createDataSources();
+        System.out.println("datasources created successfully");
+      }
     } 
-    catch (Exception e) 
+    catch (YADAResourceException e) 
     {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      String msg = "Could not load YADA.properties or properties are misconfigured.  Check 'YADA.lib'";
+      l.fatal(msg);
+    }
+    catch (YADAConnectionException e)
+    {
+      String msg = "Could not connect to YADA index.";
+      l.fatal(msg);
     }
   }
   
@@ -228,7 +256,9 @@ public class ConnectionFactory {
    * @return a {@link Connection} object from the {@link DataSource} connection pool
    * @throws YADAConnectionException when the YADAIndex data source cannot provide a connection
    * @since 8.0.0
+   * @deprecated since 9.0.0
    */
+  @Deprecated  
   private Connection getYADAConnection() throws YADAConnectionException 
   { 
     Connection yadaConn = null;
