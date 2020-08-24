@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -103,13 +104,13 @@ public class YADASecuritySpec extends HashMap<String, Object> {
    * Constant equal to {@value}
    * @since 9.0.0
    */
-  public final static String RX_COL = "^(("+RX_COL_INJECTION+"|[A-Za-z0-9_]+)\\s?)+$";
+  public final static String RX_COL = "^(("+RX_COL_INJECTION+"|[A-Za-z0-9_]+))$";
   
   /**
    * Constant equal to {@value}
    * @since 9.0.0
    */
-  public final static String RX_IDX = "^(("+RX_IDX_INJECTION+"|[\\d]+)\\s?)+$";
+  public final static String RX_IDX = "^(("+RX_IDX_INJECTION+"|[\\d]+))$";
   
   /**
    * 
@@ -211,20 +212,24 @@ public class YADASecuritySpec extends HashMap<String, Object> {
    * @param columnsOrIndexes
    * @throws YADAQueryConfigurationException
    */
-  public void setExecutionPolicy(String type, String protector, String columnsOrIndexes) throws YADAQueryConfigurationException 
+  @SuppressWarnings("unchecked")
+  public void setExecutionPolicy(String type, String protector, List<?> columnsOrIndexes) throws YADAQueryConfigurationException 
   {
-    if(null == type || null == protector || (!columnsOrIndexes.matches(RX_COL) && !columnsOrIndexes.matches(RX_IDX)))
+    List<String> list = (List<String>) columnsOrIndexes;
+    boolean isColumns = (null != list && list.stream().filter(c -> c.matches(RX_COL)).collect(Collectors.toList()).size() > 0);
+    if(null == type || null == protector 
+        || (!isColumns && list.stream().filter(c -> c.matches(RX_IDX)).collect(Collectors.toList()).size() == 0))
       throw new YADAQueryConfigurationException("policy, type, protector, and columns, indexes, or indices must be non-null");
     this.put(KEY_POLICY, POLICY_EXECUTION);
     this.put(KEY_TYPE, type);
     this.put(KEY_PROTECTOR, protector);
-    if(columnsOrIndexes.matches(RX_IDX))
+    if(isColumns)
     {
-      this.put(KEY_INDEXES, columnsOrIndexes);
+      this.put(KEY_COLUMNS, columnsOrIndexes);
     }
     else
     {
-      this.put(KEY_COLUMNS, columnsOrIndexes);
+      this.put(KEY_INDEXES, columnsOrIndexes);
     }
   }
   
@@ -255,9 +260,11 @@ public class YADASecuritySpec extends HashMap<String, Object> {
    * @param qualifier
    * @throws YADAQueryConfigurationException
    */
-  public void setAuthorizationPolicy(String type, String qualifier) throws YADAQueryConfigurationException 
+  @SuppressWarnings("unchecked")
+  public void setAuthorizationPolicy(String type, List<?> qualifier) throws YADAQueryConfigurationException 
   {
-    if(null == type || null == qualifier)
+    List<String> list = (List<String>) qualifier;
+    if(null == type || null == qualifier || null == list || list.size() == 0)
       throw new YADAQueryConfigurationException("policy, type, protector, and columns, indexes, or indices must be non-null");
     this.put(KEY_POLICY, POLICY_AUTHORIZATION);
     this.put(KEY_TYPE, type);
