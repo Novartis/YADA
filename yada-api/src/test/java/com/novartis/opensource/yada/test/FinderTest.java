@@ -27,7 +27,16 @@ import com.novartis.opensource.yada.YADAQueryConfigurationException;
  * @since 4.0.0
  */
 public class FinderTest {
-	
+  
+  //TODO test no switch branch when config == current
+  //TODO test switch branch when config != current
+  //TODO test pull from repo when prop is true
+  //TODO test no pull when prop is false
+  //TODO test fatal when branch name no exist
+  //TODO test fatal when pull true and no remote set
+  //TODO test fatal when props not loaded
+  //TODO test fatal when lib not exist
+  
   /**
    * Tests {@link Finder#getQuery(String)}.  The test is successful if the query {@code YADA test SELECT} is retrieved without error.
    * @throws YADAConnectionException when the connection to the YADA index can't be opened
