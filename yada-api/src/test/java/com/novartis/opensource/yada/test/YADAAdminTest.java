@@ -675,14 +675,7 @@ public class YADAAdminTest {
     
     // save 
     //   multiple ways to save? (not yet)
-    policyAction.selectByValue("save");
-
-    // TODO validate data is in db
-    // TODO validate security works? or is this just for a standard integration test?
-    // TODO alert user when security setting is invalid or unsavable for any reason
-    // TODO alert user to save security settings (this may enable safety net after all)
-    // TODO parse security param into UI when appropriate (it currently doesn't) 
-    
+    policyAction.selectByValue("save");    
     
     d.findElement(By.id("button-save")).click();
     Thread.sleep(3000);

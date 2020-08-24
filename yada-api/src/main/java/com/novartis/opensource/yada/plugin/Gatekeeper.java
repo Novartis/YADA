@@ -167,8 +167,6 @@ public class Gatekeeper extends AbstractPreprocessor {
 
   /**
    * Contains the conditions specified in A11N.
-   * 
-   * TODO: rename qualifier, condition, role, ... ?
    */
   private JSONObject locks = new JSONObject();
 
