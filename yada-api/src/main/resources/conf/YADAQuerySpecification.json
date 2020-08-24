@@ -516,7 +516,8 @@
           "then": {
             "properties": {
               "value": {
-                "pattern": "(?:[a-zA-Z0-9\\][\\]]+)(?:,(?:[,a-zA-Z0-9\\[\\]]+))*"
+                "pattern": "(?:[a-zA-Z0-9\\][\\]]+)(?:,(?:[,a-zA-Z0-9\\[\\]]+))*",
+                "$comment":"The 'params' parameter: a comma-sep list, will never be configured as a default param."
               }
             }
           }
@@ -609,7 +610,7 @@
           "type": "string"
         }
       },
-      "oneOf": [
+      "anyOf": [
         {
           "allOf": [
             {
