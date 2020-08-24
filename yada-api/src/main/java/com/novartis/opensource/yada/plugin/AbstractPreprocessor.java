@@ -297,7 +297,7 @@ public abstract class AbstractPreprocessor
     // default impl does nothing - override in gatekeeper plugin
     authorize();
     
-    if(this.getSecuritySpec() != null)
+    if(this.hasSecuritySpec())
     {
       for(String iface : new String[] {EXECUTION_POLICY_INTERFACE, CONTENT_POLICY_INTERFACE})
       {
@@ -386,7 +386,7 @@ public abstract class AbstractPreprocessor
   @Override
   public void validateURL() throws YADASecurityException {
     String pathRx, reqUrl;
-    if(this.getSecuritySpec() != null)
+    if(this.hasSecuritySpec())
     {
       pathRx = this.getSecuritySpec().getURLSpec();
     }
@@ -617,7 +617,7 @@ public abstract class AbstractPreprocessor
       String   name  = "";
       try
       {
-        if(this.getSecuritySpec() != null)
+        if(this.hasSecuritySpec())
         {
           name = this.getSecuritySpec().getTokenValidator();
         }
@@ -1013,6 +1013,10 @@ public abstract class AbstractPreprocessor
     }
     return true;
   }
+  
+  public boolean hasSecuritySpec() {
+    return this.getSecuritySpec() != null;
+  }
 
   /**
    * Standard mutator for variable
@@ -1083,119 +1087,3 @@ public abstract class AbstractPreprocessor
     this.securitySpec = securitySpec;
   }
 }
-
-/*
- * {
-          "if": {
-            "properties": {
-              "policy": {
-                "const": "A"
-              }
-            }
-          },
-          "then": {
-            "allOf": [
-              {
-                "required": [
-                  "qualifier"
-                ]
-              },
-              {
-                "not": {
-                  "required": [
-                    "protector",
-                    "indices",
-                    "indexes",
-                    "columns",
-                    "predicate"
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "policy": {
-                "const": "C"
-              }
-            }
-          },
-          "then": {
-            "allOf": [
-              {
-                "required": [
-                  "predicate"
-                ]
-              },
-              {
-                "not": {
-                  "required": [
-                    "protector",
-                    "indices",
-                    "indexes",
-                    "columns",
-                    "qualifier"
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "policy": {
-                "const": "E"
-              }
-            }
-          },
-          "then": {
-            "allOf": [
-              {
-                "required": [
-                  "protector"
-                ]
-              },
-              {
-                "oneOf": [
-                  {
-                    "required": [
-                      "indices"
-                    ]
-                  },
-                  {
-                    "required": [
-                      "indexes"
-                    ]
-                  },
-                  {
-                    "required": [
-                      "columns"
-                    ]
-                  }
-                ]
-              },
-              {
-                "allOf": [
-                  {
-                    "not": {
-                      "required": [
-                        "qualifier"
-                      ]
-                    }
-                  },
-                  {
-                    "not": {
-                      "required": [
-                        "predicate"
-                      ]
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        }
-        */
