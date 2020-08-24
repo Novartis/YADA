@@ -72,6 +72,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.novartis.opensource.yada.Finder;
 import com.novartis.opensource.yada.JSONParams;
 import com.novartis.opensource.yada.JSONParamsEntry;
 import com.novartis.opensource.yada.Service;
@@ -80,6 +81,7 @@ import com.novartis.opensource.yada.YADAParam;
 import com.novartis.opensource.yada.YADAQueryConfigurationException;
 import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADARequestException;
+import com.novartis.opensource.yada.YADAResourceException;
 import com.novartis.opensource.yada.format.YADAResponseException;
 import com.novartis.opensource.yada.util.YADAUtils;
 
@@ -597,9 +599,10 @@ public class ServiceTest
    *         can't be closed
    */
   @BeforeMethod(groups = { "json", "standard", "options", "api", "jsp", "plugins", "sqlite_debug" })
-  public void dbPrep() throws URISyntaxException, YADAQueryConfigurationException, IOException
+  public void dbPrep() throws URISyntaxException, YADAQueryConfigurationException, IOException, YADAResourceException
   {
-    prepOrClean(new String[] { "/test/inserts_single_json_prep.txt" });
+    if(Finder.YADA_PROPERTIES.getProperty(Finder.YADA_LIB) == null)
+      prepOrClean(new String[] { "/test/inserts_single_json_prep.txt" });
   }
 
   /**
