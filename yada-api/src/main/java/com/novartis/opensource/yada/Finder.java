@@ -14,7 +14,9 @@
  */
 package com.novartis.opensource.yada;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -23,6 +25,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,6 +39,16 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
 import org.apache.log4j.Logger;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.CheckoutConflictException;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.InvalidRefNameException;
+import org.eclipse.jgit.api.errors.RefAlreadyExistsException;
+import org.eclipse.jgit.api.errors.RefNotFoundException;
+import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.RepositoryBuilder;
 
 /**
  * Provides for retrieval YADA query code and metadata from the YADA Index as
@@ -48,7 +61,7 @@ public class Finder {
   /**
    * Local logger handle
    */
-  static Logger              l                = Logger.getLogger(Finder.class);
+  static Logger              l           = Logger.getLogger(Finder.class);
   /**
    * Hardcoded to the stardard value: {@value}. Used to identify mapped sources in
    * the YADA Index.
@@ -56,7 +69,7 @@ public class Finder {
    * @deprecated since 9.0.0
    */
   @Deprecated
-  public final static String JNDI_PREFIX      = "java:comp/env";
+  public final static String JNDI_PREFIX = "java:comp/env";
   /**
    * Currently hardcoded to {@value}, this may be configurable in a future
    * version. Used to access the YADA Index.
@@ -64,8 +77,8 @@ public class Finder {
    * @deprecated since 9.0.0
    */
   @Deprecated
-  public final static String YADA_INDEX       = "/jdbc/yada";                  // TODO Make yada jndi string a
-                                                                               // configurable property
+  public final static String YADA_INDEX  = "/jdbc/yada";
+
   /**
    * A constant equal to: {@value}
    * 
@@ -287,31 +300,178 @@ public class Finder {
   /**
    * Constant equal to: {@value}
    */
-  public final static String YADA_CACHE     = "YADAIndex";
-  
+  public final static String YADA_CACHE = "YADAIndex";
+
   /**
    * Constant equal to: {@value}
    */
   public final static String YADA_CACHE_MGR = "YADAIndexManager";
-  
+
   /**
    * Constant equal to {@value}
+   * 
    * @since 9.0.0
    */
-  public final static String YADA_LIB = "yada.lib";
-  
+  public final static String YADA_LIB = "YADA.lib";
+
   /**
    * Constant equal to {@value}
+   * 
    * @since 9.0.0
    */
   private static final String SLASH = "/";
-  
+
   /**
    * Constant equal to {@value}
+   * 
    * @since 9.0.0
    */
-  private static final String Q_RX = "^(.+)([/\\s])(.+)$";
+  private static final String Q_RX = "^(.+?)([/\\s])(.+)$";
+
+  /**
+   * Constant equal to {@value}. Used for retrieving config for specific YADA
+   * index.
+   * 
+   * @since 9.0.0
+   */
+  private final static String YADA_PROPERTIES_PATH = "YADA.properties.path";
   
+  /**
+   * Constant equal to {@value}. Used for retrieving config for specific YADA
+   * index.
+   * 
+   * @since 9.0.0
+   */
+  private final static String YADA_BRANCH = "YADA.branch";
+  
+  /**
+   * Constant equal to {@value}. Used for retrieving config for specific YADA
+   * index.
+   * 
+   * @since 9.0.0
+   */
+  private final static String YADA_SWITCH_BRANCH = "YADA.switch.branch";
+
+  /**
+   * Constant equal to {@value}. Used for retrieving config for specific YADA
+   * index.
+   * 
+   * @since 9.0.0
+   */
+  private final static String GIT_DIR = ".git";
+  
+  /**
+   * Constant equal to {@value}. Used for retrieving config for specific YADA
+   * index.
+   * 
+   * @since 9.0.0
+   */
+  private final static String YADA_PULL_ON_LAUNCH = "YADA.pull.on.launch";
+  
+  /**
+   * Constant equal to {@value}. Default location for {@code YADA.properties}
+   * file, in {@code WEB-INF/classes}
+   * 
+   * @since 9.0.0
+   */
+  public final static String YADA_DEFAULT_PROPERTIES_PATH = "/YADA.properties";
+  
+  /**
+   * Constant equal to {@value}. The YADA app name.
+   * 
+   * @since 9.0.0
+   */
+  public final static String YADA = "YADA";
+
+  /**
+   * Constant holding the contents of {@code YADA.properties} or equivalent
+   * @since 9.0.0
+   */
+  public final static Properties YADA_PROPERTIES = getYADAProperties();
+  
+  static {
+    RepositoryBuilder builder = new RepositoryBuilder();
+    try
+    {
+      Repository repo = builder.setGitDir(new File(YADA_PROPERTIES.getProperty(YADA_LIB),GIT_DIR))
+          .readEnvironment()
+          .findGitDir()
+          .build();
+      ObjectId id = repo.resolve(Constants.HEAD);
+      String confBranch = YADA_PROPERTIES.getProperty(YADA_BRANCH);      
+      String currBranch = repo.getBranch();
+      Boolean switchBranch = Boolean.valueOf(YADA_PROPERTIES.getProperty(YADA_SWITCH_BRANCH));
+      l.debug("\nconf branch:" 
+          + confBranch+", \ncurrent branch: "
+          + currBranch+", \nconf switch branch:" 
+          + switchBranch+", \nHEAD:"
+          + id);
+      if(!confBranch.contentEquals(currBranch) && sw)
+      {
+        try(Git git = new Git(repo))
+        {
+          git.checkout().setName(confBranch).call();
+        }
+        catch (RefAlreadyExistsException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+        catch (RefNotFoundException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+        catch (InvalidRefNameException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+        catch (CheckoutConflictException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+        catch (GitAPIException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+    }        
+    catch (IOException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+  
+  /**
+   * Sets {@code static} {@link YADA_PROPERTIES} object
+   * 
+   * @return {@link java.util.Properties}
+   */
+  private final static Properties getYADAProperties() 
+  {
+    Properties props = new Properties();
+    String     path  = System.getProperty(YADA_PROPERTIES_PATH);
+    if (path == null || "".equals(path))
+      path = YADA_DEFAULT_PROPERTIES_PATH;
+    InputStream is = Finder.class.getResourceAsStream(path);
+    try
+    {
+      props.load(is);
+      l.info(String.format("Loaded %s",path));
+    }
+    catch (IOException e)
+    {
+      String msg = String.format("Cannot find or load YADA properties file %s", path);
+      l.fatal(msg);
+      System.exit(1);
+    }
+    return props;
+  }
+
   /**
    * Retrieves the system property loaded at startup. This method was refactored
    * in version 8.3.0
@@ -325,8 +485,12 @@ public class Finder {
     String result = System.getProperty(property);
     if (result == null || "".equals(result))
     {
-      String msg = "The property [" + property + "] was not found.";
-      throw new YADAResourceException(msg);
+      result = YADA_PROPERTIES.getProperty(property);
+      if(result == null || "".equals(result))
+      {
+        String msg = "The property [" + property + "] was not found.";
+        throw new YADAResourceException(msg);
+      }
     }
     return result;
   }
@@ -423,28 +587,27 @@ public class Finder {
   }
 
   /**
-   * Retrieves the query {@code q} from the local repository.
-   * Typically the query is then added to the in-memory cache.
+   * Retrieves the query {@code q} from the local repository. Typically the query
+   * is then added to the in-memory cache.
    * 
    * @param q the query name to retrieve
    * @return the {@link YADAQuery} retrieved from the distributed index
-   * @throws YADAFinderException             if the query {@code q} can't be found
-   *                                         in the YADA_LIB. Check your
-   *                                         spelling and case.
+   * @throws YADAFinderException if the query {@code q} can't be found in the
+   *                             YADA_LIB. Check your spelling and case.
    * @see #getQuery(String)
    * @since 9.0.0
    */
   public YADAQuery getQueryFromLib(String q) throws YADAFinderException {
-    YADAQuery yq = null;
-    String app = "";
-    String qpath = "";
-    String qname = "";
+    YADAQuery yq    = null;
+    String    app   = "";
+    String    qpath = "";
+    String    qname = "";
     try
     {
       Pattern rx = Pattern.compile(Q_RX);
       Matcher m  = rx.matcher(q);
-      if(m.matches())
-      {   
+      if (m.matches())
+      {
         String lib = "";
         try
         {
@@ -456,33 +619,33 @@ public class Finder {
           throw new YADAFinderException(msg, e);
         }
         app = m.group(1);
-        if(m.group(2).equals(SLASH))
+        if (m.group(2).equals(SLASH))
         {
-          qpath = String.format("%s/%s", lib, q); 
+          qpath = String.format("%s/%s.json", lib, q);
           qname = m.group(3);
         }
         else
         {
-          qpath = String.format("%s/%s/%s", lib, app, q);
+          qpath = String.format("%s/%s/%s.json", lib, app, q);
           qname = q;
         }
       }
-      String qjson = new String(Files.readAllBytes(Paths.get(qpath)), StandardCharsets.UTF_8);      
+      String qjson = new String(Files.readAllBytes(Paths.get(qpath)), StandardCharsets.UTF_8);
       yq = new YADAQuery(app, qname, qjson);
     }
-    catch(IOException e)
+    catch (IOException e)
     {
-      String msg = String.format("Failed to load query %s. Check spelling and capitilization", q);
+      String msg = String.format("Failed to load query `%s`. Check spelling and case in request.", q);
       throw new YADAFinderException(msg, e);
     }
     catch (YADAQueryConfigurationException e)
     {
-      String msg = String.format("Failed to instantiate query %s.", q);
+      String msg = String.format("Failed to instantiate query `%s.`", q);
       throw new YADAFinderException(msg, e);
     }
     return yq;
   }
-  
+
   /**
    * Overloaded version of {@link #getQuery(String, boolean)} always passing
    * {@code true} in the second {@code updateStats} arg.
@@ -499,8 +662,21 @@ public class Finder {
    * @throws YADAQueryConfigurationException if default parameters cannot be set
    */
   public YADAQuery getQuery(String q)
-      throws YADAConnectionException, YADAFinderException, YADAQueryConfigurationException {    
+      throws YADAConnectionException, YADAFinderException, YADAQueryConfigurationException {
+    YADAQuery yq = null;
+    try
+    {
+      if (Finder.getEnv(Finder.YADA_LIB) != null)
+      {
+        yq = this.getQueryFromLib(q);
+        return yq; 
+      }
+    }
+    catch (YADAResourceException e)
+    {
       return this.getQuery(q, true);
+    }
+    return null;
   }
 
   /**
@@ -548,12 +724,12 @@ public class Finder {
       }
       else
       {
-        try 
+        try
         {
           getEnv(YADA_LIB);
           yq = getQueryFromLib(q);
         }
-        catch(YADAResourceException e)
+        catch (YADAResourceException e)
         {
           yq = getQueryFromIndex(q);
         }
@@ -676,7 +852,9 @@ public class Finder {
    *                                 Index.
    * @see Finder#getQuery(String)
    * @since 8.1.1
+   * @deprecated since 9.0.0
    */
+  @Deprecated
   void updateQueryStatistics(String qname, int accessCount) throws YADAConnectionException, YADAFinderException {
 
     l.debug("Updating Query Stats for [" + qname + "]");
