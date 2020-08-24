@@ -1,13 +1,13 @@
-q=YADA test SELECT
-q=YADA test SELECT INTEGER with INS&p=1,2,3,10
-q=YADA test SELECT VARCHAR with INS&p=[A,B,Z]
-q=YADA test SELECT VARCHAR with INS&p=A,B,Z 
-q=YADA test SELECT with multiple INS&p=[A,B,Z],10
-q=YADA test SELECT with multiple INS&p=[A,B,Z],[8,9,10]
+q=YADA/test SELECT
+q=YADA/test SELECT INTEGER with INS&p=1,2,3,10
+q=YADA/test SELECT VARCHAR with INS&p=[A,B,Z]
+q=YADA/test SELECT VARCHAR with INS&p=A,B,Z 
+q=YADA/test SELECT with multiple INS&p=[A,B,Z],10
+q=YADA/test SELECT with multiple INS&p=[A,B,Z],[8,9,10]
 
-qname=YADA test SELECT
-qname=YADA test SELECT INTEGER with INS&params=1,2,3,10
-qname=YADA test SELECT VARCHAR with INS&params=[A,B,Z]
-qname=YADA test SELECT VARCHAR with INS&params=A,B,Z 
-qname=YADA test SELECT with multiple INS&params=[A,B,Z],10
-qname=YADA test SELECT with multiple INS&params=[A,B,Z],[8,9,10]
+qname=YADA/test SELECT
+qname=YADA/test SELECT INTEGER with INS&params=1,2,3,10
+qname=YADA/test SELECT VARCHAR with INS&params=[A,B,Z]
+qname=YADA/test SELECT VARCHAR with INS&params=A,B,Z 
+qname=YADA/test SELECT with multiple INS&params=[A,B,Z],10
+qname=YADA/test SELECT with multiple INS&params=[A,B,Z],[8,9,10]

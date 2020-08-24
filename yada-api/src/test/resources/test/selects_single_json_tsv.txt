@@ -1,27 +1,27 @@
-j=[{"qname":"YADA test SELECT","DATA":[{}]}]&f=tsv
-j=[{"qname":"YADA test SELECT INTEGER with INS","DATA":[{"COL2":"1,2,3,10"}]}]&f=tsv
-j=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":["A","B","Z"]}]}]&f=tsv
-j=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"}]}]&f=tsv
-j=[{"qname":"YADA test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":"10"}]}]&f=tsv
-j=[{"qname":"YADA test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":10}]}]&f=tsv
+j=[{"qname":"YADA/test SELECT","DATA":[{}]}]&f=tsv
+j=[{"qname":"YADA/test SELECT INTEGER with INS","DATA":[{"COL2":"1,2,3,10"}]}]&f=tsv
+j=[{"qname":"YADA/test SELECT VARCHAR with INS","DATA":[{"COL1":["A","B","Z"]}]}]&f=tsv
+j=[{"qname":"YADA/test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"}]}]&f=tsv
+j=[{"qname":"YADA/test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":"10"}]}]&f=tsv
+j=[{"qname":"YADA/test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":10}]}]&f=tsv
 
-JSONParams=[{"qname":"YADA test SELECT","DATA":[{}]}]&format=tsv
-JSONParams=[{"qname":"YADA test SELECT INTEGER with INS","DATA":[{"COL2":"1,2,3,10"}]}]&format=tsv
-JSONParams=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":["A","B","Z"]}]}]&format=tsv
-JSONParams=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"}]}]&format=tsv
-JSONParams=[{"qname":"YADA test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":"10"}]}]&format=tsv
-JSONParams=[{"qname":"YADA test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":10}]}]&format=tsv
+JSONParams=[{"qname":"YADA/test SELECT","DATA":[{}]}]&format=tsv
+JSONParams=[{"qname":"YADA/test SELECT INTEGER with INS","DATA":[{"COL2":"1,2,3,10"}]}]&format=tsv
+JSONParams=[{"qname":"YADA/test SELECT VARCHAR with INS","DATA":[{"COL1":["A","B","Z"]}]}]&format=tsv
+JSONParams=[{"qname":"YADA/test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"}]}]&format=tsv
+JSONParams=[{"qname":"YADA/test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":"10"}]}]&format=tsv
+JSONParams=[{"qname":"YADA/test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":10}]}]&format=tsv
 
-j=[{"qname":"YADA test SELECT","DATA":[{}]}]&f=tab
-j=[{"qname":"YADA test SELECT INTEGER with INS","DATA":[{"COL2":"1,2,3,10"}]}]&f=tab
-j=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":["A","B","Z"]}]}]&f=tab
-j=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"}]}]&f=tab
-j=[{"qname":"YADA test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":"10"}]}]&f=tab
-j=[{"qname":"YADA test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":10}]}]&f=tab
+j=[{"qname":"YADA/test SELECT","DATA":[{}]}]&f=tab
+j=[{"qname":"YADA/test SELECT INTEGER with INS","DATA":[{"COL2":"1,2,3,10"}]}]&f=tab
+j=[{"qname":"YADA/test SELECT VARCHAR with INS","DATA":[{"COL1":["A","B","Z"]}]}]&f=tab
+j=[{"qname":"YADA/test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"}]}]&f=tab
+j=[{"qname":"YADA/test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":"10"}]}]&f=tab
+j=[{"qname":"YADA/test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":10}]}]&f=tab
 
-JSONParams=[{"qname":"YADA test SELECT","DATA":[{}]}]&format=tab
-JSONParams=[{"qname":"YADA test SELECT INTEGER with INS","DATA":[{"COL2":"1,2,3,10"}]}]&format=tab
-JSONParams=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":["A","B","Z"]}]}]&format=tab
-JSONParams=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"}]}]&format=tab
-JSONParams=[{"qname":"YADA test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":"10"}]}]&format=tab
-JSONParams=[{"qname":"YADA test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":10}]}]&format=tab
+JSONParams=[{"qname":"YADA/test SELECT","DATA":[{}]}]&format=tab
+JSONParams=[{"qname":"YADA/test SELECT INTEGER with INS","DATA":[{"COL2":"1,2,3,10"}]}]&format=tab
+JSONParams=[{"qname":"YADA/test SELECT VARCHAR with INS","DATA":[{"COL1":["A","B","Z"]}]}]&format=tab
+JSONParams=[{"qname":"YADA/test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"}]}]&format=tab
+JSONParams=[{"qname":"YADA/test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":"10"}]}]&format=tab
+JSONParams=[{"qname":"YADA/test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":10}]}]&format=tab

@@ -3,13 +3,13 @@
 # Params:    j, JSONParams
 # DataTypes: String, Integer, Number, Date, Time
 # BaseData:  {"COL1":"Z","COL2":"10","COL3":"7.5","COL4":"2013-03-04","COL5":"2015-09-05 20:44:33"}
-j=[{"qname":"YADA test DELETE with STRING","DATA":[{"COL1":"Z"},{"COL1":"A"},{"COL1":"Z,Z"}]}]
-j=[{"qname":"YADA test DELETE with INTEGER","DATA":[{"COL2":"10"},{"COL2":"11"},{"COL2":"10,11"}]}]
-j=[{"qname":"YADA test DELETE with NUMBER","DATA":[{"COL3":"7.5"},{"COL3":"8.5"},{"COL3":"7.5,8.5"}]}]
-j=[{"qname":"YADA test DELETE with DATE","DATA":[{"COL4":"2013-03-04"},{"COL4":"2013-04-14"},{"COL4":"2013-03-04,2013-04-14"}]}]
-j=[{"qname":"YADA test DELETE with TIME","DATA":[{"COL5":"2015-09-05 20:44:33"},{"COL5":"2015-09-05 20:44:46"},{"COL5":"2015-09-05 20:44:33,2015-09-05 20:44:46"}]}]
-JSONParams=[{"qname":"YADA test DELETE with STRING","DATA":[{"COL1":"Z"},{"COL1":"A"},{"COL1":"Z,Z"}]}]
-JSONParams=[{"qname":"YADA test DELETE with INTEGER","DATA":[{"COL2":"10"},{"COL2":"11"},{"COL2":"10,11"}]}]
-JSONParams=[{"qname":"YADA test DELETE with NUMBER","DATA":[{"COL3":"7.5"},{"COL3":"8.5"},{"COL3":"7.5,8.5"}]}]
-JSONParams=[{"qname":"YADA test DELETE with DATE","DATA":[{"COL4":"2013-03-04"},{"COL4":"2013-04-14"},{"COL4":"2013-03-04,2013-04-14"}]}]
-JSONParams=[{"qname":"YADA test DELETE with TIME","DATA":[{"COL5":"2015-09-05 20:44:33"},{"COL5":"2015-09-05 20:44:46"},{"COL5":"2015-09-05 20:44:33,2015-09-05 20:44:46"}]}]
+j=[{"qname":"YADA/test DELETE with STRING","DATA":[{"COL1":"Z"},{"COL1":"A"},{"COL1":"Z,Z"}]}]
+j=[{"qname":"YADA/test DELETE with INTEGER","DATA":[{"COL2":"10"},{"COL2":"11"},{"COL2":"10,11"}]}]
+j=[{"qname":"YADA/test DELETE with NUMBER","DATA":[{"COL3":"7.5"},{"COL3":"8.5"},{"COL3":"7.5,8.5"}]}]
+j=[{"qname":"YADA/test DELETE with DATE","DATA":[{"COL4":"2013-03-04"},{"COL4":"2013-04-14"},{"COL4":"2013-03-04,2013-04-14"}]}]
+j=[{"qname":"YADA/test DELETE with TIME","DATA":[{"COL5":"2015-09-05 20:44:33"},{"COL5":"2015-09-05 20:44:46"},{"COL5":"2015-09-05 20:44:33,2015-09-05 20:44:46"}]}]
+JSONParams=[{"qname":"YADA/test DELETE with STRING","DATA":[{"COL1":"Z"},{"COL1":"A"},{"COL1":"Z,Z"}]}]
+JSONParams=[{"qname":"YADA/test DELETE with INTEGER","DATA":[{"COL2":"10"},{"COL2":"11"},{"COL2":"10,11"}]}]
+JSONParams=[{"qname":"YADA/test DELETE with NUMBER","DATA":[{"COL3":"7.5"},{"COL3":"8.5"},{"COL3":"7.5,8.5"}]}]
+JSONParams=[{"qname":"YADA/test DELETE with DATE","DATA":[{"COL4":"2013-03-04"},{"COL4":"2013-04-14"},{"COL4":"2013-03-04,2013-04-14"}]}]
+JSONParams=[{"qname":"YADA/test DELETE with TIME","DATA":[{"COL5":"2015-09-05 20:44:33"},{"COL5":"2015-09-05 20:44:46"},{"COL5":"2015-09-05 20:44:33,2015-09-05 20:44:46"}]}]

@@ -1,117 +1,117 @@
-j=[{"qname":"YADA test UPDATE DATE","DATA":[{"COL4":"2013-04-14","COL1":"A"}]}]
-j=[{"qname":"YADA test UPDATE DATE with INS","DATA":[{"COL4":"2013-04-14","COL1":"A,B,Z"}]}]
-j=[{"qname":"YADA test UPDATE DATE with STRING LITERAL and INS in WHERE","DATA":[{"COL4":"2013-04-14","COL3":"7.5,8.5,9.5"}]}]
-j=[{"qname":"YADA test UPDATE DATE with STRING LITERAL in WHERE","DATA":[{"COL4":"2013-04-14","COL1":"A"}]}]
-j=[{"qname":"YADA test UPDATE INTEGER","DATA":[{"COL2":"2","COL1":"A"}]}]
-j=[{"qname":"YADA test UPDATE INTEGER and NUMBER","DATA":[{"COL2":"2","COL3":"2.2","COL1":"A"}]}]
-j=[{"qname":"YADA test UPDATE INTEGER with INS","DATA":[{"COL2":"2","COL1":"A,B,C"}]}]
-j=[{"qname":"YADA test UPDATE INTEGER with LITERAL","DATA":[{"COL1":"A"}]}]
-j=[{"qname":"YADA test UPDATE INTEGER with LITERAL and INS","DATA":[{"COL1":"A,B,C"}]}]
-j=[{"qname":"YADA test UPDATE INTEGER with STRING LITERAL and INS in WHERE","DATA":[{"COL2":"10","COL3":"1.1,2.2,7.5,8.5,9.5"}]}]
-j=[{"qname":"YADA test UPDATE INTEGER with STRING LITERAL in WHERE","DATA":[{"COL2":"2"}]}]
-j=[{"qname":"YADA test UPDATE NUMBER","DATA":[{"COL3":"2.2","COL1":"A"}]}]
-j=[{"qname":"YADA test UPDATE NUMBER with INS","DATA":[{"COL3":"2.2","COL1":"A,B,C"}]}]
-j=[{"qname":"YADA test UPDATE NUMBER with LITERAL","DATA":[{"COL1":"A"}]}]
-j=[{"qname":"YADA test UPDATE NUMBER with LITERAL and INS","DATA":[{"COL1":"A,B,C"}]}]
-j=[{"qname":"YADA test UPDATE NUMBER with STRING LITERAL and INS in WHERE","DATA":[{"COL3":"1.1","COL2":"1,2,3,10"}]}]
-j=[{"qname":"YADA test UPDATE NUMBER with STRING LITERAL in WHERE","DATA":[{"COL3":"1.1"}]}]
-j=[{"qname":"YADA test UPDATE STRING","DATA":[{"COL1":"V","COL2":"10"}]}]
-j=[{"qname":"YADA test UPDATE STRING","DATA":[{"COL1":"Z,Z","COL2":"10"}]}]
-j=[{"qname":"YADA test UPDATE STRING with INS","DATA":[{"COL1":"W","COL2":"1,2,3,10"}]}]
-j=[{"qname":"YADA test UPDATE STRING with INTEGER LITERAL and INS in WHERE","DATA":[{"COL1":"V","COL3":"1.1,2.2,7.5,8.5,9.5"}]}]
-j=[{"qname":"YADA test UPDATE STRING with INTEGER LITERAL in WHERE","DATA":[{"COL1":"X"}]}]
-j=[{"qname":"YADA test UPDATE STRING with LITERAL","DATA":[{"COL2":"10"}]}]
-j=[{"qname":"YADA test UPDATE STRING with LITERAL and INS","DATA":[{"COL2":"1,2,3,10"}]}]
-j=[{"qname":"YADA test UPDATE TIME","DATA":[{"COL5":"2015-09-05 20:44:46","COL1":"A"}]}]
-j=[{"qname":"YADA test UPDATE TIME with INS","DATA":[{"COL5":"2015-09-05 20:44:46","COL1":"A,B,C"}]}]
-j=[{"qname":"YADA test UPDATE TIME with STRING LITERAL and INS in WHERE","DATA":[{"COL5":"2015-09-05 20:44:46","COL2":"1,2,3,10"}]}]
-j=[{"qname":"YADA test UPDATE TIME with STRING LITERAL in WHERE","DATA":[{"COL5":"2015-09-05 20:44:46"}]}]
+j=[{"qname":"YADA/test UPDATE DATE","DATA":[{"COL4":"2013-04-14","COL1":"A"}]}]
+j=[{"qname":"YADA/test UPDATE DATE with INS","DATA":[{"COL4":"2013-04-14","COL1":"A,B,Z"}]}]
+j=[{"qname":"YADA/test UPDATE DATE with STRING LITERAL and INS in WHERE","DATA":[{"COL4":"2013-04-14","COL3":"7.5,8.5,9.5"}]}]
+j=[{"qname":"YADA/test UPDATE DATE with STRING LITERAL in WHERE","DATA":[{"COL4":"2013-04-14","COL1":"A"}]}]
+j=[{"qname":"YADA/test UPDATE INTEGER","DATA":[{"COL2":"2","COL1":"A"}]}]
+j=[{"qname":"YADA/test UPDATE INTEGER and NUMBER","DATA":[{"COL2":"2","COL3":"2.2","COL1":"A"}]}]
+j=[{"qname":"YADA/test UPDATE INTEGER with INS","DATA":[{"COL2":"2","COL1":"A,B,C"}]}]
+j=[{"qname":"YADA/test UPDATE INTEGER with LITERAL","DATA":[{"COL1":"A"}]}]
+j=[{"qname":"YADA/test UPDATE INTEGER with LITERAL and INS","DATA":[{"COL1":"A,B,C"}]}]
+j=[{"qname":"YADA/test UPDATE INTEGER with STRING LITERAL and INS in WHERE","DATA":[{"COL2":"10","COL3":"1.1,2.2,7.5,8.5,9.5"}]}]
+j=[{"qname":"YADA/test UPDATE INTEGER with STRING LITERAL in WHERE","DATA":[{"COL2":"2"}]}]
+j=[{"qname":"YADA/test UPDATE NUMBER","DATA":[{"COL3":"2.2","COL1":"A"}]}]
+j=[{"qname":"YADA/test UPDATE NUMBER with INS","DATA":[{"COL3":"2.2","COL1":"A,B,C"}]}]
+j=[{"qname":"YADA/test UPDATE NUMBER with LITERAL","DATA":[{"COL1":"A"}]}]
+j=[{"qname":"YADA/test UPDATE NUMBER with LITERAL and INS","DATA":[{"COL1":"A,B,C"}]}]
+j=[{"qname":"YADA/test UPDATE NUMBER with STRING LITERAL and INS in WHERE","DATA":[{"COL3":"1.1","COL2":"1,2,3,10"}]}]
+j=[{"qname":"YADA/test UPDATE NUMBER with STRING LITERAL in WHERE","DATA":[{"COL3":"1.1"}]}]
+j=[{"qname":"YADA/test UPDATE STRING","DATA":[{"COL1":"V","COL2":"10"}]}]
+j=[{"qname":"YADA/test UPDATE STRING","DATA":[{"COL1":"Z,Z","COL2":"10"}]}]
+j=[{"qname":"YADA/test UPDATE STRING with INS","DATA":[{"COL1":"W","COL2":"1,2,3,10"}]}]
+j=[{"qname":"YADA/test UPDATE STRING with INTEGER LITERAL and INS in WHERE","DATA":[{"COL1":"V","COL3":"1.1,2.2,7.5,8.5,9.5"}]}]
+j=[{"qname":"YADA/test UPDATE STRING with INTEGER LITERAL in WHERE","DATA":[{"COL1":"X"}]}]
+j=[{"qname":"YADA/test UPDATE STRING with LITERAL","DATA":[{"COL2":"10"}]}]
+j=[{"qname":"YADA/test UPDATE STRING with LITERAL and INS","DATA":[{"COL2":"1,2,3,10"}]}]
+j=[{"qname":"YADA/test UPDATE TIME","DATA":[{"COL5":"2015-09-05 20:44:46","COL1":"A"}]}]
+j=[{"qname":"YADA/test UPDATE TIME with INS","DATA":[{"COL5":"2015-09-05 20:44:46","COL1":"A,B,C"}]}]
+j=[{"qname":"YADA/test UPDATE TIME with STRING LITERAL and INS in WHERE","DATA":[{"COL5":"2015-09-05 20:44:46","COL2":"1,2,3,10"}]}]
+j=[{"qname":"YADA/test UPDATE TIME with STRING LITERAL in WHERE","DATA":[{"COL5":"2015-09-05 20:44:46"}]}]
 
 
-JSONParams=[{"qname":"YADA test UPDATE DATE","DATA":[{"COL4":"2013-04-14","COL1":"A"}]}]
-JSONParams=[{"qname":"YADA test UPDATE DATE with INS","DATA":[{"COL4":"2013-04-14","COL1":"A,B,Z"}]}]
-JSONParams=[{"qname":"YADA test UPDATE DATE with STRING LITERAL and INS in WHERE","DATA":[{"COL4":"2013-04-14","COL3":"7.5,8.5,9.5"}]}]
-JSONParams=[{"qname":"YADA test UPDATE DATE with STRING LITERAL in WHERE","DATA":[{"COL4":"2013-04-14","COL1":"A"}]}]
-JSONParams=[{"qname":"YADA test UPDATE INTEGER","DATA":[{"COL2":"2","COL1":"A"}]}]
-JSONParams=[{"qname":"YADA test UPDATE INTEGER and NUMBER","DATA":[{"COL2":"2","COL3":"2.2","COL1":"A"}]}]
-JSONParams=[{"qname":"YADA test UPDATE INTEGER with INS","DATA":[{"COL2":"2","COL1":"A,B,C"}]}]
-JSONParams=[{"qname":"YADA test UPDATE INTEGER with LITERAL","DATA":[{"COL1":"A"}]}]
-JSONParams=[{"qname":"YADA test UPDATE INTEGER with LITERAL and INS","DATA":[{"COL1":"A,B,C"}]}]
-JSONParams=[{"qname":"YADA test UPDATE INTEGER with STRING LITERAL and INS in WHERE","DATA":[{"COL2":"10","COL3":"1.1,2.2,7.5,8.5,9.5"}]}]
-JSONParams=[{"qname":"YADA test UPDATE INTEGER with STRING LITERAL in WHERE","DATA":[{"COL2":"2"}]}]
-JSONParams=[{"qname":"YADA test UPDATE NUMBER","DATA":[{"COL3":"2.2","COL1":"A"}]}]
-JSONParams=[{"qname":"YADA test UPDATE NUMBER with INS","DATA":[{"COL3":"2.2","COL1":"A,B,C"}]}]
-JSONParams=[{"qname":"YADA test UPDATE NUMBER with LITERAL","DATA":[{"COL1":"A"}]}]
-JSONParams=[{"qname":"YADA test UPDATE NUMBER with LITERAL and INS","DATA":[{"COL1":"A,B,C"}]}]
-JSONParams=[{"qname":"YADA test UPDATE NUMBER with STRING LITERAL and INS in WHERE","DATA":[{"COL3":"1.1","COL2":"1,2,3,10"}]}]
-JSONParams=[{"qname":"YADA test UPDATE NUMBER with STRING LITERAL in WHERE","DATA":[{"COL3":"1.1"}]}]
-JSONParams=[{"qname":"YADA test UPDATE STRING","DATA":[{"COL1":"V","COL2":"10"}]}]
-JSONParams=[{"qname":"YADA test UPDATE STRING","DATA":[{"COL1":"Z,Z","COL2":"10"}]}]
-JSONParams=[{"qname":"YADA test UPDATE STRING with INS","DATA":[{"COL1":"W","COL2":"1,2,3,10"}]}]
-JSONParams=[{"qname":"YADA test UPDATE STRING with INTEGER LITERAL and INS in WHERE","DATA":[{"COL1":"V","COL3":"1.1,2.2,7.5,8.5,9.5"}]}]
-JSONParams=[{"qname":"YADA test UPDATE STRING with INTEGER LITERAL in WHERE","DATA":[{"COL1":"X"}]}]
-JSONParams=[{"qname":"YADA test UPDATE STRING with LITERAL","DATA":[{"COL2":"10"}]}]
-JSONParams=[{"qname":"YADA test UPDATE STRING with LITERAL and INS","DATA":[{"COL2":"1,2,3,10"}]}]
-JSONParams=[{"qname":"YADA test UPDATE TIME","DATA":[{"COL5":"2015-09-05 20:44:46","COL1":"A"}]}]
-JSONParams=[{"qname":"YADA test UPDATE TIME with INS","DATA":[{"COL5":"2015-09-05 20:44:46","COL1":"A,B,C"}]}]
-JSONParams=[{"qname":"YADA test UPDATE TIME with STRING LITERAL and INS in WHERE","DATA":[{"COL5":"2015-09-05 20:44:46","COL2":"1,2,3,10"}]}]
-JSONParams=[{"qname":"YADA test UPDATE TIME with STRING LITERAL in WHERE","DATA":[{"COL5":"2015-09-05 20:44:46"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE DATE","DATA":[{"COL4":"2013-04-14","COL1":"A"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE DATE with INS","DATA":[{"COL4":"2013-04-14","COL1":"A,B,Z"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE DATE with STRING LITERAL and INS in WHERE","DATA":[{"COL4":"2013-04-14","COL3":"7.5,8.5,9.5"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE DATE with STRING LITERAL in WHERE","DATA":[{"COL4":"2013-04-14","COL1":"A"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE INTEGER","DATA":[{"COL2":"2","COL1":"A"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE INTEGER and NUMBER","DATA":[{"COL2":"2","COL3":"2.2","COL1":"A"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE INTEGER with INS","DATA":[{"COL2":"2","COL1":"A,B,C"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE INTEGER with LITERAL","DATA":[{"COL1":"A"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE INTEGER with LITERAL and INS","DATA":[{"COL1":"A,B,C"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE INTEGER with STRING LITERAL and INS in WHERE","DATA":[{"COL2":"10","COL3":"1.1,2.2,7.5,8.5,9.5"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE INTEGER with STRING LITERAL in WHERE","DATA":[{"COL2":"2"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE NUMBER","DATA":[{"COL3":"2.2","COL1":"A"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE NUMBER with INS","DATA":[{"COL3":"2.2","COL1":"A,B,C"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE NUMBER with LITERAL","DATA":[{"COL1":"A"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE NUMBER with LITERAL and INS","DATA":[{"COL1":"A,B,C"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE NUMBER with STRING LITERAL and INS in WHERE","DATA":[{"COL3":"1.1","COL2":"1,2,3,10"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE NUMBER with STRING LITERAL in WHERE","DATA":[{"COL3":"1.1"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE STRING","DATA":[{"COL1":"V","COL2":"10"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE STRING","DATA":[{"COL1":"Z,Z","COL2":"10"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE STRING with INS","DATA":[{"COL1":"W","COL2":"1,2,3,10"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE STRING with INTEGER LITERAL and INS in WHERE","DATA":[{"COL1":"V","COL3":"1.1,2.2,7.5,8.5,9.5"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE STRING with INTEGER LITERAL in WHERE","DATA":[{"COL1":"X"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE STRING with LITERAL","DATA":[{"COL2":"10"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE STRING with LITERAL and INS","DATA":[{"COL2":"1,2,3,10"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE TIME","DATA":[{"COL5":"2015-09-05 20:44:46","COL1":"A"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE TIME with INS","DATA":[{"COL5":"2015-09-05 20:44:46","COL1":"A,B,C"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE TIME with STRING LITERAL and INS in WHERE","DATA":[{"COL5":"2015-09-05 20:44:46","COL2":"1,2,3,10"}]}]
+JSONParams=[{"qname":"YADA/test UPDATE TIME with STRING LITERAL in WHERE","DATA":[{"COL5":"2015-09-05 20:44:46"}]}]
 
 
-j=[{"qname":"YADA test UPDATE DATE","DATA":[{"COL4":"2013-04-14","COL1":"A"}]}]&m=update
-j=[{"qname":"YADA test UPDATE DATE with INS","DATA":[{"COL4":"2013-04-14","COL1":"A,B,Z"}]}]&m=update
-j=[{"qname":"YADA test UPDATE DATE with STRING LITERAL and INS in WHERE","DATA":[{"COL4":"2013-04-14","COL3":"7.5,8.5,9.5"}]}]&m=update
-j=[{"qname":"YADA test UPDATE DATE with STRING LITERAL in WHERE","DATA":[{"COL4":"2013-04-14","COL1":"A"}]}]&m=update
-j=[{"qname":"YADA test UPDATE INTEGER","DATA":[{"COL2":"2","COL1":"A"}]}]&m=update
-j=[{"qname":"YADA test UPDATE INTEGER and NUMBER","DATA":[{"COL2":"2","COL3":"2.2","COL1":"A"}]}]&m=update
-j=[{"qname":"YADA test UPDATE INTEGER with INS","DATA":[{"COL2":"2","COL1":"A,B,C"}]}]&m=update
-j=[{"qname":"YADA test UPDATE INTEGER with LITERAL","DATA":[{"COL1":"A"}]}]&m=update
-j=[{"qname":"YADA test UPDATE INTEGER with LITERAL and INS","DATA":[{"COL1":"A,B,C"}]}]&m=update
-j=[{"qname":"YADA test UPDATE INTEGER with STRING LITERAL and INS in WHERE","DATA":[{"COL2":"10","COL3":"1.1,2.2,7.5,8.5,9.5"}]}]&m=update
-j=[{"qname":"YADA test UPDATE INTEGER with STRING LITERAL in WHERE","DATA":[{"COL2":"2"}]}]&m=update
-j=[{"qname":"YADA test UPDATE NUMBER","DATA":[{"COL3":"2.2","COL1":"A"}]}]&m=update
-j=[{"qname":"YADA test UPDATE NUMBER with INS","DATA":[{"COL3":"2.2","COL1":"A,B,C"}]}]&m=update
-j=[{"qname":"YADA test UPDATE NUMBER with LITERAL","DATA":[{"COL1":"A"}]}]&m=update
-j=[{"qname":"YADA test UPDATE NUMBER with LITERAL and INS","DATA":[{"COL1":"A,B,C"}]}]&m=update
-j=[{"qname":"YADA test UPDATE NUMBER with STRING LITERAL and INS in WHERE","DATA":[{"COL3":"1.1","COL2":"1,2,3,10"}]}]&m=update
-j=[{"qname":"YADA test UPDATE NUMBER with STRING LITERAL in WHERE","DATA":[{"COL3":"1.1"}]}]&m=update
-j=[{"qname":"YADA test UPDATE STRING","DATA":[{"COL1":"V","COL2":"10"}]}]&m=update
-j=[{"qname":"YADA test UPDATE STRING","DATA":[{"COL1":"Z,Z","COL2":"10"}]}]&m=update
-j=[{"qname":"YADA test UPDATE STRING with INS","DATA":[{"COL1":"W","COL2":"1,2,3,10"}]}]&m=update
-j=[{"qname":"YADA test UPDATE STRING with INTEGER LITERAL and INS in WHERE","DATA":[{"COL1":"V","COL3":"1.1,2.2,7.5,8.5,9.5"}]}]&m=update
-j=[{"qname":"YADA test UPDATE STRING with INTEGER LITERAL in WHERE","DATA":[{"COL1":"X"}]}]&m=update
-j=[{"qname":"YADA test UPDATE STRING with LITERAL","DATA":[{"COL2":"10"}]}]&m=update
-j=[{"qname":"YADA test UPDATE STRING with LITERAL and INS","DATA":[{"COL2":"1,2,3,10"}]}]&m=update
-j=[{"qname":"YADA test UPDATE TIME","DATA":[{"COL5":"2015-09-05 20:44:46","COL1":"A"}]}]&m=update
-j=[{"qname":"YADA test UPDATE TIME with INS","DATA":[{"COL5":"2015-09-05 20:44:46","COL1":"A,B,C"}]}]&m=update
-j=[{"qname":"YADA test UPDATE TIME with STRING LITERAL and INS in WHERE","DATA":[{"COL5":"2015-09-05 20:44:46","COL2":"1,2,3,10"}]}]&m=update
-j=[{"qname":"YADA test UPDATE TIME with STRING LITERAL in WHERE","DATA":[{"COL5":"2015-09-05 20:44:46"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE DATE","DATA":[{"COL4":"2013-04-14","COL1":"A"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE DATE with INS","DATA":[{"COL4":"2013-04-14","COL1":"A,B,Z"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE DATE with STRING LITERAL and INS in WHERE","DATA":[{"COL4":"2013-04-14","COL3":"7.5,8.5,9.5"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE DATE with STRING LITERAL in WHERE","DATA":[{"COL4":"2013-04-14","COL1":"A"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE INTEGER","DATA":[{"COL2":"2","COL1":"A"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE INTEGER and NUMBER","DATA":[{"COL2":"2","COL3":"2.2","COL1":"A"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE INTEGER with INS","DATA":[{"COL2":"2","COL1":"A,B,C"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE INTEGER with LITERAL","DATA":[{"COL1":"A"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE INTEGER with LITERAL and INS","DATA":[{"COL1":"A,B,C"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE INTEGER with STRING LITERAL and INS in WHERE","DATA":[{"COL2":"10","COL3":"1.1,2.2,7.5,8.5,9.5"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE INTEGER with STRING LITERAL in WHERE","DATA":[{"COL2":"2"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE NUMBER","DATA":[{"COL3":"2.2","COL1":"A"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE NUMBER with INS","DATA":[{"COL3":"2.2","COL1":"A,B,C"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE NUMBER with LITERAL","DATA":[{"COL1":"A"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE NUMBER with LITERAL and INS","DATA":[{"COL1":"A,B,C"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE NUMBER with STRING LITERAL and INS in WHERE","DATA":[{"COL3":"1.1","COL2":"1,2,3,10"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE NUMBER with STRING LITERAL in WHERE","DATA":[{"COL3":"1.1"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE STRING","DATA":[{"COL1":"V","COL2":"10"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE STRING","DATA":[{"COL1":"Z,Z","COL2":"10"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE STRING with INS","DATA":[{"COL1":"W","COL2":"1,2,3,10"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE STRING with INTEGER LITERAL and INS in WHERE","DATA":[{"COL1":"V","COL3":"1.1,2.2,7.5,8.5,9.5"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE STRING with INTEGER LITERAL in WHERE","DATA":[{"COL1":"X"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE STRING with LITERAL","DATA":[{"COL2":"10"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE STRING with LITERAL and INS","DATA":[{"COL2":"1,2,3,10"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE TIME","DATA":[{"COL5":"2015-09-05 20:44:46","COL1":"A"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE TIME with INS","DATA":[{"COL5":"2015-09-05 20:44:46","COL1":"A,B,C"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE TIME with STRING LITERAL and INS in WHERE","DATA":[{"COL5":"2015-09-05 20:44:46","COL2":"1,2,3,10"}]}]&m=update
+j=[{"qname":"YADA/test UPDATE TIME with STRING LITERAL in WHERE","DATA":[{"COL5":"2015-09-05 20:44:46"}]}]&m=update
 
-JSONParams=[{"qname":"YADA test UPDATE DATE","DATA":[{"COL4":"2013-04-14","COL1":"A"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE DATE with INS","DATA":[{"COL4":"2013-04-14","COL1":"A,B,Z"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE DATE with STRING LITERAL and INS in WHERE","DATA":[{"COL4":"2013-04-14","COL3":"7.5,8.5,9.5"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE DATE with STRING LITERAL in WHERE","DATA":[{"COL4":"2013-04-14","COL1":"A"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE INTEGER","DATA":[{"COL2":"2","COL1":"A"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE INTEGER and NUMBER","DATA":[{"COL2":"2","COL3":"2.2","COL1":"A"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE INTEGER with INS","DATA":[{"COL2":"2","COL1":"A,B,C"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE INTEGER with LITERAL","DATA":[{"COL1":"A"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE INTEGER with LITERAL and INS","DATA":[{"COL1":"A,B,C"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE INTEGER with STRING LITERAL and INS in WHERE","DATA":[{"COL2":"10","COL3":"1.1,2.2,7.5,8.5,9.5"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE INTEGER with STRING LITERAL in WHERE","DATA":[{"COL2":"2"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE NUMBER","DATA":[{"COL3":"2.2","COL1":"A"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE NUMBER with INS","DATA":[{"COL3":"2.2","COL1":"A,B,C"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE NUMBER with LITERAL","DATA":[{"COL1":"A"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE NUMBER with LITERAL and INS","DATA":[{"COL1":"A,B,C"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE NUMBER with STRING LITERAL and INS in WHERE","DATA":[{"COL3":"1.1","COL2":"1,2,3,10"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE NUMBER with STRING LITERAL in WHERE","DATA":[{"COL3":"1.1"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE STRING","DATA":[{"COL1":"V","COL2":"10"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE STRING","DATA":[{"COL1":"Z,Z","COL2":"10"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE STRING with INS","DATA":[{"COL1":"W","COL2":"1,2,3,10"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE STRING with INTEGER LITERAL and INS in WHERE","DATA":[{"COL1":"V","COL3":"1.1,2.2,7.5,8.5,9.5"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE STRING with INTEGER LITERAL in WHERE","DATA":[{"COL1":"X"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE STRING with LITERAL","DATA":[{"COL2":"10"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE STRING with LITERAL and INS","DATA":[{"COL2":"1,2,3,10"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE TIME","DATA":[{"COL5":"2015-09-05 20:44:46","COL1":"A"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE TIME with INS","DATA":[{"COL5":"2015-09-05 20:44:46","COL1":"A,B,C"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE TIME with STRING LITERAL and INS in WHERE","DATA":[{"COL5":"2015-09-05 20:44:46","COL2":"1,2,3,10"}]}]&method=update
-JSONParams=[{"qname":"YADA test UPDATE TIME with STRING LITERAL in WHERE","DATA":[{"COL5":"2015-09-05 20:44:46"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE DATE","DATA":[{"COL4":"2013-04-14","COL1":"A"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE DATE with INS","DATA":[{"COL4":"2013-04-14","COL1":"A,B,Z"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE DATE with STRING LITERAL and INS in WHERE","DATA":[{"COL4":"2013-04-14","COL3":"7.5,8.5,9.5"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE DATE with STRING LITERAL in WHERE","DATA":[{"COL4":"2013-04-14","COL1":"A"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE INTEGER","DATA":[{"COL2":"2","COL1":"A"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE INTEGER and NUMBER","DATA":[{"COL2":"2","COL3":"2.2","COL1":"A"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE INTEGER with INS","DATA":[{"COL2":"2","COL1":"A,B,C"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE INTEGER with LITERAL","DATA":[{"COL1":"A"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE INTEGER with LITERAL and INS","DATA":[{"COL1":"A,B,C"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE INTEGER with STRING LITERAL and INS in WHERE","DATA":[{"COL2":"10","COL3":"1.1,2.2,7.5,8.5,9.5"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE INTEGER with STRING LITERAL in WHERE","DATA":[{"COL2":"2"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE NUMBER","DATA":[{"COL3":"2.2","COL1":"A"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE NUMBER with INS","DATA":[{"COL3":"2.2","COL1":"A,B,C"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE NUMBER with LITERAL","DATA":[{"COL1":"A"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE NUMBER with LITERAL and INS","DATA":[{"COL1":"A,B,C"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE NUMBER with STRING LITERAL and INS in WHERE","DATA":[{"COL3":"1.1","COL2":"1,2,3,10"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE NUMBER with STRING LITERAL in WHERE","DATA":[{"COL3":"1.1"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE STRING","DATA":[{"COL1":"V","COL2":"10"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE STRING","DATA":[{"COL1":"Z,Z","COL2":"10"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE STRING with INS","DATA":[{"COL1":"W","COL2":"1,2,3,10"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE STRING with INTEGER LITERAL and INS in WHERE","DATA":[{"COL1":"V","COL3":"1.1,2.2,7.5,8.5,9.5"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE STRING with INTEGER LITERAL in WHERE","DATA":[{"COL1":"X"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE STRING with LITERAL","DATA":[{"COL2":"10"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE STRING with LITERAL and INS","DATA":[{"COL2":"1,2,3,10"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE TIME","DATA":[{"COL5":"2015-09-05 20:44:46","COL1":"A"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE TIME with INS","DATA":[{"COL5":"2015-09-05 20:44:46","COL1":"A,B,C"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE TIME with STRING LITERAL and INS in WHERE","DATA":[{"COL5":"2015-09-05 20:44:46","COL2":"1,2,3,10"}]}]&method=update
+JSONParams=[{"qname":"YADA/test UPDATE TIME with STRING LITERAL in WHERE","DATA":[{"COL5":"2015-09-05 20:44:46"}]}]&method=update
