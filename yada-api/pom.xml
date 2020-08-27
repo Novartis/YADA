@@ -19,7 +19,6 @@
 		</site>
 	</distributionManagement>
 	<properties>
-		<YADA.lib>${env.YADA_LIB}</YADA.lib>
 		<YADA.branch>master</YADA.branch>
 		<YADA.switch.branch>false</YADA.switch.branch>
 		<YADA.pull.on.launch>false</YADA.pull.on.launch>
@@ -35,13 +34,18 @@
 	</properties>
 	<profiles>
 		<profile>
-			<id>test</id>
+			<id>test</id>			
 			<properties>
-				<YADA.lib>${env.YADA_LIB}</YADA.lib>
 				<YADA.branch>testng</YADA.branch>
 				<YADA.switch.branch>true</YADA.switch.branch>
 				<YADA.pull.on.launch>false</YADA.pull.on.launch>
-				<log.level>debug</log.level>
+				<log.level>info</log.level>
+				<YADA.index.host>${YADATEST.pgsql.index.host}</YADA.index.host>
+				<YADA.index.url>${YADATEST.pgsql.index.url}</YADA.index.url>
+        <YADA.index.username>${YADATEST.pgsql.index.username}</YADA.index.username>
+        <YADA.index.password>${YADATEST.pgsql.index.password}</YADA.index.password>
+        <YADA.index.autoCommit>false</YADA.index.autoCommit>
+        <YADA.index.driverClassName>${YADATEST.pgsql.index.driverClassName}</YADA.index.driverClassName>
 			</properties>
 			<!-- <properties> <YADA.index.url>${YADA.pgsql.index.url}</YADA.index.url>
 				<YADA.index.username>${YADA.pgsql.index.username}</YADA.index.username> <YADA.index.password>${YADA.pgsql.index.password}</YADA.index.password>
@@ -55,12 +59,35 @@
 						<argument>PostgreSQL</argument> <argument>${dbload.backup}</argument> </arguments>
 						</configuration> <executions> <execution> <id>db-load</id> <phase>compile</phase>
 						<goals> <goal>exec</goal> </goals> </execution> </executions> </plugin> -->
-					<plugin>
+						<plugin>
+	            <groupId>org.codehaus.mojo</groupId>
+	            <artifactId>exec-maven-plugin</artifactId>
+	            <version>1.3.2</version>
+	            <configuration>
+	              <skip>${skip.db.load}</skip>
+	              <executable>/bin/bash</executable>
+	              <arguments>
+	                <argument>${project.build.testOutputDirectory}/conf/dbLoad.sh</argument>
+	                <argument>PostgreSQL</argument>
+	                <!-- <argument>${dbload.backup}</argument> -->
+	              </arguments>
+	            </configuration>
+	            <executions>
+	              <execution>
+	                <id>db-load</id>
+	                <phase>test</phase>
+	                <goals>
+	                  <goal>exec</goal>
+	                </goals>
+	              </execution>
+	            </executions>
+	          </plugin>
+						<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>2.18.1</version>
 						<configuration>
-							<skip>true</skip>
+						<skip>true</skip>
 						</configuration>
 						<executions>
 							<execution>
@@ -70,7 +97,7 @@
 								</goals>
 								<phase>test</phase>
 								<configuration>
-									<skip>false</skip>
+									<skip>${surefire.skip}</skip>
 									<properties>
 										<test.properties>${basedir}/target/test-classes/conf/TestNG_YADA.properties</test.properties>
 									</properties>
@@ -81,7 +108,7 @@
 										<additionalClasspathElement>${test.properties}</additionalClasspathElement>
 									</additionalClasspathElements>
 									<properties>
-										<property>
+                                        <property>
 											<name>listener</name>
 											<value>com.novartis.opensource.yada.test.QueryFileTransformer</value>
 										</property>
@@ -322,6 +349,8 @@
 					<include>ehcache.xml</include>
 					<include>log4j.properties</include>
 					<include>YADA.properties</include>
+					<include>dbLoad.sh</include>
+					<include>YADA_db_PostgreSQL.sql</include>
 				</includes>
 			</testResource>
 			<testResource>
@@ -725,8 +754,11 @@
 			<version>7.1.1-1</version> <scope>test</scope> </dependency> -->
 		<!-- <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId>
 			<version>5.1.31</version> <scope>test</scope> </dependency> -->
-		<!-- <dependency> <groupId>org.postgresql</groupId> <artifactId>postgresql</artifactId>
-			<scope>test</scope> </dependency> -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>test</scope>
+		</dependency>
 		<!-- restore for oracle 11g -->
 		<!-- You may need to install this jar manually in your maven repo -->
 		<!-- <dependency> <groupId>com.oracle</groupId> <artifactId>ojdbc6</artifactId>
@@ -788,10 +820,10 @@
 		</dependency>
 		<!-- <dependency> <groupId>org.elasticsearch</groupId> <artifactId>elasticsearch</artifactId>
 			<version>2.1.1</version> </dependency> -->
-		<!-- <dependency> <groupId>org.hsqldb</groupId> <artifactId>hsqldb</artifactId>
-			<version>2.3.4</version> </dependency> -->
-		<!-- <dependency> <groupId>org.hsqldb</groupId> <artifactId>sqltool</artifactId>
-			<version>2.3.4</version> </dependency> -->
+		<dependency> <groupId>org.hsqldb</groupId> <artifactId>hsqldb</artifactId>
+			<version>2.3.4</version> </dependency>
+		<dependency> <groupId>org.hsqldb</groupId> <artifactId>sqltool</artifactId>
+			<version>2.3.4</version> </dependency>
 		<dependency>
 			<groupId>com.zaxxer</groupId>
 			<artifactId>HikariCP</artifactId>
@@ -824,5 +856,9 @@
 			<artifactId>org.eclipse.jgit</artifactId>
 			<version>5.8.1.202007141445-r</version>
 		</dependency>
+		<dependency>
+        <groupId>com.sun.xml.messaging.saaj</groupId>
+        <artifactId>saaj-impl</artifactId>        
+    </dependency>
 	</dependencies>
 </project>
