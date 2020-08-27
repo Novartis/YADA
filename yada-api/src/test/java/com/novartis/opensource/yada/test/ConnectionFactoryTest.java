@@ -108,7 +108,7 @@ public class ConnectionFactoryTest {
    * The test is successful if a {@link YADAConnectionException} is thrown.
    * @throws YADAConnectionException when the connection can't be opened
    */
-  @Test (groups = {"core"}, expectedExceptions=YADAConnectionException.class)
+  @Test (groups = {"core"}, expectedExceptions=YADAConnectionException.class, enabled = false)
   public void getUnknownConnectionFail() throws YADAConnectionException 
   {
   	ConnectionFactory.getConnectionFactory().getConnection("jdbc/yomama");
