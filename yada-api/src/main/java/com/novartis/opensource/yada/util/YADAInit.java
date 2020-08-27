@@ -57,7 +57,7 @@ public class YADAInit extends HttpServlet {
  			URL url = getClass().getResource(file);
  	 		CacheManager.create(url);
  		}
- 		ConnectionFactory.getConnectionFactory();
+// 		ConnectionFactory.getConnectionFactory();
  		//TODO implement URL string mapping 
 	}
  	
