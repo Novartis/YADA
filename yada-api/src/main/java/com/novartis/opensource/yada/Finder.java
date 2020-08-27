@@ -335,7 +335,7 @@ public class Finder {
    * @since 9.0.0
    */
   private final static String YADA_PROPERTIES_PATH = "YADA.properties.path";
-  
+
   /**
    * Constant equal to {@value}. Used for retrieving config for specific YADA
    * index.
@@ -343,7 +343,7 @@ public class Finder {
    * @since 9.0.0
    */
   private final static String YADA_BRANCH = "YADA.branch";
-  
+
   /**
    * Constant equal to {@value}. Used for retrieving config for specific YADA
    * index.
@@ -358,8 +358,8 @@ public class Finder {
    * 
    * @since 9.0.0
    */
-  private final static String GIT_DIR = ".git";
-  
+  public final static String GIT_DIR = ".git";
+
   /**
    * Constant equal to {@value}. Used for retrieving config for specific YADA
    * index.
@@ -367,7 +367,7 @@ public class Finder {
    * @since 9.0.0
    */
   private final static String YADA_PULL_ON_LAUNCH = "YADA.pull.on.launch";
-  
+
   /**
    * Constant equal to {@value}. Default location for {@code YADA.properties}
    * file, in {@code WEB-INF/classes}
@@ -375,7 +375,7 @@ public class Finder {
    * @since 9.0.0
    */
   public final static String YADA_DEFAULT_PROPERTIES_PATH = "/YADA.properties";
-  
+
   /**
    * Constant equal to {@value}. The YADA app name.
    * 
@@ -385,30 +385,27 @@ public class Finder {
 
   /**
    * Constant holding the contents of {@code YADA.properties} or equivalent
+   * 
    * @since 9.0.0
    */
   public final static Properties YADA_PROPERTIES = getYADAProperties();
-  
-  static {
+
+  static
+  {
     RepositoryBuilder builder = new RepositoryBuilder();
     try
     {
-      Repository repo = builder.setGitDir(new File(YADA_PROPERTIES.getProperty(YADA_LIB),GIT_DIR))
-          .readEnvironment()
-          .findGitDir()
-          .build();
-      ObjectId id = repo.resolve(Constants.HEAD);
-      String confBranch = YADA_PROPERTIES.getProperty(YADA_BRANCH);      
-      String currBranch = repo.getBranch();
-      Boolean switchBranch = Boolean.valueOf(YADA_PROPERTIES.getProperty(YADA_SWITCH_BRANCH));
-      l.debug("\nconf branch:" 
-          + confBranch+", \ncurrent branch: "
-          + currBranch+", \nconf switch branch:" 
-          + switchBranch+", \nHEAD:"
-          + id);
-      if(!confBranch.contentEquals(currBranch) && sw)
+      Repository repo         = builder.setGitDir(new File(getYADALibDirectory(), GIT_DIR)).readEnvironment()
+          .findGitDir().build();
+      ObjectId   id           = repo.resolve(Constants.HEAD);
+      String     confBranch   = YADA_PROPERTIES.getProperty(YADA_BRANCH);
+      String     currBranch   = repo.getBranch();
+      Boolean    switchBranch = Boolean.valueOf(YADA_PROPERTIES.getProperty(YADA_SWITCH_BRANCH));
+      l.debug("\nconf branch:" + confBranch + ", \ncurrent branch: " + currBranch + ", \nconf switch branch:"
+          + switchBranch + ", \nHEAD:" + id);
+      if (!confBranch.contentEquals(currBranch) && switchBranch)
       {
-        try(Git git = new Git(repo))
+        try (Git git = new Git(repo))
         {
           git.checkout().setName(confBranch).call();
         }
@@ -438,21 +435,48 @@ public class Finder {
           e.printStackTrace();
         }
       }
-    }        
+    }
     catch (IOException e)
     {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
-  
+
+  /**
+   * Indicates if {@link YADA_LIB} has been set
+   * 
+   * @return {@code true} if {@link YADA_LIB} is present in
+   *         {@link YADA_PROPERTIES}
+   * @since 9.0.0
+   */
+  public final static boolean hasYADALib() {
+    return YADA_PROPERTIES.getProperty(YADA_LIB) != null;
+  }
+
+  /**
+   * @return a {@link File} implementation of the directory referenced by
+   *         {@link YADA_LIB}
+   * @since 9.0.0
+   */
+  public final static File getYADALibDirectory() {
+    return new File(YADA_PROPERTIES.getProperty(YADA_LIB));
+  }
+
+  /**
+   * @return the {@link String} associated to the {@code YADA_LIB} property
+   * @since 9.0.0
+   */
+  public final static String getYADALib() {
+    return YADA_PROPERTIES.getProperty(YADA_LIB);
+  }
+
   /**
    * Sets {@code static} {@link YADA_PROPERTIES} object
    * 
    * @return {@link java.util.Properties}
    */
-  private final static Properties getYADAProperties() 
-  {
+  private final static Properties getYADAProperties() {
     Properties props = new Properties();
     String     path  = System.getProperty(YADA_PROPERTIES_PATH);
     if (path == null || "".equals(path))
@@ -461,7 +485,7 @@ public class Finder {
     try
     {
       props.load(is);
-      l.info(String.format("Loaded %s",path));
+      l.info(String.format("Loaded %s", path));
     }
     catch (IOException e)
     {
@@ -486,7 +510,7 @@ public class Finder {
     if (result == null || "".equals(result))
     {
       result = YADA_PROPERTIES.getProperty(property);
-      if(result == null || "".equals(result))
+      if (result == null || "".equals(result))
       {
         String msg = "The property [" + property + "] was not found.";
         throw new YADAResourceException(msg);
@@ -640,7 +664,7 @@ public class Finder {
     }
     catch (YADAQueryConfigurationException e)
     {
-      String msg = String.format("Failed to instantiate query `%s.`", q);
+      String msg = String.format("Failed to instantiate query `%s`", q);
       throw new YADAFinderException(msg, e);
     }
     return yq;
@@ -664,19 +688,15 @@ public class Finder {
   public YADAQuery getQuery(String q)
       throws YADAConnectionException, YADAFinderException, YADAQueryConfigurationException {
     YADAQuery yq = null;
-    try
+    if (hasYADALib())
     {
-      if (Finder.getEnv(Finder.YADA_LIB) != null)
-      {
-        yq = this.getQueryFromLib(q);
-        return yq; 
-      }
+      yq = this.getQueryFromLib(q);
+      return yq;
     }
-    catch (YADAResourceException e)
+    else
     {
       return this.getQuery(q, true);
     }
-    return null;
   }
 
   /**
