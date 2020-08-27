@@ -9,7 +9,7 @@
 
 -->
 <urlrewrite>
-	
+
     <rule>
       <note>This is a simple rewrite for backward compatibility, when the jsp had a different name</note>
       <from>^/service.jsp$</from>
@@ -20,8 +20,9 @@
     	<condition type="query-string" operator="equal">^$</condition>
       <condition type="request-uri" operator="notequal">JSONParams\.html$</condition>
     	<condition type="request-uri" operator="equal">\b(q|qname|j|JSONParams)\b</condition>
-    	<from> ^/((yada|service)/)*(.+)$</from>
-    	<to last="true">/yada.jsp?yp=$3</to>
+    	<!--<from> ^/((yada|service)/)*(.+)$</from>-->
+      <from>^(?:/yada|service)*/(q(?:name)?/.+/.+)$</from>
+    	<to last="true">/yada.jsp?yp=$1</to>
     </rule>
     <rule>
       <note>Support for arbitrary paths - currently untested</note>
@@ -89,4 +90,3 @@
     -->
 
 </urlrewrite>
-
