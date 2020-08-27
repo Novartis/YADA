@@ -922,7 +922,7 @@ public class YADAQuery {
 			String key = param.getName();
 			if(key.equals(YADARequest.PS_HARMONYMAP) || key.equals(YADARequest.PL_HARMONYMAP))
 			{
-			  JSONArray  hMap = new JSONArray(param.getValue());
+			  JSONArray hMap = new JSONArray(param.getValue());
 			  int idx = hMap.length() > 1 ? index : 0;
 			  param.setValue(hMap.getJSONObject(idx).toString());
 			}
