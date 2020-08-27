@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,7 +19,12 @@ import org.json.JSONObject;
  * @since 9.0.0
  */
 public class YADASecuritySpec extends HashMap<String, Object> {
-
+  
+  /**
+   * 
+   */
+  private static Logger l = Logger.getLogger(YADASecuritySpec.class); 
+  
   /**
    * 
    */
@@ -140,13 +146,13 @@ public class YADASecuritySpec extends HashMap<String, Object> {
         }
         catch(JSONException e)
         {
-          String msg = String.format("%s key caused an error", key);
+          String msg = String.format("[%s] key caused an error", key);
           throw new YADAQueryConfigurationException(msg);
         }        
       }
       else
       {
-        String msg = String.format("%s is not permitted in YADASecuritySpec", key);
+        String msg = String.format("[%s] is not permitted in YADASecuritySpec", key);
         throw new YADAQueryConfigurationException(msg);
       }
     }
@@ -162,7 +168,22 @@ public class YADASecuritySpec extends HashMap<String, Object> {
     {
       if(field.getName().startsWith("KEY"))
       {
-        names.add(field.getName());
+        try
+        {
+          names.add(field.get(null).toString());
+          l.debug("YADASecuritySpec KEY field: "+field.get(null).toString());
+        }
+        catch (IllegalArgumentException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+        catch (IllegalAccessException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+        
       }
     }
     return names;
