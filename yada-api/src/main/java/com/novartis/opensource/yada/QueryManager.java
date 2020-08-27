@@ -443,7 +443,7 @@ public class QueryManager {
           msg += "------------------------------------------------------------\n";
           l.debug(msg);
         }
-        else
+        else if(!connection.getAutoCommit())
         {
           deferCommit(yq.getApp());
         }
@@ -485,8 +485,8 @@ public class QueryManager {
             msg += "   Commit successful on [" + source + "].\n";
             msg += "------------------------------------------------------------\n";
             l.info(msg);
-          }
-          else
+          }          
+          else if(!connection.getAutoCommit())
           {
             deferCommit(source);
           }
@@ -537,11 +537,19 @@ public class QueryManager {
       try
       {
         Connection connection = (Connection) this.connectionMap.get(app);
-        connection.commit();
-        String msg = "\n------------------------------------------------------------\n";
-        msg += "   Commit successful on [" + app + "].\n";
-        msg += "------------------------------------------------------------\n";
-        l.info(msg);
+        if(connection.getAutoCommit())
+        {
+          String msg = "Auto-commited";
+          l.info(msg);
+        }
+        else
+        {
+          connection.commit();
+          String msg = "\n------------------------------------------------------------\n";
+          msg += "   Commit successful on [" + app + "].\n";
+          msg += "------------------------------------------------------------\n";
+          l.info(msg);
+        }
       }
       catch (SQLException e)
       {
@@ -794,7 +802,8 @@ public class QueryManager {
             String msg = "\n------------------------------------------------------------";
             msg += "\n   SELECT statement to execute:";
             msg += "\n------------------------------------------------------------\n";
-            msg += wrappedCode.toString() + "\n";
+            msg += wrappedCode.toString() + "";
+            msg += "\n------------------------------------------------------------\n";
             l.debug(msg);
           }
           else // INSERT, UPDATE, DELETE
@@ -804,7 +813,8 @@ public class QueryManager {
             String msg = "\n------------------------------------------------------------";
             msg += "\n   INSERT/UPDATE/DELETE statement to execute:";
             msg += "\n------------------------------------------------------------\n";
-            msg += wrappedCode.toString() + "\n";
+            msg += wrappedCode.toString() + "";
+            msg += "\n------------------------------------------------------------\n";
             l.debug(msg);
           }
 
@@ -815,7 +825,8 @@ public class QueryManager {
             String msg = "\n------------------------------------------------------------";
             msg += "\n   SELECT COUNT statement to execute:";
             msg += "\n------------------------------------------------------------\n";
-            msg += wrappedCode.toString() + "\n";
+            msg += wrappedCode.toString() + "";
+            msg += "\n------------------------------------------------------------\n";
             l.debug(msg);
             storePreparedStatementForCount(yq, yq.getPstmt(row), wrappedCode);
           }
@@ -926,8 +937,11 @@ public class QueryManager {
     while (jpIter.hasNext())
     {
       String qname = jpIter.next();
-
-      YADAQuery yq = new Finder().getQuery(qname, this.getUpdateStats());
+      YADAQuery yq = null;
+      if(Finder.hasYADALib())
+        yq = new Finder().getQuery(qname);
+      else
+        yq = new Finder().getQuery(qname, this.getUpdateStats());
       yqs[index++] = endowQuery(yq, jSONParams.get(qname));
     }
     return yqs;
@@ -983,7 +997,11 @@ public class QueryManager {
    */
   YADAQuery endowQuery(String q) throws YADAConnectionException, YADAFinderException, YADAQueryConfigurationException,
       YADAResourceException, YADAUnsupportedAdaptorException {
-    YADAQuery                       yq     = new Finder().getQuery(q, this.getUpdateStats());
+    YADAQuery yq = null;
+    if(Finder.hasYADALib())
+      yq     = new Finder().getQuery(q);
+    else
+      yq     = new Finder().getQuery(q, this.getUpdateStats());
     LinkedHashMap<String, String[]> data   = new LinkedHashMap<>();
     String[][]                      params = this.yadaReq.getParams();
     if (params != null)
@@ -1020,7 +1038,14 @@ public class QueryManager {
       YADAUnsupportedAdaptorException, YADAConnectionException {
     int index = 0;
     if (getJsonParams() != null)
+    {
+      String qpath = yq.getApp() + "/" + yq.getQname();
+      index = ArrayUtils.indexOf(getJsonParams().getKeys(), qpath);
+    }
+    if(index == -1)
+    {
       index = ArrayUtils.indexOf(getJsonParams().getKeys(), yq.getQname());
+    }
     yq.addRequestParams(this.yadaReq.getRequestParamsForQueries(), index);
     yq.setAdaptorClass(this.qutils.getAdaptorClass(yq.getApp()));
     if (RESTAdaptor.class.equals(yq.getAdaptorClass()))
