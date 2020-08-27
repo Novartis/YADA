@@ -1,17 +1,17 @@
-q=YADA/test SELECT&pl=com.novartis.opensource.yada.plugin.ScriptPreprocessor&a=scriptPluginPreTest.pl,YADA/test validate preproc&c=false
-q=YADA/test SELECT&pl=com.novartis.opensource.yada.plugin.ScriptPreprocessor&pr=scriptPluginPreTest.pl,YADA/test validate preproc&c=false
-q=YADA/test SELECT&pl=ScriptPreprocessor&a=scriptPluginPreTest.pl,YADA/test validate preproc&c=false
-q=YADA/test SELECT&pl=ScriptPreprocessor&pr=scriptPluginPreTest.pl,YADA/test validate preproc&c=false
-q=YADA/test SELECT&pr=scriptPluginPreTest.pl,YADA/test validate preproc&c=false
+q=YADATEST/test SELECT&pl=com.novartis.opensource.yada.plugin.ScriptPreprocessor&a=scriptPluginPreTest.pl,YADATEST/test validate preproc&c=false
+q=YADATEST/test SELECT&pl=com.novartis.opensource.yada.plugin.ScriptPreprocessor&pr=scriptPluginPreTest.pl,YADATEST/test validate preproc&c=false
+q=YADATEST/test SELECT&pl=ScriptPreprocessor&a=scriptPluginPreTest.pl,YADATEST/test validate preproc&c=false
+q=YADATEST/test SELECT&pl=ScriptPreprocessor&pr=scriptPluginPreTest.pl,YADATEST/test validate preproc&c=false
+q=YADATEST/test SELECT&pr=scriptPluginPreTest.pl,YADATEST/test validate preproc&c=false
 #
-q=YADA/test SELECT&plugin=com.novartis.opensource.yada.plugin.ScriptPreprocessor&args=scriptPluginPreTest.pl,YADA/test validate preproc&count=false
-q=YADA/test SELECT&plugin=com.novartis.opensource.yada.plugin.ScriptPreprocessor&preargs=scriptPluginPreTest.pl,YADA/test validate preproc&count=false
-q=YADA/test SELECT&plugin=ScriptPreprocessor&args=scriptPluginPreTest.pl,YADA/test validate preproc&count=false
-q=YADA/test SELECT&plugin=ScriptPreprocessor&preargs=scriptPluginPreTest.pl,YADA/test validate preproc&count=false
-q=YADA/test SELECT&preargs=scriptPluginPreTest.pl,YADA/test validate preproc&count=false
+q=YADATEST/test SELECT&plugin=com.novartis.opensource.yada.plugin.ScriptPreprocessor&args=scriptPluginPreTest.pl,YADATEST/test validate preproc&count=false
+q=YADATEST/test SELECT&plugin=com.novartis.opensource.yada.plugin.ScriptPreprocessor&preargs=scriptPluginPreTest.pl,YADATEST/test validate preproc&count=false
+q=YADATEST/test SELECT&plugin=ScriptPreprocessor&args=scriptPluginPreTest.pl,YADATEST/test validate preproc&count=false
+q=YADATEST/test SELECT&plugin=ScriptPreprocessor&preargs=scriptPluginPreTest.pl,YADATEST/test validate preproc&count=false
+q=YADATEST/test SELECT&preargs=scriptPluginPreTest.pl,YADATEST/test validate preproc&count=false
 #
-q=YADA/test SELECT&pl=com.novartis.opensource.yada.plugin.ScriptPreprocessor,scriptPluginPreTest.pl,YADA/test validate preproc&c=false
-q=YADA/test SELECT&pl=ScriptPreprocessor,scriptPluginPreTest.pl,YADA/test validate preproc&c=false
+q=YADATEST/test SELECT&pl=com.novartis.opensource.yada.plugin.ScriptPreprocessor,scriptPluginPreTest.pl,YADATEST/test validate preproc&c=false
+q=YADATEST/test SELECT&pl=ScriptPreprocessor,scriptPluginPreTest.pl,YADATEST/test validate preproc&c=false
 #
-q=YADA/test SELECT&plugin=com.novartis.opensource.yada.plugin.ScriptPreprocessor,scriptPluginPreTest.pl,YADA/test validate preproc&count=false
-q=YADA/test SELECT&plugin=ScriptPreprocessor,scriptPluginPreTest.pl,YADA/test validate preproc&count=false
+q=YADATEST/test SELECT&plugin=com.novartis.opensource.yada.plugin.ScriptPreprocessor,scriptPluginPreTest.pl,YADATEST/test validate preproc&count=false
+q=YADATEST/test SELECT&plugin=ScriptPreprocessor,scriptPluginPreTest.pl,YADATEST/test validate preproc&count=false

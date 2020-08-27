@@ -3,7 +3,7 @@
 # Params:    q,qname,m,method
 # DataTypes: None specified
 # BaseData:  {"COL1":"Z","COL2":"10","COL3":"7.5","COL4":"2013-03-04","COL5":"2015-09-05 20:44:33"}
-q=YADA/test DELETE
-qname=YADA/test DELETE
-q=YADA/test DELETE&m=update
-qname=YADA/test DELETE&method=update
+q=YADATEST/test DELETE
+qname=YADATEST/test DELETE
+q=YADATEST/test DELETE&m=update
+qname=YADATEST/test DELETE&method=update

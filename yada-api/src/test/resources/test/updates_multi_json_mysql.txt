@@ -1,11 +1,11 @@
-j=[{"qname":"YADA/test UPDATE DATE with LITERAL","DATA":[{"COL1":"Z"},{"COL1":"ZZ"}]}]
-j=[{"qname":"YADA/test UPDATE DATE with LITERAL and INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"A,B,ZZ"}]}]
+j=[{"qname":"YADATEST/test UPDATE DATE with LITERAL","DATA":[{"COL1":"Z"},{"COL1":"ZZ"}]}]
+j=[{"qname":"YADATEST/test UPDATE DATE with LITERAL and INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"A,B,ZZ"}]}]
 
-JSONParams=[{"qname":"YADA/test UPDATE DATE with LITERAL","DATA":[{"COL1":"Z"},{"COL1":"ZZ"}]}]
-JSONParams=[{"qname":"YADA/test UPDATE DATE with LITERAL and INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"A,B,ZZ"}]}]
+JSONParams=[{"qname":"YADATEST/test UPDATE DATE with LITERAL","DATA":[{"COL1":"Z"},{"COL1":"ZZ"}]}]
+JSONParams=[{"qname":"YADATEST/test UPDATE DATE with LITERAL and INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"A,B,ZZ"}]}]
 
-j=[{"qname":"YADA/test UPDATE TIME with LITERAL","DATA":[{"COL1":"Z"},{"COL1":"ZZ"}]}]
-j=[{"qname":"YADA/test UPDATE TIME with LITERAL and INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"A,B,ZZ"}]}]
+j=[{"qname":"YADATEST/test UPDATE TIME with LITERAL","DATA":[{"COL1":"Z"},{"COL1":"ZZ"}]}]
+j=[{"qname":"YADATEST/test UPDATE TIME with LITERAL and INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"A,B,ZZ"}]}]
 
-JSONParams=[{"qname":"YADA/test UPDATE TIME with LITERAL","DATA":[{"COL1":"Z"},{"COL1":"ZZ"}]}]
-JSONParams=[{"qname":"YADA/test UPDATE TIME with LITERAL and INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"A,B,ZZ"}]}]
+JSONParams=[{"qname":"YADATEST/test UPDATE TIME with LITERAL","DATA":[{"COL1":"Z"},{"COL1":"ZZ"}]}]
+JSONParams=[{"qname":"YADATEST/test UPDATE TIME with LITERAL and INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"A,B,ZZ"}]}]

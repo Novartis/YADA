@@ -3,15 +3,15 @@
 # Params:    q,qname,p,params,co,countOnly
 # DataTypes: String, Integer
 # BaseData:  {"COL1":"Z","COL2":"10","COL3":"7.5","COL4":"2013-03-04","COL5":"2015-09-05 20:44:33"}
-q=YADA/test SELECT&co=true
-q=YADA/test SELECT INTEGER with INS&p=1,2,3,10&co=true
-q=YADA/test SELECT VARCHAR with INS&p=[A,B,Z]&co=true
-q=YADA/test SELECT VARCHAR with INS&p=A,B,Z&co=true
-q=YADA/test SELECT with multiple INS&p=[A,B,Z],10&co=true
-q=YADA/test SELECT with multiple INS&p=[A,B,Z],[8,9,10]&co=true
-qname=YADA/test SELECT&countOnly=true
-qname=YADA/test SELECT INTEGER with INS&params=1,2,3,10&countOnly=true
-qname=YADA/test SELECT VARCHAR with INS&params=[A,B,Z]&countOnly=true
-qname=YADA/test SELECT VARCHAR with INS&params=A,B,Z&countOnly=true
-qname=YADA/test SELECT with multiple INS&params=[A,B,Z],10&countOnly=true
-qname=YADA/test SELECT with multiple INS&params=[A,B,Z],[8,9,10]&countOnly=true
+q=YADATEST/test SELECT&co=true
+q=YADATEST/test SELECT INTEGER with INS&p=1,2,3,10&co=true
+q=YADATEST/test SELECT VARCHAR with INS&p=[A,B,Z]&co=true
+q=YADATEST/test SELECT VARCHAR with INS&p=A,B,Z&co=true
+q=YADATEST/test SELECT with multiple INS&p=[A,B,Z],10&co=true
+q=YADATEST/test SELECT with multiple INS&p=[A,B,Z],[8,9,10]&co=true
+qname=YADATEST/test SELECT&countOnly=true
+qname=YADATEST/test SELECT INTEGER with INS&params=1,2,3,10&countOnly=true
+qname=YADATEST/test SELECT VARCHAR with INS&params=[A,B,Z]&countOnly=true
+qname=YADATEST/test SELECT VARCHAR with INS&params=A,B,Z&countOnly=true
+qname=YADATEST/test SELECT with multiple INS&params=[A,B,Z],10&countOnly=true
+qname=YADATEST/test SELECT with multiple INS&params=[A,B,Z],[8,9,10]&countOnly=true

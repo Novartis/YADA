@@ -1,35 +1,35 @@
-q=RESTTEST GET
-#q=RESTTEST OPTIONS
-q=RESTTEST DELETE
-q=RESTTEST GET with param&p=1
-q=RESTTEST DELETE&p=1
+q=RESTTEST/GET
+#q=RESTTEST/OPTIONS
+q=RESTTEST/DELETE
+q=RESTTEST/GET with param&p=1
+q=RESTTEST/DELETE&p=1
 
-q=RESTTEST GET&r=RESTPassThruResponse
-#q=RESTTEST OPTIONS&r=RESTPassThruResponse
-q=RESTTEST DELETE&r=RESTPassThruResponse
-q=RESTTEST GET with param&p=1&r=RESTPassThruResponse
-q=RESTTEST DELETE&p=1&r=RESTPassThruResponse
+q=RESTTEST/GET&r=RESTPassThruResponse
+#q=RESTTEST/OPTIONS&r=RESTPassThruResponse
+q=RESTTEST/DELETE&r=RESTPassThruResponse
+q=RESTTEST/GET with param&p=1&r=RESTPassThruResponse
+q=RESTTEST/DELETE&p=1&r=RESTPassThruResponse
 
-q=RESTTEST GET&r=com.novartis.opensource.yada.format.RESTPassThruResponse
-#q=RESTTEST OPTIONS&r=com.novartis.opensource.yada.format.RESTPassThruResponse
-q=RESTTEST DELETE&r=com.novartis.opensource.yada.format.RESTPassThruResponse
-q=RESTTEST GET with param&p=1&r=com.novartis.opensource.yada.format.RESTPassThruResponse
-q=RESTTEST DELETE&p=1&r=com.novartis.opensource.yada.format.RESTPassThruResponse
+q=RESTTEST/GET&r=com.novartis.opensource.yada.format.RESTPassThruResponse
+#q=RESTTEST/OPTIONS&r=com.novartis.opensource.yada.format.RESTPassThruResponse
+q=RESTTEST/DELETE&r=com.novartis.opensource.yada.format.RESTPassThruResponse
+q=RESTTEST/GET with param&p=1&r=com.novartis.opensource.yada.format.RESTPassThruResponse
+q=RESTTEST/DELETE&p=1&r=com.novartis.opensource.yada.format.RESTPassThruResponse
 
-qname=RESTTEST GET
-#qname=RESTTEST OPTIONS
-qname=RESTTEST DELETE
-qname=RESTTEST GET with param&params=1
-qname=RESTTEST DELETE&params=1
+qname=RESTTEST/GET
+#qname=RESTTEST/OPTIONS
+qname=RESTTEST/DELETE
+qname=RESTTEST/GET with param&params=1
+qname=RESTTEST/DELETE&params=1
 
-qname=RESTTEST GET&response=RESTPassThruResponse
-#qname=RESTTEST OPTIONS&response=RESTPassThruResponse
-qname=RESTTEST DELETE&response=RESTPassThruResponse
-qname=RESTTEST GET with param&params=1&response=RESTPassThruResponse
-qname=RESTTEST DELETE&params=1&response=RESTPassThruResponse
+qname=RESTTEST/GET&response=RESTPassThruResponse
+#qname=RESTTEST/OPTIONS&response=RESTPassThruResponse
+qname=RESTTEST/DELETE&response=RESTPassThruResponse
+qname=RESTTEST/GET with param&params=1&response=RESTPassThruResponse
+qname=RESTTEST/DELETE&params=1&response=RESTPassThruResponse
 
-qname=RESTTEST GET&response=com.novartis.opensource.yada.format.RESTPassThruResponse
-#qname=RESTTEST OPTIONS&response=com.novartis.opensource.yada.format.RESTPassThruResponse
-qname=RESTTEST DELETE&response=com.novartis.opensource.yada.format.RESTPassThruResponse
-qname=RESTTEST GET with param&params=1&response=com.novartis.opensource.yada.format.RESTPassThruResponse
-qname=RESTTEST DELETE&params=1&response=com.novartis.opensource.yada.format.RESTPassThruResponse
+qname=RESTTEST/GET&response=com.novartis.opensource.yada.format.RESTPassThruResponse
+#qname=RESTTEST/OPTIONS&response=com.novartis.opensource.yada.format.RESTPassThruResponse
+qname=RESTTEST/DELETE&response=com.novartis.opensource.yada.format.RESTPassThruResponse
+qname=RESTTEST/GET with param&params=1&response=com.novartis.opensource.yada.format.RESTPassThruResponse
+qname=RESTTEST/DELETE&params=1&response=com.novartis.opensource.yada.format.RESTPassThruResponse

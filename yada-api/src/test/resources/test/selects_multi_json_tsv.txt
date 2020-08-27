@@ -1,4 +1,4 @@
-j=[{"qname":"YADA/test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"X,Y,Z,M,N"}]}]&f=tsv
-JSONParams=[{"qname":"YADA/test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"X,Y,Z,M,N"}]}]&format=tsv
-j=[{"qname":"YADA/test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"X,Y,Z,M,N"}]}]&f=tab
-JSONParams=[{"qname":"YADA/test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"X,Y,Z,M,N"}]}]&format=tab
+j=[{"qname":"YADATEST/test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"X,Y,Z,M,N"}]}]&f=tsv
+JSONParams=[{"qname":"YADATEST/test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"X,Y,Z,M,N"}]}]&format=tsv
+j=[{"qname":"YADATEST/test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"X,Y,Z,M,N"}]}]&f=tab
+JSONParams=[{"qname":"YADATEST/test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"X,Y,Z,M,N"}]}]&format=tab

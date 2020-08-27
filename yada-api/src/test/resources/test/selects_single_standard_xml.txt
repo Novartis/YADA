@@ -3,15 +3,15 @@
 # Params:    q,qname,p,params,f,format
 # DataTypes: String, Integer
 # BaseData:  {"COL1":"Z","COL2":"10","COL3":"7.5","COL4":"2013-03-04","COL5":"2015-09-05 20:44:33"}
-q=YADA/test SELECT&f=xml
-q=YADA/test SELECT INTEGER with INS&p=1,2,3,10&f=xml
-q=YADA/test SELECT VARCHAR with INS&p=[A,B,Z]&f=xml
-q=YADA/test SELECT VARCHAR with INS&p=A,B,Z &f=xml
-q=YADA/test SELECT with multiple INS&p=[A,B,Z],10&f=xml
-q=YADA/test SELECT with multiple INS&p=[A,B,Z],[8,9,10]&f=xml
-qname=YADA/test SELECT&format=xml
-qname=YADA/test SELECT INTEGER with INS&params=1,2,3,10&format=xml
-qname=YADA/test SELECT VARCHAR with INS&params=[A,B,Z]&format=xml
-qname=YADA/test SELECT VARCHAR with INS&params=A,B,Z &format=xml
-qname=YADA/test SELECT with multiple INS&params=[A,B,Z],10&format=xml
-qname=YADA/test SELECT with multiple INS&params=[A,B,Z],[8,9,10]&format=xml
+q=YADATEST/test SELECT&f=xml
+q=YADATEST/test SELECT INTEGER with INS&p=1,2,3,10&f=xml
+q=YADATEST/test SELECT VARCHAR with INS&p=[A,B,Z]&f=xml
+q=YADATEST/test SELECT VARCHAR with INS&p=A,B,Z &f=xml
+q=YADATEST/test SELECT with multiple INS&p=[A,B,Z],10&f=xml
+q=YADATEST/test SELECT with multiple INS&p=[A,B,Z],[8,9,10]&f=xml
+qname=YADATEST/test SELECT&format=xml
+qname=YADATEST/test SELECT INTEGER with INS&params=1,2,3,10&format=xml
+qname=YADATEST/test SELECT VARCHAR with INS&params=[A,B,Z]&format=xml
+qname=YADATEST/test SELECT VARCHAR with INS&params=A,B,Z &format=xml
+qname=YADATEST/test SELECT with multiple INS&params=[A,B,Z],10&format=xml
+qname=YADATEST/test SELECT with multiple INS&params=[A,B,Z],[8,9,10]&format=xml
