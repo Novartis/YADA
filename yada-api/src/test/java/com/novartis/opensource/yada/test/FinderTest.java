@@ -46,7 +46,7 @@ public class FinderTest {
   @Test (groups = {"core"})
   public void getExistingQuery() throws YADAConnectionException, YADAFinderException, YADAQueryConfigurationException  
   {
-  	new Finder().getQuery("YADA test SELECT");
+  	new Finder().getQuery("YADATEST/test SELECT");
   }
   
   
@@ -60,7 +60,7 @@ public class FinderTest {
   @Test (groups = {"core"}, expectedExceptions = YADAFinderException.class)
   public void getUnknownQuery() throws YADAConnectionException, YADAFinderException, YADAQueryConfigurationException 
   {
-  	new Finder().getQuery("YADA fake query");
+  	new Finder().getQuery("YADATEST/fake query");
   }
 
 }
