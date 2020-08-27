@@ -118,16 +118,12 @@ public class Service {
 	{
 		Map<String, String[]> map = new LinkedHashMap<>();
 		String[] pathElements = parameterString.split("/");
-		/*String[] split = parameterString.split("&"); 
-		for (String pair : split)
+		for(int i=1;i<pathElements.length;i=i+2)
 		{
-			String[] subsplit = pair.split("=");
-			map.put(subsplit[0], new String[] {subsplit[1]});
-		}
-		*/
-		for(int i=0;i<pathElements.length;i=i+2)
-		{
-			map.put(pathElements[i], new String[] {pathElements[i+1]});
+		  if(Finder.hasYADALib() && i == 1)
+		    map.put(pathElements[i-1], new String[] {pathElements[i]+"/"+pathElements[++i]});
+		  else
+		    map.put(pathElements[i-1], new String[] {pathElements[i]});
 		}
 		getYADARequest().setRequest(request);
 		handleRequest(request.getHeader("referer"), map);
@@ -141,7 +137,6 @@ public class Service {
 	@SuppressWarnings("unchecked")
   public void handleRequest(HttpServletRequest request)
 	{
-		l.debug("Request query string is ["+request.getQueryString()+"]");
 		getYADARequest().setRequest(request);
 		handleRequest(request.getHeader("referer"), request.getParameterMap());
 	}
@@ -1137,7 +1132,7 @@ public class Service {
 			      yq.addParam(yp);
           }
 			    // get the plugin class, instantiate it and engage it
-					l.debug("possible preprocess plugin is["+plugin+"]");
+					l.debug("possible preprocess plugin is ["+plugin+"]");
 					if (null != plugin && !"".equals(plugin))
 					{
 						try
