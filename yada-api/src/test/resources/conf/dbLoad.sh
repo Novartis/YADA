@@ -3,12 +3,12 @@ DATE=`date +%Y%m%d%H%M%S`
 DATADIR=${project.basedir}/../../data
 BAKDIR=${DATADIR}/backup
 DB_TMP=/tmp/db.tmp
-DB_USER=${YADA_INDEX_USERNAME}
+DB_USER=${YADA.index.username}
 DB_NAME=yada
-DB_PASS=${YADA_INDEX_PASSWORD}
-DB_HOST=${YADA_INDEX_HOST}
+DB_PASS=${YADA.index.password}
+DB_HOST=${YADA.index.host}
 PGPASSWORD=${DB_PASS}
-YADA_SCRIPTDIR="${project.basedir}/../yada-war/src/main/resources/scripts"
+YADA_SCRIPTDIR="${project.build.testOutputDirectory}/conf"
 
 
 EXEC_POSTGRESQL=psql
@@ -92,9 +92,10 @@ fi
 # and https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
 
 rm ${DB_TMP}
-cat ${project.build.testOutputDirectory}/YADA_db_${DB}.sql \
-${project.build.testOutputDirectory}/YADA_query_essentials.sql \
-${project.build.testOutputDirectory}/YADA_query_tests.sql > ${DB_TMP}
+cat ${YADA_SCRIPTDIR}/YADA_db_${DB}.sql > ${DB_TMP}
+# ${project.build.testOutputDirectory}/YADA_query_essentials.sql \
+# ${project.build.testOutputDirectory}/YADA_query_tests.sql \
+
 if [ "SQLITE" != "${DB}" ]
 then
   echo "COMMIT;" >> ${DB_TMP}
