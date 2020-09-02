@@ -33,9 +33,9 @@
 		<profile>
 			<id>test</id>
 			<properties>
-			    <log.level>info</log.level>
-				<skip.test>false</skip.test>
-				<test.run.properties>/conf/TestNG_YADA_HTTP_noauth.properties</test.run.properties>
+			  <log.level>info</log.level>
+				<skip.test>true</skip.test>
+				<test.properties>/conf/TestNG_YADA_HTTP_noauth.properties</test.properties>
 				<YADA.index.url>${YADATEST.pgsql.index.url}</YADA.index.url>
 				<YADA.index.username>${YADATEST.pgsql.index.username}</YADA.index.username>
 				<YADA.index.password>${YADATEST.pgsql.index.password}</YADA.index.password>
@@ -339,7 +339,7 @@
 					<systemPropertyVariables>
 					</systemPropertyVariables>
 					<additionalClasspathElements>
-						<additionalClasspathElement>${test.run.properties}</additionalClasspathElement>
+						<additionalClasspathElement>${test.properties}</additionalClasspathElement>
 					</additionalClasspathElements>
 					<suiteXmlFiles>
 						<suiteXmlFile>${basedir}/target/test-classes/conf/TestNG_YADA_HTTP_noauth.xml</suiteXmlFile>
