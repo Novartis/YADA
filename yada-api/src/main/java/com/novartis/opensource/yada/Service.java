@@ -729,12 +729,19 @@ public class Service {
 				}
 				// engage query preprocessor
 				engagePreprocess(yq);
+				
 				// execute query
-				yq.getAdaptor().execute(yq);
-				if(this.qutils.isCommitQuery(yq))
+				if(!Finder.hasYADALib() // in all pre 9.0.0 cases
+				    || yq.getApp() != "YADA" // all 9.0.0+ with oldschool queries with APP values
+				    || !yq.getQname().startsWith("YADA/")) // all 9.0.0 cases with matching qnames
 				{
-					// close query transaction
-					this.qMgr.commit(yq);
+				  yq.getAdaptor().execute(yq);
+  				
+  				if(this.qutils.isCommitQuery(yq))
+  				{
+  					// close query transaction
+  					this.qMgr.commit(yq);
+  				}
 				}
 				// engage query postprocessor
 				engagePostprocess(yq);
