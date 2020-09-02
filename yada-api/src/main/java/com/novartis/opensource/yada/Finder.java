@@ -53,7 +53,7 @@ import org.eclipse.jgit.lib.RepositoryBuilder;
 /**
  * Provides for retrieval YADA query code and metadata from the YADA Index as
  * encapsulated {@link YADAQuery} objects.
- * 
+ *
  * @author David Varon
  * @since 4.0.0
  */
@@ -65,7 +65,7 @@ public class Finder {
   /**
    * Hardcoded to the stardard value: {@value}. Used to identify mapped sources in
    * the YADA Index.
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
@@ -73,7 +73,7 @@ public class Finder {
   /**
    * Currently hardcoded to {@value}, this may be configurable in a future
    * version. Used to access the YADA Index.
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
@@ -81,49 +81,49 @@ public class Finder {
 
   /**
    * A constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   public final static String JSON_VERSION     = "v";
   /**
    * A constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   public final static String JSON_SOURCE      = "s";
   /**
    * A constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   public final static String JSON_QUERY       = "q";
   /**
    * A constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   public final static String JSON_QNAME       = "qn";
   /**
    * A constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   public final static String JSON_URLPARAMS   = "p";
   /**
    * A constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   public final static String JSON_PARAMTARGET = "t";
   /**
    * A constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
@@ -135,128 +135,119 @@ public class Finder {
   public final static String JSON_PARAMVAL    = "v";
   /**
    * A constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   public final static String JSON_PARAMRULE   = "r";
   /**
    * A constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   public final static String NOT_APPLICABLE   = "na";
-
   /**
    * Constant equal to: {@value}
-   * 
-   * @deprecated since 8.0.0
-   */
-  @SuppressWarnings("unused")
-  @Deprecated
-  private final static String YADA_VERSION      = "VER";
-  /**
-   * Constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   private final static String YADA_SOURCE       = "S";
   /**
    * Constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   private final static String YADA_CONF         = "C";
   /**
    * Constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   private final static String YADA_QUERY        = "Q";
   /**
    * Constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   private final static String YADA_APP          = "A";
   /**
    * Constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   private final static String YADA_PARAMID      = "I";
   /**
    * Constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   private final static String YADA_PARAMTARGET  = "T";
   /**
    * Constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   private final static String YADA_PARAMNAME    = "N";
   /**
    * Constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   private final static String YADA_PARAMVAL     = "VAL";
   /**
    * Constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   private final static String YADA_PARAMRULE    = "R";
   /**
    * Constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   private final static String YADA_PROPTARGET   = "PROPT";
   /**
    * Constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   private final static String YADA_PROPNAME     = "PROPN";
   /**
    * Constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   private final static String YADA_PROPVALUE    = "PROPV";
   /**
    * Constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   private final static String YADA_ACCESS_COUNT = "AC";
   /**
    * Constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
   private final static String SQL_STATS         = "update yada_query set access_count=(select b.access_count+1 from yada_query b where b.qname = ?), last_access=? where qname = ?";
   /**
    * Constant equal to: {@value}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
@@ -268,7 +259,7 @@ public class Finder {
                               + "b.source "      +YADA_SOURCE+", "
                               + "b.conf "        +YADA_CONF+", "
                               + "c.id "          +YADA_PARAMID+", "
-                              + "c.target "      +YADA_PARAMTARGET+", " 
+                              + "c.target "      +YADA_PARAMTARGET+", "
                               + "c.name "        +YADA_PARAMNAME+", "
                               + "c.value "       +YADA_PARAMVAL+", "
                               + "c.rule "        +YADA_PARAMRULE+", "
@@ -283,7 +274,7 @@ public class Finder {
                               + "where b.active = 1 "
                               + "and a.qname = ? "
                               + "order by c.target"}
-   * 
+   *
    * @deprecated since 9.0.0
    */
   @Deprecated
@@ -309,21 +300,21 @@ public class Finder {
 
   /**
    * Constant equal to {@value}
-   * 
+   *
    * @since 9.0.0
    */
   public final static String YADA_LIB = "YADA.lib";
 
   /**
    * Constant equal to {@value}
-   * 
+   *
    * @since 9.0.0
    */
   private static final String SLASH = "/";
 
   /**
    * Constant equal to {@value}
-   * 
+   *
    * @since 9.0.0
    */
   private static final String Q_RX = "^(.+?)([/\\s])(.+)$";
@@ -331,7 +322,7 @@ public class Finder {
   /**
    * Constant equal to {@value}. Used for retrieving config for specific YADA
    * index.
-   * 
+   *
    * @since 9.0.0
    */
   private final static String YADA_PROPERTIES_PATH = "YADA.properties.path";
@@ -339,7 +330,7 @@ public class Finder {
   /**
    * Constant equal to {@value}. Used for retrieving config for specific YADA
    * index.
-   * 
+   *
    * @since 9.0.0
    */
   private final static String YADA_BRANCH = "YADA.branch";
@@ -347,7 +338,7 @@ public class Finder {
   /**
    * Constant equal to {@value}. Used for retrieving config for specific YADA
    * index.
-   * 
+   *
    * @since 9.0.0
    */
   private final static String YADA_SWITCH_BRANCH = "YADA.switch.branch";
@@ -355,7 +346,7 @@ public class Finder {
   /**
    * Constant equal to {@value}. Used for retrieving config for specific YADA
    * index.
-   * 
+   *
    * @since 9.0.0
    */
   public final static String GIT_DIR = ".git";
@@ -363,7 +354,7 @@ public class Finder {
   /**
    * Constant equal to {@value}. Used for retrieving config for specific YADA
    * index.
-   * 
+   *
    * @since 9.0.0
    */
   private final static String YADA_PULL_ON_LAUNCH = "YADA.pull.on.launch";
@@ -371,27 +362,28 @@ public class Finder {
   /**
    * Constant equal to {@value}. Default location for {@code YADA.properties}
    * file, in {@code WEB-INF/classes}
-   * 
+   *
    * @since 9.0.0
    */
   public final static String YADA_DEFAULT_PROPERTIES_PATH = "/YADA.properties";
 
   /**
    * Constant equal to {@value}. The YADA app name.
-   * 
+   *
    * @since 9.0.0
    */
   public final static String YADA = "YADA";
 
   /**
    * Constant holding the contents of {@code YADA.properties} or equivalent
-   * 
+   *
    * @since 9.0.0
    */
-  public final static Properties YADA_PROPERTIES = getYADAProperties();
+  public static Properties YADA_PROPERTIES = getYADAProperties();
 
   static
   {
+    YADA_PROPERTIES = getYADAProperties();
     RepositoryBuilder builder = new RepositoryBuilder();
     try
     {
@@ -445,7 +437,7 @@ public class Finder {
 
   /**
    * Indicates if {@link YADA_LIB} has been set
-   * 
+   *
    * @return {@code true} if {@link YADA_LIB} is present in
    *         {@link YADA_PROPERTIES}
    * @since 9.0.0
@@ -460,7 +452,7 @@ public class Finder {
    * @since 9.0.0
    */
   public final static File getYADALibDirectory() {
-    return new File(YADA_PROPERTIES.getProperty(YADA_LIB));
+    return new File(getYADALib());
   }
 
   /**
@@ -473,7 +465,7 @@ public class Finder {
 
   /**
    * Sets {@code static} {@link YADA_PROPERTIES} object
-   * 
+   *
    * @return {@link java.util.Properties}
    */
   private final static Properties getYADAProperties() {
@@ -499,7 +491,7 @@ public class Finder {
   /**
    * Retrieves the system property loaded at startup. This method was refactored
    * in version 8.3.0
-   * 
+   *
    * @param property a string registered in the application context, or system
    *                 property
    * @return {@link String} value of the system property
@@ -522,7 +514,7 @@ public class Finder {
   /**
    * Convenient wrapper to return a {@link String} equal to {@link #JNDI_PREFIX} +
    * {@link #YADA_INDEX}
-   * 
+   *
    * @return {@link String} equal to {@link #JNDI_PREFIX} + {@link #YADA_INDEX}
    * @deprecated since 9.0.0
    */
@@ -534,7 +526,7 @@ public class Finder {
   /**
    * Retrieves the query {@code q} from the distributed index (i.e., database).
    * Typically the query is then added to the in-memory cache.
-   * 
+   *
    * @param q the query name to retrieve
    * @return the {@link YADAQuery} retrieved from the distributed index
    * @throws YADAFinderException             if the query {@code q} can't be found
@@ -613,7 +605,7 @@ public class Finder {
   /**
    * Retrieves the query {@code q} from the local repository. Typically the query
    * is then added to the in-memory cache.
-   * 
+   *
    * @param q the query name to retrieve
    * @return the {@link YADAQuery} retrieved from the distributed index
    * @throws YADAFinderException if the query {@code q} can't be found in the
@@ -673,7 +665,7 @@ public class Finder {
   /**
    * Overloaded version of {@link #getQuery(String, boolean)} always passing
    * {@code true} in the second {@code updateStats} arg.
-   * 
+   *
    * @since 5.0.0
    * @param q the stored canonical name of the desired {@link YADAQuery}
    * @return {@link YADAQuery} object encapsulating the query code and parameters
@@ -710,7 +702,7 @@ public class Finder {
    * requested, it is found in the cache, cloned, and the clone put to use.
    * </p>
    *
-   * 
+   *
    * @since 4.0.0
    * @param q           the stored canonical name of the desired {@link YADAQuery}
    * @param updateStats set to {@code true} to execute parallel operation to query
@@ -725,7 +717,7 @@ public class Finder {
    *                                         the result of a configuration issue.
    * @throws YADAQueryConfigurationException if default parameters cannot be set
    * @see YADAQuery
-   * 
+   *
    */
   public YADAQuery getQuery(String q, boolean updateStats)
       throws YADAConnectionException, YADAFinderException, YADAQueryConfigurationException {
@@ -796,7 +788,7 @@ public class Finder {
   /**
    * Wraps default parameter data stored in the YADAIndex into a {@link YADAParam}
    * object and adds it to {@code yq}.
-   * 
+   *
    * @param yq the {@link YADAQuery} to which to add the parameter defined in
    *           {@code rs}
    * @param rs the data containing the parameter, as retrieved from the YADA Index
@@ -833,7 +825,7 @@ public class Finder {
   }
 
   /**
-   * 
+   *
    * @param yq The {@link YADAQuery} to which to attach {@link YADAProperty}
    *           objects
    * @param rs The {@link ResultSet} from which to retrieve the values
@@ -863,7 +855,7 @@ public class Finder {
    * A utility method called in a separate thread by
    * {@link Finder#getQuery(String)} to increment a query-access counter in the
    * YADA Index.
-   * 
+   *
    * @param qname       the name of the query just requested
    * @param accessCount the number of times a query has been access, derived from
    *                    the cache
@@ -924,7 +916,7 @@ public class Finder {
    * A utility method called in a separate thread by
    * {@link Finder#getQuery(String)} to increment a query-access counter in the
    * YADA Index.
-   * 
+   *
    * @param qname the name of the query just requested
    * @throws YADAConnectionException when the YADA Index can't be accessed
    * @throws YADAFinderException     when {@code qname} can't be found in the YADA
