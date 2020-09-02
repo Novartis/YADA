@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- <suite name="Suite" parallel="methods" thread-count="20" data-provider-thread-count="20" 
+<!-- <suite name="Suite" parallel="methods" thread-count="20" data-provider-thread-count="20"
 	> -->
 <suite name="pgsql-suite" parallel="false">
-	<parameter name="properties"
-		value="/conf/TestNG_YADA.properties" />
+	<parameter name="properties" value="/conf/TestNG_YADA.properties" />
 	<test enabled="true" name="API" preserve-order="true">
 		<groups>
 			<run>
@@ -13,6 +12,7 @@
 				<include name="api" />
 				<include name="options" />
 				<include name="plugins" />
+				<include name="sec" />
 			</run>
 		</groups>
 		<classes>
