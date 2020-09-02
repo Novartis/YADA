@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$ref": "#/definitions/YADAConf",
+  "definitions": {
+    "YADAConf": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "format": "uri"
+        },
+        "name": {
+          "type": "string"
+        },
+        "descr": {
+          "type": "string"
+        },
+        "props": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "oneOf": [
+        {
+          "properties": {
+            "source": {
+              "pattern": "^jdbc.+$"
+            },
+            "props": {
+              "type": "object",
+              "properties": {
+                "driverClassName": {
+                  "type": "string",
+                  "pattern": "^(?:(?:[a-z0-9]+)\\.(?:[a-z0-9\\.]+)*)*[A-Z][a-zA-Z0-9]+$",
+                  "$comment": "classname or fully qualified classname"
+                },
+                "poolName": {
+                  "type": "string",
+                  "pattern": "^HikariPool-[a-zA-Z0-9_]+$"
+                }
+              },
+              "required": [
+                "driverClassName",
+                "poolName"
+              ]
+            }
+          },
+          "required": [
+            "props"
+          ]
+        },
+        {
+          "properties": {
+            "source": {
+              "pattern": "^(?!jdbc).+$"
+            }
+          }
+        }
+      ],
+      "title": "YADAConfElement"
+    }
+  }
+}
