@@ -33,6 +33,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,6 +83,7 @@ import com.novartis.opensource.yada.YADAQueryConfigurationException;
 import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADARequestException;
 import com.novartis.opensource.yada.YADAResourceException;
+import com.novartis.opensource.yada.YADASecurityException;
 import com.novartis.opensource.yada.format.YADAResponseException;
 import com.novartis.opensource.yada.util.YADAUtils;
 
@@ -273,6 +275,22 @@ public class ServiceTest
    * The flag to use authentication
    */
   protected String auth = "false";
+  
+  /**
+   * Container for tokens
+   * @since 9.0.0
+   */
+  protected JSONObject secData;
+  
+  /** 
+   * @since 9.0.0
+   */
+  protected String user = "";
+  
+  /**
+   * @since 9.0.0
+   */
+  protected String pass = "";
 
   /**
    * One-arg constructor passes in host from config file;
@@ -285,14 +303,31 @@ public class ServiceTest
   /**
    * The initialization method required by the {@code jsp} group to set the
    * pertinent ivars to property values.
+   * @throws YADAResourceException 
    */
-  @BeforeSuite(groups = { "jsp" })
-  public void init()
+  @Parameters({"properties"})
+  @BeforeSuite(groups = { "jsp","sec" })
+  public void init(@Optional String properties) throws YADAResourceException
   {
     Properties props = ConnectionFactoryTest.getProps();
+    if(props.size() == 0 || props == null)
+    {
+      try
+      {
+        ConnectionFactoryTest.setProps(properties);
+      }
+      catch (IOException e)
+      {
+        String msg = "Unable to set properties";
+        throw new YADAResourceException(msg, e);
+      }
+      props = ConnectionFactoryTest.getProps();
+    }
     this.host = props.getProperty("YADA.host");
     this.uri = props.getProperty("YADA.uri");
     this.auth = props.getProperty("YADA.auth");
+    this.user = props.getProperty("YADA.user");
+    this.pass = props.getProperty("YADA.pass");
   }
 
   /**
@@ -540,6 +575,50 @@ public class ServiceTest
       result[i] = new Object[] { params[i] };
     }
     return result;
+  }
+  
+  /**
+   * Authenticates the logged user using the xml param
+   * @throws YADAQueryConfigurationException 
+   * 
+   */
+  @BeforeMethod(groups = { "sec" })  
+  public void login() throws YADAQueryConfigurationException
+  {    
+    YADARequest yadaReq = new YADARequest();
+    yadaReq.setUpdateStats(new String[] { "false" });
+    
+    yadaReq.setQname(new String[] { "YADATEST/resource access" });
+    yadaReq.setPlugin(new String[] { "Authorizer" });
+    JSONObject hdrs = new JSONObject();
+    try
+    {
+      byte[] toEncode = (this.user+":"+this.pass).getBytes("utf-8");
+      String basic    = "Basic " + Base64.getEncoder().encodeToString(toEncode);
+      hdrs.put("Authorization", basic);
+      yadaReq.setHTTPHeaders(new String[] { hdrs.toString() });
+//      paraMap.put(YADARequest.PS_HTTPHEADERS, );
+//      hdrs.put("X-Requested-With", "XMLHttpRequest");
+//      yadaReq.setParameterMap(paraMap);
+      Service svc = new Service(yadaReq);
+      this.secData = new JSONObject(svc.execute());
+      l.debug(secData.toString(2));      
+    }
+    catch (JSONException e)
+    {
+      String msg = "Unable to encapsulate header or result value as json";
+      throw new YADAQueryConfigurationException(msg, e);
+    }
+    catch (UnsupportedEncodingException e)
+    {
+      String msg = "Unable to encode credentials";
+      throw new YADAQueryConfigurationException(msg, e);
+    }
+    catch (YADARequestException e)
+    {
+      String msg = "Unable to set headers";
+      throw new YADAQueryConfigurationException(msg, e);
+    }    
   }
 
   /**
@@ -1297,7 +1376,6 @@ public class ServiceTest
     Assert.assertTrue(validate(svc.getYADARequest(), svc.execute()) ,  "Data invalid for query: "+query);
   }
 
-
   /**
    * Tests listing the files in the yada io/in mapped directory.
    *
@@ -1671,8 +1749,42 @@ public class ServiceTest
         }
       }
     }
-  }
+  }  
+  
+  /**
+   * @param query 
+   * @throws YADAQueryConfigurationException 
+   * @throws YADAResponseException 
+   * @throws YADASecurityException 
+   * @since 9.0.0
+   */
+  @Test(enabled = true, dataProvider = "QueryTests", groups = { "sec" })
+  @QueryFile(list = {})
+  public void testYADASec(String query) throws YADAQueryConfigurationException, YADAResponseException, YADASecurityException
+  {
+    Service svc = prepareTest(query);
+    YADARequest req = svc.getYADARequest();
+    try
+    {
+      JSONObject hdrs = new JSONObject();
+      hdrs.put("X-CSRF-Token", this.secData.get("X-CSRF-Token"));
+      hdrs.put("Authorization", this.secData.get("Bearer"));
+      req.setHTTPHeaders(new String[] { hdrs.toString() });
+    }
+    catch (JSONException | YADARequestException e)
+    {      
+      String msg = "Unable to set headers";
+      throw new YADAQueryConfigurationException(msg, e);
+    }
+    Assert.assertTrue(validate(svc.getYADARequest(), svc.execute()) ,  "Data invalid for query: "+query);
 
+    /*
+     *       headers: {'Content-Type': 'application/json',
+      'X-CSRF-Token': YADA.sec['X-CSRF-Token'],
+      'Authorization': `Bearer ${YADA.sec['Bearer']}`}
+     */
+  }
+  
   /**
    * @param req the {@link YADARequest} containing the test query
    * @param result the {@link String} returned by {@link Service#execute()}
