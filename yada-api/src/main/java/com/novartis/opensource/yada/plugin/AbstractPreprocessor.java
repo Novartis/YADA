@@ -590,14 +590,19 @@ public abstract class AbstractPreprocessor
 
   @Override
   public String getCookie(String cookie) {
-    Cookie[] cookies = getYADARequest().getRequest().getCookies();
-    if (cookies != null)
+    // api calls have no HTTPServletRequest so must check for null
+    YADARequest yr = getYADARequest();
+    if(null != yr.getRequest())
     {
-      for (Cookie c: cookies)
+      Cookie[] cookies = getYADARequest().getRequest().getCookies();
+      if (cookies != null)
       {
-        if (c.getName().equals(cookie))
+        for (Cookie c: cookies)
         {
-          return c.getValue();
+          if (c.getName().equals(cookie))
+          {
+            return c.getValue();
+          }
         }
       }
     }
