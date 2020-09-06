@@ -10,7 +10,7 @@
           "2"
         ],
         "policy": "E",
-        "protector": "YADA test sec multi params multi polcol use token protector",
+        "protector": "YADATEST/test sec multi params multi polcol use token protector",
         "type": "allow"
       },
       "rule": 1

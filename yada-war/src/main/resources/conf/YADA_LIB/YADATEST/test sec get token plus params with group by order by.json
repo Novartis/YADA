@@ -1,11 +1,11 @@
 {
-  "query": "select * from yada_test where col1=?v group by col1, col2, col3, col4, col5, token order by col1, col2",
+  "query": "select * from yada_test where col1=?v GROUP BY col1, col2, col3, col4, col5, userid order by col1, col2",
   "params": [
     {
       "name": "pl",
       "value": "Gatekeeper",
       "spec": {
-        "predicate": "token=getQToken()",
+        "predicate": "user=getLoggedUser()",
         "policy": "C"
       },
       "rule": 1

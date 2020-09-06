@@ -10,7 +10,7 @@
           "COL2"
         ],
         "policy": "E",
-        "protector": "YADA test sec multi params multi polcol jp protector",
+        "protector": "YADATEST/test sec multi params multi polcol jp protector",
         "type": "allow"
       },
       "rule": 1

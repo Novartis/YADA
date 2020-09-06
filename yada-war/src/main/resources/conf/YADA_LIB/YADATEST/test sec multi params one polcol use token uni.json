@@ -9,7 +9,7 @@
           "TOKEN:getToken()"
         ],
         "policy": "E",
-        "protector": "YADA test sec multi params one polcol use token uni protector",
+        "protector": "YADATEST/test sec multi params one polcol use token uni protector",
         "type": "allow"
       },
       "rule": 1

@@ -9,7 +9,7 @@
           "0"
         ],
         "policy": "E",
-        "protector": "YADA test sec multi params one polcol indexes protector",
+        "protector": "YADATEST/test sec multi params one polcol indexes protector",
         "type": "allow"
       },
       "rule": 1

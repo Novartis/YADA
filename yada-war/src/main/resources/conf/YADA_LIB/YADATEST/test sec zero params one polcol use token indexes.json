@@ -9,7 +9,7 @@
           "0"
         ],
         "policy": "E",
-        "protector": "YADA test sec zero params one polcol use token indexes protector",
+        "protector": "YADATEST/test sec zero params one polcol use token indexes protector",
         "type": "allow"
       },
       "rule": 1

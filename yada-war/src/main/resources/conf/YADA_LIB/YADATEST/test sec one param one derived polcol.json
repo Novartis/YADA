@@ -9,7 +9,7 @@
           "0"
         ],
         "policy": "E",
-        "protector": "YADA test sec one param one derived polcol protector",
+        "protector": "YADATEST/test sec one param one derived polcol protector",
         "type": "allow"
       },
       "rule": 1

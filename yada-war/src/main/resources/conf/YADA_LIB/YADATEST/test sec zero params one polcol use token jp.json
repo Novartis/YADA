@@ -9,7 +9,7 @@
           "TOKEN:getToken()"
         ],
         "policy": "E",
-        "protector": "YADA test sec zero params one polcol use token jp protector",
+        "protector": "YADATEST/test sec zero params one polcol use token jp protector",
         "type": "allow"
       },
       "rule": 1

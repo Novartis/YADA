@@ -6,7 +6,7 @@
       "value": "Gatekeeper",
       "spec": {
         "policy": "E",
-        "protector": "YADA test sec one param zero polcols jp protector",
+        "protector": "YADATEST/test sec one param zero polcols jp protector",
         "type": "allow"
       },
       "rule": 1

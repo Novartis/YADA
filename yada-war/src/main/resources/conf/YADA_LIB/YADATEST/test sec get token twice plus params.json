@@ -5,7 +5,7 @@
       "name": "pl",
       "value": "Gatekeeper",
       "spec": {
-        "predicate": "token=getQToken() and token=getQToken()",
+        "predicate": "user=getLoggedUser() and user=getLoggedUser()",
         "policy": "C"
       },
       "rule": 1
