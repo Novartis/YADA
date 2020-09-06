@@ -18,6 +18,7 @@
  */
 package com.novartis.opensource.yada.plugin;
 
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -302,11 +303,19 @@ public abstract class AbstractPostprocessor implements Postprocess, Authorizatio
    * @since 8.7.6
    */
   public void setHTTPHeaders(String[] httpHeaders) throws YADARequestException {
-    Matcher             m1         = Pattern.compile(RX_NOTJSON).matcher(httpHeaders.toString());
+    Matcher             m1         = Pattern.compile(RX_NOTJSON).matcher(Arrays.toString(httpHeaders));
     Map<String, String> reqHeaders = new HashMap<String, String>();
     // ignore key case
-    // api circumvents http request so check for null
-    if (null != getRequest())
+    // api circumvents http request so check for null    
+    if (null == getRequest())
+    {
+      // extract headers from YADARequest--it's an api call
+      for(String name: JSONObject.getNames(this.getYADARequest().getHttpHeaders()))
+      {
+        reqHeaders.put(name.toLowerCase(), this.getYADARequest().getHttpHeaders().getString(name));
+      }
+    }
+    else  
     {
       @SuppressWarnings("unchecked")
       Enumeration<String> hdrNames = getRequest().getHeaderNames();
@@ -314,13 +323,6 @@ public abstract class AbstractPostprocessor implements Postprocess, Authorizatio
       {
         String name = hdrNames.nextElement();
         reqHeaders.put(name.toLowerCase(), getRequest().getHeader(name));
-      }
-    }
-    else // extract headers from YADARequest--it's an api call 
-    {
-      for(String name: JSONObject.getNames(this.getYADARequest().getHttpHeaders()))
-      {
-        reqHeaders.put(name.toLowerCase(), this.getYADARequest().getHttpHeaders().getString(name));
       }
     }
 
