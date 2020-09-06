@@ -17,31 +17,6 @@ BAK_POSTGRESQL=pg_dump
 BAK_POSTGRESQL_ARCH=${BAKDIR}/${DB_NAME}-${BAK_POSTGRESQL}${DATE}.gz
 BAK_CMD_POSTGRESQL="${BAK_POSTGRESQL}  -h ${DB_HOST} -U ${DB_USER} -w ${DB_NAME} | gzip -c > ${BAK_POSTGRESQL_ARCH}"
 
-
-EXEC_MYSQL=mysql
-CMD_MYSQL="${EXEC_MYSQL} -u ${DB_USER} -p${DB_PASS} ${DB_NAME} < ${DB_TMP}"
-BAK_MYSQL=mysqldump
-BAK_MYSQL_FILE="${BAKDIR}/${DB_NAME}-${BAK_MYSQL}${DATE}.gz"
-BAK_CMD_MYSQL="${BAK_MYSQL} -u ${DB_USER} -p${DB_PASS} ${DB_NAME} | gzip -c > ${BAK_MYSQL_FILE}"
-
-
-EXEC_SQLITE=sqlite3
-SQLITE_DB=${DATADIR}/YADA.db
-CMD_SQLITE="${EXEC_SQLITE} ${SQLITE_DB} < ${DB_TMP}"
-BAK_SQLITE=${EXEC_SQLITE}
-FILE=${BAKDIR}/${DB_NAME}-${BAK_SQLITE}${DATE}
-BAK_CMD_SQLITE="${BAK_SQLITE} ${SQLITE_DB} \".backup ${FILE}\"; gzip ${FILE}" # untested
-
-
-# requires SqlTool to be on classpath (sqltool-2.3.4.jar)
-EXEC_HSQLDB=java
-CMD_HSQLDB="${EXEC_HSQLDB} org.hsqldb.cmdline.SqlTool ${DB_NAME} ${DB_TMP}"
-# store sql statement in file
-echo "BACKUP DATABASE TO '${BAKDIR}/' BLOCKING;" > /tmp/backupcmd
-BAK_HSQLDB=${EXEC_HSQLDB}
-BAK_CMD_HSQLDB="${BAK_HSQLDB} org.hsqldb.cmdline.SqlTool ${DB_NAME} /tmp/backupcmd"
-
-
 DB=$1
 BU=$2
 
@@ -92,7 +67,7 @@ fi
 # and https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
 
 rm ${DB_TMP}
-cat ${YADA_SCRIPTDIR}/YADA_db_${DB}.sql > ${DB_TMP}
+cat ${YADA_SCRIPTDIR}/YADA_db.sql > ${DB_TMP}
 # ${project.build.testOutputDirectory}/YADA_query_essentials.sql \
 # ${project.build.testOutputDirectory}/YADA_query_tests.sql \
 
