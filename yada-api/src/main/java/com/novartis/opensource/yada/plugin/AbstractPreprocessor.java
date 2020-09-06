@@ -22,6 +22,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -306,9 +307,9 @@ public abstract class AbstractPreprocessor
         try
         {
           YADASecuritySpec spec = this.getSecuritySpec();
-          method = "get"+iface;
+          method = "has"+iface;
           // test for existing policy config
-          if(spec.getClass().getMethod(method).invoke(spec) != null)
+          if((boolean) spec.getClass().getMethod(method).invoke(spec))
           {
             plugin = Class.forName(PLUGIN_PKG + iface);
             if (plugin.isAssignableFrom(getClass()))
@@ -321,7 +322,7 @@ public abstract class AbstractPreprocessor
               // cast the current policy object to the current iface,
               // get the 'apply+iface' (e.g., applyExecutionPolicy) method and
               // invoke it on the current plugin
-              policy.getClass().cast(plugin.getClass()).getClass().getMethod("apply"+iface).invoke(this);
+              policy.getClass().getMethod("apply"+iface).invoke(this);
             }
           }
         }        
@@ -942,18 +943,32 @@ public abstract class AbstractPreprocessor
    * @throws YADARequestException when the header string is malformed
    * @since 8.7.6
    */
+  @SuppressWarnings("unchecked")
   public void setHTTPHeaders(String[] httpHeaders) throws YADARequestException {
-    Matcher             m1         = Pattern.compile(RX_NOTJSON).matcher(httpHeaders.toString());
+    Matcher             m1         = Pattern.compile(RX_NOTJSON).matcher(Arrays.toString(httpHeaders));
     Map<String, String> reqHeaders = new HashMap<String, String>();
+    ArrayList<String>   hdrNames   = null;
     // ignore key case
     // api circumvents http request so check for null
-    if (null != getRequest())
+    if (null == getRequest()) 
     {
-      @SuppressWarnings("unchecked")
-      Enumeration<String> hdrNames = getRequest().getHeaderNames();
-      while (hdrNames.hasMoreElements())
+      // it's an api call -- enumerate the headers in the YADARequest
+      hdrNames = new ArrayList<>(Arrays.asList(JSONObject.getNames(getYADARequest().getHttpHeaders())));
+      for(String name : hdrNames)
       {
-        String name = hdrNames.nextElement();
+        String key   = name.toLowerCase();
+        String value = getYADARequest().getHttpHeaders().getString(name);
+        if(key.contentEquals(Authorization.YADA_HDR_AUTH.toLowerCase()))
+          value = String.format("%s %s", Authorization.YADA_HDR_AUTH_JWT_PREFIX, value);
+        reqHeaders.put(key, value);
+      }
+    }
+    else
+    {
+      // it's an http request -- enumerate the headers in the HTTPServletRequest
+      hdrNames = new ArrayList<String>(Collections.list(getRequest().getHeaderNames()));
+      for(String name : hdrNames)
+      {
         reqHeaders.put(name.toLowerCase(), getRequest().getHeader(name));
       }
     }
