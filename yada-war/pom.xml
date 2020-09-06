@@ -1,687 +1,527 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>com.novartis.opensource</groupId>
-		<artifactId>YADA</artifactId>
-		<version>9.0.0-SNAPSHOT</version>
-	</parent>
-	<artifactId>yada-war</artifactId>
-	<name>yada-war</name>
-	<url>http://github.com/Novartis/YADA</url>
-	<packaging>war</packaging>
-	<distributionManagement>
-		<site>
-			<id>yada.site</id>
-			<name>YADA site</name>
-			<url>${distribution.site.url}/${project.artifactId}</url>
-		</site>
-	</distributionManagement>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<!-- <skip.sqlite.test>true</skip.sqlite.test> <skip.oracle.test>true</skip.oracle.test>
-			<skip.mysql.test>true</skip.mysql.test> <skip.pgsql.test>true</skip.pgsql.test>
-			<skip.hsqldb.test>true</skip.hsqldb.test> -->
-		<skip.deploy.war>true</skip.deploy.war>
-		<!-- <skip.proxy.test>true</skip.proxy.test> <skip.noproxy.test>true</skip.noproxy.test> -->
-		<deployment.goal>start</deployment.goal>
-		<main.basedir>${project.parent.basedir}</main.basedir>
-	</properties>
-	<profiles>
-		<profile>
-			<id>test</id>
-			<properties>
-			  <log.level>info</log.level>
-				<skip.test>true</skip.test>
-				<test.properties>/conf/TestNG_YADA_HTTP_noauth.properties</test.properties>
-				<YADA.index.url>${YADATEST.pgsql.index.url}</YADA.index.url>
-				<YADA.index.username>${YADATEST.pgsql.index.username}</YADA.index.username>
-				<YADA.index.password>${YADATEST.pgsql.index.password}</YADA.index.password>
-				<YADA.index.autoCommit>false</YADA.index.autoCommit>
-				<YADA.index.driverClassName>${YADATEST.pgsql.index.driverClassName}</YADA.index.driverClassName>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.2</version>
-						<configuration>
-							<source>1.8</source>
-							<target>1.8</target>
-						</configuration>
-					</plugin>
-					<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>exec-maven-plugin</artifactId>
-						<version>1.3.2</version> <configuration> <skip>${skip.db.load}</skip> <executable>/bin/bash</executable>
-						<arguments> <argument>${project.build.testOutputDirectory}/dbLoad.sh</argument>
-						<argument>PostgreSQL</argument> <argument>${dbload.backup}</argument> </arguments>
-						</configuration> <executions> <execution> <id>db-load</id> <phase>compile</phase>
-						<goals> <goal>exec</goal> </goals> </execution> </executions> </plugin> -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-war-plugin</artifactId>
-						<version>2.1.1</version>
-						<configuration>
-							<skip>false</skip>
-							<warSourceExcludes>
-							 **/node_modules/**
-							</warSourceExcludes>
-						</configuration>
-						<executions>
-							<execution>
-								<id>war-test</id>
-								<phase>package</phase>
-								<goals>
-									<goal>war</goal>
-								</goals>
-								<configuration>
-									<filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
-									<archive>
-										<addMavenDescriptor>false</addMavenDescriptor>
-									</archive>
-									<filters>
-										<filter>${basedir}/src/test/resources/conf/TestNG_YADA_HTTP_noauth.properties</filter>
-									</filters>
-									<webResources>
-										<resource>
-											<directory>${basedir}/src/main/webapp/META-INF</directory>
-											<targetPath>META-INF</targetPath>
-											<filtering>true</filtering>
-											<includes>
-												<include>context.xml</include>
-											</includes>
-										</resource>
-										<resource>
-											<directory>${basedir}/src/main/webapp/yada-admin</directory>
-											<targetPath>yada-admin</targetPath>
-											<filtering>true</filtering>
-											<includes>
-												<include>index.html</include>
-											</includes>
-										</resource>
-									</webResources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<!-- <profile> <id>test-hsqldb</id> <properties> <skip.hsqldb.test>false</skip.hsqldb.test>
-			<test.run.properties>/conf/TestNG_YADA_HSQLdb_HTTP_noauth.properties</test.run.properties>
-			<YADA.index.url>${YADA.hsqldb.index.url}</YADA.index.url> <YADA.index.username>${YADA.hsqldb.index.username}</YADA.index.username>
-			<YADA.index.password>${YADA.hsqldb.index.password}</YADA.index.password>
-			<YADA.index.autoCommit>false</YADA.index.autoCommit> <YADA.index.driverClassName>${YADA.hsqldb.index.driverClassName}</YADA.index.driverClassName>
-			</properties> <build> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-antrun-plugin</artifactId> <version>1.6</version> <executions>
-			<execution> <id>start-hsqldb-server</id> <phase>pre-integration-test</phase>
-			<goals> <goal>run</goal> </goals> <configuration> <target unless="skip.db.launch">
-			<property name="compile_classpath" refid="maven.compile.classpath" /> command-line:
-			java org.hsqldb.Server -database.0 file:${project.basedir}/src/main/webapp/YADADB
-			-dbname.0 YADADB <java classpath="${compile_classpath}" classname="org.hsqldb.Server">
-			<arg value="-database.0" /> <arg value="file:${project.basedir}/src/main/webapp/YADADB"
-			/> <arg value="-dbname.0" /> <arg value="YADADB" /> </java> </target> </configuration>
-			</execution> <execution> <id>stub-assembly</id> <phase /> </execution> <execution>
-			<id>html-it</id> <phase /> </execution> <execution> <id>copy-to-quickstart</id>
-			<phase /> </execution> </executions> </plugin> <plugin> <groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-war-plugin</artifactId> <version>2.1.1</version> <configuration>
-			<skip>true</skip> </configuration> <executions> <execution> <id>war-hsqldb</id>
-			<phase>package</phase> <goals> <goal>war</goal> </goals> <configuration>
-			<filteringDeploymentDescriptors>true</filteringDeploymentDescriptors> <archive>
-			<addMavenDescriptor>false</addMavenDescriptor> </archive> <filters> <filter>${basedir}/src/test/resources/conf/TestNG_YADA_HSQLdb_HTTP_noauth.properties</filter>
-			</filters> <webResources> <resource> <directory>${basedir}/src/main/webapp/META-INF</directory>
-			<targetPath>META-INF</targetPath> <filtering>true</filtering> <includes>
-			<include>context.xml</include> </includes> </resource> <resource> <directory>${basedir}/src/main/webapp/yada-admin</directory>
-			<targetPath>yada-admin</targetPath> <filtering>true</filtering> <includes>
-			<include>index.html</include> </includes> </resource> </webResources> </configuration>
-			</execution> </executions> </plugin> </plugins> </build> </profile> -->
-		<!-- <profile>
-			<id>test-pgsql</id>
-			<properties>
-				<skip.pgsql.test>false</skip.pgsql.test>
-				<test.run.properties>/conf/TestNG_YADA_PgSQL_HTTP_noauth.properties</test.run.properties>
-				<YADA.index.url>${YADA.pgsql.index.url}</YADA.index.url>
-				<YADA.index.username>${YADA.pgsql.index.username}</YADA.index.username>
-				<YADA.index.password>${YADA.pgsql.index.password}</YADA.index.password>
-				<YADA.index.autoCommit>false</YADA.index.autoCommit>
-				<YADA.index.driverClassName>${YADA.pgsql.index.driverClassName}</YADA.index.driverClassName>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.2</version>
-						<configuration>
-							<source>1.8</source>
-							<target>1.8</target>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-war-plugin</artifactId>
-						<version>2.1.1</version>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-						<executions>
-							<execution>
-								<id>war-pgsql</id>
-								<phase>package</phase>
-								<goals>
-									<goal>war</goal>
-								</goals>
-								<configuration>
-									<filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
-									<archive>
-										<addMavenDescriptor>false</addMavenDescriptor>
-									</archive>
-									<filters>
-										<filter>${basedir}/src/test/resources/conf/TestNG_YADA_PgSQL_HTTP_noauth.properties</filter>
-									</filters>
-									<webResources>
-										<resource>
-											<directory>${basedir}/src/main/webapp/META-INF</directory>
-											<targetPath>META-INF</targetPath>
-											<filtering>true</filtering>
-											<includes>
-												<include>context.xml</include>
-											</includes>
-										</resource>
-										<resource>
-											<directory>${basedir}/src/main/webapp/yada-admin</directory>
-											<targetPath>yada-admin</targetPath>
-											<filtering>true</filtering>
-											<includes>
-												<include>index.html</include>
-											</includes>
-										</resource>
-									</webResources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>-->
-		<!--profile> <id>test-oracle</id> <properties> <skip.oracle.test>false</skip.oracle.test>
-			<display.version>${project.version}</display.version> <test.run.properties>/conf/TestNG_YADA_Oracle_HTTP_noauth.properties</test.run.properties>
-			<YADA.index.url>${YADA.oracle.index.url}</YADA.index.url> <YADA.index.username>${YADA.oracle.index.username}</YADA.index.username>
-			<YADA.index.password>${YADA.oracle.index.password}</YADA.index.password>
-			<YADA.index.autoCommit>false</YADA.index.autoCommit> <YADA.index.driverClassName>${YADA.oracle.index.driverClassName}</YADA.index.driverClassName>
-			</properties> <build> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-war-plugin</artifactId> <version>2.1.1</version> <configuration>
-			<skip>true</skip> </configuration> <executions> <execution> <id>war-oracle</id>
-			<phase>package</phase> <goals> <goal>war</goal> </goals> <configuration>
-			<filteringDeploymentDescriptors>true</filteringDeploymentDescriptors> <archive>
-			<addMavenDescriptor>false</addMavenDescriptor> </archive> <filters> <filter>${basedir}/src/test/resources/conf/TestNG_YADA_Oracle_HTTP_noauth.properties</filter>
-			</filters> <webResources> <resource> <directory>${basedir}/src/main/webapp/META-INF</directory>
-			<targetPath>META-INF</targetPath> <filtering>true</filtering> <includes>
-			<include>context.xml</include> </includes> </resource> <resource> <directory>${basedir}/src/main/webapp/yada-admin</directory>
-			<targetPath>yada-admin</targetPath> <filtering>true</filtering> <includes>
-			<include>index.html</include> </includes> </resource> </webResources> </configuration>
-			</execution> </executions> </plugin> </plugins> </build> </profile> -->
-		<!-- <profile> <id>test-mysql</id> <properties> <skip.mysql.test>false</skip.mysql.test>
-			<test.run.properties>/conf/TestNG_YADA_MySQL_HTTP_noauth.properties</test.run.properties>
-			<YADA.index.url>${YADA.mysql.index.url}</YADA.index.url> <YADA.index.username>${YADA.mysql.index.username}</YADA.index.username>
-			<YADA.index.password>${YADA.mysql.index.password}</YADA.index.password> <YADA.index.autoCommit>false</YADA.index.autoCommit>
-			<YADA.index.driverClassName>${YADA.mysql.index.driverClassName}</YADA.index.driverClassName>
-			</properties> <build> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-war-plugin</artifactId> <version>2.1.1</version> <configuration>
-			<skip>true</skip> </configuration> <executions> <execution> <id>war-mysql</id>
-			<phase>package</phase> <goals> <goal>war</goal> </goals> <configuration>
-			<filteringDeploymentDescriptors>true</filteringDeploymentDescriptors> <archive>
-			<addMavenDescriptor>false</addMavenDescriptor> </archive> <filters> <filter>${basedir}/src/test/resources/conf/TestNG_YADA_MySQL_HTTP_noauth.properties</filter>
-			</filters> <webResources> <resource> <directory>${basedir}/src/main/webapp/META-INF</directory>
-			<targetPath>META-INF</targetPath> <filtering>true</filtering> <includes>
-			<include>context.xml</include> </includes> </resource> <resource> <directory>${basedir}/src/main/webapp/yada-admin</directory>
-			<targetPath>yada-admin</targetPath> <filtering>true</filtering> <includes>
-			<include>index.html</include> </includes> </resource> </webResources> </configuration>
-			</execution> </executions> </plugin> </plugins> </build> </profile> -->
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.novartis.opensource</groupId>
+    <artifactId>YADA</artifactId>
+    <version>9.0.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>yada-war</artifactId>
+  <name>yada-war</name>
+  <url>http://github.com/Novartis/YADA</url>
+  <packaging>war</packaging>
+  <distributionManagement>
+    <site>
+      <id>yada.site</id>
+      <name>YADA site</name>
+      <url>${distribution.site.url}/${project.artifactId}</url>
+    </site>
+  </distributionManagement>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <YADA.branch>master</YADA.branch>
+    <YADA.switch.branch>false</YADA.switch.branch>
+    <YADA.pull.on.launch>false</YADA.pull.on.launch>
+    <log.level>info</log.level>
+    <test.properties>/conf/TestNG_YADA.properties</test.properties>
+    <display.version>${project.version}</display.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <skip.proxy.test>true</skip.proxy.test>
+    <skip.noproxy.test>true</skip.noproxy.test>
+    <skip.fs.test>true</skip.fs.test>
+    <skip.deploy.war>true</skip.deploy.war>
+    <deployment.goal>start</deployment.goal>
+    <main.basedir>${project.parent.basedir}</main.basedir>
+  </properties>
+  <profiles>
+    <profile>
+      <id>test</id>
+      <properties>
+        <log.level>debug</log.level>
+        <skip.test>true</skip.test>
+        <test.properties>/conf/TestNG_YADA.properties</test.properties>
+        <YADA.branch>testng</YADA.branch>
+        <YADA.switch.branch>true</YADA.switch.branch>
+        <YADA.pull.on.launch>false</YADA.pull.on.launch>
+        <test.properties>/conf/TestNG_YADA_HTTP.properties</test.properties>
+        <YADA.index.url>${YADATEST.pgsql.index.url}</YADA.index.url>
+        <YADA.index.username>${YADATEST.pgsql.index.username}</YADA.index.username>
+        <YADA.index.password>${YADATEST.pgsql.index.password}</YADA.index.password>
+        <YADA.index.autoCommit>false</YADA.index.autoCommit>
+        <YADA.index.driverClassName>${YADATEST.pgsql.index.driverClassName}</YADA.index.driverClassName>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.2</version>
+            <configuration>
+              <source>1.8</source>
+              <target>1.8</target>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>2.1.1</version>
+            <configuration>
+              <skip>false</skip>
+              <warSourceExcludes>
+                **/node_modules/**
+              </warSourceExcludes>
+            </configuration>
+            <executions>
+              <execution>
+                <id>war-test</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>war</goal>
+                </goals>
+                <configuration>
+                  <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+                  <archive>
+                    <addMavenDescriptor>false</addMavenDescriptor>
+                  </archive>
+                  <filters>
+                    <filter>${basedir}/src/test/resources/conf/TestNG_YADA_HTTP.properties</filter>
+                  </filters>
+                  <webResources>
+                    <resource>
+                      <directory>${basedir}/src/main/webapp/META-INF</directory>
+                      <targetPath>META-INF</targetPath>
+                      <filtering>true</filtering>
+                      <includes>
+                        <include>context.xml</include>
+                      </includes>
+                    </resource>
+                    <resource>
+                      <directory>${basedir}/src/main/webapp/yada-admin</directory>
+                      <targetPath>yada-admin</targetPath>
+                      <filtering>true</filtering>
+                      <includes>
+                        <include>index.html</include>
+                      </includes>
+                    </resource>
+                  </webResources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>test-pre-9</id>
+      <properties>
+        
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.2</version>
+            <configuration>
+              <source>1.8</source>
+              <target>1.8</target>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>2.1.1</version>
+            <configuration>
+              <skip>false</skip>
+              <warSourceExcludes>
+                **/node_modules/**
+              </warSourceExcludes>
+            </configuration>
+            <executions>
+              <execution>
+                <id>war-test</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>war</goal>
+                </goals>
+                <configuration>
+                  <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+                  <archive>
+                    <addMavenDescriptor>false</addMavenDescriptor>
+                  </archive>
+                  <filters>
+                    <filter>${basedir}/src/test/resources/conf/TestNG_YADA_HTTP.properties</filter>
+                  </filters>
+                  <webResources>
+                    <resource>
+                      <directory>${basedir}/src/main/webapp/META-INF</directory>
+                      <targetPath>META-INF</targetPath>
+                      <filtering>true</filtering>
+                      <includes>
+                        <include>context.xml</include>
+                      </includes>
+                    </resource>
+                    <resource>
+                      <directory>${basedir}/src/main/webapp/yada-admin</directory>
+                      <targetPath>yada-admin</targetPath>
+                      <filtering>true</filtering>
+                      <includes>
+                        <include>index.html</include>
+                      </includes>
+                    </resource>
+                  </webResources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>deploy-war</id>
+      <properties>
+        <skip.deploy.war>false</skip.deploy.war>
+      </properties>
+    </profile>
+  </profiles>
+  <build>
+    <finalName>ROOT</finalName>
+    <filters>
+      <filter>${basedir}/src/main/resources/conf/build.properties</filter>
+    </filters>
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main/resources/conf</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>ehcache.xml</include>
+          <include>log4j.properties</include>
+          <include>YADA.properties</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+        <includes>
+          <include>utils/**</include>
+          <include>templates/**</include>
+        </includes>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>${basedir}/src/test/resources/conf</directory>
+        <filtering>true</filtering>
+        <targetPath>conf</targetPath>
+      </testResource>
+      <testResource>
+        <directory>${basedir}/src/test/resources</directory>
+        <filtering>false</filtering>
+        <includes>
+          <include>log4j.properties</include>
+        </includes>
+      </testResource>
+      <testResource>
+        <directory>${basedir}/src/test/resources</directory>
+        <filtering>false</filtering>
+        <includes>
+          <include>files/**</include>
+        </includes>
+      </testResource>
+    </testResources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.1.1</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.18</version>
+        <configuration>
+          <useSystemClassLoader>false</useSystemClassLoader>
+          <additionalClasspathElements>
+            <additionalClasspathElement>${test.properties}</additionalClasspathElement>
+          </additionalClasspathElements>
+          <suiteXmlFiles>
+            <suiteXmlFile>${basedir}/target/test-classes/conf/TestNG_YADA_HTTP.xml</suiteXmlFile>
+          </suiteXmlFiles>
+          <properties>
+            <property>
+              <name>listener</name>
+              <value>com.novartis.opensource.yada.test.QueryFileTransformer</value>
+            </property>
+          </properties>
+        </configuration>
+        <executions>
+          <execution>
+            <id>default-test</id>
+            <phase>integration-test</phase>
+            <configuration>
+              <skipTests>false</skipTests>
+            </configuration>
+            <goals>
+              <goal>integration-test</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>verify</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.10</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+          <includeEmptyDirs>true</includeEmptyDirs>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <id>stub-assembly</id>
+            <phase />
+          </execution>
+          <execution>
+            <id>html-it</id>
+            <phase />
+          </execution>
+        </executions>
+      </plugin>
 
-		<!-- <profile> <id>test-sqlite</id> <properties> <skip.sqlite.test>false</skip.sqlite.test>
-			<test.run.properties>/conf/TestNG_YADA_SQLite_HTTP_noauth.properties</test.run.properties>
-			<YADA.index.url>${YADA.sqlite.index.url}</YADA.index.url> <YADA.index.username>${YADA.sqlite.index.username}</YADA.index.username>
-			<YADA.index.password>${YADA.sqlite.index.password}</YADA.index.password>
-			<YADA.index.autoCommit>true</YADA.index.autoCommit> <YADA.index.driverClassName>${YADA.sqlite.index.driverClassName}</YADA.index.driverClassName>
-			</properties> <build> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-war-plugin</artifactId> <version>2.1.1</version> <configuration>
-			<skip>true</skip> </configuration> <executions> <execution> <id>war-sqlite</id>
-			<phase>package</phase> <goals> <goal>war</goal> </goals> <configuration>
-			<filteringDeploymentDescriptors>true</filteringDeploymentDescriptors> <archive>
-			<addMavenDescriptor>false</addMavenDescriptor> </archive> <filters> <filter>${basedir}/src/test/resources/conf/TestNG_YADA_SQLite_HTTP_noauth.properties</filter>
-			</filters> <webResources> <resource> <directory>${basedir}/src/main/webapp/META-INF</directory>
-			<targetPath>META-INF</targetPath> <filtering>true</filtering> <includes>
-			<include>context.xml</include> </includes> </resource> <resource> <directory>${basedir}/src/main/webapp/yada-admin</directory>
-			<targetPath>yada-admin</targetPath> <filtering>true</filtering> <includes>
-			<include>index.html</include> </includes> </resource> </webResources> </configuration>
-			</execution> </executions> </plugin> </plugins> </build> </profile> -->
-		<!-- <profile> <id>test-proxy</id> <properties> <skip.proxy.test>false</skip.proxy.test>
-			<test.properties>${basedir}/src/test/resources/conf/TestNG_YADA_HSQLDB_HTTP_noauth.properties</test.properties>
-			<YADA.index.url>${YADA.hsqldb.index.url}</YADA.index.url> <YADA.index.username>${YADA.hsqldb.index.username}</YADA.index.username>
-			<YADA.index.password>${YADA.hsqldb.index.password}</YADA.index.password>
-			<YADA.index.autoCommit>false</YADA.index.autoCommit> <YADA.index.driverClassName>${YADA.hsqldb.index.driverClassName}</YADA.index.driverClassName>
-			</properties> </profile> -->
-		<!-- <profile> <id>test-noproxy</id> <properties> <skip.noproxy.test>false</skip.noproxy.test>
-			<test.properties>${basedir}/src/test/resources/conf/TestNG_YADA_HSQLDB_HTTP_noauth.properties</test.properties>
-			<YADA.index.url>${YADA.hsqldb.index.url}</YADA.index.url> <YADA.index.username>${YADA.hsqldb.index.username}</YADA.index.username>
-			<YADA.index.password>${YADA.hsqldb.index.password}</YADA.index.password>
-			<YADA.index.autoCommit>false</YADA.index.autoCommit> <YADA.index.driverClassName>${YADA.hsqldb.index.driverClassName}</YADA.index.driverClassName>
-			</properties> </profile> -->
-		<profile>
-			<id>deploy-war</id>
-			<properties>
-				<skip.deploy.war>false</skip.deploy.war>
-			</properties>
-		</profile>
-	</profiles>
-	<build>
-		<finalName>ROOT</finalName>
-		<filters>
-			<filter>${basedir}/src/main/resources/conf/build.properties</filter>
-		</filters>
-		<resources>
-			<resource>
-				<directory>${basedir}/src/main/resources/conf</directory>
-				<filtering>true</filtering>
-				<includes>
-					<include>ehcache.xml</include>
-					<include>log4j.properties</include>
-					<include>YADA.properties</include>
-				</includes>
-			</resource>
-			<resource>
-				<directory>${basedir}/src/main/resources</directory>
-				<includes>
-					<include>utils/**</include>
-					<include>templates/**</include>
-				</includes>
-			</resource>
-		</resources>
-		<testResources>
-			<testResource>
-				<directory>${basedir}/src/test/resources/conf</directory>
-				<filtering>true</filtering>
-				<targetPath>conf</targetPath>
-			</testResource>
-			<!-- <testResource> <directory>${basedir}/src/test/resources/test</directory>
-				<filtering>false</filtering> <targetPath>test</targetPath> </testResource> -->
-			<testResource>
-				<directory>${basedir}/src/test/resources</directory>
-				<filtering>false</filtering>
-				<includes>
-					<include>log4j.properties</include>
-				</includes>
-			</testResource>
-			<testResource>
-				<directory>${basedir}/src/test/resources</directory>
-				<!-- <targetPath>${project.build.testOutputDirectory}</targetPath> -->
-				<filtering>false</filtering>
-				<includes>
-					<include>files/**</include>
-				</includes>
-			</testResource>
-		</testResources>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.1.1</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.18</version>
-				<configuration>
-					<useSystemClassLoader>false</useSystemClassLoader>
-					<systemPropertyVariables>
-					</systemPropertyVariables>
-					<additionalClasspathElements>
-						<additionalClasspathElement>${test.properties}</additionalClasspathElement>
-					</additionalClasspathElements>
-					<suiteXmlFiles>
-						<suiteXmlFile>${basedir}/target/test-classes/conf/TestNG_YADA_HTTP_noauth.xml</suiteXmlFile>
-					</suiteXmlFiles>
-					<properties>
-						<property>
-							<name>listener</name>
-							<value>com.novartis.opensource.yada.test.QueryFileTransformer</value>
-						</property>
-					</properties>
-				</configuration>
-				<executions>
-					<execution>
-						<id>default-test</id>
-						<phase>integration-test</phase>
-						<configuration>
-						
-						 <skipTests>false</skipTests>
-						</configuration>
-						 <goals>
-                              <goal>integration-test</goal> 
-                          </goals>
-					</execution>
-					<!-- <execution>
-						<id>test-war-hsqldb-config</id>
-						<phase>integration-test</phase>
-						<goals>
-							<goal>integration-test</goal>
-						</goals>
-						<configuration>
-							<skipTests>${skip.hsqldb.test}</skipTests>
-							<reportNameSuffix>hsqldb</reportNameSuffix>
-						</configuration>
-					</execution>
-					<execution>
-						<id>test-war-pgsql-config</id>
-						<phase>integration-test</phase>
-						<goals>
-							<goal>integration-test</goal>
-						</goals>
-						<configuration>
-							<skipTests>${skip.pgsql.test}</skipTests>
-							<reportNameSuffix>pgsql</reportNameSuffix>
-						</configuration>
-					</execution>
-					<execution>
-						<id>test-war-oracle-config</id>
-						<phase>integration-test</phase>
-						<goals>
-							<goal>integration-test</goal>
-						</goals>
-						<configuration>
-							<skipTests>${skip.oracle.test}</skipTests>
-							<reportNameSuffix>oracle</reportNameSuffix>
-						</configuration>
-					</execution>
-					<execution>
-						<id>test-war-mysql-config</id>
-						<phase>integration-test</phase>
-						<goals>
-							<goal>integration-test</goal>
-						</goals>
-						<configuration>
-							<skipTests>${skip.mysql.test}</skipTests>
-							<reportNameSuffix>mysql</reportNameSuffix>
-						</configuration>
-					</execution>
-					<execution>
-						<id>test-war-sqlite-config</id>
-						<phase>integration-test</phase>
-						<goals>
-							<goal>integration-test</goal>
-						</goals>
-						<configuration>
-							<skipTests>${skip.sqlite.test}</skipTests>
-							<reportNameSuffix>sqlite</reportNameSuffix>
-						</configuration>
-					</execution>
-					<execution>
-						<id>test-proxy</id>
-						<configuration>
-							<skipTests>${skip.proxy.test}</skipTests>
-							<reportNameSuffix>proxy</reportNameSuffix>
-						</configuration>
-					</execution>
-					<execution>
-						<id>test-noproxy</id>
-						<configuration>
-							<skipTests>${skip.noproxy.test}</skipTests>
-							<reportNameSuffix>noproxy</reportNameSuffix>
-						</configuration>
-					</execution> -->
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.10</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.7</version>
-				<configuration>
-					<includeEmptyDirs>true</includeEmptyDirs>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.6</version>
-				<executions>
-					<execution>
-						<id>stub-assembly</id>
-						<phase />
-					</execution>
-					<execution>
-						<id>html-it</id>
-						<phase />
-					</execution>
-					<!-- <execution> <id>copy-to-quickstart</id> <phase /> </execution> -->
-				</executions>
-			</plugin>
+      <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
+        <version>1.4.4</version>
+        <configuration>
+          <properties>
+          </properties>
+          <skip>${skip.deploy.war}</skip>
+          <container>
+            <containerId>tomcat8x</containerId>
+            <timeout>300000</timeout>
+            <zipUrlInstaller>
+              <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/8.5.49/tomcat-8.5.49.zip</url>
+            </zipUrlInstaller>
+            <!-- <containerId>tomcat9x</containerId> <zipUrlInstaller> <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/9.0.29/tomcat-9.0.29.zip</url>
+              </zipUrlInstaller> -->
+          </container>
+          <configuration>
+            <type>standalone</type>
+            <properties>
+              <cargo.jvmargs>
+                -Xdebug
+                -Xrunjdwp:transport=dt_socket,server=y,suspend=${suspend.debugger},address=5005
+                -Xnoagent
+                -Djava.compiler=NONE
+                -Dsecurity.token=YADAYADA
+                -Djwt.iss=yada
+                -Djws.key=drphilscrypto
+                <!-- -Djavax.net.ssl.keyStore=~/.keystore -Djavax.net.ssl.keyStorePassword=changeit
+                  -Djavax.net.ssl.trustStore=~/.keystore -Djavax.net.ssl.trustStorePassword=changeit -->
+              </cargo.jvmargs>
+              <cargo.logging>low</cargo.logging>
+              <cargo.standalone.ignoreNonExistingProperties>true</cargo.standalone.ignoreNonExistingProperties>
+            </properties>
+          </configuration>
+        </configuration>
+        <executions>
+          <execution>
+            <id>test-deploy</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>${deployment.goal}</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
-			<plugin>
-				<groupId>org.codehaus.cargo</groupId>
-				<artifactId>cargo-maven2-plugin</artifactId>
-				<version>1.4.4</version>
-				<configuration>
-					<skip>${skip.deploy.war}</skip>
-					<container>
-					   <containerId>tomcat8x</containerId>
-					   <timeout>300000</timeout>
-					   <zipUrlInstaller>
-					       <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/8.5.49/tomcat-8.5.49.zip</url>
-					   </zipUrlInstaller>
-						<!-- <containerId>tomcat9x</containerId>
-						<zipUrlInstaller>
-						  <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/9.0.29/tomcat-9.0.29.zip</url>
-						</zipUrlInstaller> -->
-					</container>
-					<configuration>
-						<type>standalone</type>
-						<properties>
-							<cargo.jvmargs>
-								-Xdebug
-								-Xrunjdwp:transport=dt_socket,server=y,suspend=${suspend.debugger},address=5005
-								-Xnoagent
-								-Djava.compiler=NONE
-								-Dsecurity.token=YADAYADA
-								<!-- -Djavax.net.ssl.keyStore=~/.keystore -Djavax.net.ssl.keyStorePassword=changeit
-									-Djavax.net.ssl.trustStore=~/.keystore -Djavax.net.ssl.trustStorePassword=changeit -->
-							</cargo.jvmargs>
-							<cargo.logging>low</cargo.logging>
-							<cargo.standalone.ignoreNonExistingProperties>true</cargo.standalone.ignoreNonExistingProperties>
-						</properties>
-					</configuration>
-				</configuration>
-				<executions>
-					<execution>
-						<id>test-deploy</id>
-						<phase>pre-integration-test</phase>
-						<goals>
-							<goal>${deployment.goal}</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <finalName>${project.artifactId}-${project.version}</finalName>
+              <classifier>sources</classifier>
+              <excludeResources>true</excludeResources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>empty-javadoc-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <finalName>${project.artifactId}-${project.version}</finalName>
+              <classifier>javadoc</classifier>
+              <classesDirectory>${basedir}/src/main/java</classesDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.mycila</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>2.11</version>
+        <configuration>
+          <header>${main.basedir}/src/main/resources/license.txt</header>
+          <useDefaultExcludes>true</useDefaultExcludes>
+          <properties>
+            <year>${project.inceptionYear}</year>
+          </properties>
+          <excludes>
+            <!-- excluded due to requirement for line feed at end of license -->
+            <exclude>**</exclude>
+          </excludes>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>2.18.1</version>
+        <configuration>
+          <skipSurefireReport>true</skipSurefireReport>
+          <goals>
+            <goal>failsafe-report-only</goal>
+          </goals>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>2.3</version>
+      </plugin>
+    </plugins>
+  </reporting>
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>yada-api</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>yada-api</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.thetransactioncompany</groupId>
+      <artifactId>cors-filter</artifactId>
+      <version>1.3.2</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.tuckey</groupId>
+      <artifactId>urlrewritefilter</artifactId>
+      <version>4.0.4</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>nl.javadude.assumeng</groupId>
+      <artifactId>assumeng</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.31</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<configuration>
-							<finalName>${project.artifactId}-${project.version}</finalName>
-							<classifier>sources</classifier>
-							<excludeResources>true</excludeResources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>empty-javadoc-jar</id>
-						<phase>package</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<configuration>
-							<finalName>${project.artifactId}-${project.version}</finalName>
-							<classifier>javadoc</classifier>
-							<classesDirectory>${basedir}/src/main/java</classesDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>com.mycila</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<version>2.11</version>
-				<configuration>
-					<header>${main.basedir}/src/main/resources/license.txt</header>
-					<useDefaultExcludes>true</useDefaultExcludes>
-					<properties>
-						<year>${project.inceptionYear}</year>
-					</properties>
-					<excludes>
-						<!-- excluded due to requirement for line feed at end of license -->
-						<exclude>**</exclude>
-					</excludes>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>2.18.1</version>
-				<configuration>
-					<skipSurefireReport>true</skipSurefireReport>
-					<goals>
-						<goal>failsafe-report-only</goal>
-					</goals>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jxr-plugin</artifactId>
-				<version>2.3</version>
-			</plugin>
-		</plugins>
-	</reporting>
-	<dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>yada-api</artifactId>
-			<version>${project.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>yada-api</artifactId>
-			<version>${project.version}</version>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<!-- <dependency> <groupId>org.apache.tomcat</groupId> <artifactId>catalina</artifactId>
-			<scope>test</scope> </dependency> -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.thetransactioncompany</groupId>
-			<artifactId>cors-filter</artifactId>
-			<version>1.3.2</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.tuckey</groupId>
-			<artifactId>urlrewritefilter</artifactId>
-			<version>4.0.4</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>nl.javadude.assumeng</groupId>
-			<artifactId>assumeng</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.31</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			
-		</dependency>
-		<!-- You'll need to install this jar manually in your maven repo -->
-		<!-- <dependency> <groupId>com.oracle</groupId> <artifactId>ojdbc6</artifactId>
-			<version>11.2.0.3</version> <scope>test</scope> </dependency> -->
-		<dependency>
-			<groupId>org.xerial</groupId>
-			<artifactId>sqlite-jdbc</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-			<version>2.3.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hsqldb</groupId>
-			<artifactId>sqltool</artifactId>
-			<version>2.3.4</version>
-		</dependency>
-		<dependency>
-			<groupId>com.novartis.opensource</groupId>
-			<artifactId>jsqlparser</artifactId>
-			<version>0.9.6.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-java</artifactId>
-			<version>3.0.0-beta3</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-chrome-driver</artifactId>
-			<version>3.0.0-beta2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-firefox-driver</artifactId>
-			<version>3.0.0-beta2</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+    </dependency>
+    <!-- You'll need to install this jar manually in your maven repo -->
+    <!-- <dependency> <groupId>com.oracle</groupId> <artifactId>ojdbc6</artifactId>
+      <version>11.2.0.3</version> <scope>test</scope> </dependency> -->
+    <dependency>
+      <groupId>org.xerial</groupId>
+      <artifactId>sqlite-jdbc</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <version>2.3.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hsqldb</groupId>
+      <artifactId>sqltool</artifactId>
+      <version>2.3.4</version>
+    </dependency>
+    <dependency>
+      <groupId>com.novartis.opensource</groupId>
+      <artifactId>jsqlparser</artifactId>
+      <version>0.9.6.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <version>3.0.0-beta3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-chrome-driver</artifactId>
+      <version>3.0.0-beta2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-firefox-driver</artifactId>
+      <version>3.0.0-beta2</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>
