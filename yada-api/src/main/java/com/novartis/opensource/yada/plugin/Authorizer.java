@@ -222,24 +222,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
         // Is there a GRANT for this APP
         if (hasGrants()) // even without locks, a grant for the app will pass
         {
-  //        if (hasAllowList()) // why bother?
-  //        {
-  //          // pl=Authorizer,<APP>,<LOCK>
-  //          JSONArray grants = (JSONArray) getGrant();
-  //          for (int i = 0; i < grants.length(); i++)
-  //          {
-  //            String grantStr = grants.get(i).toString();
-  //            if (getAllowList().contains(grantStr))
-  //            {
-  //              authorized = true;
-  //            }
-  //          }
-  //        }
-  //        else
-  //        {
-            // pl=Authorizer,<APP>
           authorized = true;
-  //        }
         }
       }
     }
@@ -333,7 +316,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
       Pattern rxAuthUsrCreds   = Pattern.compile(RX_HDR_AUTH_USR_CREDS);
       Matcher m2               = rxAuthUsrCreds.matcher(credentialString);
       if (m2.matches())
-      {// found user
+      { // found user
         userid = m2.group(1);
         pw     = m2.group(2);
       }
