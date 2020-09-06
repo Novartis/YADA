@@ -42,6 +42,25 @@ public interface SecurityPolicy {
   
   /**
    * Constant equal to {@value}.
+   * Refers to a security query in the {@code YADA_A11N} table.
+   * For the pre-process to approve running the original query, 
+   * the security query must return 0 rows.
+   * @since 9.0.0
+   */
+  public static final String DENYLIST = "deny";
+
+  /**
+   * Constant equal to {@value}.
+   * Refers to a security query in the {@code YADA_A11N} table.
+   * For the pre-process to approve running the original query, 
+   * the security query must &gt;0 rows.
+   * @since 9.0.0
+   */
+  public static final String ALLOWLIST = "allow";
+
+  
+  /**
+   * Constant equal to {@value}.
    * Refers to the value stored in the {@code YADA_A11N.POLICY} column pertaining to the protected qname.
    * @since 7.0.0
    */
