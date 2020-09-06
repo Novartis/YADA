@@ -553,7 +553,7 @@ public abstract class AbstractPreprocessor
    * @since 7.0.0
    */
   @Override
-  public Object getToken() throws YADASecurityException {
+  public Object getToken() {
     return this.token;
   }
 
@@ -862,7 +862,7 @@ public abstract class AbstractPreprocessor
    */
   @Override
   public boolean isBlacklist(String type) {
-    return BLACKLIST.equals(type);
+    return BLACKLIST.equals(type) || DENYLIST.equals(type);
   }
 
   /**
@@ -875,7 +875,7 @@ public abstract class AbstractPreprocessor
    */
   @Override
   public boolean isWhitelist(String type) {
-    return WHITELIST.equals(type);
+    return WHITELIST.equals(type) || ALLOWLIST.equals(type);
   }
 
   /**
