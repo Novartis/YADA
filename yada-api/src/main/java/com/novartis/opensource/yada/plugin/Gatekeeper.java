@@ -113,6 +113,30 @@ public class Gatekeeper extends AbstractPreprocessor {
    * Constant equal to {@value}
    */
   protected static final String CONTENT_POLICY_PREDICATE = "content.policy.predicate";
+  
+  /**
+   * Constant equal to {@value}
+   * @since 9.0.0
+   */
+  protected static final String COLUMNS = "columns";
+
+  /**
+   * Constant equal to {@value}
+   * @since 9.0.0
+   */
+  protected static final String INDICES = "indices";
+
+  /**
+   * Constant equal to {@value}
+   * @since 9.0.0
+   */
+  protected static final String INDEXES = "indexes";
+
+  /**
+   * Constant equal to {@value}
+   * @since 9.0.0
+   */
+  protected static final String PREDICATE = "predicate";
 
   /**
    * Constant equal to {@value}
@@ -301,13 +325,9 @@ public class Gatekeeper extends AbstractPreprocessor {
   /**
    * 
    * @return the identity object from the identity cache
-   * @throws YADARequestException
-   * @throws YADASecurityException
-   * @throws YADAExecutionException
    * @since 8.7.6
-   * 
    */
-  public Object obtainIdentity() throws YADASecurityException, YADARequestException, YADAExecutionException {
+  public Object obtainIdentity() {
     Object result = getCacheEntry(YADA_IDENTITY_CACHE, (String) this.getToken());
     return result;
   }
@@ -352,16 +372,9 @@ public class Gatekeeper extends AbstractPreprocessor {
     boolean blacklist  = false;
 
     // Check authority for identity
-    try
-    {
-      setIdentity(obtainIdentity());
-    }
-    catch (YADASecurityException | YADARequestException | YADAExecutionException e)
-    {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
+    Object ident = obtainIdentity();
+    setIdentity(ident);
+    
     // Check a11n table for locks
     try
     {
@@ -369,7 +382,7 @@ public class Gatekeeper extends AbstractPreprocessor {
     }
     catch (YADARequestException | YADAExecutionException e2)
     {
-      String msg = "A11N Request Exception";
+      String msg = "Unauthorized. Unable to set query locks.";
       throw new YADASecurityException(msg);
     }
     
@@ -474,14 +487,17 @@ public class Gatekeeper extends AbstractPreprocessor {
     String qualifier;
     List<?> qualifierList;
     YADASecuritySpec spec = this.getSecuritySpec();
-    Map<String, Object> policy = spec != null ? this.getSecuritySpec().getAuthorizationPolicy() : null;
-    if(policy != null)
+    if(Finder.hasYADALib())        
     {
-      type = (String) policy.get(YADASecuritySpec.KEY_TYPE);
-      qualifierList = (List<?>) policy.get(YADASecuritySpec.KEY_QUALIFIER);
-      for(Object q : qualifierList)
+      if(null != spec && spec.hasAuthorizationPolicy())
       {
-        result.put((String) q, type);
+        Map<String, Object> policy = spec != null ? this.getSecuritySpec().getAuthorizationPolicy() : null;
+        type = (String) policy.get(YADASecuritySpec.KEY_TYPE);
+        qualifierList = (List<?>) policy.get(YADASecuritySpec.KEY_QUALIFIER);
+        for(Object q : qualifierList)
+        {
+          result.put((String) q, type);
+        }
       }
     }
     else
@@ -505,7 +521,7 @@ public class Gatekeeper extends AbstractPreprocessor {
       }
       catch (SQLException | YADAConnectionException | YADASQLException e)
       {
-        String msg = "Unauthorized. Could not obtain security query (Authorize).";
+        String msg = "There was a problem executing the authorization query.";
         throw new YADASecurityException(msg, e);
       }
     }
@@ -562,7 +578,7 @@ public class Gatekeeper extends AbstractPreprocessor {
     // for execution policy
     
     
-    List<SecurityPolicyRecord> spec;
+    List<SecurityPolicyRecord> spec = null;
     List<SecurityPolicyRecord> prunedSpec = new ArrayList<>();
 
     // process security spec
@@ -572,23 +588,34 @@ public class Gatekeeper extends AbstractPreprocessor {
     // if json, need name of column to map to token
 
     // if standard, need list of relevant indices
-    String policyColumns;
-    String policyIndices;
+    String policyColumns = null;
+    String policyIndices = null;
     
     if(this.getSecuritySpec() != null)
     {
       // this is a crap way to do it--store as list, convert to space-del string, then split later, but 
       // it's the quickest route to valhalla
-      policyColumns = String.join(" ", (List<String>) this.getSecuritySpec().getExecutionPolicy().get("columns"));
-      policyIndices = String.join(" ", (List<String>) this.getSecuritySpec().getExecutionPolicy().get("columns"));
-      if(policyIndices == null)        
-        policyIndices = String.join(" ", (List<String>) this.getSecuritySpec().getExecutionPolicy().get("indexes"));
-      Map<String,Object> execPol = this.getSecuritySpec().getExecutionPolicy();
-      spec = new ArrayList<SecurityPolicyRecord>();
-      String qname = getYADAQuery().getQname();
-      String type = (String) execPol.get(YADASecuritySpec.KEY_TYPE);
-      String protector = (String) execPol.get(YADASecuritySpec.KEY_PROTECTOR);
-      spec.add(new SecurityPolicyRecord(qname,EXECUTION_POLICY_CODE,type,protector));
+      if(this.getSecuritySpec().hasExecutionPolicy())
+      {
+        List<String> polcols = (List<String>) this.getSecuritySpec().getExecutionPolicy().get(COLUMNS);
+        List<String> polind  = (List<String>) this.getSecuritySpec().getExecutionPolicy().get(INDICES);
+        if(null != polcols && polcols.size() > 0)
+          policyColumns = String.join(" ", polcols).replaceAll("[\\[\\]\"]","");
+        if(null != polind && polind.size() > 0)
+          policyIndices = String.join(" ", polind).replaceAll("[\\[\\]\"]","");
+        if(null == policyIndices)        
+        {
+          polind = (List<String>) this.getSecuritySpec().getExecutionPolicy().get(INDEXES);
+          if(null != polind && polind.size() > 0)
+            policyIndices = String.join(" ", polind).replaceAll("[\\[\\]\"]","");
+        }
+        Map<String,Object> execPol = this.getSecuritySpec().getExecutionPolicy();
+        spec = new ArrayList<SecurityPolicyRecord>();
+        String qname = getYADAQuery().getQname();
+        String type = (String) execPol.get(YADASecuritySpec.KEY_TYPE);
+        String protector = (String) execPol.get(YADASecuritySpec.KEY_PROTECTOR);
+        spec.add(new SecurityPolicyRecord(qname,EXECUTION_POLICY_CODE,type,protector));
+      }
     }
     else
     {
@@ -614,11 +641,11 @@ public class Gatekeeper extends AbstractPreprocessor {
     {
 
       // Are params required for security query?
-      if (policyIndices != null && policyIndices.matches(polColParams_rx))
+      if (policyIndices != null && policyIndices.split(" ")[0].matches(polColParams_rx))
       {
         policyHasParams = true;
       }
-      if (policyColumns != null && policyColumns.matches(polColJSONParams_rx))
+      if (policyColumns != null && policyColumns.split(" ")[0].matches(polColJSONParams_rx))
       {
         policyHasJSONParams = true;
       }
@@ -633,23 +660,24 @@ public class Gatekeeper extends AbstractPreprocessor {
         // confirm sec spec is config properly
         if (hasValidPolicy(secRec.getType())) // whitelist or blacklist
         {
-
-          // confirm sec spec is mapped to requested query
-          try
+          if(!Finder.hasYADALib())
           {
-            new Finder().getQuery(secRec.getA11nQname());
+            // confirm sec spec is mapped to requested query
+            try
+            {            
+              new Finder().getQuery(secRec.getA11nQname());
+            }
+            catch (YADAFinderException e)
+            {
+              String msg = "Unauthorized. Authorization qname not found.";
+              throw new YADASecurityException(msg);
+            }
+            catch (YADAConnectionException | YADAQueryConfigurationException e)
+            {
+              String msg = "Unauthorized. Unable to check for security query. This could be a temporary issue.";
+              throw new YADASecurityException(msg, e);
+            }
           }
-          catch (YADAFinderException e)
-          {
-            String msg = "Unauthorized. Authorization qname not found.";
-            throw new YADASecurityException(msg);
-          }
-          catch (YADAConnectionException | YADAQueryConfigurationException e)
-          {
-            String msg = "Unauthorized. Unable to check for security query. This could be a temporary issue.";
-            throw new YADASecurityException(msg, e);
-          }
-
           // security query exists
         }
         else
@@ -680,6 +708,7 @@ public class Gatekeeper extends AbstractPreprocessor {
       // policy has params and req has compatible params
       if (policyHasParams && !reqHasJSONParams)
       {
+        // split on space to process each polCol separately
         String[]      polCols = policyIndices.split("\\s");
         StringBuilder polVals = new StringBuilder();
         if (reqHasParams)
@@ -705,6 +734,8 @@ public class Gatekeeper extends AbstractPreprocessor {
             if (injectedIndex.equals("") && index > -1)
             {
               if (index >= vals.size())
+                // insert token by default if current polCol index exceeds 
+                // length of request's param list for this query
                 polVals.append((String) getToken());
               else
                 polVals.append(vals.get(index));
@@ -715,14 +746,14 @@ public class Gatekeeper extends AbstractPreprocessor {
               Matcher m1          = rxInjection.matcher(injectedIndex);
               if (m1.matches() && m1.groupCount() == 3) // injection
               {
-
                 // parse regex: this is where the method value is injected
                 // String colIdx = m1.group(2);
-                String colval = m1.group(3);
+                String colval = m1.group(2);
+                String arg    = m1.group(3);
 
                 // find and execute injected method
                 String method = colval.substring(0, colval.indexOf('('));
-                String arg    = colval.substring(colval.indexOf('(') + 1, colval.indexOf(')'));
+//                String arg    = colval.substring(colval.indexOf('(') + 1, colval.indexOf(')'));
                 Object val    = null;
                 try
                 {
@@ -754,7 +785,53 @@ public class Gatekeeper extends AbstractPreprocessor {
         {
           for (int i = 0; i < polCols.length; i++)
           {
-            polVals.append((String) getToken());
+            injectedIndex = polCols[i];
+            
+            if(polVals.length() > 0)
+            {
+              polVals.append(",");
+            }
+            
+            // insert token by default since here, polCol index exceeds 
+            // zero-length of request's param list for this query
+//            polVals.append((String) getToken());
+            Pattern rxInjection = Pattern.compile(YADASecuritySpec.RX_IDX_INJECTION);
+            Matcher m1          = rxInjection.matcher(injectedIndex);
+            if (m1.matches() && m1.groupCount() == 3) // injection
+            {
+              // parse regex: this is where the method value is injected
+              // String colIdx = m1.group(2);
+              String colval = m1.group(2);
+              String arg    = m1.group(3);
+
+              // find and execute injected method
+              String method = colval.substring(0, colval.indexOf('('));
+//              String arg    = colval.substring(colval.indexOf('(') + 1, colval.indexOf(')'));
+              Object val    = null;
+              try
+              {
+                if (arg.equals(""))
+                  val = getClass().getMethod(method).invoke(this, new Object[] {});
+                else
+                  val = getClass().getMethod(method, new Class[] { java.lang.String.class }).invoke(this,
+                      new Object[] { arg });
+              }
+              catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+                  | InvocationTargetException e)
+              {
+                String msg = "Unathorized. Injected method invocation failed.";
+                throw new YADASecurityException(msg, e);
+              }
+
+              // add/replace item in dataRow
+              polVals.append(val);
+            }            
+            else
+            {
+              // default to token, although this is probably never going to be called
+              // and will fail if a real auth token is in use
+              polVals.append((String) getToken());
+            }
           }
           result = YADAUtils.executeYADAGet(new String[] { a11nQname }, new String[] { polVals.toString() });
         }
@@ -782,12 +859,12 @@ public class Gatekeeper extends AbstractPreprocessor {
           {
 
             // parse regex: this is where the method value is injected
-            String colname = m1.group(2);
-            String colval  = m1.group(3);
+            String colname = m1.group(1);
+            String colval  = m1.group(2);
+            String arg     = m1.group(3);
 
             // find and execute injected method
             String method = colval.substring(0, colval.indexOf('('));
-            String arg    = colval.substring(colval.indexOf('(') + 1, colval.indexOf(')'));
             Object val    = null;
             try
             {
@@ -865,7 +942,7 @@ public class Gatekeeper extends AbstractPreprocessor {
     
     if(this.getSecuritySpec() != null)
     {
-      rawPolicy = this.getSecuritySpec().getContentPolicy().get(CONTENT_POLICY_PREDICATE);
+      rawPolicy = this.getSecuritySpec().getContentPolicy().get(PREDICATE);
     }
     else
     {
@@ -969,7 +1046,7 @@ public class Gatekeeper extends AbstractPreprocessor {
     {
       user = new JSONObject(obtainIdentity().toString()).getString(Authorization.YADA_IDENTITY_SUB);
     }
-    catch (YADASecurityException | JSONException | YADARequestException | YADAExecutionException e)
+    catch (JSONException e)
     {
       String msg = "There was a problem obtaining the user identity.";
       throw new YADASecurityException(msg, e);
@@ -1127,10 +1204,9 @@ public class Gatekeeper extends AbstractPreprocessor {
 
   /**
    * @return
-   * @throws YADASecurityException
    * @since 8.7.6
    */
-  public boolean hasToken() throws YADASecurityException {
+  public boolean hasToken() {
     if (null != this.getToken() && !"".equals(this.getToken()))
     {
       return true;
@@ -1140,10 +1216,9 @@ public class Gatekeeper extends AbstractPreprocessor {
 
   /**
    * @return
-   * @throws YADASecurityException
    * @since 8.7.6
    */
-  public boolean hasSyncToken() throws YADASecurityException {
+  public boolean hasSyncToken() {
     if (null != this.getSyncToken() && !"".equals(this.getSyncToken()))
     {
       return true;
