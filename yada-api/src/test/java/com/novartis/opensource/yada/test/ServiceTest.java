@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -123,17 +124,17 @@ public class ServiceTest
    * Constant equal to:
    * <code>^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\",){3}(\"[\\-\\s:0-9]+\",*){2}$</code>
    */
-  protected static final Pattern CSV = Pattern.compile("^((\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"|null),){3}((\"[\\-\\s:0-9\\.]+\"|null),*){2}(\"((YADA)+|YO)\")?$");
+  protected static final Pattern CSV = Pattern.compile("^((\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"|null),){3}((\"[\\-\\s:0-9\\.]+\"|null),*){2}(\"foo@bar.com\")?$");
   /**
    * Constant equal to:
    * <code>^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"\\t){3}(\"[\\-\\s:0-9]+\"\\t*){2}$</code>
    */
-  protected static final Pattern TSV = Pattern.compile("^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"\\t){3}(\"[\\-\\s:0-9\\.]+\"\\t*){2}(\"((YADA)+|YO)\")?$");
+  protected static final Pattern TSV = Pattern.compile("^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"\\t){3}(\"[\\-\\s:0-9\\.]+\"\\t*){2}(\"foo@bar.com\")?$");
   /**
    * Constant equal to:
    * <code>^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"\\|){3}(\"[\\-\\s:0-9]+\"\\|*){2}$</code>
    */
-  protected static final Pattern PSV = Pattern.compile("^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"\\|){3}(\"[\\-\\s:0-9\\.]+\"\\|*){2}(\"((YADA)+|YO)\")?$");
+  protected static final Pattern PSV = Pattern.compile("^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"\\|){3}(\"[\\-\\s:0-9\\.]+\"\\|*){2}(\"foo@bar.com\")?$");
   /**
    * Constant equal to: {@value}
    */
@@ -585,6 +586,7 @@ public class ServiceTest
   @BeforeMethod(groups = { "sec" })  
   public void login() throws YADAQueryConfigurationException
   {    
+    l.debug("Logging in...");
     YADARequest yadaReq = new YADARequest();
     yadaReq.setUpdateStats(new String[] { "false" });
     
@@ -597,9 +599,6 @@ public class ServiceTest
       String basic    = "Basic " + Base64.getEncoder().encodeToString(toEncode);
       hdrs.put("Authorization", basic);
       yadaReq.setHTTPHeaders(new String[] { hdrs.toString() });
-//      paraMap.put(YADARequest.PS_HTTPHEADERS, );
-//      hdrs.put("X-Requested-With", "XMLHttpRequest");
-//      yadaReq.setParameterMap(paraMap);
       Service svc = new Service(yadaReq);
       this.secData = new JSONObject(svc.execute());
       l.debug(secData.toString(2));      
@@ -751,13 +750,97 @@ public class ServiceTest
   }
 
   /**
-   * Method stub for testing with environment-specific authentication credential
+   * For testing with environment-specific authentication credential
    * @param connection the connection to imbue with authentication properties
    * @throws YADAExecutionException when any authentication method fails. Any exception thrown internally by authentication methods can be caught and rethrown as {@link YADAExecutionException}s.
    */
-  public void setAuthentication(HttpURLConnection connection) throws YADAExecutionException
+  public void setAuthentication() throws YADAExecutionException
   {
-    // stubbed method - nothing to do
+    if(null != this.secData && this.secData.length() > 0)
+    {
+      return;
+    }
+    
+    byte[] toEncode = null;
+    try
+    {
+      toEncode = (this.user+":"+this.pass).getBytes("utf-8");
+    }
+    catch (UnsupportedEncodingException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    
+    String basic    = "Basic " + Base64.getEncoder().encodeToString(toEncode);
+    String query = "YADA/q/YADATEST/resource access/pl/Authorizer";
+    String[] splits = query.split("/");    
+    String encQuery = "";
+    for(String s : splits)
+    {
+      try
+      {
+//        if(encQuery.length() > 0)
+//          encQuery += "/";
+        encQuery += "/" + URLEncoder.encode(s,UTF8);
+      }
+      catch (UnsupportedEncodingException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+       
+    
+    String target = "http://" + this.host + encQuery;
+    URL url = null;
+    try
+    {
+      url = new URL(target);
+    }
+    catch (MalformedURLException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    
+    HttpURLConnection connection = null;
+    try
+    {
+      connection = (HttpURLConnection) url.openConnection();
+    }
+    catch (IOException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+        
+    connection.setRequestProperty("Authorization", basic);
+    connection.setUseCaches(false);
+    connection.setDoInput(true);
+    connection.setDoOutput(true);
+    
+
+    // Get Response
+    try(InputStream is = connection.getInputStream())
+    {
+      try(BufferedReader rd = new BufferedReader(new InputStreamReader(is)))
+      {
+        String line;
+        StringBuffer result = new StringBuffer();
+        while ((line = rd.readLine()) != null)
+        {
+          result.append(line);
+        }
+        l.debug(result);
+        this.secData = new JSONObject(result.toString());        
+      }
+    }
+    catch (IOException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -848,7 +931,9 @@ public class ServiceTest
       // auth
       if (Boolean.parseBoolean(this.auth))
       {
-        setAuthentication(connection);
+        setAuthentication();
+        connection.setRequestProperty("X-CSRF-Token", (String) this.secData.get("X-CSRF-Token"));
+        connection.setRequestProperty("Authorization", (String) this.secData.get("Bearer"));
       }
 
       // Send request
@@ -961,7 +1046,9 @@ public class ServiceTest
       // auth
       if (Boolean.parseBoolean(this.auth))
       {
-        setAuthentication(connection);
+        setAuthentication();        
+        connection.setRequestProperty("X-CSRF-Token", (String) this.secData.get("X-CSRF-Token"));
+        connection.setRequestProperty("Authorization", (String) this.secData.get("Bearer"));
       }
 
       // Get Response
@@ -1777,12 +1864,6 @@ public class ServiceTest
       throw new YADAQueryConfigurationException(msg, e);
     }
     Assert.assertTrue(validate(svc.getYADARequest(), svc.execute()) ,  "Data invalid for query: "+query);
-
-    /*
-     *       headers: {'Content-Type': 'application/json',
-      'X-CSRF-Token': YADA.sec['X-CSRF-Token'],
-      'Authorization': `Bearer ${YADA.sec['Bearer']}`}
-     */
   }
   
   /**
