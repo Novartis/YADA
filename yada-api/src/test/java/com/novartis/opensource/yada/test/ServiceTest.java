@@ -25,7 +25,6 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -74,7 +73,6 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.novartis.opensource.yada.Finder;
 import com.novartis.opensource.yada.JSONParams;
 import com.novartis.opensource.yada.JSONParamsEntry;
 import com.novartis.opensource.yada.Service;
