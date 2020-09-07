@@ -19,50 +19,51 @@
       <url>${distribution.site.url}/${project.artifactId}</url>
     </site>
   </distributionManagement>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  <properties>        
+    <!-- YADA 9 git specs -->
+    <YADA.properties>YADA.properties</YADA.properties>
     <YADA.branch>master</YADA.branch>
     <YADA.switch.branch>false</YADA.switch.branch>
     <YADA.pull.on.launch>false</YADA.pull.on.launch>
+    <!-- default log level -->
     <log.level>info</log.level>
-    <test.properties>/conf/TestNG_YADA.properties</test.properties>
+        
     <display.version>${project.version}</display.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- default tests are skipped -->
+    <skip.test>true</skip.test>
     <skip.proxy.test>true</skip.proxy.test>
     <skip.noproxy.test>true</skip.noproxy.test>
     <skip.fs.test>true</skip.fs.test>
     <skip.deploy.war>true</skip.deploy.war>
+    
+    <!-- test deployment default -->
     <deployment.goal>start</deployment.goal>
+    
+    <!--  other -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <main.basedir>${project.parent.basedir}</main.basedir>
   </properties>
   <profiles>
     <profile>
       <id>test</id>
       <properties>
-        <log.level>debug</log.level>
-        <skip.test>true</skip.test>
-        <test.properties>/conf/TestNG_YADA.properties</test.properties>
+        <!-- log level usu. overriden on command line.  See YADA/src/main/resources/yadaMvnTestNG.sh -->
+        <log.level>info</log.level>        
+        <!-- YADA 9 git spects -->
         <YADA.branch>testng</YADA.branch>
         <YADA.switch.branch>true</YADA.switch.branch>
         <YADA.pull.on.launch>false</YADA.pull.on.launch>
-        <test.properties>/conf/TestNG_YADA_HTTP.properties</test.properties>
+        <!-- YADA 9 test specs -->
+        <test.properties>/conf/TestNG_YADA_HTTP.properties</test.properties>        
+        <!-- test db instance for testing jdbc queries -->
         <YADA.index.url>${YADATEST.pgsql.index.url}</YADA.index.url>
         <YADA.index.username>${YADATEST.pgsql.index.username}</YADA.index.username>
         <YADA.index.password>${YADATEST.pgsql.index.password}</YADA.index.password>
-        <YADA.index.autoCommit>false</YADA.index.autoCommit>
         <YADA.index.driverClassName>${YADATEST.pgsql.index.driverClassName}</YADA.index.driverClassName>
       </properties>
       <build>
         <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.2</version>
-            <configuration>
-              <source>1.8</source>
-              <target>1.8</target>
-            </configuration>
-          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-war-plugin</artifactId>
@@ -89,6 +90,132 @@
                     <filter>${basedir}/src/test/resources/conf/TestNG_YADA_HTTP.properties</filter>
                   </filters>
                   <webResources>
+                    <resource>
+                      <directory>${basedir}/src/main/webapp/META-INF</directory>
+                      <targetPath>META-INF</targetPath>
+                      <filtering>true</filtering>
+                      <includes>
+                        <include>context.xml</include>
+                      </includes>
+                    </resource>
+                  </webResources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-maven2-plugin</artifactId>
+            <version>1.4.4</version>
+            <configuration>
+              <properties>
+              </properties>
+              <skip>${skip.deploy.war}</skip>
+              <container>
+                <containerId>tomcat8x</containerId>
+                <timeout>300000</timeout>
+                <zipUrlInstaller>
+                  <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/8.5.49/tomcat-8.5.49.zip</url>
+                </zipUrlInstaller>
+                <!-- <containerId>tomcat9x</containerId> <zipUrlInstaller> 
+                  <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/9.0.29/tomcat-9.0.29.zip</url> 
+                  </zipUrlInstaller> -->
+              </container>
+              <configuration>
+                <type>standalone</type>
+                <properties>
+                  <cargo.jvmargs>
+                    -Xdebug
+                    -Xrunjdwp:transport=dt_socket,server=y,suspend=${suspend.debugger},address=5005
+                    -Xnoagent
+                    -Djava.compiler=NONE
+                    -Dsecurity.token=YADAYADA
+                    -Djwt.iss=yada
+                    -Djws.key=drphilscrypto
+                    <!-- -Djavax.net.ssl.keyStore=~/.keystore -Djavax.net.ssl.keyStorePassword=changeit 
+                      -Djavax.net.ssl.trustStore=~/.keystore -Djavax.net.ssl.trustStorePassword=changeit -->
+                  </cargo.jvmargs>
+                  <cargo.logging>low</cargo.logging>
+                  <cargo.standalone.ignoreNonExistingProperties>true</cargo.standalone.ignoreNonExistingProperties>
+                </properties>
+              </configuration>
+            </configuration>
+            <executions>
+              <execution>
+                <id>test-deploy</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>${deployment.goal}</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>test_pre9</id>
+      <properties>
+        <YADA.properties>YADA_pre9.properties</YADA.properties>
+        <test.properties>/conf/TestNG_YADA_HTTP_pre9.properties</test.properties>
+      </properties>
+      <build>
+        <plugins>          
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>2.1.1</version>
+            <configuration>
+              <skip>false</skip>
+              <warSourceExcludes>
+                **/node_modules/**
+              </warSourceExcludes>
+            </configuration>
+            <executions>
+              <execution>
+                <id>war-test</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>war</goal>
+                </goals>
+                <configuration>
+                  <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+                  <archive>
+                    <addMavenDescriptor>false</addMavenDescriptor>
+                  </archive>
+                  <filters>
+                    <filter>${basedir}/src/test/resources/conf/TestNG_YADA_HTTP_pre9.properties</filter>
+                  </filters>
+                  <webResources>
+                    <resource>
+                      <directory>${basedir}/src/main/resources/conf</directory>
+                      <targetPath>WEB-INF/classes</targetPath>                      
+                      <includes>
+                        <include>log4j.properties</include>
+                        <include>ehcache.xml</include>
+                      </includes>
+                      <excludes>
+                        <exclude>YADA.properties</exclude>
+                      </excludes>
+                    </resource>
+                    <resource>
+                      <directory>${basedir}/src/test/resources/conf</directory>
+                      <targetPath>WEB-INF/classes</targetPath>
+                      <includes>
+                        <include>YADA_pre9.properties</include>
+                      </includes>
+                      <excludes>
+                        <exclude>YADA.properties</exclude>
+                      </excludes>
+                    </resource>
+                    <resource>
+                      <directory>${basedir}/src/test/resources/conf</directory>
+                      <targetPath>WEB-INF/classes/conf</targetPath>
+                      <filtering>true</filtering>
+                      <includes>
+                        <include>Test*pre9*</include>
+                      </includes>
+                    </resource>
                     <resource>
                       <directory>${basedir}/src/main/webapp/META-INF</directory>
                       <targetPath>META-INF</targetPath>
@@ -110,69 +237,88 @@
               </execution>
             </executions>
           </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>test-pre-9</id>
-      <properties>
-        
-      </properties>
-      <build>
-        <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.2</version>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.18</version>
             <configuration>
-              <source>1.8</source>
-              <target>1.8</target>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-war-plugin</artifactId>
-            <version>2.1.1</version>
-            <configuration>
-              <skip>false</skip>
-              <warSourceExcludes>
-                **/node_modules/**
-              </warSourceExcludes>
+              <useSystemClassLoader>false</useSystemClassLoader>
+              <additionalClasspathElements>
+                <additionalClasspathElement>${test.properties}</additionalClasspathElement>
+              </additionalClasspathElements>
+              <suiteXmlFiles>
+                <suiteXmlFile>${basedir}/target/test-classes/conf/TestNG_YADA_HTTP_pre9.xml</suiteXmlFile>
+              </suiteXmlFiles>
+              <properties>
+                <property>
+                  <name>listener</name>
+                  <value>com.novartis.opensource.yada.test.pre9.QueryFileTransformer</value>
+                </property>
+              </properties>
             </configuration>
             <executions>
               <execution>
-                <id>war-test</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>war</goal>
-                </goals>
+                <id>default-test</id>
+                <phase>integration-test</phase>
                 <configuration>
-                  <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
-                  <archive>
-                    <addMavenDescriptor>false</addMavenDescriptor>
-                  </archive>
-                  <filters>
-                    <filter>${basedir}/src/test/resources/conf/TestNG_YADA_HTTP.properties</filter>
-                  </filters>
-                  <webResources>
-                    <resource>
-                      <directory>${basedir}/src/main/webapp/META-INF</directory>
-                      <targetPath>META-INF</targetPath>
-                      <filtering>true</filtering>
-                      <includes>
-                        <include>context.xml</include>
-                      </includes>
-                    </resource>
-                    <resource>
-                      <directory>${basedir}/src/main/webapp/yada-admin</directory>
-                      <targetPath>yada-admin</targetPath>
-                      <filtering>true</filtering>
-                      <includes>
-                        <include>index.html</include>
-                      </includes>
-                    </resource>
-                  </webResources>
+                  <skipTests>false</skipTests>
                 </configuration>
+                <goals>
+                  <goal>integration-test</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>verify</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>verify</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-maven2-plugin</artifactId>
+            <version>1.4.4</version>
+            <configuration>
+              <properties>
+              </properties>
+              <skip>${skip.deploy.war}</skip>
+              <container>
+                <containerId>tomcat8x</containerId>
+                <timeout>300000</timeout>
+                <zipUrlInstaller>
+                  <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/8.5.49/tomcat-8.5.49.zip</url>
+                </zipUrlInstaller>
+                <!-- <containerId>tomcat9x</containerId> <zipUrlInstaller> 
+                  <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/9.0.29/tomcat-9.0.29.zip</url> 
+                  </zipUrlInstaller> -->
+              </container>
+              <configuration>
+                <type>standalone</type>
+                <properties>
+                  <cargo.jvmargs>
+                    -Xdebug
+                    -Xrunjdwp:transport=dt_socket,server=y,suspend=${suspend.debugger},address=5005
+                    -Xnoagent
+                    -Djava.compiler=NONE
+                    -Dsecurity.token=YADAYADA
+                    -DYADA.properties.path=/YADA_pre9.properties
+                    <!-- -Djavax.net.ssl.keyStore=~/.keystore -Djavax.net.ssl.keyStorePassword=changeit 
+                      -Djavax.net.ssl.trustStore=~/.keystore -Djavax.net.ssl.trustStorePassword=changeit -->
+                  </cargo.jvmargs>
+                  <cargo.logging>low</cargo.logging>
+                  <cargo.standalone.ignoreNonExistingProperties>true</cargo.standalone.ignoreNonExistingProperties>
+                </properties>
+              </configuration>
+            </configuration>
+            <executions>
+              <execution>
+                <id>test-deploy</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>${deployment.goal}</goal>
+                </goals>
               </execution>
             </executions>
           </plugin>
@@ -198,7 +344,7 @@
         <includes>
           <include>ehcache.xml</include>
           <include>log4j.properties</include>
-          <include>YADA.properties</include>
+          <include>${YADA.properties}</include>
         </includes>
       </resource>
       <resource>
@@ -214,12 +360,16 @@
         <directory>${basedir}/src/test/resources/conf</directory>
         <filtering>true</filtering>
         <targetPath>conf</targetPath>
+        <includes>
+          <include>*Test*</include>
+        </includes>
       </testResource>
       <testResource>
-        <directory>${basedir}/src/test/resources</directory>
-        <filtering>false</filtering>
+        <directory>${basedir}/src/test/resources/conf</directory>
+        <filtering>true</filtering>
         <includes>
           <include>log4j.properties</include>
+          <include>${YADA.properties}</include>
         </includes>
       </testResource>
       <testResource>
@@ -231,6 +381,15 @@
       </testResource>
     </testResources>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.2</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin> 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -304,52 +463,7 @@
         </executions>
       </plugin>
 
-      <plugin>
-        <groupId>org.codehaus.cargo</groupId>
-        <artifactId>cargo-maven2-plugin</artifactId>
-        <version>1.4.4</version>
-        <configuration>
-          <properties>
-          </properties>
-          <skip>${skip.deploy.war}</skip>
-          <container>
-            <containerId>tomcat8x</containerId>
-            <timeout>300000</timeout>
-            <zipUrlInstaller>
-              <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/8.5.49/tomcat-8.5.49.zip</url>
-            </zipUrlInstaller>
-            <!-- <containerId>tomcat9x</containerId> <zipUrlInstaller> <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/9.0.29/tomcat-9.0.29.zip</url>
-              </zipUrlInstaller> -->
-          </container>
-          <configuration>
-            <type>standalone</type>
-            <properties>
-              <cargo.jvmargs>
-                -Xdebug
-                -Xrunjdwp:transport=dt_socket,server=y,suspend=${suspend.debugger},address=5005
-                -Xnoagent
-                -Djava.compiler=NONE
-                -Dsecurity.token=YADAYADA
-                -Djwt.iss=yada
-                -Djws.key=drphilscrypto
-                <!-- -Djavax.net.ssl.keyStore=~/.keystore -Djavax.net.ssl.keyStorePassword=changeit
-                  -Djavax.net.ssl.trustStore=~/.keystore -Djavax.net.ssl.trustStorePassword=changeit -->
-              </cargo.jvmargs>
-              <cargo.logging>low</cargo.logging>
-              <cargo.standalone.ignoreNonExistingProperties>true</cargo.standalone.ignoreNonExistingProperties>
-            </properties>
-          </configuration>
-        </configuration>
-        <executions>
-          <execution>
-            <id>test-deploy</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>${deployment.goal}</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -483,7 +597,7 @@
 
     </dependency>
     <!-- You'll need to install this jar manually in your maven repo -->
-    <!-- <dependency> <groupId>com.oracle</groupId> <artifactId>ojdbc6</artifactId>
+    <!-- <dependency> <groupId>com.oracle</groupId> <artifactId>ojdbc6</artifactId> 
       <version>11.2.0.3</version> <scope>test</scope> </dependency> -->
     <dependency>
       <groupId>org.xerial</groupId>
