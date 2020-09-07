@@ -731,9 +731,10 @@ public class Service {
 				engagePreprocess(yq);
 				
 				// execute query
+				l.debug("YADA.lib:"+Finder.getYADALib()+", hasYADALib() = "+Finder.hasYADALib());
 				if(!Finder.hasYADALib() // in all pre 9.0.0 cases
-				    || yq.getApp() != "YADA" // all 9.0.0+ with oldschool queries with APP values
-				    || !yq.getQname().startsWith("YADA/")) // all 9.0.0 cases with matching qnames
+				    || (Finder.hasYADALib() && yq.getApp() != "YADA") // all 9.0.0+ with oldschool queries with APP values
+				    || (Finder.hasYADALib() && !yq.getQname().startsWith("YADA/"))) // all 9.0.0+ cases with matching qnames
 				{
 				  yq.getAdaptor().execute(yq);
   				
