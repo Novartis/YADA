@@ -93,7 +93,7 @@
                   <properties>
                     <test.properties>/conf/TestNG_YADA.properties</test.properties>
                   </properties>
-                  <useSystemClassLoader>false</useSystemClassLoader>
+                  <useSystemClassLoader>true</useSystemClassLoader>
                   <reportNameSuffix></reportNameSuffix>
                   <trimStackTrace>false</trimStackTrace>
                   <additionalClasspathElements>
@@ -121,8 +121,9 @@
     </profile>
     <!-- pre9 -->
     <profile>
-      <id>test-pre9</id>
+      <id>test_pre9</id>
       <properties>
+        <test.properties>/conf/TestNG_YADA_pre9.properties</test.properties>
         <YADA.index.host>${YADATEST.pgsql.index.host}</YADA.index.host>
         <YADA.index.url>${YADATEST.pgsql.index.url}</YADA.index.url>
         <YADA.index.username>${YADATEST.pgsql.index.username}</YADA.index.username>
@@ -140,7 +141,7 @@
               <skip>${skip.db.load}</skip>
               <executable>/bin/bash</executable>
               <arguments>
-                <argument>${project.build.testOutputDirectory}/conf/dbLoad-pre9.sh</argument>
+                <argument>${project.build.testOutputDirectory}/conf/dbLoad_pre9.sh</argument>
                 <argument>PostgreSQL</argument>
                 <!-- <argument>${dbload.backup}</argument> -->
               </arguments>
@@ -164,7 +165,7 @@
             </configuration>
             <executions>
               <execution>
-                <id>test-pgsql</id>
+                <id>test-pre9</id>
                 <goals>
                   <goal>test</goal>
                 </goals>
@@ -173,9 +174,9 @@
                   <skip>false</skip>
                   <properties>
                     <skip.pgsql.test>false</skip.pgsql.test>
-                    <test.properties>${basedir}/target/test-classes/conf/TestNG_YADA_PgSQL.properties</test.properties>
+                    <test.properties>/conf/TestNG_YADA_pre9.properties</test.properties>
                   </properties>
-                  <useSystemClassLoader>false</useSystemClassLoader>
+                  <useSystemClassLoader>true</useSystemClassLoader>
                   <reportNameSuffix>pgsql</reportNameSuffix>
                   <trimStackTrace>false</trimStackTrace>
                   <systemPropertyVariables>
@@ -186,11 +187,11 @@
                   <properties>
                     <property>
                       <name>listener</name>
-                      <value>com.novartis.opensource.yada.test.QueryFileTransformer</value>
+                      <value>com.novartis.opensource.yada.test.pre9.QueryFileTransformer</value>
                     </property>
                   </properties>
                   <suiteXmlFiles>
-                    <suiteXmlFile>src/test/resources/conf/TestNG_YADA_PgSQL.xml</suiteXmlFile>
+                    <suiteXmlFile>src/test/resources/conf/TestNG_YADA_pre9.xml</suiteXmlFile>
                   </suiteXmlFiles>
                 </configuration>
               </execution>
@@ -236,7 +237,7 @@
         <targetPath>conf</targetPath>
         <excludes>
           <exclude>log4j.properties</exclude>
-          <exclude>YADA.properties</exclude>
+          <exclude>YADA*.properties</exclude>
         </excludes>
       </testResource>
       <testResource>
@@ -244,12 +245,16 @@
         <filtering>true</filtering>
         <includes>
           <include>log4j.properties</include>
-          <include>YADA.properties</include>
+          <include>YADA*.properties</include>
         </includes>
       </testResource>
       <testResource>
         <directory>${basedir}/src/test/resources/test</directory>
         <targetPath>test</targetPath>
+      </testResource>
+      <testResource>
+        <directory>${basedir}/src/test/resources/test_pre9</directory>
+        <targetPath>test_pre9</targetPath>
       </testResource>
       <testResource>
         <directory>${basedir}/src/test/resources/bin</directory>
@@ -396,7 +401,7 @@
     </plugins>
     <pluginManagement>
       <plugins>
-        <!--This plugin's configuration is used to store Eclipse m2e settings
+        <!--This plugin's configuration is used to store Eclipse m2e settings 
           only. It has no influence on the Maven build itself. -->
         <plugin>
           <groupId>org.eclipse.m2e</groupId>
@@ -623,12 +628,12 @@
       <scope>provided</scope>
     </dependency>
     <!-- You'll need to install this jar manually in your maven repo -->
-    <!-- <dependency> <groupId>com.microsoft.sqlserver</groupId> <artifactId>sqljdbc4</artifactId>
+    <!-- <dependency> <groupId>com.microsoft.sqlserver</groupId> <artifactId>sqljdbc4</artifactId> 
       <version>4.0</version> <scope>test</scope> </dependency> -->
     <!-- You'll need to install this jar manually in your maven repo -->
-    <!-- <dependency> <groupId>com.vertica</groupId> <artifactId>vertica-jdbc</artifactId>
+    <!-- <dependency> <groupId>com.vertica</groupId> <artifactId>vertica-jdbc</artifactId> 
       <version>7.1.1-1</version> <scope>test</scope> </dependency> -->
-    <!-- <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId>
+    <!-- <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId> 
       <version>5.1.31</version> <scope>test</scope> </dependency> -->
     <dependency>
       <groupId>org.postgresql</groupId>
@@ -637,11 +642,11 @@
     </dependency>
     <!-- restore for oracle 11g -->
     <!-- You may need to install this jar manually in your maven repo -->
-    <!-- <dependency> <groupId>com.oracle</groupId> <artifactId>ojdbc6</artifactId>
+    <!-- <dependency> <groupId>com.oracle</groupId> <artifactId>ojdbc6</artifactId> 
       <version>11.2.0.3</version> <scope>test</scope> </dependency> -->
     <!-- omit for oracle 11g -->
     <!-- You may need to install this jar manually in your maven repo -->
-    <!-- <dependency> <groupId>com.oracle</groupId> <artifactId>ojdbc14</artifactId>
+    <!-- <dependency> <groupId>com.oracle</groupId> <artifactId>ojdbc14</artifactId> 
       <version>10.2.0.4.0</version> <scope>test</scope> </dependency> -->
     <dependency>
       <groupId>org.testng</groupId>
@@ -654,43 +659,43 @@
       <scope>test</scope>
     </dependency>
     <!-- unused -->
-    <!-- <dependency> <groupId>javax.xml.stream</groupId> <artifactId>stax-api</artifactId>
+    <!-- <dependency> <groupId>javax.xml.stream</groupId> <artifactId>stax-api</artifactId> 
       <version>1.0-2</version> </dependency> -->
-    <!-- <dependency> <groupId>org.pojava</groupId> <artifactId>persistence</artifactId>
+    <!-- <dependency> <groupId>org.pojava</groupId> <artifactId>persistence</artifactId> 
       <version>3.0.0</version> </dependency> -->
-    <!-- <dependency> <groupId>commons-beanutils</groupId> <artifactId>commons-beanutils</artifactId>
+    <!-- <dependency> <groupId>commons-beanutils</groupId> <artifactId>commons-beanutils</artifactId> 
       <version>1.8.3</version> </dependency> -->
-    <!-- <dependency> <groupId>org.apache.commons</groupId> <artifactId>commons-compress</artifactId>
+    <!-- <dependency> <groupId>org.apache.commons</groupId> <artifactId>commons-compress</artifactId> 
       <version>1.4.1</version> </dependency> -->
-    <!-- <dependency> <groupId>commons-httpclient</groupId> <artifactId>commons-httpclient</artifactId>
+    <!-- <dependency> <groupId>commons-httpclient</groupId> <artifactId>commons-httpclient</artifactId> 
       <version>3.1</version> </dependency> -->
-    <!-- <dependency> <groupId>commons-io</groupId> <artifactId>commons-io</artifactId>
+    <!-- <dependency> <groupId>commons-io</groupId> <artifactId>commons-io</artifactId> 
       <version>2.4</version> </dependency> -->
-    <!-- <dependency> <groupId>dom4j</groupId> <artifactId>dom4j</artifactId>
+    <!-- <dependency> <groupId>dom4j</groupId> <artifactId>dom4j</artifactId> 
       <version>1.6.1</version> </dependency> -->
-    <!-- <dependency> <groupId>xalan</groupId> <artifactId>xalan</artifactId>
+    <!-- <dependency> <groupId>xalan</groupId> <artifactId>xalan</artifactId> 
       <version>2.7.1</version> </dependency> -->
-    <!-- <dependency> <groupId>xalan</groupId> <artifactId>serializer</artifactId>
+    <!-- <dependency> <groupId>xalan</groupId> <artifactId>serializer</artifactId> 
       <version>2.7.1</version> </dependency> -->
-    <!-- <dependency> <groupId>xerces</groupId> <artifactId>xercesImpl</artifactId>
+    <!-- <dependency> <groupId>xerces</groupId> <artifactId>xercesImpl</artifactId> 
       <version>2.11.0</version> </dependency> -->
-    <!-- <dependency> <groupId>org.apache.xmlbeans</groupId> <artifactId>xmlbeans</artifactId>
+    <!-- <dependency> <groupId>org.apache.xmlbeans</groupId> <artifactId>xmlbeans</artifactId> 
       <version>2.3.0</version> </dependency> -->
-    <!-- <dependency> <groupId>org.apache.xmlgraphics</groupId> <artifactId>xmlgraphics-commons</artifactId>
+    <!-- <dependency> <groupId>org.apache.xmlgraphics</groupId> <artifactId>xmlgraphics-commons</artifactId> 
       <version>1.4</version> </dependency> -->
     <dependency>
       <groupId>org.tuckey</groupId>
       <artifactId>urlrewritefilter</artifactId>
       <version>4.0.4</version>
     </dependency>
-    <!-- <dependency> <groupId>org.xerial</groupId> <artifactId>sqlite-jdbc</artifactId>
+    <!-- <dependency> <groupId>org.xerial</groupId> <artifactId>sqlite-jdbc</artifactId> 
       <scope>test</scope> </dependency> -->
     <dependency>
       <groupId>org.mozilla</groupId>
       <artifactId>rhino</artifactId>
       <version>1.7R5</version>
     </dependency>
-    <!-- <dependency> <groupId>org.elasticsearch</groupId> <artifactId>elasticsearch</artifactId>
+    <!-- <dependency> <groupId>org.elasticsearch</groupId> <artifactId>elasticsearch</artifactId> 
       <version>2.1.1</version> </dependency> -->
     <dependency>
       <groupId>org.hsqldb</groupId>
