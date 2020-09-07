@@ -85,68 +85,68 @@ public class Finder {
    * @deprecated since 9.0.0
    */
   @Deprecated
-  public final static String JSON_VERSION     = "v";
+  public final static String  JSON_VERSION      = "v";
   /**
    * A constant equal to: {@value}
    *
    * @deprecated since 9.0.0
    */
   @Deprecated
-  public final static String JSON_SOURCE      = "s";
+  public final static String  JSON_SOURCE       = "s";
   /**
    * A constant equal to: {@value}
    *
    * @deprecated since 9.0.0
    */
   @Deprecated
-  public final static String JSON_QUERY       = "q";
+  public final static String  JSON_QUERY        = "q";
   /**
    * A constant equal to: {@value}
    *
    * @deprecated since 9.0.0
    */
   @Deprecated
-  public final static String JSON_QNAME       = "qn";
+  public final static String  JSON_QNAME        = "qn";
   /**
    * A constant equal to: {@value}
    *
    * @deprecated since 9.0.0
    */
   @Deprecated
-  public final static String JSON_URLPARAMS   = "p";
+  public final static String  JSON_URLPARAMS    = "p";
   /**
    * A constant equal to: {@value}
    *
    * @deprecated since 9.0.0
    */
   @Deprecated
-  public final static String JSON_PARAMTARGET = "t";
+  public final static String  JSON_PARAMTARGET  = "t";
   /**
    * A constant equal to: {@value}
    *
    * @deprecated since 9.0.0
    */
   @Deprecated
-  public final static String JSON_PARAMNAME   = "n";
+  public final static String  JSON_PARAMNAME    = "n";
   /**
    * A constant equal to: {@value}
    */
   @Deprecated
-  public final static String JSON_PARAMVAL    = "v";
-  /**
-   * A constant equal to: {@value}
-   *
-   * @deprecated since 9.0.0
-   */
-  @Deprecated
-  public final static String JSON_PARAMRULE   = "r";
+  public final static String  JSON_PARAMVAL     = "v";
   /**
    * A constant equal to: {@value}
    *
    * @deprecated since 9.0.0
    */
   @Deprecated
-  public final static String NOT_APPLICABLE   = "na";
+  public final static String  JSON_PARAMRULE    = "r";
+  /**
+   * A constant equal to: {@value}
+   *
+   * @deprecated since 9.0.0
+   */
+  @Deprecated
+  public final static String  NOT_APPLICABLE    = "na";
   /**
    * Constant equal to: {@value}
    *
@@ -384,54 +384,57 @@ public class Finder {
   static
   {
     YADA_PROPERTIES = getYADAProperties();
-    RepositoryBuilder builder = new RepositoryBuilder();
-    try
+    if (hasYADALib())
     {
-      Repository repo         = builder.setGitDir(new File(getYADALibDirectory(), GIT_DIR)).readEnvironment()
-          .findGitDir().build();
-      ObjectId   id           = repo.resolve(Constants.HEAD);
-      String     confBranch   = YADA_PROPERTIES.getProperty(YADA_BRANCH);
-      String     currBranch   = repo.getBranch();
-      Boolean    switchBranch = Boolean.valueOf(YADA_PROPERTIES.getProperty(YADA_SWITCH_BRANCH));
-      l.debug("\nconf branch:" + confBranch + ", \ncurrent branch: " + currBranch + ", \nconf switch branch:"
-          + switchBranch + ", \nHEAD:" + id);
-      if (!confBranch.contentEquals(currBranch) && switchBranch)
+      RepositoryBuilder builder = new RepositoryBuilder();
+      try
       {
-        try (Git git = new Git(repo))
+        Repository repo         = builder.setGitDir(new File(getYADALibDirectory(), GIT_DIR)).readEnvironment()
+            .findGitDir().build();
+        ObjectId   id           = repo.resolve(Constants.HEAD);
+        String     confBranch   = YADA_PROPERTIES.getProperty(YADA_BRANCH);
+        String     currBranch   = repo.getBranch();
+        Boolean    switchBranch = Boolean.valueOf(YADA_PROPERTIES.getProperty(YADA_SWITCH_BRANCH));
+        l.debug("\nconf branch:" + confBranch + ", \ncurrent branch: " + currBranch + ", \nconf switch branch:"
+            + switchBranch + ", \nHEAD:" + id);
+        if (!confBranch.contentEquals(currBranch) && switchBranch)
         {
-          git.checkout().setName(confBranch).call();
-        }
-        catch (RefAlreadyExistsException e)
-        {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-        catch (RefNotFoundException e)
-        {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-        catch (InvalidRefNameException e)
-        {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-        catch (CheckoutConflictException e)
-        {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-        catch (GitAPIException e)
-        {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
+          try (Git git = new Git(repo))
+          {
+            git.checkout().setName(confBranch).call();
+          }
+          catch (RefAlreadyExistsException e)
+          {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+          catch (RefNotFoundException e)
+          {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+          catch (InvalidRefNameException e)
+          {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+          catch (CheckoutConflictException e)
+          {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+          catch (GitAPIException e)
+          {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
         }
       }
-    }
-    catch (IOException e)
-    {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      catch (IOException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
   }
 
@@ -721,10 +724,12 @@ public class Finder {
    */
   public YADAQuery getQuery(String q, boolean updateStats)
       throws YADAConnectionException, YADAFinderException, YADAQueryConfigurationException {
-    final String qname     = q;
-    YADAQuery    yq        = null;
-    Element      cachedYq  = null;
-    Cache        yadaIndex = ConnectionFactory.getConnectionFactory().getCacheConnection(YADA_CACHE_MGR, YADA_CACHE);
+    final String qname    = q;
+    YADAQuery    yq       = null;
+    Element      cachedYq = null;
+//    System.out.println(System.getProperties().get("java.class.path"));
+    ConnectionFactory cf        = ConnectionFactory.getConnectionFactory();
+    Cache             yadaIndex = cf.getCacheConnection(YADA_CACHE_MGR, YADA_CACHE);
 
     if (yadaIndex != null)
     {
@@ -738,7 +743,8 @@ public class Finder {
       {
         try
         {
-          getEnv(YADA_LIB);
+          String lib = getEnv(YADA_LIB);
+          l.debug("YADA_LIB=" + lib);
           yq = getQueryFromLib(q);
         }
         catch (YADAResourceException e)
