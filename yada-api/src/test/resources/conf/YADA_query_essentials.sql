@@ -160,7 +160,7 @@ INSERT into YADA_PROP (target,name,value) VALUES ('YADA delete prop for target',
 
 
 -- app dml
-NSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA select app config','select a.app "APP", a.name "NAME", a.descr "DESCR", CASE WHEN b.role = ''ADMIN'' THEN a.conf ELSE ''UNAUTHORIZED'' END "CONF", a.active "ACTIVE" from yada_query_conf a join yada_ug b on a.app = b.app where a.app != ''YADA'' and a.app = ?v','YADABOT', 'YADA');
+INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA select app config','select a.app "APP", a.name "NAME", a.descr "DESCR", CASE WHEN b.role = ''ADMIN'' THEN a.conf ELSE ''UNAUTHORIZED'' END "CONF", a.active "ACTIVE" from yada_query_conf a join yada_ug b on a.app = b.app where a.app != ''YADA'' and a.app = ?v','YADABOT', 'YADA');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('1','YADA select app config','pl',1,'Gatekeeper,execution.policy=void,content.policy.predicate=userid=getQLoggedUser()');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('2','YADA select app config','pz',1,'-1');
 INSERT into YADA_PARAM (id,target,name,rule,value) VALUES ('3','YADA select app config','c',1,'false');

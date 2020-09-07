@@ -1,4 +1,4 @@
 #q=YADATEST/test SELECT&pl=TestPostprocessor
 #qname=YADATEST/test SELECT&plugin=TestPostprocessor
-q=YADATEST/test SELECT&pl=TestPreprocessor&pl=TestPostprocessor
+q=YADATEST/test SELECT&pl=com.novartis.opensource.yada.plugin.TestPreprocessor&pl=TestPostprocessor
 #q=YADATEST/test sec multi params multi polcol uni&p=Z,10&pl=TestPostprocessor
