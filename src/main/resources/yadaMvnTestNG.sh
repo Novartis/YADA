@@ -1,6 +1,6 @@
 #!/bin/bash
 
-usage() { echo "Usage: $0 [-x surefire|failsafe|all] [-p test|test-pre9] [-Xtd]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-x surefire|failsafe|all] [-p test|test_pre9] [-Xtd]" 1>&2; exit 1; }
 
 SUSPEND=n
 MAVEN_DEBUG=
@@ -10,18 +10,19 @@ SUREFIRE=
 FAILSAFE=
 DEBUG=
 PROFILE=test
+YADA_PROPS=
 
 while getopts "x:Xtdp:" opt; do
   case ${opt} in
     x )
       SUSPEND=y
-      if [ "surefire" = "$OPTARG" ]
+      if [ "surefire" == "$OPTARG" ]
       then
         SUREFIRE=true
-      elif [ "failsafe" = "$OPTARG" ]
+      elif [ "failsafe" == "$OPTARG" ]
       then
         FAILSAFE=true
-      elif [ "all" = "$OPTARG" ]
+      elif [ "all" = "$OPTARG" ] || [ -z "$OPTARG"]
       then
         SUREFIRE=true
         FAILSAFE=true
@@ -38,6 +39,10 @@ while getopts "x:Xtdp:" opt; do
       ;;
     p )
       PROFILE="$OPTARG"
+      if [ "test_pre9" == "$PROFILE" ]
+      then
+        YADA_PROPS=-DYADA.properties.path=/YADA_pre9.properties
+      fi
       ;;
     * ) usage
       ;;
@@ -71,7 +76,8 @@ $SKIP_DB_LOAD \
 $SKIP_JAVADOC \
 $SKIP_SOURCE \
 $TOGGLE_TESTS \
-$LOG_LEVEL"
+$LOG_LEVEL \
+$YADA_PROPS"
 
 rm $LOG
 cd $YADA_SRCDIR
@@ -84,10 +90,10 @@ then
   # in one of the tools, e.g., YADA.properties
   SUREFIRE_DEBUG="-Dmaven.surefire.debug"
   FAILSAFE_DEBUG="-Dmaven.failsafe.debug"
-  if [ "${SURFIRE}" ]
+  if [ ! -z "${SUREFIRE}" ]
   then
-      DEBUG="${SUREFIRE_DEBUG}"
-  elif [ "${FAILSAFE}" ]
+      DEBUG="${DEBUG} ${SUREFIRE_DEBUG}"
+  elif [ ! -z "${FAILSAFE}" ]
   then
       DEBUG="${DEBUG} ${FAILSAFE_DEBUG}"
   fi
