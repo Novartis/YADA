@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- *************************************************************** -->
+<!-- This file is for testing backwards compatibility with pre-9.0.0 -->
+<!-- configurations using a relational database for the YADA index -->
+<!-- *************************************************************** -->
+<suite name="pgsql-suite" parallel="false">
+  <parameter name="properties"
+    value="/conf/TestNG_YADA_pre9.properties" />
+  <test enabled="true" name="API-PgSQL" preserve-order="true">
+    <groups>
+      <run>
+        <include name="core" />
+        <include name="json" />
+        <include name="standard" />
+        <include name="api" />
+        <include name="options" />
+        <include name="plugins" />
+      </run>
+    </groups>
+    <classes>
+      <class
+        name="com.novartis.opensource.yada.test.pre9.FinderTest" />
+      <class
+        name="com.novartis.opensource.yada.test.pre9.ConnectionFactoryTest" />
+      <class
+        name="com.novartis.opensource.yada.test.pre9.ServiceTest" />
+    </classes>
+  </test>
+</suite> <!-- Suite -->
