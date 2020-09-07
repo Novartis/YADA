@@ -1,0 +1,5 @@
+j=[{"qname":"RESTTEST PUT",DATA:[{"YADA_PAYLOAD":"title=yadayada&body=bar&userId=1"}]}]
+j=[{"qname":"RESTTEST PUT with param",DATA:[{"YADA_1":"1","YADA_PAYLOAD":"title=yadayada&body=bar&userId=1"}]}]
+
+JSONParams=[{"qname":"RESTTEST PUT",DATA:[{"YADA_PAYLOAD":"title=yadayada&body=bar&userId=1"}]}]
+JSONParams=[{"qname":"RESTTEST PUT with param",DATA:[{"YADA_1":"1","YADA_PAYLOAD":"title=yadayada&body=bar&userId=1"}]}]

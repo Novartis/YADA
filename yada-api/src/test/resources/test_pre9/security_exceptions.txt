@@ -1,0 +1,2 @@
+q=YADATEST test sec app property
+q=YADATEST test sec query property

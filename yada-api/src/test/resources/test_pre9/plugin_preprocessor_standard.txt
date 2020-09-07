@@ -1,0 +1,2 @@
+q=YADA test SELECT&pl=com.novartis.opensource.yada.plugin.pre9.TestPreprocessor
+qname=YADA test SELECT&plugin=com.novartis.opensource.yada.plugin.pre9.TestPreprocessor

@@ -1,0 +1,4 @@
+j=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"X,Y,Z,M,N"}]}]&f=psv
+JSONParams=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"X,Y,Z,M,N"}]}]&format=psv
+j=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"X,Y,Z,M,N"}]}]&f=pipe
+JSONParams=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"X,Y,Z,M,N"}]}]&format=pipe
