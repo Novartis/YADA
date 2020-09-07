@@ -21,7 +21,7 @@
       <condition type="request-uri" operator="notequal">JSONParams\.html$</condition>
     	<condition type="request-uri" operator="equal">\b(q|qname|j|JSONParams)\b</condition>
     	<!--<from> ^/((yada|service)/)*(.+)$</from>-->
-      <from>^(?:/yada|service)*/(q(?:name)?/.+/.+)$</from>
+      <from>^(?:/yada|service)*/(q(?:name)?/.+(?:/.+)*)$</from>
     	<to last="true">/yada.jsp?yp=$1</to>
     </rule>
     <rule>
