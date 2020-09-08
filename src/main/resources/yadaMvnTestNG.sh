@@ -1,6 +1,17 @@
 #!/bin/bash
 
-usage() { echo "Usage: $0 [-T surefire|failsafe] [-x surefire|failsafe] [-p test|test_pre9] [-Xtd]" 1>&2; exit 1; }
+usage() {
+printf "Usage: $0 [-T surefire|failsafe] [-x surefire|failsafe] [-p test|test_pre9] [-Xtd] \n\n \
+  -T  Execute either surefire (api) or failsafe (http) testing. Omit option or argument to execute both. \n \
+      Failsafe suppression will also suppress cargo deployment. Default is both. \n \
+  -x  debug surefire or failsafe execution. Leave argument empty to debug both. \n \
+  -p  choose the profile.  'test' is the default.  If 'test_pre9' is selected, \n \
+      the YADA.properties will be modified accordingly. \n \
+  -X  show maven debug output. \n \
+  -t  use the 'tmp_toggle' file to cherry pick tests. Default is all tests. \n \
+  -d  show java debug log output. Default log level is 'info'. \n \
+  -?  show this help \n\n \
+" 1>&2; exit 1; }
 
 SUSPEND=n
 MAVEN_DEBUG=
@@ -14,6 +25,7 @@ YADA_PROPS=
 SKIP_SUREFIRE=
 SKIP_FAILSAFE=
 
+OPTERR=0
 while getopts "x:Xtdp:T:" opt; do
   case ${opt} in
     T )
@@ -61,7 +73,7 @@ while getopts "x:Xtdp:T:" opt; do
         YADA_PROPS=-DYADA.properties.path=/YADA_pre9.properties
       fi
       ;;
-    * ) usage
+    ? ) usage
       ;;
   esac
 done
