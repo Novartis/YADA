@@ -124,11 +124,20 @@
 						<exclude>src/test/resources/test/**</exclude>
 						<exclude>src/main/resources/conf/**</exclude>
 						<exclude>src/main/webapp/META-INF/**</exclude>
-						<exclude>src/main/webapp/WEB-INF/**</exclude>
-						<exclude>src/main/webapp/yada-admin/lib/**</exclude>
+						<exclude>src/main/webapp/WEB-INF/**</exclude>            
+						<exclude>src/main/webapp/yada-admin/**</exclude>
 						<exclude>yada-api/src/main/resaurces/utils/r.js</exclude>
+                        <!-- post -->
+                        <exclude>src/main/java/com/novartis/opensource/yada/plugin/SecurityPreprocessor.java</exclude>
+                        <exclude>src/main/java/com/novartis/opensource/yada/plugin/SecurityPluginDetector.java</exclude>
+                        <exclude>src/main/java/com/novartis/opensource/yada/plugin/Authorizer.java</exclude>
+                        <exclude>src/main/java/com/novartis/opensource/yada/plugin/SourceExchanger.java</exclude>
+                        <exclude>src/main/java/com/novartis/opensource/yada/YADASecuritySpec.java</exclude>
+                        <exclude>src/main/java/com/novartis/opensource/yada/plugin/Authorization.java</exclude>
+                        <exclude>src/test/java/com/novartis/opensource/yada/test/pre9/*</exclude>
 						<!-- excluded due to requirement for line feed at end of license -->
 						<exclude>yada-war/src/main/webapp/yada.jsp</exclude>
+                                
 					</excludes>
 				</configuration>
 				<executions>

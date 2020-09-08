@@ -2,14 +2,15 @@
 
 usage() {
 printf "Usage: $0 [-T surefire|failsafe] [-x surefire|failsafe] [-p test|test_pre9] [-Xtd] \n\n \
-  -T  Execute either surefire (api) or failsafe (http) testing. Omit option or argument to execute both. \n \
-      Failsafe suppression will also suppress cargo deployment. Default is both. \n \
+  -T  Execute either surefire (api) or failsafe (http) testing. Omit argument to suppress both. \n \
+      Failsafe suppression will also suppress cargo deployment. Default (arg omitted) is to execute both. \n \
   -x  debug surefire or failsafe execution. Leave argument empty to debug both. \n \
-  -p  choose the profile.  'test' is the default.  If 'test_pre9' is selected, \n \
-      the YADA.properties will be modified accordingly. \n \
+  -p  choose the profile. 'test' is the currently preferred test profile.  \n \
+      If 'test_pre9' is selected, the YADA.properties will be modified accordingly. \n \
   -X  show maven debug output. \n \
   -t  use the 'tmp_toggle' file to cherry pick tests. Default is all tests. \n \
   -d  show java debug log output. Default log level is 'info'. \n \
+  -s  deloy snapshot to maven central.  Implies -T \n \
   -?  show this help \n\n \
 " 1>&2; exit 1; }
 
@@ -20,14 +21,17 @@ LOG_LEVEL="-Dlog.level=info"
 SUREFIRE_X=
 FAILSAFE_X=
 DEBUG=
-PROFILE=test
+PROFILE=
 YADA_PROPS=
 SKIP_SUREFIRE=
 SKIP_FAILSAFE=
+DEPLOY_SNAPSHOT=
 
 OPTERR=0
-while getopts "x:Xtdp:T:" opt; do
+while getopts "x:Xtdp:T:s" opt; do
   case ${opt} in
+    s )
+      DEPLOY_SNAPSHOT=1
     T )
       if [ "surefire" == "$OPTARG" ]
       then
@@ -39,22 +43,22 @@ while getopts "x:Xtdp:T:" opt; do
         SKIP_FAILSAFE=
       elif [ -z "$OPTARG" ]
       then
-        SKIP_SUREFIRE=
-        SKIP_FAILSAFE=
+        SKIP_SUREFIRE=-Dsurefire.skip=true
+        SKIP_FAILSAFE="-Dskip.tests=true -Dskip.deploy.war=true"
       fi
       ;;
     x )
       SUSPEND=y
       if [ "surefire" == "$OPTARG" ]
       then
-        SUREFIRE_X=true
+        SUREFIRE_X=1
       elif [ "failsafe" == "$OPTARG" ]
       then
-        FAILSAFE_X=true
+        FAILSAFE_X=1
       elif [ "all" = "$OPTARG" ] || [ -z "$OPTARG"]
       then
-        SUREFIRE_X=true
-        FAILSAFE_X=true
+        SUREFIRE_X=1
+        FAILSAFE_X=1
       fi
       ;;
     X )
@@ -79,7 +83,7 @@ while getopts "x:Xtdp:T:" opt; do
 done
 
 
-
+CMD=
 MAVEN=mvn
 WORKSPACE=/Users/dvaron/Documents/work
 YADA_SRCDIR=$WORKSPACE/YADA
@@ -89,7 +93,6 @@ YADA_LOCAL_TOMCAT_HOME=-DYADA.local.tomcat.home=$WORKSPACE/containers/$CONTAINER
 MVN_DEPLOYMENT_GOAL=-Ddeployment.goal=start
 LOG=$YADA_SRCDIR/src/main/resources/testng.log
 LOG_STDOUT=-Dlog.stdout=true
-#SKIP_SUREFIRE=-Dsurefire.skip=true
 SKIP_LICENSE=-Dlicense.skip=true
 # SKIP_DB_LOAD=-Dskip.db.load=true
 SKIP_JAVADOC=-Dmaven.javadoc.skip=true
@@ -115,22 +118,24 @@ cd $YADA_SRCDIR
 
 if [ "y" = "$SUSPEND" ]
 then
-  # Remember: If the debugger fails with an ExceptionInitializer error or it can't
-  # find the Finder class, it's probably because there is an open build artifact
-  # in one of the tools, e.g., YADA.properties
   SUREFIRE_DEBUG="-Dmaven.surefire.debug"
   FAILSAFE_DEBUG="-Dmaven.failsafe.debug"
-  if [ ! -z "${SUREFIRE_X}" ]
+  if [ 1 -eq "${SUREFIRE_X}" ]
   then
       DEBUG="${DEBUG} ${SUREFIRE_DEBUG}"
-  elif [ ! -z "${FAILSAFE_X}" ]
+  elif [ 1 -eq "${FAILSAFE_X}" ]
   then
       DEBUG="${DEBUG} ${FAILSAFE_DEBUG}"
   fi
   DEBUG="${DEBUG} -DYADA_LIB=${YADA_LIB}"
 fi
 
-CMD="$MAVEN $MAVEN_DEBUG clean verify -P${PROFILE},deploy-war $DEBUG -Dsuspend.debugger=$SUSPEND $COMMON_VARS"
+if [ 1 -eq "$DEPLOY_SNAPSHOT"]
+then
+  CMD="$MAVEN ${SKIP_FAILSAFE} ${SKIP_SUREFIRE} ${SKIP_LICENSE} -DskipTests=true clean deploy"
+else
+  CMD="$MAVEN $MAVEN_DEBUG clean verify -P${PROFILE},deploy-war $DEBUG -Dsuspend.debugger=$SUSPEND $COMMON_VARS"
+fi
 echo $CMD
 exec $CMD > >(tee -i $LOG)
 echo "[$$] ${CMD}"
