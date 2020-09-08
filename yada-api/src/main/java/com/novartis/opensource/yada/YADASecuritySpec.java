@@ -133,7 +133,8 @@ public class YADASecuritySpec extends HashMap<String, Object> {
   public YADASecuritySpec() {}
   
   /**
-   * @param spec
+   * @param spec a {@link JSONObject} containing the specification to be instantiated
+   * @throws YADAQueryConfigurationException when the spec is invalid
    */
   public YADASecuritySpec(JSONObject spec) throws YADAQueryConfigurationException
   {    
@@ -161,7 +162,7 @@ public class YADASecuritySpec extends HashMap<String, Object> {
   }
   
   /**
-   * @return
+   * @return all the keys in this spec which correspond to constants having the {@code KEY} prefix 
    */
   public final static List<String> getKeyFields() 
   {
@@ -192,8 +193,8 @@ public class YADASecuritySpec extends HashMap<String, Object> {
   }
   
   /**
-   * @param value
-   * @throws YADAQueryConfigurationException
+   * @param value the classname of the {@link com.novartis.opensource.yada.plugin.TokenValidator}
+   * @throws YADAQueryConfigurationException when {@code value} is {@code null}
    */
   public void setTokenValidator(String value) throws YADAQueryConfigurationException 
   {
@@ -203,16 +204,16 @@ public class YADASecuritySpec extends HashMap<String, Object> {
   }
   
   /**
-   * @return
-   */
+   * @return the value of the {@link #KEY_TOKEN_VALIDATOR} entry
+   */ 
   public String getTokenValidator()
   {
     return (String) this.get(KEY_TOKEN_VALIDATOR);
   }
   
   /**
-   * @param value
-   * @throws YADAQueryConfigurationException
+   * @param value a regular expression for validating request urls
+   * @throws YADAQueryConfigurationException when {@code value} is {@code null}
    */
   public void setURLSpec(String value) throws YADAQueryConfigurationException 
   {
@@ -222,7 +223,7 @@ public class YADASecuritySpec extends HashMap<String, Object> {
   }
   
   /**
-   * @return
+   * @return the value of the {@link #KEY_AUTH_PATH_RX} entry
    */
   public String getURLSpec() 
   {
@@ -230,10 +231,10 @@ public class YADASecuritySpec extends HashMap<String, Object> {
   }
   
   /**
-   * @param type
-   * @param protector
-   * @param columnsOrIndexes
-   * @throws YADAQueryConfigurationException
+   * @param type {@link #TYPE_ALLOWLIST} or {@link #TYPE_DENYLIST}
+   * @param protector the name of the protector query
+   * @param columnsOrIndexes a {@link List} of columns or indices from the query config
+   * @throws YADAQueryConfigurationException if any parameter is {@code null}
    */
   @SuppressWarnings("unchecked")
   public void setExecutionPolicy(String type, String protector, List<?> columnsOrIndexes) throws YADAQueryConfigurationException 
@@ -264,7 +265,7 @@ public class YADASecuritySpec extends HashMap<String, Object> {
   }
   
   /**
-   * @return
+   * @return a {@link Map} containing the {@link #POLICY_EXECUTION} specs
    */
   public Map<String, Object> getExecutionPolicy()  
   {
@@ -287,16 +288,16 @@ public class YADASecuritySpec extends HashMap<String, Object> {
   }
   
   /**
-   * @param type
-   * @param qualifier
-   * @throws YADAQueryConfigurationException
+   * @param type {@link #TYPE_ALLOWLIST} or {@link #TYPE_DENYLIST}
+   * @param qualifier the grants associated to the query
+   * @throws YADAQueryConfigurationException if any parameter is {@code null}
    */
   @SuppressWarnings("unchecked")
   public void setAuthorizationPolicy(String type, List<?> qualifier) throws YADAQueryConfigurationException 
   {
     List<String> list = (List<String>) qualifier;
     if(null == type || null == qualifier || null == list || list.size() == 0)
-      throw new YADAQueryConfigurationException("policy, type, protector, and columns, indexes, or indices must be non-null");
+      throw new YADAQueryConfigurationException("type and qualifier must be non-null");
 //    this.put(KEY_POLICY, POLICY_AUTHORIZATION);
     this.put(KEY_TYPE, type);
     this.put(KEY_QUALIFIER, qualifier);    
@@ -311,7 +312,7 @@ public class YADASecuritySpec extends HashMap<String, Object> {
   }
   
   /**
-   * @return
+   * @return a {@link Map} containing the {@link #POLICY_AUTHORIZATION} specs
    */
   public Map<String,Object> getAuthorizationPolicy()  
   {
@@ -326,9 +327,9 @@ public class YADASecuritySpec extends HashMap<String, Object> {
   }
   
   /**
-   * @param type
-   * @param predicate
-   * @throws YADAQueryConfigurationException
+   * @param type {@link #TYPE_ALLOWLIST} or {@link #TYPE_DENYLIST}
+   * @param predicate the dynamic sql config associated to the query
+   * @throws YADAQueryConfigurationException if any parameter is {@code null}
    */
   public void setContentPolicy(String type, String predicate) throws YADAQueryConfigurationException 
   {
@@ -348,7 +349,7 @@ public class YADASecuritySpec extends HashMap<String, Object> {
   }
   
   /**
-   * @return
+   * @return a {@link Map} containing the {@link #POLICY_CONTENT} specs
    */
   public Map<String,String> getContentPolicy()  
   {
@@ -364,8 +365,8 @@ public class YADASecuritySpec extends HashMap<String, Object> {
   }
   
   /**
-   * @param value
-   * @return
+   * @param value a {@link JSONArray} mapped to {@link #KEY_QUALIFIER}, {@link #KEY_COLUMNS}, {@link #KEY_INDEXES}, or {@link #KEY_INDICES}
+   * @return a {@link List} containing the entries associated to {@code value}
    */
   private List<?> getValueAsList(Object value) {
     if(null == value)

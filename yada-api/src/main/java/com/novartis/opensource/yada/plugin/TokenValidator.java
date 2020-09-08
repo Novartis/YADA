@@ -32,26 +32,23 @@ public interface TokenValidator {
   /**
    * Standard accessor for variable
    * @return the security token object
-   * @throws YADASecurityException when the token can't be retrieved
    */
-  public Object getToken() throws YADASecurityException;
+  public Object getToken();
   /**
    * Standard mutator for variable
    * @param token tho security token
-   * @throws YADASecurityException when the token can't be set
    */
-  public void setToken(Object token) throws YADASecurityException;
+  public void setToken(Object token);
   
   /**
    * No arg mutator for variable, gets FQCN from args or properties 
-   * @throws YADASecurityException when there is an issue setting the token
    * @since 7.0.0
    */
-  public void setToken() throws YADASecurityException;
+  public void setToken();
   
   /**
-   * @param yadaReq 
-   * @throws YADASecurityException 
+   * @param yadaReq the current {@link YADARequest}
+   * @throws YADASecurityException when there is an issue obtaining the token
    * @since 8.7.6
    */
   public void obtainToken(YADARequest yadaReq) throws YADASecurityException;

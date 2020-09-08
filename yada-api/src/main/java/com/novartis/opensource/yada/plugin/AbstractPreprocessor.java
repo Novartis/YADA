@@ -23,7 +23,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -550,7 +549,6 @@ public abstract class AbstractPreprocessor
    * Standard accessor for variable
    * 
    * @return the value of the validated {@code NIBR521} header
-   * @throws YADASecurityException when token retrieval fails
    * @since 7.0.0
    */
   @Override
@@ -573,7 +571,7 @@ public abstract class AbstractPreprocessor
    * Base implementation returns {@code null}
    * 
    * @return the current user id
-   * @throws YADASecurityException
+   * @throws YADASecurityException when the user object is not accessible
    */
   public String getLoggedUser() throws YADASecurityException {
     return null;
@@ -939,7 +937,7 @@ public abstract class AbstractPreprocessor
    * {@link javax.servlet.http.HttpServletRequest#getParameterMap()} Converts
    * parameter string into {@link JSONObject}
    * 
-   * @param httpHeaders
+   * @param httpHeaders the array of headers passed in the {@link YADARequest}
    * @throws YADARequestException when the header string is malformed
    * @since 8.7.6
    */
@@ -1034,6 +1032,9 @@ public abstract class AbstractPreprocessor
     return true;
   }
   
+  /**
+   * @return {@code true} if {@link #getSecuritySpec()} returns a non-null object
+   */
   public boolean hasSecuritySpec() {
     return this.getSecuritySpec() != null;
   }
@@ -1100,7 +1101,7 @@ public abstract class AbstractPreprocessor
 
   /**
    * Standard mutator
-   * @param securitySpec
+   * @param securitySpec the {@link YADASecuritySpec} to be processed
    * @since 9.0.0
    */
   public void setSecuritySpec(YADASecuritySpec securitySpec) {

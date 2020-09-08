@@ -302,7 +302,8 @@ public class ServiceTest
   /**
    * The initialization method required by the {@code jsp} group to set the
    * pertinent ivars to property values.
-   * @throws YADAResourceException 
+   * @param properties the properties referenced in the TestNG configuration 
+   * @throws YADAResourceException when the properties can't be loaded
    */
   @Parameters({"properties"})
   @BeforeSuite(groups = { "jsp","sec" })
@@ -577,8 +578,9 @@ public class ServiceTest
   }
   
   /**
-   * Authenticates the logged user using the xml param
-   * @throws YADAQueryConfigurationException 
+   * Authenticates the logged user using the http header
+   * @throws YADAQueryConfigurationException when the credentials cannot be set in order to validate
+   * @since 9.0.0
    * 
    */
   @BeforeMethod(groups = { "sec" })  
@@ -675,7 +677,7 @@ public class ServiceTest
    *         can't be closed
    */
   @BeforeMethod(groups = { "json", "standard", "options", "api", "jsp", "plugins", "sqlite_debug" })
-  public void dbPrep() throws URISyntaxException, YADAQueryConfigurationException, IOException, YADAResourceException
+  public void dbPrep() throws URISyntaxException, YADAQueryConfigurationException, IOException
   {
     prepOrClean(new String[] { "/test/inserts_single_json_prep.txt" });
   }
@@ -749,7 +751,6 @@ public class ServiceTest
 
   /**
    * For testing with environment-specific authentication credential
-   * @param connection the connection to imbue with authentication properties
    * @throws YADAExecutionException when any authentication method fails. Any exception thrown internally by authentication methods can be caught and rethrown as {@link YADAExecutionException}s.
    */
   public void setAuthentication() throws YADAExecutionException
@@ -1841,10 +1842,10 @@ public class ServiceTest
   }  
   
   /**
-   * @param query 
-   * @throws YADAQueryConfigurationException 
-   * @throws YADAResponseException 
-   * @throws YADASecurityException 
+   * @param query the path to the query config string passed by the {@link QueryFileTransformer}
+   * @throws YADAQueryConfigurationException when the auth headers cannot be set, either because the values are malformed, or non-existent
+   * @throws YADAResponseException when the assertion fails due to an error in request processig
+   * @throws YADASecurityException when the assertion fails due to a issue with authorization
    * @since 9.0.0
    */
   @Test(enabled = true, dataProvider = "QueryTests", groups = { "sec" })

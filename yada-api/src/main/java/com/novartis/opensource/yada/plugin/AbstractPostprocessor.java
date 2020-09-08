@@ -196,7 +196,7 @@ public abstract class AbstractPostprocessor implements Postprocess, Authorizatio
   }
 
   /**
-   * @param cookie
+   * @param cookie the name of the desired cookie value
    * @return the requested <code>cookie</code>
    * 
    * @since 8.7.6
@@ -219,24 +219,21 @@ public abstract class AbstractPostprocessor implements Postprocess, Authorizatio
   /**
    * Default implementation intended for override
    * 
-   * @throws YADASecurityException
-   * 
    * @since 8.7.6
    */
   @Override
-  public void setToken() throws YADASecurityException {
+  public void setToken() {
     // nothing to do
   }
 
   /**
    * Standard mutator for variable
    * 
-   * @param token the value of the authentication token
-   * @throws YADASecurityException
+   * @param token the value of the authentication token 
    * @since 8.7.6
    */
   @Override
-  public void setToken(Object token) throws YADASecurityException {
+  public void setToken(Object token) {
     this.token = token;
   }
 
@@ -252,7 +249,7 @@ public abstract class AbstractPostprocessor implements Postprocess, Authorizatio
   }
 
   /**
-   * @param header
+   * @param header the name of the desired header
    * @return the requested <code>header</code>
    * 
    * @since 8.7.6
@@ -298,7 +295,7 @@ public abstract class AbstractPostprocessor implements Postprocess, Authorizatio
    * {@link javax.servlet.http.HttpServletRequest#getParameterMap()} Converts
    * parameter string into {@link JSONObject}
    * 
-   * @param httpHeaders
+   * @param httpHeaders the array of headers passed in the {@link YADARequest} 
    * @throws YADARequestException when the header string is malformed
    * @since 8.7.6
    */

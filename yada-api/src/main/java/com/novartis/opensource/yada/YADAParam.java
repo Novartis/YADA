@@ -51,23 +51,28 @@ public class YADAParam
 	 * @see YADARequest
 	 */
 	private String  name;
+	
 	/**
 	 * The parameter value
 	 */
 	private String  value;
+	
 	/**
 	 * The parameter mutation rule, either {@link #OVERRIDEABLE} or {@link #NONOVERRIDEABLE}
 	 */
 	private int     rule; 
+	
 	/**
 	 * Flag indicating whether the parameter value was derived from the yada index, as a default parameter
 	 * or set in the request
 	 */
 	private boolean isDefault = false;
+	
 	/**
 	 * The parameter id
 	 */
 	private int id;
+	
 	/**
 	 * The security specification, should contain 
 	 *   <ul>
@@ -241,7 +246,8 @@ public class YADAParam
 	}
 	
 	/**
-	 * @param securitySpec
+	 * @param securitySpec a {@link YADASecuritySpec} for this {@link YADAParam}
+	 * @since 9.0.0
 	 */
 	public void setSecuritySpec(YADASecuritySpec securitySpec)
 	{
@@ -249,7 +255,8 @@ public class YADAParam
 	}
 	
 	/**
-	 * @return
+	 * @return the {@link YADASecuritySpec} instance associated to this {@link YADAParam}
+	 * @since 9.0.0
 	 */
 	public YADASecuritySpec getSecuritySpec() 
 	{
@@ -263,6 +270,7 @@ public class YADAParam
 	@Override
 	public String toString()
 	{
+	  //TODO update to include YADASecuritySpec
 		return "{"
 		    +"\"id\":\""+getId()
 		    +"\",\"name\":\""+getName()

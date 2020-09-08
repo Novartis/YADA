@@ -54,7 +54,6 @@ import com.novartis.opensource.yada.JSONParamsEntry;
 import com.novartis.opensource.yada.QueryManager;
 import com.novartis.opensource.yada.Service;
 import com.novartis.opensource.yada.YADAConnectionException;
-import com.novartis.opensource.yada.YADAExecutionException;
 import com.novartis.opensource.yada.YADAFinderException;
 import com.novartis.opensource.yada.YADAQuery;
 import com.novartis.opensource.yada.YADAQueryConfigurationException;
@@ -240,7 +239,7 @@ public class Gatekeeper extends AbstractPreprocessor {
   /**
    * Checking header then cookie for token to set
    * 
-   * @throws YADASecurityException
+   * @throws YADASecurityException when token cannot be successfully obtained
    */
 
   @Override
@@ -274,13 +273,11 @@ public class Gatekeeper extends AbstractPreprocessor {
   /**
    * Checking header then cookie for token to set
    * 
-   * @param yadaReq
-   * @return
-   * 
-   * @throws YADASecurityException
+   * @param yadaReq the {@link YADARequest} containing the token header to process
+   * @return the value of the {@link Authorization#YADA_HDR_SYNC_TKN} header
    */
 
-  public String obtainSyncToken(YADARequest yadaReq) throws YADASecurityException {
+  public String obtainSyncToken(YADARequest yadaReq) {
     // Check header for sync token
     String result = new String();
     if (this.hasHttpHeaders())
@@ -335,14 +332,23 @@ public class Gatekeeper extends AbstractPreprocessor {
   /**
    * Obtain specified GRANT(KEYS) from current identity
    * 
-   * @param app
-   * @return
-   * @throws YADASecurityException
-   * @throws YADARequestException
-   * @throws YADAExecutionException
+   * @param app the YADA app for which to obtain grants
+   * @return a {@link JSONArray} as an {@link Object} containing the {@link Authorization#YADA_IDENTITY_KEYS}
+   * @throws YADASecurityException when the user's identity is malformed, i.e., invalid json
+   * @since 8.7.6
    */
-  public Object obtainGrant(String app) throws YADASecurityException, YADARequestException, YADAExecutionException {
-    JSONObject jo = new JSONObject((String) getIdentity());
+  public Object obtainGrant(String app) throws YADASecurityException {
+    JSONObject jo = null;
+    try
+    {
+      jo = new JSONObject((String) getIdentity());
+    }
+    catch (JSONException e)
+    {
+      String msg = "Identity is malformed.";
+      throw new YADASecurityException(msg, e);
+    }
+    
     JSONArray  ja = jo.getJSONArray(YADA_IDENTITY_GRANTS);
     // find the app
     JSONArray keys = new JSONArray();
@@ -380,10 +386,10 @@ public class Gatekeeper extends AbstractPreprocessor {
     {
       setLocks(obtainLocks());
     }
-    catch (YADARequestException | YADAExecutionException e2)
+    catch (YADASecurityException e)
     {
       String msg = "Unauthorized. Unable to set query locks.";
-      throw new YADASecurityException(msg);
+      throw new YADASecurityException(msg, e);
     }
     
     //TODO there may need to be an array of "locks" i.e., qualifier:type pairs in the 
@@ -435,7 +441,7 @@ public class Gatekeeper extends AbstractPreprocessor {
           // Obtain a relevant GRANT if it exists within IDENTITY
           setGrant(obtainGrant(app));
         }
-        catch (YADASecurityException | YADARequestException | YADAExecutionException e)
+        catch (YADASecurityException e)
         {
           String msg = "User is not authorized";
           throw new YADASecurityException(msg);
@@ -476,12 +482,10 @@ public class Gatekeeper extends AbstractPreprocessor {
   /**
    * 
    * @return yadaauth {Role: [whitelist/blacklist]}
-   * @throws YADARequestException
-   * @throws YADASecurityException
-   * @throws YADAExecutionException
+   * @throws YADASecurityException when a database-backed yada index request cannot be processed 
    * @since 8.7.6
    */
-  public JSONObject obtainLocks() throws YADARequestException, YADASecurityException, YADAExecutionException {
+  public JSONObject obtainLocks() throws  YADASecurityException {
     JSONObject result = new JSONObject();
     String type;
     String qualifier;
@@ -1058,7 +1062,7 @@ public class Gatekeeper extends AbstractPreprocessor {
    * Utility function for content policy
    * 
    * @return the auth token wrapped in single quotes
-   * @throws YADASecurityException
+   * @throws YADASecurityException if the logged user value cannot be obtained
    * @since 8.1.0
    */
 
@@ -1119,14 +1123,14 @@ public class Gatekeeper extends AbstractPreprocessor {
   }
 
   /**
-   * @param grant
+   * @param grant the privilege to allow
    */
   public void addAllowListEntry(String grant) {
     this.allowList.add(grant);
   }
 
   /**
-   * @param grant
+   * @param grant the privilege to deny
    */
   public void removeAllowListEntry(String grant) {
     this.allowList.remove(grant);
@@ -1140,7 +1144,7 @@ public class Gatekeeper extends AbstractPreprocessor {
   }
 
   /**
-   * @param grant
+   * @param grant the privilege to deny
    */
   public void addDenyListEntry(String grant) {
     this.denyList.add(grant);
@@ -1203,7 +1207,7 @@ public class Gatekeeper extends AbstractPreprocessor {
   }
 
   /**
-   * @return
+   * @return {@code true} if {@link AbstractPreprocessor#getToken} returns a non-null, non-empty {@link String} 
    * @since 8.7.6
    */
   public boolean hasToken() {
@@ -1215,7 +1219,7 @@ public class Gatekeeper extends AbstractPreprocessor {
   }
 
   /**
-   * @return
+   * @return {@code true} if the {@link #syncToken} variable is a non-null, non-empty {@link String}
    * @since 8.7.6
    */
   public boolean hasSyncToken() {
@@ -1240,8 +1244,7 @@ public class Gatekeeper extends AbstractPreprocessor {
   }
 
   /**
-   * @return
-   * @@return {@code true} if {@link #grant} has at least 1 entry, otherwise
+   * @return {@code true} if {@link #grant} has at least 1 entry, otherwise
    *          {@code false}
    * @since 8.7.6
    */

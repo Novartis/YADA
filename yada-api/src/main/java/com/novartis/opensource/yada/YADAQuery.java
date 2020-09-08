@@ -270,18 +270,17 @@ public class YADAQuery {
 
 	/**
 	 * JSON string constructor
-	 * @param app 
-	 * @param qname 
-	 * @param json 
-	 * @throws YADAQueryConfigurationException 
+	 * @param app the name of the app (repo directory)
+	 * @param qname the name of (path to) the query (file) (excluding the {@code .json} extension)
+	 * @param qjson the stringified version of the {@link YADAQuery} loaded from the repo
+	 * @throws YADAQueryConfigurationException when the query file is invalid
 	 * @since 9.0.0
 	 */
 	public YADAQuery(String app, String qname, String qjson) throws YADAQueryConfigurationException
 	{
 	  JSONObject yq = new JSONObject(qjson);
-//	  String version = "";
 	  //TODO pull git commit into constructor args and set in 
-
+//	  String version = "";	  
 //	  this.setVersion(version);
     this.setCoreCode(new String(yq.getString("query")));    
     this.setQname(qname);

@@ -37,7 +37,7 @@ import com.novartis.opensource.yada.test.QueryFile;
 
 /**
  * @author David Varon
- * @since  5.1.0
+ * @since  9.0.0
  */
 public class QueryFileTransformer implements IAnnotationTransformer2 {
 

@@ -103,7 +103,7 @@ import com.novartis.opensource.yada.util.YADAUtils;
  * and json strings stored in resources as test cases
  *
  * @author David Varon
- *
+ * @since 9.0.0
  */
 @Listeners(AssumptionListener.class)
 public class ServiceTest
@@ -240,7 +240,6 @@ public class ServiceTest
 
   /**
    * Constant equal to: {@value}
-   * @since 6.1.0
    */
   protected static final String RECORDS = "records";
 
@@ -276,17 +275,16 @@ public class ServiceTest
   
   /**
    * Container for tokens
-   * @since 9.0.0
    */
   protected JSONObject secData;
   
   /** 
-   * @since 9.0.0
+   * 
    */
   protected String user = "";
   
   /**
-   * @since 9.0.0
+   * 
    */
   protected String pass = "";
 
@@ -660,7 +658,6 @@ public class ServiceTest
    * @throws YADAQueryConfigurationException when request creation fails
    * @throws IOException if the {@link InputStream} used for reading test files
    *         can't be closed
-   * @since 5.1.0
    */
   public void prepOrClean(String[] paths) throws URISyntaxException, IOException, YADAQueryConfigurationException
   {
@@ -689,7 +686,6 @@ public class ServiceTest
 
   /**
    * Method stub for testing with environment-specific authentication credential
-   * @param connection the connection to imbue with authentication properties
    * @throws YADAExecutionException when any authentication method fails. Any exception thrown internally by authentication methods can be caught and rethrown as {@link YADAExecutionException}s.
    */
   public void setAuthentication() throws YADAExecutionException

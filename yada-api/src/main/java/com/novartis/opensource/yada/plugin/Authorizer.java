@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.auth0.jwt.JWT;
@@ -34,7 +33,6 @@ import static com.kosprov.jargon2.api.Jargon2.*;
 import com.novartis.opensource.yada.ConnectionFactory;
 import com.novartis.opensource.yada.Finder;
 import com.novartis.opensource.yada.YADAConnectionException;
-import com.novartis.opensource.yada.YADAExecutionException;
 import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADARequestException;
 import com.novartis.opensource.yada.YADAResourceException;
@@ -44,7 +42,7 @@ import com.novartis.opensource.yada.util.YADAUtils;
 
 /**
  * @author jfinn
- *
+ * @since 8.7.6
  */
 public class Authorizer extends AbstractPostprocessor implements Authorization {
 
@@ -113,7 +111,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
   private ArrayList<String> denyList = new ArrayList<String>();
 
   /**
-   * The file containing credential hashes and grants.
+   * Constant with value {@value} referencing file containing credential hashes and grants.
    * 
    * <strong>DO NOT COMMIT THIS FILE TO THE REPOSITORY</strong>. The
    * {@code .shadow.json} file should not be renamed unless the {@code .gitignore}
@@ -123,8 +121,22 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
    */
   private static final String YADA_SHADOW = ".shadow.json";
   
+  /**
+   * Constant with value {@value} referencing the native user's password hash
+   * @since 9.0.0
+   */
   private static final String YADA_IDENTITY_HASH = "hash";
+  
+  /**
+   * Constant with value {@value} referencing the native user's authority
+   * @since 9.0.0
+   */
   private static final String YADA_IDENTITY_GRANTS = "grants";
+  
+  /**
+   * Constant with value {@value}. Default error. 
+   * @since 9.0.0
+   */
   private static final String UNAUTHORIZED = "User is not authorized";
 
   /**
@@ -153,9 +165,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
   }
 
   /**
-   * Authorize payload
-   * 
-   * @since 8.7.6
+   * Authorize payload   
    */
   @Override
   public void authorize(String payload) throws YADASecurityException {
@@ -239,9 +249,8 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
   }
 
   /**
-   * 
-   * @return
-   * @since 8.7.6
+   * @return a {@link JSONObject} containing the {@link Authorization#YADA_HDR_SYNC_TKN}
+   * and {@link Authorization#YADA_HDR_AUTH_JWT_PREFIX} values
    */
   public JSONObject generateResult() {
     JSONObject result = new JSONObject();
@@ -255,7 +264,6 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
   /**
    * 
    * @return yadaauth {Role: [whitelist/blacklist]}
-   * @since 8.7.6
    */
   public JSONObject obtainLocks() {
     JSONObject result = new JSONObject();
@@ -284,8 +292,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
    * Check header for credentials, obtain identity, obtain token, and cache
    * identity with token
    * 
-   * @throws YADASecurityException
-   * @since 8.7.6
+   * @throws YADASecurityException when token acquisition goes awry
    */
   @Override
   public void obtainToken(YADARequest yadaReq) throws YADASecurityException {
@@ -339,7 +346,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
           }
         }
       }
-      catch (YADASecurityException | YADARequestException | YADAExecutionException e)
+      catch (YADASecurityException e)
       {
         throw new YADASecurityException(UNAUTHORIZED);
       }
@@ -356,11 +363,8 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
   }
 
   /**
-   * @param userid
-   * @throws YADASecurityException
-   * 
-   * @since 8.7.6
-   * 
+   * @param userid the username of the attempted logged user
+   * @throws YADASecurityException when token generation goes awry, usually due to invalid or missing JWT input arguments
    */
   public void generateToken(String userid) throws YADASecurityException {
     // issueDate: JWT iat
@@ -382,13 +386,9 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
   }
 
   /**
-   * @param userid
-   * @throws YADASecurityException
-   * 
-   * @since 8.7.6
-   * 
+   * @param userid the username of the attempted logged user
    */
-  public void generateSyncToken(String userid) throws YADASecurityException {
+  public void generateSyncToken(String userid) {
     // Create a synchronization token with the userid and the current time
     Instant issueDate = Instant.now().truncatedTo(ChronoUnit.SECONDS);
     String  token     = userid + issueDate.toString();
@@ -422,20 +422,16 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
   /**
    * Obtain Identity with basic authentication
    * 
-   * @param userid
-   * @param pw
+   * @param userid the username of the attempted logged user
+   * @param pw the password of the attempted logged user
    * 
    * @return identity
-   * @throws YADARequestException
-   * @throws YADASecurityException
-   * @throws YADAExecutionException
-   * @throws YADAResourceException
-   * @since 8.7.6
+   * @throws YADASecurityException when the credentials are invalid
+   * @throws YADAResourceException when the credential store exists but can't be loaded
    * 
    */
 
-  public Object obtainIdentity(String userid, String pw)
-      throws YADARequestException, YADASecurityException, YADAExecutionException, YADAResourceException {
+  public Object obtainIdentity(String userid, String pw) throws YADASecurityException, YADAResourceException {
     JSONObject        result = new JSONObject();
     JSONArray         a      = new JSONArray();
     ArrayList<String> al     = new ArrayList<String>();
@@ -593,8 +589,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
   }
 
   /**
-   * @return
-   * @since 8.7.6
+   * @return the {@link #identity} object from the {@link Authorization#YADA_IDENTITY_CACHE}
    */
   public Object obtainIdentity() {
     Object result = getCacheEntry(YADA_IDENTITY_CACHE, (String) this.getToken());
@@ -604,8 +599,8 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
   /**
    * Obtain specified GRANT(KEYS) from current identity
    * 
-   * @param app
-   * @return
+   * @param app the app to which the desired grants to check are mapped (usu. the current app)
+   * @return a {@link JSONArray} as an {@link Object} containing the {@link Authorization#YADA_IDENTITY_KEYS}
    */
   public Object obtainGrant(String app) {
     JSONObject identity = new JSONObject((String) getIdentity());
@@ -630,10 +625,8 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
   /**
    * @return {@code true} if {@link AbstractPostprocessor#getToken()} is set,
    *         otherwise {@code false}
-   * @throws YADASecurityException
-   * @since 8.7.6
    */
-  public boolean hasToken() throws YADASecurityException {
+  public boolean hasToken() {
     if (null != this.getToken() && !"".equals(this.getToken()))
     {
       return true;
@@ -644,7 +637,6 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
   /**
    * @return {@code true} if {@link #locks} has at least 1 entry, otherwise
    *         {@code false}
-   * @since 8.7.6
    */
   public boolean hasLocks() {
     if (getLocks().length() > 0)
@@ -657,7 +649,6 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
   /**
    * @return {@code true} if {@link #grant} has at least 1 entry, otherwise
    *         {@code false}
-   * @since 8.7.6
    */
   public boolean hasGrants() {
     if (((JSONArray) getGrant()).length() > 0)
@@ -668,8 +659,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
   }
 
   /**
-   * @return
-   * @since 8.7.6
+   * @return {@code true} if the {@link #identity} is a non-null, non-empty {@link String}
    */
   public boolean hasIdentity() {
     if (null != getIdentity() && !"".equals(getIdentity()))
@@ -682,7 +672,6 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
   /**
    * @return {@code true} if {@link #allowList} has at least 1 entry, otherwise
    *         {@code false}
-   * @since 8.7.6
    */
   public boolean hasAllowList() {
     if (getAllowList().size() > 0)
@@ -695,7 +684,6 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
   /**
    * @return {@code true} if {@link #credentials} has at least 1 entry, otherwise
    *         {@code false}
-   * @since 8.7.6
    */
   public boolean hasCredentials() {
     if (null != getCredentials() && !"".equals(getCredentials()))
@@ -797,14 +785,14 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
   }
 
   /**
-   * @param grant
+   * @param grant the privilege to allow
    */
   public void addAllowListEntry(String grant) {
     this.allowList.add(grant);
   }
 
   /**
-   * @param grant
+   * @param grant the privilege to deny
    */
   public void removeAllowListEntry(String grant) {
     this.allowList.remove(grant);
@@ -818,7 +806,7 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
   }
 
   /**
-   * @param grant
+   * @param grant the privilege to deny
    */
   public void addDenyListEntry(String grant) {
     this.denyList.add(grant);

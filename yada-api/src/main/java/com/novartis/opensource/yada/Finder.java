@@ -439,10 +439,10 @@ public class Finder {
   }
 
   /**
-   * Indicates if {@link YADA_LIB} has been set
+   * Indicates if {@link #YADA_LIB} has been set
    *
-   * @return {@code true} if {@link YADA_LIB} is present in
-   *         {@link YADA_PROPERTIES}
+   * @return {@code true} if {@link #YADA_LIB} is present in
+   *         {@link #YADA_PROPERTIES}
    * @since 9.0.0
    */
   public final static boolean hasYADALib() {
@@ -451,7 +451,7 @@ public class Finder {
 
   /**
    * @return a {@link File} implementation of the directory referenced by
-   *         {@link YADA_LIB}
+   *         {@link #YADA_LIB}
    * @since 9.0.0
    */
   public final static File getYADALibDirectory() {
@@ -467,7 +467,7 @@ public class Finder {
   }
 
   /**
-   * Sets {@code static} {@link YADA_PROPERTIES} object
+   * Sets {@code static} {@link #YADA_PROPERTIES} object
    *
    * @return {@link java.util.Properties}
    */

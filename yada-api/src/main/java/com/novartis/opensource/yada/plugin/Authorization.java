@@ -19,16 +19,13 @@ import net.sf.ehcache.Element;
 public interface Authorization {
 
   /**
-   * Constant with value: {@value}
-   *
-   * @since 2.0
+   * Constant with value: {@value}   
    */
   public final static String JWSKEY = "jws.key";
 
   /**
    * Constant with value: {@value}
    *
-   * @since 2.0
    */
   public final static String JWTISS = "jwt.iss";
 
@@ -39,21 +36,18 @@ public interface Authorization {
   /**
    * Constant with value: {@value}
    *
-   * @since 8.7.6
    */
   public final static String YADA_HDR_AUTH = "Authorization";
 
   /**
    * Constant with value: {@value}
    *
-   * @since 8.7.6
    */
   public final static String YADA_HDR_SYNC_TKN = "X-CSRF-Token";
 
   /**
    * Constant with value: {@value}
    *
-   * @since 8.7.6
    */
   public final static String YADA_HDR_AUTH_JWT_PREFIX = "Bearer";
 
@@ -65,63 +59,54 @@ public interface Authorization {
   /**
    * Constant with value: {@value}
    *
-   * @since 8.7.6
    */
   public final static String YADA_CK_TKN = "yadajwt";
 
   /**
    * Constant with value: {@value}
    *
-   * @since 8.7.6
    */
   public final static String YADA_IDENTITY_SUB = "sub";
 
   /**
    * Constant with value: {@value}
    *
-   * @since 8.7.6
    */
   public final static String YADA_IDENTITY_APP = "app";
 
   /**
    * Constant with value: {@value}
    *
-   * @since 8.7.6
    */
   public final static String YADA_IDENTITY_ID = "identity";
 
   /**
    * Constant with value: {@value}
    *
-   * @since 8.7.6
    */
   public final static String YADA_IDENTITY_KEY = "key";
 
   /**
    * Constant with value: {@value}
    *
-   * @since 8.7.6
    */
   public final static String YADA_IDENTITY_KEYS = "keys";
 
   /**
    * Constant with value: {@value}
    *
-   * @since 8.7.6
    */
   public final static String YADA_IDENTITY_TKN = "token";
 
   /**
    * Constant with value: {@value}
    *
-   * @since 8.7.6
    */
   public final static String YADA_IDENTITY_GRANTS = "grants";
 
   /**
    * Constant with value: {@value}
    *
-   * @since 8.7.6
    */
   public final static String YADA_IDENTITY_IAT = "iat";
 
@@ -158,7 +143,6 @@ public interface Authorization {
   /**
    * Constant with value: {@value}
    *
-   * @since 3.0
    */
   public final static String AUTH_TYPE_WHITELIST = "whitelist";
 
@@ -167,21 +151,18 @@ public interface Authorization {
   /**
    * Constant equal to {@value}
    * 
-   * @since 8.7.6
    */
   public final static String RX_HDR_AUTH_USR_PREFIX = "(Basic)(.+?)([A-Za-z0-9\\-\\._~\\+\\/]+=*)";
 
   /**
    * Constant equal to {@value}
    * 
-   * @since 8.7.6
    */
   public final static String RX_HDR_AUTH_USR_CREDS = "(.+)[:=](.+)";
 
   /**
    * Constant equal to {@value} Formerly: (Bearer)(.+?)([a-zA-Z0-9-_.]{5,})
    * 
-   * @since 8.7.6
    */
   public final static String RX_HDR_AUTH_TKN_PREFIX = "(Bearer)(.+?)([A-Za-z0-9\\-\\._~\\+\\/]+=*)";
 
@@ -208,35 +189,35 @@ public interface Authorization {
   /**
    * Authorization of general use for given context
    * 
-   * @param payload
-   * @throws YADASecurityException
+   * @param payload a string to validate
+   * @throws YADASecurityException when authorization fails for any reason, e.g., invalid credentials or token
    */
   public void authorize(String payload) throws YADASecurityException;
 
   /**
    * Authorization of query use for given context
    * 
-   * @throws YADASecurityException
+   * @throws YADASecurityException when authorization fails for any reason, e.g., invalid credentials or token
    */
   public void authorize() throws YADASecurityException;
 
   /**
-   * Confirm token is valid and user possesses necessary grants
+   * Confirm token is valid and user possesses necessary grants. Intended for use in a postprocessor plugin.
    * 
-   * @param yadaReq
-   * @param result
-   * @throws YADASecurityException
+   * @see Authorizer
+   * @param yadaReq the {@link YADARequest} containing the headers to validate
+   * @param result the default auth query result, e.g., {@code 401 Unauthorized}
+   * @throws YADASecurityException when validation fails for any reason, e.g., invalid credentials or token
    */
   public void authorizeYADARequest(YADARequest yadaReq, String result) throws YADASecurityException;
 
   /**
    * Write to the IAM cache
    * 
-   * @param cache
-   * @param key
-   * @param cacheValue
-   * @param ttl
-   * @since 8.7.6
+   * @param cache the name of the cache
+   * @param key the cache entry name
+   * @param cacheValue the cache entry value
+   * @param ttl the time-to-live of the entry
    */
   public default void setCacheEntry(String cache, String key, Object cacheValue, Integer ttl) {
     CacheManager cacheManager = CacheManager.getCacheManager(Finder.YADA_CACHE_MGR);
@@ -261,10 +242,9 @@ public interface Authorization {
   /**
    * Read the IAM cache
    * 
-   * @param cache
-   * @param key
+   * @param cache the name of the cache
+   * @param key the name of the entry to retrieve
    * @return the stored string
-   * @since 8.7.6
    */
   public default Object getCacheEntry(String cache, String key) {
     Object       cacheValue   = null;
