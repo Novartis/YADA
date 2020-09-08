@@ -116,7 +116,7 @@ public interface Authorization {
   public final static String YADA_IDENTITY_CACHE = "identity";
 
   /**
-   * Constant equal to: {@value}
+   * Constant equal to: 14399
    */
   public final static Integer YADA_IDENTITY_TTL = 14399;
 
@@ -126,7 +126,7 @@ public interface Authorization {
   public final static String YADA_GRANT_CACHE = "grant";
 
   /**
-   * Constant equal to: {@value}
+   * Constant equal to: 1799
    */
   public final static Integer YADA_GRANT_TTL = 1799;
 
@@ -136,7 +136,7 @@ public interface Authorization {
   public final static String YADA_GROUP_CACHE = "groupList";
 
   /**
-   * Constant equal to: {@value}
+   * Constant equal to: 119
    */
   public final static Integer YADA_GROUP_TTL = 119;
 
