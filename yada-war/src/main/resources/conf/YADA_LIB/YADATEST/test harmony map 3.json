@@ -1,0 +1,3 @@
+{
+  "query": "select col1,col5 from YADA_TEST"
+}

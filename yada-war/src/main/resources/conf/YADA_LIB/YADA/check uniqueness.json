@@ -1,0 +1,24 @@
+{
+  "query": "select count(qname) as \"count\" from yada_query where qname = ?v",
+  "params": [
+    {
+      "name": "pl",
+      "value": "Gatekeeper",
+      "spec": {
+        "columns": [
+          "userid:getLoggedUser()"
+        ],
+        "policy": "E",
+        "protector": "YADA view protector",
+        "type": "allow"
+      },
+      "rule": 1
+    }
+  ],
+  "props": [
+    {
+      "name": "protected",
+      "value": "true"
+    }
+  ]
+}

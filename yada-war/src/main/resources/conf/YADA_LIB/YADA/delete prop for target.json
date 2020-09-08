@@ -1,0 +1,24 @@
+{
+  "query": "delete from yada_prop where target = ?v",
+  "params": [
+    {
+      "name": "pl",
+      "value": "Gatekeeper",
+      "spec": {
+        "columns": [
+          "userid:getLoggedUser()"
+        ],
+        "policy": "E",
+        "protector": "YADA crud protector",
+        "type": "allow"
+      },
+      "rule": 1
+    }
+  ],
+  "props": [
+    {
+      "name": "protected",
+      "value": "true"
+    }
+  ]
+}

@@ -3,7 +3,7 @@
 # Params:    q,qname
 # DataTypes: None specified
 # BaseData:  {"COL1":"Z","COL2":"10","COL3":"7.5","COL4":"2013-03-04","COL5":"2015-09-05 20:44:33"}
-/yada/q/YADA test DELETE
-/q/YADA test DELETE
-/yada/qname/YADA test DELETE
-/qname/YADA test DELETE
+/yada/q/YADATEST/test DELETE
+/q/YADATEST/test DELETE
+/yada/qname/YADATEST/test DELETE
+/qname/YADATEST/test DELETE

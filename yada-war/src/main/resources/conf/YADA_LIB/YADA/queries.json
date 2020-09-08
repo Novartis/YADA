@@ -1,0 +1,24 @@
+{
+  "query": "select a.qname as \"QNAME\", a.query as \"QUERY\", a.app as \"APP\", a.created as \"CREATED\", a.modified as \"MODIFIED\", a.created_by as \"CREATED_BY\", a.modified_by as \"MODIFIED_BY\", a.last_access as \"LAST_ACCESS\", a.access_count as \"ACCESS_COUNT\", count(b.target) as \"DEFAULT_PARAMS\", a.comments as \"COMMENTS\" from yada_query a left join YADA_PARAM b on a.qname = b.target where app = ?v group by a.app, a.qname, a.query, a.last_access, a.access_count, a.modified, a.modified_by, a.created, a.created_by,a.comments",
+  "params": [
+    {
+      "name": "pl",
+      "value": "Gatekeeper",
+      "spec": {
+        "columns": [
+          "userid:getLoggedUser()"
+        ],
+        "policy": "E",
+        "protector": "YADA view protector",
+        "type": "allow"
+      },
+      "rule": 1
+    }
+  ],
+  "props": [
+    {
+      "name": "protected",
+      "value": "true"
+    }
+  ]
+}

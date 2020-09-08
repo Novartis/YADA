@@ -1,27 +1,27 @@
-q=YADA test SELECT&f=psv&f=psv&format=psv
-q=YADA test SELECT INTEGER with INS&p=1,2,3,10&f=psv&f=psv&format=psv
-q=YADA test SELECT VARCHAR with INS&p=[A,B,Z]&f=psv&f=psv&format=psv
-q=YADA test SELECT VARCHAR with INS&p=A,B,Z &f=psv&f=psv&format=psv
-q=YADA test SELECT with multiple INS&p=[A,B,Z],10&f=psv&f=psv&format=psv
-q=YADA test SELECT with multiple INS&p=[A,B,Z],[8,9,10]&f=psv&f=psv&format=psv
+q=YADATEST/test SELECT&f=psv&f=psv&format=psv
+q=YADATEST/test SELECT INTEGER with INS&p=1,2,3,10&f=psv&f=psv&format=psv
+q=YADATEST/test SELECT VARCHAR with INS&p=[A,B,Z]&f=psv&f=psv&format=psv
+q=YADATEST/test SELECT VARCHAR with INS&p=A,B,Z &f=psv&f=psv&format=psv
+q=YADATEST/test SELECT with multiple INS&p=[A,B,Z],10&f=psv&f=psv&format=psv
+q=YADATEST/test SELECT with multiple INS&p=[A,B,Z],[8,9,10]&f=psv&f=psv&format=psv
 
-qname=YADA test SELECT&format=psv
-qname=YADA test SELECT INTEGER with INS&params=1,2,3,10&format=psv
-qname=YADA test SELECT VARCHAR with INS&params=[A,B,Z]&format=psv
-qname=YADA test SELECT VARCHAR with INS&params=A,B,Z &format=psv
-qname=YADA test SELECT with multiple INS&params=[A,B,Z],10&format=psv
-qname=YADA test SELECT with multiple INS&params=[A,B,Z],[8,9,10]&format=psv
+qname=YADATEST/test SELECT&format=psv
+qname=YADATEST/test SELECT INTEGER with INS&params=1,2,3,10&format=psv
+qname=YADATEST/test SELECT VARCHAR with INS&params=[A,B,Z]&format=psv
+qname=YADATEST/test SELECT VARCHAR with INS&params=A,B,Z &format=psv
+qname=YADATEST/test SELECT with multiple INS&params=[A,B,Z],10&format=psv
+qname=YADATEST/test SELECT with multiple INS&params=[A,B,Z],[8,9,10]&format=psv
 
-q=YADA test SELECT&f=pipe&f=pipe&format=pipe
-q=YADA test SELECT INTEGER with INS&p=1,2,3,10&f=pipe&f=pipe&format=pipe
-q=YADA test SELECT VARCHAR with INS&p=[A,B,Z]&f=pipe&f=pipe&format=pipe
-q=YADA test SELECT VARCHAR with INS&p=A,B,Z &f=pipe&f=pipe&format=pipe
-q=YADA test SELECT with multiple INS&p=[A,B,Z],10&f=pipe&f=pipe&format=pipe
-q=YADA test SELECT with multiple INS&p=[A,B,Z],[8,9,10]&f=pipe&f=pipe&format=pipe
+q=YADATEST/test SELECT&f=pipe&f=pipe&format=pipe
+q=YADATEST/test SELECT INTEGER with INS&p=1,2,3,10&f=pipe&f=pipe&format=pipe
+q=YADATEST/test SELECT VARCHAR with INS&p=[A,B,Z]&f=pipe&f=pipe&format=pipe
+q=YADATEST/test SELECT VARCHAR with INS&p=A,B,Z &f=pipe&f=pipe&format=pipe
+q=YADATEST/test SELECT with multiple INS&p=[A,B,Z],10&f=pipe&f=pipe&format=pipe
+q=YADATEST/test SELECT with multiple INS&p=[A,B,Z],[8,9,10]&f=pipe&f=pipe&format=pipe
 
-qname=YADA test SELECT&format=pipe
-qname=YADA test SELECT INTEGER with INS&params=1,2,3,10&format=pipe
-qname=YADA test SELECT VARCHAR with INS&params=[A,B,Z]&format=pipe
-qname=YADA test SELECT VARCHAR with INS&params=A,B,Z &format=pipe
-qname=YADA test SELECT with multiple INS&params=[A,B,Z],10&format=pipe
-qname=YADA test SELECT with multiple INS&params=[A,B,Z],[8,9,10]&format=pipe
+qname=YADATEST/test SELECT&format=pipe
+qname=YADATEST/test SELECT INTEGER with INS&params=1,2,3,10&format=pipe
+qname=YADATEST/test SELECT VARCHAR with INS&params=[A,B,Z]&format=pipe
+qname=YADATEST/test SELECT VARCHAR with INS&params=A,B,Z &format=pipe
+qname=YADATEST/test SELECT with multiple INS&params=[A,B,Z],10&format=pipe
+qname=YADATEST/test SELECT with multiple INS&params=[A,B,Z],[8,9,10]&format=pipe

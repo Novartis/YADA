@@ -1,21 +1,21 @@
-q=YADA test SELECT&pl=com.novartis.opensource.yada.plugin.ScriptBypass&a=scriptPluginBypassTest.pl&c=false
+q=YADATEST/test SELECT&pl=com.novartis.opensource.yada.plugin.ScriptBypass&a=scriptPluginBypassTest.pl&c=false
 
-q=YADA test SELECT&pl=com.novartis.opensource.yada.plugin.ScriptBypass&b=scriptPluginBypassTest.pl&c=false
-q=YADA test SELECT&pl=ScriptBypass&a=scriptPluginBypassTest.pl&c=false
+q=YADATEST/test SELECT&pl=com.novartis.opensource.yada.plugin.ScriptBypass&b=scriptPluginBypassTest.pl&c=false
+q=YADATEST/test SELECT&pl=ScriptBypass&a=scriptPluginBypassTest.pl&c=false
 
-q=YADA test SELECT&pl=ScriptBypass&b=scriptPluginBypassTest.pl&c=false
+q=YADATEST/test SELECT&pl=ScriptBypass&b=scriptPluginBypassTest.pl&c=false
 
-q=YADA test SELECT&b=scriptPluginBypassTest.pl&c=false
-qname=YADA test SELECT&plugin=com.novartis.opensource.yada.plugin.ScriptBypass&args=scriptPluginBypassTest.pl&count=false
+q=YADATEST/test SELECT&b=scriptPluginBypassTest.pl&c=false
+qname=YADATEST/test SELECT&plugin=com.novartis.opensource.yada.plugin.ScriptBypass&args=scriptPluginBypassTest.pl&count=false
 
-qname=YADA test SELECT&plugin=com.novartis.opensource.yada.plugin.ScriptBypass&bypassargs=scriptPluginBypassTest.pl&count=false
-qname=YADA test SELECT&plugin=ScriptBypass&args=scriptPluginBypassTest.pl&count=false
+qname=YADATEST/test SELECT&plugin=com.novartis.opensource.yada.plugin.ScriptBypass&bypassargs=scriptPluginBypassTest.pl&count=false
+qname=YADATEST/test SELECT&plugin=ScriptBypass&args=scriptPluginBypassTest.pl&count=false
 
-qname=YADA test SELECT&plugin=ScriptBypass&bypassargs=scriptPluginBypassTest.pl&count=false
+qname=YADATEST/test SELECT&plugin=ScriptBypass&bypassargs=scriptPluginBypassTest.pl&count=false
 
-qname=YADA test SELECT&bypassargs=scriptPluginBypassTest.pl&count=false
+qname=YADATEST/test SELECT&bypassargs=scriptPluginBypassTest.pl&count=false
 
-q=YADA test SELECT&pl=com.novartis.opensource.yada.plugin.ScriptBypass,scriptPluginBypassTest.pl&c=false
-q=YADA test SELECT&pl=ScriptBypass,scriptPluginBypassTest.pl&c=false
-qname=YADA test SELECT&plugin=com.novartis.opensource.yada.plugin.ScriptBypass,scriptPluginBypassTest.pl&count=false
-qname=YADA test SELECT&plugin=ScriptBypass,scriptPluginBypassTest.pl&count=false
+q=YADATEST/test SELECT&pl=com.novartis.opensource.yada.plugin.ScriptBypass,scriptPluginBypassTest.pl&c=false
+q=YADATEST/test SELECT&pl=ScriptBypass,scriptPluginBypassTest.pl&c=false
+qname=YADATEST/test SELECT&plugin=com.novartis.opensource.yada.plugin.ScriptBypass,scriptPluginBypassTest.pl&count=false
+qname=YADATEST/test SELECT&plugin=ScriptBypass,scriptPluginBypassTest.pl&count=false

@@ -118,16 +118,12 @@ public class Service {
 	{
 		Map<String, String[]> map = new LinkedHashMap<>();
 		String[] pathElements = parameterString.split("/");
-		/*String[] split = parameterString.split("&"); 
-		for (String pair : split)
+		for(int i=1;i<pathElements.length;i=i+2)
 		{
-			String[] subsplit = pair.split("=");
-			map.put(subsplit[0], new String[] {subsplit[1]});
-		}
-		*/
-		for(int i=0;i<pathElements.length;i=i+2)
-		{
-			map.put(pathElements[i], new String[] {pathElements[i+1]});
+		  if(Finder.hasYADALib() && i == 1)
+		    map.put(pathElements[i-1], new String[] {pathElements[i]+"/"+pathElements[++i]});
+		  else
+		    map.put(pathElements[i-1], new String[] {pathElements[i]});
 		}
 		getYADARequest().setRequest(request);
 		handleRequest(request.getHeader("referer"), map);
@@ -141,7 +137,6 @@ public class Service {
 	@SuppressWarnings("unchecked")
   public void handleRequest(HttpServletRequest request)
 	{
-		l.debug("Request query string is ["+request.getQueryString()+"]");
 		getYADARequest().setRequest(request);
 		handleRequest(request.getHeader("referer"), request.getParameterMap());
 	}
@@ -734,12 +729,20 @@ public class Service {
 				}
 				// engage query preprocessor
 				engagePreprocess(yq);
+				
 				// execute query
-				yq.getAdaptor().execute(yq);
-				if(this.qutils.isCommitQuery(yq))
+				l.debug("YADA.lib:"+Finder.getYADALib()+", hasYADALib() = "+Finder.hasYADALib());
+				if(!Finder.hasYADALib() // in all pre 9.0.0 cases
+				    || (Finder.hasYADALib() && yq.getApp() != "YADA") // all 9.0.0+ with oldschool queries with APP values
+				    || (Finder.hasYADALib() && !yq.getQname().startsWith("YADA/"))) // all 9.0.0+ cases with matching qnames
 				{
-					// close query transaction
-					this.qMgr.commit(yq);
+				  yq.getAdaptor().execute(yq);
+  				
+  				if(this.qutils.isCommitQuery(yq))
+  				{
+  					// close query transaction
+  					this.qMgr.commit(yq);
+  				}
 				}
 				// engage query postprocessor
 				engagePostprocess(yq);
@@ -1121,6 +1124,9 @@ public class Service {
 	      {
 			    String plugin = plugins[pluginIndex];
 			    // check for default parameter plugin (args) unprocessed by Service.handleRequestParameters
+			    // in other words, the value of the 'pl' parameter is a comma-delimited string 
+			    // e.g.: "Gatekeeper,content.policy=void,execution.policy.columns=COL1 COL2"
+			    // or it's just a single argument, in which case the value of 'plugin' is already set
 			    int firstCommaIndex = plugin.indexOf(',');
 			    String    args = "";
 			    YADAParam yp   = null;
@@ -1128,12 +1134,13 @@ public class Service {
           {
 			      args   = plugin.substring(firstCommaIndex+1);
 			      plugin = plugin.substring(0, firstCommaIndex);
-			      // add a query parameter for the arg list
-			      //yp = new YADAParam(YADARequest.PS_ARGLIST, args, yq.getQname(), YADAParam.NONOVERRIDEABLE, true);
+			      // add a query parameter for the arg list with the plugin class as the target
+			      // this will be detected later in the AbstractPreprocessor.engage method
 			      yp = new YADAParam(YADARequest.PS_ARGLIST, args, plugin, YADAParam.NONOVERRIDEABLE, true);
 			      yq.addParam(yp);
           }
-					l.debug("possible preprocess plugin is["+plugin+"]");
+			    // get the plugin class, instantiate it and engage it
+					l.debug("possible preprocess plugin is ["+plugin+"]");
 					if (null != plugin && !"".equals(plugin))
 					{
 						try
@@ -1149,7 +1156,10 @@ public class Service {
 								try
 								{
 									Object plugObj = pluginClass.newInstance();
+									
+									// meaty bit
 									((Preprocess)plugObj).engage(getYADARequest(),yq);
+									
 									// reset the query internals
 									try
 									{

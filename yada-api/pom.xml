@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.novartis.opensource</groupId>
     <artifactId>YADA</artifactId>
-    <version>8.7.6-SNAPSHOT</version>
+    <version>9.0.0-SNAPSHOT</version>
   </parent>
   <artifactId>yada-api</artifactId>
   <name>yada-api</name>
@@ -17,28 +19,36 @@
     </site>
   </distributionManagement>
   <properties>
-    <display.version>${project.version}</display.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <skip.sqlite.test>true</skip.sqlite.test>
-    <skip.oracle.test>true</skip.oracle.test>
-    <skip.mysql.test>true</skip.mysql.test>
-    <skip.pgsql.test>true</skip.pgsql.test>
-    <skip.hsqldb.test>true</skip.hsqldb.test>
+    <YADA.branch>master</YADA.branch>
+    <YADA.switch.branch>false</YADA.switch.branch>
+    <YADA.pull.on.launch>false</YADA.pull.on.launch>
+    <log.level>info</log.level>
+    <test.properties>/conf/TestNG_YADA.properties</test.properties>
     <skip.proxy.test>true</skip.proxy.test>
     <skip.noproxy.test>true</skip.noproxy.test>
     <skip.fs.test>true</skip.fs.test>
+    <display.version>${project.version}</display.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <main.basedir>${project.parent.basedir}</main.basedir>
-    <yada.war.scriptdir>../yada-war/src/main/resources/scripts</yada.war.scriptdir>
+    <!-- pre9 -->
+    <skip.pgsql.test>true</skip.pgsql.test>
   </properties>
   <profiles>
     <profile>
-      <id>test-hsqldb</id>
+      <id>test</id>
       <properties>
-        <YADA.index.url>${YADA.hsqldb.index.url}</YADA.index.url>
-        <YADA.index.username>${YADA.hsqldb.index.username}</YADA.index.username>
-        <YADA.index.password>${YADA.hsqldb.index.password}</YADA.index.password>
+        <log.level>info</log.level>
+        <skip.test>true</skip.test>
+        <test.properties>/conf/TestNG_YADA.properties</test.properties>
+        <YADA.branch>testng</YADA.branch>
+        <YADA.switch.branch>true</YADA.switch.branch>
+        <YADA.pull.on.launch>false</YADA.pull.on.launch>
+        <YADA.index.host>${YADATEST.pgsql.index.host}</YADA.index.host>
+        <YADA.index.url>${YADATEST.pgsql.index.url}</YADA.index.url>
+        <YADA.index.username>${YADATEST.pgsql.index.username}</YADA.index.username>
+        <YADA.index.password>${YADATEST.pgsql.index.password}</YADA.index.password>
         <YADA.index.autoCommit>false</YADA.index.autoCommit>
-        <YADA.index.driverClassName>${YADA.hsqldb.index.driverClassName}</YADA.index.driverClassName>
+        <YADA.index.driverClassName>${YADATEST.pgsql.index.driverClassName}</YADA.index.driverClassName>
       </properties>
       <build>
         <plugins>
@@ -50,15 +60,14 @@
               <skip>${skip.db.load}</skip>
               <executable>/bin/bash</executable>
               <arguments>
-                <argument>${project.build.testOutputDirectory}/dbLoad.sh</argument>
-                <argument>HSQLdb</argument>
-                <argument>${dbload.backup}</argument>
+                <argument>${project.build.testOutputDirectory}/conf/dbLoad.sh</argument>
+                <argument>PostgreSQL</argument>
               </arguments>
             </configuration>
             <executions>
               <execution>
                 <id>db-load</id>
-                <phase>compile</phase>
+                <phase>test</phase>
                 <goals>
                   <goal>exec</goal>
                 </goals>
@@ -74,22 +83,19 @@
             </configuration>
             <executions>
               <execution>
-                <id>test-hsqldb</id>
+                <id>test</id>
                 <goals>
                   <goal>test</goal>
                 </goals>
                 <phase>test</phase>
                 <configuration>
-                  <skip>false</skip>
+                  <skip>${surefire.skip}</skip>
                   <properties>
-                    <skip.hsqldb.test>false</skip.hsqldb.test>
-                    <test.properties>${basedir}/target/test-classes/conf/TestNG_YADA_HSQLdb.properties</test.properties>
+                    <test.properties>/conf/TestNG_YADA.properties</test.properties>
                   </properties>
-                  <useSystemClassLoader>false</useSystemClassLoader>
-                  <reportNameSuffix>hsqldb</reportNameSuffix>
+                  <useSystemClassLoader>true</useSystemClassLoader>
+                  <reportNameSuffix></reportNameSuffix>
                   <trimStackTrace>false</trimStackTrace>
-                  <systemPropertyVariables>
-                  </systemPropertyVariables>
                   <additionalClasspathElements>
                     <additionalClasspathElement>${test.properties}</additionalClasspathElement>
                   </additionalClasspathElements>
@@ -99,8 +105,12 @@
                       <value>com.novartis.opensource.yada.test.QueryFileTransformer</value>
                     </property>
                   </properties>
+                  <systemPropertyVariables>
+                    <jwt.iss>yada</jwt.iss>
+                    <jws.key>drphilscrypto</jws.key>
+                  </systemPropertyVariables>
                   <suiteXmlFiles>
-                    <suiteXmlFile>src/test/resources/conf/TestNG_YADA_HSQLdb.xml</suiteXmlFile>
+                    <suiteXmlFile>src/test/resources/conf/TestNG_YADA.xml</suiteXmlFile>
                   </suiteXmlFiles>
                 </configuration>
               </execution>
@@ -109,14 +119,17 @@
         </plugins>
       </build>
     </profile>
+    <!-- pre9 -->
     <profile>
-      <id>test-pgsql</id>
+      <id>test_pre9</id>
       <properties>
-        <YADA.index.url>${YADA.pgsql.index.url}</YADA.index.url>
-        <YADA.index.username>${YADA.pgsql.index.username}</YADA.index.username>
-        <YADA.index.password>${YADA.pgsql.index.password}</YADA.index.password>
+        <test.properties>/conf/TestNG_YADA_pre9.properties</test.properties>
+        <YADA.index.host>${YADATEST.pgsql.index.host}</YADA.index.host>
+        <YADA.index.url>${YADATEST.pgsql.index.url}</YADA.index.url>
+        <YADA.index.username>${YADATEST.pgsql.index.username}</YADA.index.username>
+        <YADA.index.password>${YADATEST.pgsql.index.password}</YADA.index.password>
         <YADA.index.autoCommit>false</YADA.index.autoCommit>
-        <YADA.index.driverClassName>${YADA.pgsql.index.driverClassName}</YADA.index.driverClassName>
+        <YADA.index.driverClassName>${YADATEST.pgsql.index.driverClassName}</YADA.index.driverClassName>
       </properties>
       <build>
         <plugins>
@@ -128,15 +141,15 @@
               <skip>${skip.db.load}</skip>
               <executable>/bin/bash</executable>
               <arguments>
-                <argument>${project.build.testOutputDirectory}/dbLoad.sh</argument>
+                <argument>${project.build.testOutputDirectory}/conf/dbLoad_pre9.sh</argument>
                 <argument>PostgreSQL</argument>
-                <argument>${dbload.backup}</argument>
+                <!-- <argument>${dbload.backup}</argument> -->
               </arguments>
             </configuration>
             <executions>
               <execution>
                 <id>db-load</id>
-                <phase>compile</phase>
+                <phase>test</phase>
                 <goals>
                   <goal>exec</goal>
                 </goals>
@@ -152,7 +165,7 @@
             </configuration>
             <executions>
               <execution>
-                <id>test-pgsql</id>
+                <id>test-pre9</id>
                 <goals>
                   <goal>test</goal>
                 </goals>
@@ -161,9 +174,9 @@
                   <skip>false</skip>
                   <properties>
                     <skip.pgsql.test>false</skip.pgsql.test>
-                    <test.properties>${basedir}/target/test-classes/conf/TestNG_YADA_PgSQL.properties</test.properties>
+                    <test.properties>/conf/TestNG_YADA_pre9.properties</test.properties>
                   </properties>
-                  <useSystemClassLoader>false</useSystemClassLoader>
+                  <useSystemClassLoader>true</useSystemClassLoader>
                   <reportNameSuffix>pgsql</reportNameSuffix>
                   <trimStackTrace>false</trimStackTrace>
                   <systemPropertyVariables>
@@ -174,406 +187,11 @@
                   <properties>
                     <property>
                       <name>listener</name>
-                      <value>com.novartis.opensource.yada.test.QueryFileTransformer</value>
+                      <value>com.novartis.opensource.yada.test.pre9.QueryFileTransformer</value>
                     </property>
                   </properties>
                   <suiteXmlFiles>
-                    <suiteXmlFile>src/test/resources/conf/TestNG_YADA_PgSQL.xml</suiteXmlFile>
-                  </suiteXmlFiles>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>test-oracle</id>
-      <properties>
-        <YADA.index.url>${YADA.oracle.index.url}</YADA.index.url>
-        <YADA.index.username>${YADA.oracle.index.username}</YADA.index.username>
-        <YADA.index.password>${YADA.oracle.index.password}</YADA.index.password>
-        <YADA.index.autoCommit>false</YADA.index.autoCommit>
-        <YADA.index.driverClassName>${YADA.oracle.index.driverClassName}</YADA.index.driverClassName>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.18.1</version>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-            <executions>
-              <execution>
-                <id>test-oracle</id>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <phase>test</phase>
-                <configuration>
-                  <skip>false</skip>
-                  <properties>
-                    <skip.oracle.test>false</skip.oracle.test>
-                    <test.properties>${basedir}/target/test-classes/conf/TestNG_YADA_Oracle.properties</test.properties>
-                  </properties>
-                  <useSystemClassLoader>false</useSystemClassLoader>
-                  <reportNameSuffix>oracle</reportNameSuffix>
-                  <trimStackTrace>false</trimStackTrace>
-                  <systemPropertyVariables>
-                    <java.naming.factory.initial>org.apache.naming.java.javaURLContextFactory</java.naming.factory.initial>
-                    <java.naming.factory.url.pkgs>org.apache.catalina.util.naming</java.naming.factory.url.pkgs>
-                    <java.naming.provider.url>org.apache.naming</java.naming.provider.url>
-                  </systemPropertyVariables>
-                  <additionalClasspathElements>
-                    <additionalClasspathElement>${test.properties}</additionalClasspathElement>
-                  </additionalClasspathElements>
-                  <properties>
-                    <property>
-                      <name>listener</name>
-                      <value>com.novartis.opensource.yada.test.QueryFileTransformer</value>
-                    </property>
-                  </properties>
-                  <suiteXmlFiles>
-                    <suiteXmlFile>src/test/resources/conf/TestNG_YADA_Oracle.xml</suiteXmlFile>
-                  </suiteXmlFiles>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>test-mysql</id>
-      <properties>
-        <YADA.index.url>${YADA.mysql.index.url}</YADA.index.url>
-        <YADA.index.username>${YADA.mysql.index.username}</YADA.index.username>
-        <YADA.index.password>${YADA.mysql.index.password}</YADA.index.password>
-        <YADA.index.autoCommit>false</YADA.index.autoCommit>
-        <YADA.index.driverClassName>${YADA.mysql.index.driverClassName}</YADA.index.driverClassName>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>1.3.2</version>
-            <configuration>
-              <skip>${skip.db.load}</skip>
-              <executable>/bin/bash</executable>
-              <arguments>
-                <argument>${project.build.testOutputDirectory}/dbLoad.sh</argument>
-                <argument>MySQL</argument>
-                <argument>${dbload.backup}</argument>
-              </arguments>
-            </configuration>
-            <executions>
-              <execution>
-                <id>db-load</id>
-                <phase>compile</phase>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.18.1</version>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-            <executions>
-              <execution>
-                <id>test-mysql</id>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <phase>test</phase>
-                <configuration>
-                  <skip>false</skip>
-                  <properties>
-                    <skip.oracle.test>false</skip.oracle.test>
-                    <test.properties>${basedir}/target/test-classes/conf/TestNG_YADA_MySQL.properties</test.properties>
-                  </properties>
-                  <useSystemClassLoader>false</useSystemClassLoader>
-                  <reportNameSuffix>mysql</reportNameSuffix>
-                  <!-- <reportFormat>plain</reportFormat> -->
-                  <trimStackTrace>false</trimStackTrace>
-                  <systemPropertyVariables>
-                    <java.naming.factory.initial>org.apache.naming.java.javaURLContextFactory</java.naming.factory.initial>
-                    <java.naming.factory.url.pkgs>org.apache.catalina.util.naming</java.naming.factory.url.pkgs>
-                    <java.naming.provider.url>org.apache.naming</java.naming.provider.url>
-                  </systemPropertyVariables>
-                  <additionalClasspathElements>
-                    <additionalClasspathElement>${test.properties}</additionalClasspathElement>
-                  </additionalClasspathElements>
-                  <properties>
-                    <property>
-                      <name>listener</name>
-                      <value>com.novartis.opensource.yada.test.QueryFileTransformer</value>
-                    </property>
-                  </properties>
-                  <suiteXmlFiles>
-                    <suiteXmlFile>src/test/resources/conf/TestNG_YADA_MySQL.xml</suiteXmlFile>
-                  </suiteXmlFiles>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>test-sqlite</id>
-      <properties>
-        <YADA.index.url>${YADA.sqlite.index.url}</YADA.index.url>
-        <YADA.index.username>${YADA.sqlite.index.username}</YADA.index.username>
-        <YADA.index.password>${YADA.sqlite.index.password}</YADA.index.password>
-        <YADA.index.autoCommit>true</YADA.index.autoCommit>
-        <YADA.index.driverClassName>${YADA.sqlite.index.driverClassName}</YADA.index.driverClassName>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>1.3.2</version>
-            <configuration>
-              <skip>${skip.db.load}</skip>
-              <executable>/bin/bash</executable>
-              <arguments>
-                <argument>${project.build.testOutputDirectory}/dbLoad.sh</argument>
-                <argument>SQLite</argument>
-                <argument>${dbload.backup}</argument>
-              </arguments>
-            </configuration>
-            <executions>
-              <execution>
-                <id>db-load</id>
-                <phase>compile</phase>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.18.1</version>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-            <executions>
-              <execution>
-                <id>test-sqlite</id>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <phase>test</phase>
-                <configuration>
-                  <skip>false</skip>
-                  <properties>
-                    <skip.oracle.test>false</skip.oracle.test>
-                    <test.properties>${basedir}/target/test-classes/conf/TestNG_YADA_SQLite.properties</test.properties>
-                  </properties>
-                  <useSystemClassLoader>false</useSystemClassLoader>
-                  <reportNameSuffix>oracle</reportNameSuffix>
-                  <trimStackTrace>false</trimStackTrace>
-                  <systemPropertyVariables>
-                    <java.naming.factory.initial>org.apache.naming.java.javaURLContextFactory</java.naming.factory.initial>
-                    <java.naming.factory.url.pkgs>org.apache.catalina.util.naming</java.naming.factory.url.pkgs>
-                    <java.naming.provider.url>org.apache.naming</java.naming.provider.url>
-                  </systemPropertyVariables>
-                  <additionalClasspathElements>
-                    <additionalClasspathElement>${test.properties}</additionalClasspathElement>
-                  </additionalClasspathElements>
-                  <properties>
-                    <property>
-                      <name>listener</name>
-                      <value>com.novartis.opensource.yada.test.QueryFileTransformer</value>
-                    </property>
-                  </properties>
-                  <suiteXmlFiles>
-                    <suiteXmlFile>src/test/resources/conf/TestNG_YADA_SQLite.xml</suiteXmlFile>
-                  </suiteXmlFiles>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>test-proxy</id>
-      <properties>
-        <YADA.index.url>${YADA.hsqldb.index.url}</YADA.index.url>
-        <YADA.index.username>${YADA.hsqldb.index.username}</YADA.index.username>
-        <YADA.index.password>${YADA.pgsql.index.password}</YADA.index.password>
-        <YADA.index.autoCommit>false</YADA.index.autoCommit>
-        <YADA.index.driverClassName>${YADA.hsqldb.index.driverClassName}</YADA.index.driverClassName>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.18.1</version>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-            <executions>
-              <execution>
-                <id>test-proxy</id>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <phase>test</phase>
-                <configuration>
-                  <skip>false</skip>
-                  <properties>
-                    <skip.oracle.test>false</skip.oracle.test>
-                    <test.properties>${basedir}/target/test-classes/conf/TestNG_YADA_SQLite.properties</test.properties>
-                  </properties>
-                  <useSystemClassLoader>false</useSystemClassLoader>
-                  <reportNameSuffix>oracle</reportNameSuffix>
-                  <trimStackTrace>false</trimStackTrace>
-                  <systemPropertyVariables>
-                    <java.naming.factory.initial>org.apache.naming.java.javaURLContextFactory</java.naming.factory.initial>
-                    <java.naming.factory.url.pkgs>org.apache.catalina.util.naming</java.naming.factory.url.pkgs>
-                    <java.naming.provider.url>org.apache.naming</java.naming.provider.url>
-                  </systemPropertyVariables>
-                  <additionalClasspathElements>
-                    <additionalClasspathElement>${test.properties}</additionalClasspathElement>
-                  </additionalClasspathElements>
-                  <properties>
-                    <property>
-                      <name>listener</name>
-                      <value>com.novartis.opensource.yada.test.QueryFileTransformer</value>
-                    </property>
-                  </properties>
-                  <suiteXmlFiles>
-                    <suiteXmlFile>src/test/resources/conf/TestNG_YADA_SQLite_REST_proxy.xml</suiteXmlFile>
-                  </suiteXmlFiles>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>test-noproxy</id>
-      <properties>
-        <YADA.index.url>${YADA.hsqldb.index.url}</YADA.index.url>
-        <YADA.index.username>${YADA.hsqldb.index.username}</YADA.index.username>
-        <YADA.index.password>${YADA.hsqldb.index.password}</YADA.index.password>
-        <YADA.index.autoCommit>false</YADA.index.autoCommit>
-        <YADA.index.driverClassName>${YADA.hsqldb.index.driverClassName}</YADA.index.driverClassName>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.18.1</version>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-            <executions>
-              <execution>
-                <id>test-proxy</id>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <phase>test</phase>
-                <configuration>
-                  <skip>false</skip>
-                  <properties>
-                    <skip.oracle.test>false</skip.oracle.test>
-                    <test.properties>${basedir}/target/test-classes/conf/TestNG_YADA_SQLite.properties</test.properties>
-                  </properties>
-                  <useSystemClassLoader>false</useSystemClassLoader>
-                  <reportNameSuffix>oracle</reportNameSuffix>
-                  <trimStackTrace>false</trimStackTrace>
-                  <systemPropertyVariables>
-                    <java.naming.factory.initial>org.apache.naming.java.javaURLContextFactory</java.naming.factory.initial>
-                    <java.naming.factory.url.pkgs>org.apache.catalina.util.naming</java.naming.factory.url.pkgs>
-                    <java.naming.provider.url>org.apache.naming</java.naming.provider.url>
-                  </systemPropertyVariables>
-                  <additionalClasspathElements>
-                    <additionalClasspathElement>${test.properties}</additionalClasspathElement>
-                  </additionalClasspathElements>
-                  <properties>
-                    <property>
-                      <name>listener</name>
-                      <value>com.novartis.opensource.yada.test.QueryFileTransformer</value>
-                    </property>
-                  </properties>
-                  <suiteXmlFiles>
-                    <suiteXmlFile>src/test/resources/conf/TestNG_YADA_SQLite_REST_noproxy.xml</suiteXmlFile>
-                  </suiteXmlFiles>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>test-fs</id>
-      <properties>
-        <YADA.index.url>${YADA.hsqldb.index.url}</YADA.index.url>
-        <YADA.index.username>${YADA.hsqldb.index.username}</YADA.index.username>
-        <YADA.index.password>${YADA.hsqldb.index.password}</YADA.index.password>
-        <YADA.index.autoCommit>false</YADA.index.autoCommit>
-        <YADA.index.driverClassName>${YADA.hsqldb.index.driverClassName}</YADA.index.driverClassName>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.18.1</version>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-            <executions>
-              <execution>
-                <id>test-fs</id>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <phase>test</phase>
-                <configuration>
-                  <skip>false</skip>
-                  <properties>
-                    <skip.oracle.test>false</skip.oracle.test>
-                    <test.properties>${basedir}/target/test-classes/conf/TestNG_YADA_SQLite.properties</test.properties>
-                  </properties>
-                  <useSystemClassLoader>false</useSystemClassLoader>
-                  <reportNameSuffix>oracle</reportNameSuffix>
-                  <trimStackTrace>false</trimStackTrace>
-                  <systemPropertyVariables>
-                    <java.naming.factory.initial>org.apache.naming.java.javaURLContextFactory</java.naming.factory.initial>
-                    <java.naming.factory.url.pkgs>org.apache.catalina.util.naming</java.naming.factory.url.pkgs>
-                    <java.naming.provider.url>org.apache.naming</java.naming.provider.url>
-                  </systemPropertyVariables>
-                  <additionalClasspathElements>
-                    <additionalClasspathElement>${test.properties}</additionalClasspathElement>
-                  </additionalClasspathElements>
-                  <properties>
-                    <property>
-                      <name>listener</name>
-                      <value>com.novartis.opensource.yada.test.QueryFileTransformer</value>
-                    </property>
-                  </properties>
-                  <suiteXmlFiles>
-                    <suiteXmlFile>src/test/resources/conf/TestNG_YADA_SQLite_FS.xml</suiteXmlFile>
+                    <suiteXmlFile>src/test/resources/conf/TestNG_YADA_pre9.xml</suiteXmlFile>
                   </suiteXmlFiles>
                 </configuration>
               </execution>
@@ -588,15 +206,6 @@
       <filter>${basedir}/src/main/resources/conf/build.properties</filter>
     </filters>
     <resources>
-      <resource>
-        <directory>${yada.war.scriptdir}</directory>
-        <filtering>true</filtering>
-        <includes>
-          <include>dbLoad.sh</include>
-          <include>*.sql</include>
-        </includes>
-        <targetPath>${project.build.testOutputDirectory}</targetPath>
-      </resource>
       <resource>
         <directory>${basedir}/src/main/resources/conf</directory>
         <filtering>true</filtering>
@@ -623,31 +232,29 @@
     </resources>
     <testResources>
       <testResource>
-        <directory>${basedir}/src/main/resources/conf</directory>
+        <directory>${basedir}/src/test/resources/conf</directory>
         <filtering>true</filtering>
-        <includes>
-          <include>ehcache.xml</include>
-          <include>log4j.properties</include>
-          <include>YADA.properties</include>
-        </includes>
-      </testResource>
-      <testResource>
-        <directory>${basedir}/src/main/resources/META-INF</directory>
-        <filtering>true</filtering>
-        <includes>
-          <include>MANIFEST.MF</include>
-        </includes>
-        <targetPath>META-INF</targetPath>
+        <targetPath>conf</targetPath>
+        <excludes>
+          <exclude>log4j.properties</exclude>
+          <exclude>YADA*.properties</exclude>
+        </excludes>
       </testResource>
       <testResource>
         <directory>${basedir}/src/test/resources/conf</directory>
         <filtering>true</filtering>
-        <targetPath>conf</targetPath>
+        <includes>
+          <include>log4j.properties</include>
+          <include>YADA*.properties</include>
+        </includes>
       </testResource>
       <testResource>
         <directory>${basedir}/src/test/resources/test</directory>
-        <filtering>true</filtering>
         <targetPath>test</targetPath>
+      </testResource>
+      <testResource>
+        <directory>${basedir}/src/test/resources/test_pre9</directory>
+        <targetPath>test_pre9</targetPath>
       </testResource>
       <testResource>
         <directory>${basedir}/src/test/resources/bin</directory>
@@ -659,7 +266,6 @@
         <filtering>false</filtering>
         <includes>
           <include>files/**</include>
-          <include>log4j.properties</include>
         </includes>
       </testResource>
     </testResources>
@@ -671,7 +277,7 @@
         <configuration>
           <archive>
             <addMavenDescriptor>false</addMavenDescriptor>
-            <manifestFile>target/classes/META-INF/MANIFEST.MF</manifestFile> 
+            <manifestFile>target/classes/META-INF/MANIFEST.MF</manifestFile>
           </archive>
         </configuration>
         <executions>
@@ -794,37 +400,38 @@
       </plugin>
     </plugins>
     <pluginManagement>
-    	<plugins>
-    		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-    		<plugin>
-    			<groupId>org.eclipse.m2e</groupId>
-    			<artifactId>lifecycle-mapping</artifactId>
-    			<version>1.0.0</version>
-    			<configuration>
-    				<lifecycleMappingMetadata>
-    					<pluginExecutions>
-    						<pluginExecution>
-    							<pluginExecutionFilter>
-    								<groupId>
-    									org.apache.maven.plugins
-    								</groupId>
-    								<artifactId>
-    									maven-antrun-plugin
-    								</artifactId>
-    								<versionRange>[1.6,)</versionRange>
-    								<goals>
-    									<goal>run</goal>
-    								</goals>
-    							</pluginExecutionFilter>
-    							<action>
-    								<ignore></ignore>
-    							</action>
-    						</pluginExecution>
-    					</pluginExecutions>
-    				</lifecycleMappingMetadata>
-    			</configuration>
-    		</plugin>
-    	</plugins>
+      <plugins>
+        <!--This plugin's configuration is used to store Eclipse m2e settings 
+          only. It has no influence on the Maven build itself. -->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>
+                      org.apache.maven.plugins
+                    </groupId>
+                    <artifactId>
+                      maven-antrun-plugin
+                    </artifactId>
+                    <versionRange>[1.6,)</versionRange>
+                    <goals>
+                      <goal>run</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore></ignore>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
     </pluginManagement>
   </build>
   <reporting>
@@ -899,40 +506,40 @@
     </plugins>
   </reporting>
   <dependencies>
-  <dependency>
-	<groupId>com.auth0</groupId>
-		<artifactId>java-jwt</artifactId>
-	</dependency>
+    <dependency>
+      <groupId>com.auth0</groupId>
+      <artifactId>java-jwt</artifactId>
+    </dependency>
     <dependency>
       <groupId>com.auth0</groupId>
       <artifactId>java-jwt</artifactId>
       <!-- <version>3.3.0</version> -->
       <exclusions>
-            <exclusion>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-            </exclusion>
-            <exclusion>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-            </exclusion>
-        </exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-annotations</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
-    <groupId>com.google.oauth-client</groupId>
-    <artifactId>google-oauth-client</artifactId>
-    <version>1.22.0</version>
+      <groupId>com.google.oauth-client</groupId>
+      <artifactId>google-oauth-client</artifactId>
+      <version>1.22.0</version>
     </dependency>
     <dependency>
       <groupId>com.google.http-client</groupId>
       <artifactId>google-http-client-jackson2</artifactId>
       <version>1.11.0-beta</version>
       <exclusions>
-            <exclusion>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-            </exclusion>
-        </exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.novartis.opensource</groupId>
@@ -940,19 +547,19 @@
       <version>0.9.6.1</version>
     </dependency>
     <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-core</artifactId>
-        <version>2.9.2</version> 
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>2.9.2</version>
     </dependency>
     <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>2.9.2</version> 
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.9.2</version>
     </dependency>
     <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-annotations</artifactId>
-        <version>2.9.2</version> 
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>2.9.2</version>
     </dependency>
     <dependency>
       <groupId>org.json</groupId>
@@ -1020,32 +627,14 @@
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
-    <!-- <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>dbcp</artifactId>
-      <scope>provided</scope>
-    </dependency> -->
-
     <!-- You'll need to install this jar manually in your maven repo -->
-    <!-- <dependency>
-        <groupId>com.microsoft.sqlserver</groupId>
-        <artifactId>sqljdbc4</artifactId>
-          <version>4.0</version>
-          <scope>test</scope>
-        </dependency> -->
+    <!-- <dependency> <groupId>com.microsoft.sqlserver</groupId> <artifactId>sqljdbc4</artifactId> 
+      <version>4.0</version> <scope>test</scope> </dependency> -->
     <!-- You'll need to install this jar manually in your maven repo -->
-    <!-- <dependency>
-      <groupId>com.vertica</groupId>
-      <artifactId>vertica-jdbc</artifactId>
-      <version>7.1.1-1</version>
-      <scope>test</scope>
-    </dependency> -->
-    <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>5.1.31</version>
-      <scope>test</scope>
-    </dependency>
+    <!-- <dependency> <groupId>com.vertica</groupId> <artifactId>vertica-jdbc</artifactId> 
+      <version>7.1.1-1</version> <scope>test</scope> </dependency> -->
+    <!-- <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId> 
+      <version>5.1.31</version> <scope>test</scope> </dependency> -->
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
@@ -1053,86 +642,61 @@
     </dependency>
     <!-- restore for oracle 11g -->
     <!-- You may need to install this jar manually in your maven repo -->
-    <!-- <dependency>
-      <groupId>com.oracle</groupId>
-      <artifactId>ojdbc6</artifactId>
-      <version>11.2.0.3</version>
-      <scope>test</scope>
-    </dependency> -->
+    <!-- <dependency> <groupId>com.oracle</groupId> <artifactId>ojdbc6</artifactId> 
+      <version>11.2.0.3</version> <scope>test</scope> </dependency> -->
     <!-- omit for oracle 11g -->
     <!-- You may need to install this jar manually in your maven repo -->
-    <!-- <dependency>
-        <groupId>com.oracle</groupId>
-        <artifactId>ojdbc14</artifactId>
-          <version>10.2.0.4.0</version>
-          <scope>test</scope>
-        </dependency> -->
+    <!-- <dependency> <groupId>com.oracle</groupId> <artifactId>ojdbc14</artifactId> 
+      <version>10.2.0.4.0</version> <scope>test</scope> </dependency> -->
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>catalina</artifactId>
-      <scope>test</scope>
-    </dependency> -->
     <dependency>
       <groupId>nl.javadude.assumeng</groupId>
       <artifactId>assumeng</artifactId>
       <scope>test</scope>
     </dependency>
     <!-- unused -->
-    <!-- <dependency> <groupId>javax.xml.stream</groupId> <artifactId>stax-api</artifactId>
+    <!-- <dependency> <groupId>javax.xml.stream</groupId> <artifactId>stax-api</artifactId> 
       <version>1.0-2</version> </dependency> -->
-    <!-- <dependency> <groupId>org.pojava</groupId> <artifactId>persistence</artifactId>
+    <!-- <dependency> <groupId>org.pojava</groupId> <artifactId>persistence</artifactId> 
       <version>3.0.0</version> </dependency> -->
-    <!-- <dependency> <groupId>commons-beanutils</groupId> <artifactId>commons-beanutils</artifactId>
+    <!-- <dependency> <groupId>commons-beanutils</groupId> <artifactId>commons-beanutils</artifactId> 
       <version>1.8.3</version> </dependency> -->
-    <!-- <dependency> <groupId>org.apache.commons</groupId> <artifactId>commons-compress</artifactId>
+    <!-- <dependency> <groupId>org.apache.commons</groupId> <artifactId>commons-compress</artifactId> 
       <version>1.4.1</version> </dependency> -->
-    <!-- <dependency> <groupId>commons-httpclient</groupId> <artifactId>commons-httpclient</artifactId>
+    <!-- <dependency> <groupId>commons-httpclient</groupId> <artifactId>commons-httpclient</artifactId> 
       <version>3.1</version> </dependency> -->
-    <!-- <dependency> <groupId>commons-io</groupId> <artifactId>commons-io</artifactId>
+    <!-- <dependency> <groupId>commons-io</groupId> <artifactId>commons-io</artifactId> 
       <version>2.4</version> </dependency> -->
-    <!-- <dependency> <groupId>dom4j</groupId> <artifactId>dom4j</artifactId>
+    <!-- <dependency> <groupId>dom4j</groupId> <artifactId>dom4j</artifactId> 
       <version>1.6.1</version> </dependency> -->
-    <!-- <dependency> <groupId>xalan</groupId> <artifactId>xalan</artifactId>
+    <!-- <dependency> <groupId>xalan</groupId> <artifactId>xalan</artifactId> 
       <version>2.7.1</version> </dependency> -->
-    <!-- <dependency> <groupId>xalan</groupId> <artifactId>serializer</artifactId>
+    <!-- <dependency> <groupId>xalan</groupId> <artifactId>serializer</artifactId> 
       <version>2.7.1</version> </dependency> -->
-    <!-- <dependency> <groupId>xerces</groupId> <artifactId>xercesImpl</artifactId>
+    <!-- <dependency> <groupId>xerces</groupId> <artifactId>xercesImpl</artifactId> 
       <version>2.11.0</version> </dependency> -->
-    <!-- <dependency> <groupId>org.apache.xmlbeans</groupId> <artifactId>xmlbeans</artifactId>
+    <!-- <dependency> <groupId>org.apache.xmlbeans</groupId> <artifactId>xmlbeans</artifactId> 
       <version>2.3.0</version> </dependency> -->
-    <!-- <dependency> <groupId>org.apache.xmlgraphics</groupId> <artifactId>xmlgraphics-commons</artifactId>
+    <!-- <dependency> <groupId>org.apache.xmlgraphics</groupId> <artifactId>xmlgraphics-commons</artifactId> 
       <version>1.4</version> </dependency> -->
     <dependency>
       <groupId>org.tuckey</groupId>
       <artifactId>urlrewritefilter</artifactId>
       <version>4.0.4</version>
     </dependency>
-    <dependency>
-      <groupId>org.xerial</groupId>
-      <artifactId>sqlite-jdbc</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <!-- <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-dbcp</artifactId>
-      <version>7.0.47</version>
-      <scope>provided</scope>
-    </dependency> -->
+    <!-- <dependency> <groupId>org.xerial</groupId> <artifactId>sqlite-jdbc</artifactId> 
+      <scope>test</scope> </dependency> -->
     <dependency>
       <groupId>org.mozilla</groupId>
       <artifactId>rhino</artifactId>
       <version>1.7R5</version>
     </dependency>
-    <!-- <dependency>
-      <groupId>org.elasticsearch</groupId>
-      <artifactId>elasticsearch</artifactId>
-      <version>2.1.1</version>
-    </dependency> -->
+    <!-- <dependency> <groupId>org.elasticsearch</groupId> <artifactId>elasticsearch</artifactId> 
+      <version>2.1.1</version> </dependency> -->
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
@@ -1167,8 +731,28 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-    	<groupId>javax.xml.soap</groupId>
-    	<artifactId>javax.xml.soap-api</artifactId>
+      <groupId>javax.xml.soap</groupId>
+      <artifactId>javax.xml.soap-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit</artifactId>
+      <version>5.8.1.202007141445-r</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.xml.messaging.saaj</groupId>
+      <artifactId>saaj-impl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.kosprov.jargon2</groupId>
+      <artifactId>jargon2-api</artifactId>
+      <version>1.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.kosprov.jargon2</groupId>
+      <artifactId>jargon2-native-ri-backend</artifactId>
+      <version>1.1.1</version>
+      <scope>runtime</scope>
     </dependency>
   </dependencies>
 </project>

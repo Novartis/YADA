@@ -1,214 +1,214 @@
 # standard long params, single query, map each field from object 1
-qname=YADA test harmony map 1&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}
+qname=YADATEST/test harmony map 1&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}
 # standard long params, single query, map each field from object in array 2
-qname=YADA test harmony map 1&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]
+qname=YADATEST/test harmony map 1&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]
 
 # standard long params, single query, map 2 of 3 fields from object 3
-qname=YADA test harmony map 1&harmonyMap={"col1":"STRING","col2":"INT"}
+qname=YADATEST/test harmony map 1&harmonyMap={"col1":"STRING","col2":"INT"}
 # standard long params, single query, map 2 of 3 fields from object in array 4
-qname=YADA test harmony map 1&harmonyMap=[{"col1":"STRING","col2":"INT"}]
+qname=YADATEST/test harmony map 1&harmonyMap=[{"col1":"STRING","col2":"INT"}]
 
 # short params 5-8
-q=YADA test harmony map 1&h={"col1":"STRING","col2":"INT","col3":"FLOAT"}
-q=YADA test harmony map 1&h=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]
-q=YADA test harmony map 1&h={"col1":"STRING","col2":"INT"}
-q=YADA test harmony map 1&h=[{"col1":"STRING","col2":"INT"}]
+q=YADATEST/test harmony map 1&h={"col1":"STRING","col2":"INT","col3":"FLOAT"}
+q=YADATEST/test harmony map 1&h=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]
+q=YADATEST/test harmony map 1&h={"col1":"STRING","col2":"INT"}
+q=YADATEST/test harmony map 1&h=[{"col1":"STRING","col2":"INT"}]
 
 # JSON params 9-16
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&h={"col1":"STRING","col2":"INT","col3":"FLOAT"}
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&h=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&h={"col1":"STRING","col2":"INT","col3":"FLOAT"}
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&h=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]
 
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT"}
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT"}]
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&h={"col1":"STRING","col2":"INT"}
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&h=[{"col1":"STRING","col2":"INT"}]
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT"}
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT"}]
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&h={"col1":"STRING","col2":"INT"}
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&h=[{"col1":"STRING","col2":"INT"}]
 
 # JSON params, single query, embedded map 17
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}}]
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}}]
 
 # JSON params, multi-query (2), one global map 18-23
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}]
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE","col5":"TIME"}]
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE"}]
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}]
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE","col5":"TIME"}]
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE"}]
 
 # JSON params, multi-query (3), one global map 24-29
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"},{},{}]
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE","col5":"TIME"},{"col1":"STRING","col5":"TIME"}]
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE"},{"col1":"STRING"}]
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"},{},{}]
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE","col5":"TIME"},{"col1":"STRING","col5":"TIME"}]
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE"},{"col1":"STRING"}]
 
 # JSON params, multi-query (3), embedded maps 30-34
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}},{"qname":"YADA test harmony map 2",DATA:[{}],harmonyMap:{}},{"qname":"YADA test harmony map 3",DATA:[{}]}]
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADA test harmony map 2",DATA:[{}],harmonyMap:{"col1":"STRING","col4":"DATE","col5":"TIME"}},{"qname":"YADA test harmony map 3",DATA:[{}],harmonyMap:{"col1":"STRING","col5":"TIME"}}]
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADA test harmony map 2",DATA:[{}],harmonyMap:{"col1":"STRING","col4":"DATE"}},{"qname":"YADA test harmony map 3",DATA:[{}],harmonyMap:{"col1":"STRING"}}]
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}},{"qname":"YADATEST/test harmony map 2",DATA:[{}],harmonyMap:{}},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADATEST/test harmony map 2",DATA:[{}],harmonyMap:{"col1":"STRING","col4":"DATE","col5":"TIME"}},{"qname":"YADATEST/test harmony map 3",DATA:[{}],harmonyMap:{"col1":"STRING","col5":"TIME"}}]
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADATEST/test harmony map 2",DATA:[{}],harmonyMap:{"col1":"STRING","col4":"DATE"}},{"qname":"YADATEST/test harmony map 3",DATA:[{}],harmonyMap:{"col1":"STRING"}}]
 
 ## CSV
 ## standard long params, single query, map each field from object
-qname=YADA test harmony map 1&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&format=csv
+qname=YADATEST/test harmony map 1&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&format=csv
 ## standard long params, single query, map each field from object in array
-qname=YADA test harmony map 1&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&format=csv
+qname=YADATEST/test harmony map 1&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&format=csv
 
 ## standard long params, single query, map 2 of 3 fields from object
-qname=YADA test harmony map 1&harmonyMap={"col1":"STRING","col2":"INT"}&format=csv
+qname=YADATEST/test harmony map 1&harmonyMap={"col1":"STRING","col2":"INT"}&format=csv
 ## standard long params, single query, map 2 of 3 fields from object in array
-qname=YADA test harmony map 1&harmonyMap=[{"col1":"STRING","col2":"INT"}]&format=csv
+qname=YADATEST/test harmony map 1&harmonyMap=[{"col1":"STRING","col2":"INT"}]&format=csv
 
 ## short params
-q=YADA test harmony map 1&h={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=csv
-q=YADA test harmony map 1&h=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=csv
-q=YADA test harmony map 1&h={"col1":"STRING","col2":"INT"}&f=csv
-q=YADA test harmony map 1&h=[{"col1":"STRING","col2":"INT"}]&f=csv
+q=YADATEST/test harmony map 1&h={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=csv
+q=YADATEST/test harmony map 1&h=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=csv
+q=YADATEST/test harmony map 1&h={"col1":"STRING","col2":"INT"}&f=csv
+q=YADATEST/test harmony map 1&h=[{"col1":"STRING","col2":"INT"}]&f=csv
 
 ## JSON params
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&format=csv
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&format=csv
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&h={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=csv
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&h=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=csv
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&format=csv
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&format=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&h={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&h=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=csv
 
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT"}&format=csv
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT"}]&format=csv
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&h={"col1":"STRING","col2":"INT"}&f=csv
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&h=[{"col1":"STRING","col2":"INT"}]&f=csv
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT"}&format=csv
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT"}]&format=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&h={"col1":"STRING","col2":"INT"}&f=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&h=[{"col1":"STRING","col2":"INT"}]&f=csv
 
 ## JSON params, single query, embedded map
-j=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}}]&f=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}}]&f=csv
 
 ## JSON params, multi-query (2), one global map
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=csv
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}&f=csv
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=csv
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}]&f=csv
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE","col5":"TIME"}]&f=csv
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE"}]&f=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}&f=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}]&f=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE","col5":"TIME"}]&f=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE"}]&f=csv
 
 ## JSON params, multi-query (3), one global map
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=csv
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}&f=csv
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=csv
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"},{},{}]&f=csv
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE","col5":"TIME"},{"col1":"STRING","col5":"TIME"}]&f=csv
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE"},{"col1":"STRING"}]&f=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}&f=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"},{},{}]&f=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE","col5":"TIME"},{"col1":"STRING","col5":"TIME"}]&f=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE"},{"col1":"STRING"}]&f=csv
 
 ## JSON params, multi-query (3), embedded maps
-j=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&f=csv
-j=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&f=csv
-j=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}},{"qname":"YADA test harmony map 2",DATA:[{}],harmonyMap:{}},{"qname":"YADA test harmony map 3",DATA:[{}]}]&f=csv
-j=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADA test harmony map 2",DATA:[{}],harmonyMap:{"col1":"STRING","col4":"DATE","col5":"TIME"}},{"qname":"YADA test harmony map 3",DATA:[{}],harmonyMap:{"col1":"STRING","col5":"TIME"}}]&f=csv
-j=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADA test harmony map 2",DATA:[{}],harmonyMap:{"col1":"STRING","col4":"DATE"}},{"qname":"YADA test harmony map 3",DATA:[{}],harmonyMap:{"col1":"STRING"}}]&f=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&f=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&f=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}},{"qname":"YADATEST/test harmony map 2",DATA:[{}],harmonyMap:{}},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&f=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADATEST/test harmony map 2",DATA:[{}],harmonyMap:{"col1":"STRING","col4":"DATE","col5":"TIME"}},{"qname":"YADATEST/test harmony map 3",DATA:[{}],harmonyMap:{"col1":"STRING","col5":"TIME"}}]&f=csv
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADATEST/test harmony map 2",DATA:[{}],harmonyMap:{"col1":"STRING","col4":"DATE"}},{"qname":"YADATEST/test harmony map 3",DATA:[{}],harmonyMap:{"col1":"STRING"}}]&f=csv
 
 ## XML
 ## standard long params, single query, map each field from object
-qname=YADA test harmony map 1&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&format=xml
+qname=YADATEST/test harmony map 1&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&format=xml
 ## standard long params, single query, map each field from object in array
-qname=YADA test harmony map 1&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&format=xml
+qname=YADATEST/test harmony map 1&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&format=xml
 
 ## standard long params, single query, map 2 of 3 fields from object
-qname=YADA test harmony map 1&harmonyMap={"col1":"STRING","col2":"INT"}&format=xml
+qname=YADATEST/test harmony map 1&harmonyMap={"col1":"STRING","col2":"INT"}&format=xml
 ## standard long params, single query, map 2 of 3 fields from object in array
-qname=YADA test harmony map 1&harmonyMap=[{"col1":"STRING","col2":"INT"}]&format=xml
+qname=YADATEST/test harmony map 1&harmonyMap=[{"col1":"STRING","col2":"INT"}]&format=xml
 
 ## short params
-q=YADA test harmony map 1&h={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=xml
-q=YADA test harmony map 1&h=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=xml
-q=YADA test harmony map 1&h={"col1":"STRING","col2":"INT"}&f=xml
-q=YADA test harmony map 1&h=[{"col1":"STRING","col2":"INT"}]&f=xml
+q=YADATEST/test harmony map 1&h={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=xml
+q=YADATEST/test harmony map 1&h=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=xml
+q=YADATEST/test harmony map 1&h={"col1":"STRING","col2":"INT"}&f=xml
+q=YADATEST/test harmony map 1&h=[{"col1":"STRING","col2":"INT"}]&f=xml
 
 ## JSON params
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&format=xml
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&format=xml
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&h={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=xml
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&h=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=xml
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&format=xml
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&format=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&h={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&h=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=xml
 
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT"}&format=xml
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT"}]&format=xml
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&h={"col1":"STRING","col2":"INT"}&f=xml
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&h=[{"col1":"STRING","col2":"INT"}]&f=xml
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT"}&format=xml
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT"}]&format=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&h={"col1":"STRING","col2":"INT"}&f=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&h=[{"col1":"STRING","col2":"INT"}]&f=xml
 
 ## JSON params, single query, embedded map
-j=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}}]&f=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}}]&f=xml
 
 ## JSON params, multi-query (2), one global map
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=xml
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}&f=xml
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=xml
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}]&f=xml
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE","col5":"TIME"}]&f=xml
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE"}]&f=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}&f=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}]&f=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE","col5":"TIME"}]&f=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE"}]&f=xml
 
 ## JSON params, multi-query (3), one global map
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=xml
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}&f=xml
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=xml
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"},{},{}]&f=xml
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE","col5":"TIME"},{"col1":"STRING","col5":"TIME"}]&f=xml
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE"},{"col1":"STRING"}]&f=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}&f=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"},{},{}]&f=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE","col5":"TIME"},{"col1":"STRING","col5":"TIME"}]&f=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE"},{"col1":"STRING"}]&f=xml
 
 ## JSON params, multi-query (3), embedded maps
-j=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&f=xml
-j=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&f=xml
-j=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}},{"qname":"YADA test harmony map 2",DATA:[{}],harmonyMap:{}},{"qname":"YADA test harmony map 3",DATA:[{}]}]&f=xml
-j=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADA test harmony map 2",DATA:[{}],harmonyMap:{"col1":"STRING","col4":"DATE","col5":"TIME"}},{"qname":"YADA test harmony map 3",DATA:[{}],harmonyMap:{"col1":"STRING","col5":"TIME"}}]&f=xml
-j=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADA test harmony map 2",DATA:[{}],harmonyMap:{"col1":"STRING","col4":"DATE"}},{"qname":"YADA test harmony map 3",DATA:[{}],harmonyMap:{"col1":"STRING"}}]&f=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&f=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&f=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}},{"qname":"YADATEST/test harmony map 2",DATA:[{}],harmonyMap:{}},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&f=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADATEST/test harmony map 2",DATA:[{}],harmonyMap:{"col1":"STRING","col4":"DATE","col5":"TIME"}},{"qname":"YADATEST/test harmony map 3",DATA:[{}],harmonyMap:{"col1":"STRING","col5":"TIME"}}]&f=xml
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADATEST/test harmony map 2",DATA:[{}],harmonyMap:{"col1":"STRING","col4":"DATE"}},{"qname":"YADATEST/test harmony map 3",DATA:[{}],harmonyMap:{"col1":"STRING"}}]&f=xml
 
 ## HTML
 ## standard long params, single query, map each field from object
-qname=YADA test harmony map 1&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&format=html
+qname=YADATEST/test harmony map 1&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&format=html
 ## standard long params, single query, map each field from object in array
-qname=YADA test harmony map 1&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&format=html
+qname=YADATEST/test harmony map 1&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&format=html
 
 ## standard long params, single query, map 2 of 3 fields from object
-qname=YADA test harmony map 1&harmonyMap={"col1":"STRING","col2":"INT"}&format=html
+qname=YADATEST/test harmony map 1&harmonyMap={"col1":"STRING","col2":"INT"}&format=html
 ## standard long params, single query, map 2 of 3 fields from object in array
-qname=YADA test harmony map 1&harmonyMap=[{"col1":"STRING","col2":"INT"}]&format=html
+qname=YADATEST/test harmony map 1&harmonyMap=[{"col1":"STRING","col2":"INT"}]&format=html
 
 ## short params
-q=YADA test harmony map 1&h={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=html
-q=YADA test harmony map 1&h=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=html
-q=YADA test harmony map 1&h={"col1":"STRING","col2":"INT"}&f=html
-q=YADA test harmony map 1&h=[{"col1":"STRING","col2":"INT"}]&f=html
+q=YADATEST/test harmony map 1&h={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=html
+q=YADATEST/test harmony map 1&h=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=html
+q=YADATEST/test harmony map 1&h={"col1":"STRING","col2":"INT"}&f=html
+q=YADATEST/test harmony map 1&h=[{"col1":"STRING","col2":"INT"}]&f=html
 
 ## JSON params
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&format=html
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&format=html
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&h={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=html
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&h=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=html
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&format=html
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&format=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&h={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&h=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=html
 
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT"}&format=html
-JSONParams=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT"}]&format=html
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&h={"col1":"STRING","col2":"INT"}&f=html
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]}]&h=[{"col1":"STRING","col2":"INT"}]&f=html
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT"}&format=html
+JSONParams=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT"}]&format=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&h={"col1":"STRING","col2":"INT"}&f=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]}]&h=[{"col1":"STRING","col2":"INT"}]&f=html
 
 ## JSON params, single query, embedded map
-j=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}}]&f=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}}]&f=html
 
 ## JSON params, multi-query (2), one global map
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=html
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}&f=html
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=html
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}]&f=html
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE","col5":"TIME"}]&f=html
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE"}]&f=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}&f=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}]&f=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE","col5":"TIME"}]&f=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE"}]&f=html
 
 ## JSON params, multi-query (3), one global map
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=html
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}&f=html
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=html
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"},{},{}]&f=html
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE","col5":"TIME"},{"col1":"STRING","col5":"TIME"}]&f=html
-j=[{"qname":"YADA test harmony map 1",DATA:[{}]},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE"},{"col1":"STRING"}]&f=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT"}&f=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap={"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}&f=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"}]&f=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"},{},{}]&f=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE","col5":"TIME"},{"col1":"STRING","col5":"TIME"}]&f=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}]},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&harmonyMap=[{"col1":"STRING","col2":"INT","col3":"FLOAT"},{"col1":"STRING","col4":"DATE"},{"col1":"STRING"}]&f=html
 
 ## JSON params, multi-query (3), embedded maps
-j=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&f=html
-j=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}},{"qname":"YADA test harmony map 2",DATA:[{}]},{"qname":"YADA test harmony map 3",DATA:[{}]}]&f=html
-j=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}},{"qname":"YADA test harmony map 2",DATA:[{}],harmonyMap:{}},{"qname":"YADA test harmony map 3",DATA:[{}]}]&f=html
-j=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADA test harmony map 2",DATA:[{}],harmonyMap:{"col1":"STRING","col4":"DATE","col5":"TIME"}},{"qname":"YADA test harmony map 3",DATA:[{}],harmonyMap:{"col1":"STRING","col5":"TIME"}}]&f=html
-j=[{"qname":"YADA test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADA test harmony map 2",DATA:[{}],harmonyMap:{"col1":"STRING","col4":"DATE"}},{"qname":"YADA test harmony map 3",DATA:[{}],harmonyMap:{"col1":"STRING"}}]&f=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&f=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}},{"qname":"YADATEST/test harmony map 2",DATA:[{}]},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&f=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT","col4":"DATE","col5":"TIME"}},{"qname":"YADATEST/test harmony map 2",DATA:[{}],harmonyMap:{}},{"qname":"YADATEST/test harmony map 3",DATA:[{}]}]&f=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADATEST/test harmony map 2",DATA:[{}],harmonyMap:{"col1":"STRING","col4":"DATE","col5":"TIME"}},{"qname":"YADATEST/test harmony map 3",DATA:[{}],harmonyMap:{"col1":"STRING","col5":"TIME"}}]&f=html
+j=[{"qname":"YADATEST/test harmony map 1",DATA:[{}],harmonyMap:{"col1":"STRING","col2":"INT","col3":"FLOAT"}},{"qname":"YADATEST/test harmony map 2",DATA:[{}],harmonyMap:{"col1":"STRING","col4":"DATE"}},{"qname":"YADATEST/test harmony map 3",DATA:[{}],harmonyMap:{"col1":"STRING"}}]&f=html

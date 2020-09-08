@@ -1,0 +1,27 @@
+q=YADA test SELECT&f=tsv&f=tsv&format=tsv
+q=YADA test SELECT INTEGER with INS&p=1,2,3,10&f=tsv&f=tsv&format=tsv
+q=YADA test SELECT VARCHAR with INS&p=[A,B,Z]&f=tsv&f=tsv&format=tsv
+q=YADA test SELECT VARCHAR with INS&p=A,B,Z &f=tsv&f=tsv&format=tsv
+q=YADA test SELECT with multiple INS&p=[A,B,Z],10&f=tsv&f=tsv&format=tsv
+q=YADA test SELECT with multiple INS&p=[A,B,Z],[8,9,10]&f=tsv&f=tsv&format=tsv
+
+qname=YADA test SELECT&format=tsv
+qname=YADA test SELECT INTEGER with INS&params=1,2,3,10&format=tsv
+qname=YADA test SELECT VARCHAR with INS&params=[A,B,Z]&format=tsv
+qname=YADA test SELECT VARCHAR with INS&params=A,B,Z &format=tsv
+qname=YADA test SELECT with multiple INS&params=[A,B,Z],10&format=tsv
+qname=YADA test SELECT with multiple INS&params=[A,B,Z],[8,9,10]&format=tsv
+
+q=YADA test SELECT&f=tab&f=tab&format=tab
+q=YADA test SELECT INTEGER with INS&p=1,2,3,10&f=tab&f=tab&format=tab
+q=YADA test SELECT VARCHAR with INS&p=[A,B,Z]&f=tab&f=tab&format=tab
+q=YADA test SELECT VARCHAR with INS&p=A,B,Z &f=tab&f=tab&format=tab
+q=YADA test SELECT with multiple INS&p=[A,B,Z],10&f=tab&f=tab&format=tab
+q=YADA test SELECT with multiple INS&p=[A,B,Z],[8,9,10]&f=tab&f=tab&format=tab
+
+qname=YADA test SELECT&format=tab
+qname=YADA test SELECT INTEGER with INS&params=1,2,3,10&format=tab
+qname=YADA test SELECT VARCHAR with INS&params=[A,B,Z]&format=tab
+qname=YADA test SELECT VARCHAR with INS&params=A,B,Z &format=tab
+qname=YADA test SELECT with multiple INS&params=[A,B,Z],10&format=tab
+qname=YADA test SELECT with multiple INS&params=[A,B,Z],[8,9,10]&format=tab

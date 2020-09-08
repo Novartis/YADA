@@ -1,0 +1,25 @@
+{
+  "query": "/posts/1",
+  "params": [
+    {
+      "name": "ck",
+      "value": "test",
+      "rule": 1
+    },
+    {
+      "name": "pz",
+      "value": "-1",
+      "rule": 1
+    },
+    {
+      "name": "pl",
+      "value": "Gatekeeper",
+      "rule": 1
+    },
+    {
+      "name": "c",
+      "value": "false",
+      "rule": 1
+    }
+  ]
+}

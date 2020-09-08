@@ -1,0 +1,3 @@
+{
+  "query": "select * from yada_test where col1=?v and col2=?i"
+}

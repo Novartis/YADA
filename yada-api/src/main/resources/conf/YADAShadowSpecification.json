@@ -1,0 +1,73 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/YADAShadow",
+    "definitions": {
+        "YADAShadow": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "users": {
+                    "type": "object",
+                    "items": {
+                        "$ref": "#/definitions/User"
+                    }
+                }
+            },
+            "required": [
+                "users"
+            ],
+            "title": "YADAShadow"
+        },
+        "User": {
+            "type": "object",
+            "additionalProperties": false,
+            "patternProperties": {
+            	"^[A-Za-z0-9\\._%\\+-]+@[A-Za-z0-9\\.-]+\\.[A-Za-z]{2,6}$" :
+                {
+                  "$ref" : "#/definitions/Identity"
+	            }
+            },
+            "title": "User"
+        },
+        "Identity": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "hash": {
+                    "type": "string"
+                },
+                "grants": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Grant"
+                    }
+                }
+            },
+            "required": [
+                "grants",
+                "hash"
+            ],
+            "title": "Identity"
+        },
+        "Grant": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "app": {
+                    "type": "string"
+                },
+                "keys": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "app",
+                "keys"
+            ],
+            "title": "Grant"
+        }
+    }
+}

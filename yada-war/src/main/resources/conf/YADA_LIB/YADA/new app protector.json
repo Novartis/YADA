@@ -1,0 +1,3 @@
+{
+  "query": "select 1 from yada_ug where upper(role)='ADMIN' and userid=?v"
+}

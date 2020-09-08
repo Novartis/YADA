@@ -1,2 +1,2 @@
-j=[{"qname":"YADAFSIN test write","DATA":[{"YADA_1":"writing"}]}]
-JSONParams=[{"qname":"YADAFSIN test write","DATA":[{"YADA_1":"writing"}]}]
+j=[{"qname":"YADAFSIN/test write","DATA":[{"YADA_1":"writing"}]}]
+JSONParams=[{"qname":"YADAFSIN/test write","DATA":[{"YADA_1":"writing"}]}]

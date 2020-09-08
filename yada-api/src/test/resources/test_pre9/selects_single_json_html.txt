@@ -1,0 +1,13 @@
+j=[{"qname":"YADA test SELECT","DATA":[{}]}]&f=html
+j=[{"qname":"YADA test SELECT INTEGER with INS","DATA":[{"COL2":"1,2,3,10"}]}]&f=html
+j=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":["A","B","Z"]}]}]&f=html
+j=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"}]}]&f=html
+j=[{"qname":"YADA test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":"10"}]}]&f=html
+j=[{"qname":"YADA test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":10}]}]&f=html
+
+JSONParams=[{"qname":"YADA test SELECT","DATA":[{}]}]&format=html
+JSONParams=[{"qname":"YADA test SELECT INTEGER with INS","DATA":[{"COL2":"1,2,3,10"}]}]&format=html
+JSONParams=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":["A","B","Z"]}]}]&format=html
+JSONParams=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"}]}]&format=html
+JSONParams=[{"qname":"YADA test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":"10"}]}]&format=html
+JSONParams=[{"qname":"YADA test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":10}]}]&format=html

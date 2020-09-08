@@ -1,0 +1,3 @@
+{
+  "query": "select qname as \"QNAME\", query as \"QUERY\" from yada_query where qname like 'YADA test%' and  (qname like '%INSERT%' or qname like '%UPDATE%' or qname like '%SELECT%')"
+}

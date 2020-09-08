@@ -98,7 +98,7 @@ public class ConnectionFactoryTest {
    * Tests {@link ConnectionFactory#getConnection(String)} by attempting to connect to the YADA Index.
    * @throws YADAConnectionException when the connection can't be opened
    */
-  @Test (groups = {"core"})
+  @Test (groups = {"core"}, enabled = false)
   public void getConnection() throws YADAConnectionException {
     this.connection = ConnectionFactory.getConnectionFactory().getConnection(ConnectionFactory.YADA_APP);
   }
@@ -108,7 +108,7 @@ public class ConnectionFactoryTest {
    * The test is successful if a {@link YADAConnectionException} is thrown.
    * @throws YADAConnectionException when the connection can't be opened
    */
-  @Test (groups = {"core"}, expectedExceptions=YADAConnectionException.class)
+  @Test (groups = {"core"}, expectedExceptions=YADAConnectionException.class, enabled = false)
   public void getUnknownConnectionFail() throws YADAConnectionException 
   {
   	ConnectionFactory.getConnectionFactory().getConnection("jdbc/yomama");
@@ -131,7 +131,7 @@ public class ConnectionFactoryTest {
    * @throws YADAConnectionException when the connection can't be opened
    */
   //@AfterSuite (groups = {"core", "json","standard","api","jsp","options","plugins"})
-	@AfterSuite(alwaysRun = true)
+	@AfterSuite(alwaysRun = false)
   public void releaseResources() throws YADAConnectionException 
   {
   	ConnectionFactory.releaseResources(this.connection);

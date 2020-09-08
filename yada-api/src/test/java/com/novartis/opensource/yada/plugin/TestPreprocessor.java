@@ -69,14 +69,14 @@ public class TestPreprocessor extends AbstractPreprocessor
 			if(res.has("RESULTSET") && res.getJSONObject("RESULTSET").getInt("total") == 0)
 			{
 				lyadaReq = new YADARequest();
-				lyadaReq.setQname(new String[] { "YADA test INSERT" });
+				lyadaReq.setQname(new String[] { "YADATEST/test INSERT" });
 				lyadaReq.setParams(new String[] { "A,10,7.5,26-SEP-2014" });
 			}
 			// if the result contains data, create a new request to delete it
 			else if(res.has("RESULTSET") && res.getJSONObject("RESULTSET").getInt("total") > 0)
 			{
 				lyadaReq = new YADARequest();
-				lyadaReq.setQname(new String[] { "YADA test DELETE" });
+				lyadaReq.setQname(new String[] { "YADATEST/test DELETE" });
 			}
 			else
 			// if the result is non-conforming, throw an exception

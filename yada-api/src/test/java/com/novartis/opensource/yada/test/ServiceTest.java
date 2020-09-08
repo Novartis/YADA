@@ -33,6 +33,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,6 +81,8 @@ import com.novartis.opensource.yada.YADAParam;
 import com.novartis.opensource.yada.YADAQueryConfigurationException;
 import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADARequestException;
+import com.novartis.opensource.yada.YADAResourceException;
+import com.novartis.opensource.yada.YADASecurityException;
 import com.novartis.opensource.yada.format.YADAResponseException;
 import com.novartis.opensource.yada.util.YADAUtils;
 
@@ -99,9 +102,9 @@ import com.novartis.opensource.yada.util.YADAUtils;
 /**
  * Tests all manner of queries via API and HTTP. Uses query parameter strings
  * and json strings stored in resources as test cases
- * 
+ *
  * @author David Varon
- * 
+ *
  */
 @Listeners(AssumptionListener.class)
 public class ServiceTest
@@ -112,24 +115,24 @@ public class ServiceTest
    */
   private static Logger l = Logger.getLogger(ServiceTest.class);
   /**
-   * Constant ref to <code>log.stdout</code> system property.  When present or true, prints qname and result to console during testing.  This is useful for troubleshooting but otherwise a pain. 
+   * Constant ref to <code>log.stdout</code> system property.  When present or true, prints qname and result to console during testing.  This is useful for troubleshooting but otherwise a pain.
    */
   protected static final String LOG_STDOUT = "log.stdout";
   /**
    * Constant equal to:
    * <code>^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\",){3}(\"[\\-\\s:0-9]+\",*){2}$</code>
    */
-  protected static final Pattern CSV = Pattern.compile("^((\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"|null),){3}((\"[\\-\\s:0-9\\.]+\"|null),*){2}(\"((YADA)+|YO)\")?$");
+  protected static final Pattern CSV = Pattern.compile("^((\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"|null),){3}((\"[\\-\\s:0-9\\.]+\"|null),*){2}(\"foo@bar.com\")?$");
   /**
    * Constant equal to:
    * <code>^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"\\t){3}(\"[\\-\\s:0-9]+\"\\t*){2}$</code>
    */
-  protected static final Pattern TSV = Pattern.compile("^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"\\t){3}(\"[\\-\\s:0-9\\.]+\"\\t*){2}(\"((YADA)+|YO)\")?$");
+  protected static final Pattern TSV = Pattern.compile("^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"\\t){3}(\"[\\-\\s:0-9\\.]+\"\\t*){2}(\"foo@bar.com\")?$");
   /**
    * Constant equal to:
    * <code>^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"\\|){3}(\"[\\-\\s:0-9]+\"\\|*){2}$</code>
    */
-  protected static final Pattern PSV = Pattern.compile("^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"\\|){3}(\"[\\-\\s:0-9\\.]+\"\\|*){2}(\"((YADA)+|YO)\")?$");
+  protected static final Pattern PSV = Pattern.compile("^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"\\|){3}(\"[\\-\\s:0-9\\.]+\"\\|*){2}(\"foo@bar.com\")?$");
   /**
    * Constant equal to: {@value}
    */
@@ -184,28 +187,28 @@ public class ServiceTest
    * Constant equal to: {@value}
    */
   protected static final String COL_HM_STRING = "STRING";
-  
+
   /**
    * Constant equal to: {@value}
    */
   protected static final String COL_HM_INT    = "INT";
-  
+
   /**
    * Constant equal to: {@value}
    */
   protected static final String COL_HM_FLOAT  = "FLOAT";
-  
+
   /**
    * Constant equal to: {@value}
    */
   protected static final String COL_HM_DATE   = "DATE";
-  
+
   /**
    * Constant equal to: {@value}
    */
   protected static final String COL_HM_TIME   = "TIME";
 
-  
+
   /**
    * Constant equal to: {@value}
    */
@@ -235,7 +238,7 @@ public class ServiceTest
    * Constant equal to: {@value}
    */
   protected static final String ROWS = "ROWS";
-  
+
   /**
    * Constant equal to: {@value}
    * @since 6.1.0
@@ -273,30 +276,63 @@ public class ServiceTest
   protected String auth = "false";
   
   /**
+   * Container for tokens
+   * @since 9.0.0
+   */
+  protected JSONObject secData;
+  
+  /** 
+   * @since 9.0.0
+   */
+  protected String user = "";
+  
+  /**
+   * @since 9.0.0
+   */
+  protected String pass = "";
+
+  /**
    * One-arg constructor passes in host from config file;
    */
   public ServiceTest()
   {
-    
+
   }
 
   /**
    * The initialization method required by the {@code jsp} group to set the
    * pertinent ivars to property values.
+   * @throws YADAResourceException 
    */
-  @BeforeSuite(groups = { "jsp" })
-  public void init()
+  @Parameters({"properties"})
+  @BeforeSuite(groups = { "jsp","sec" })
+  public void init(@Optional String properties) throws YADAResourceException
   {
     Properties props = ConnectionFactoryTest.getProps();
+    if(props.size() == 0 || props == null)
+    {
+      try
+      {
+        ConnectionFactoryTest.setProps(properties);
+      }
+      catch (IOException e)
+      {
+        String msg = "Unable to set properties";
+        throw new YADAResourceException(msg, e);
+      }
+      props = ConnectionFactoryTest.getProps();
+    }
     this.host = props.getProperty("YADA.host");
     this.uri = props.getProperty("YADA.uri");
     this.auth = props.getProperty("YADA.auth");
+    this.user = props.getProperty("YADA.user");
+    this.pass = props.getProperty("YADA.pass");
   }
 
   /**
    * Loads the resource at {@code path} containing query parameter or json
    * strings
-   * 
+   *
    * @param path the path to the test script
    * @return an array of query or json strings
    * @throws URISyntaxException when a handle can't be attached to the test file
@@ -339,7 +375,7 @@ public class ServiceTest
   /**
    * Combines the queries from multiple resources into a single array to
    * facilitate execution of tests from multiple files
-   * 
+   *
    * @param paths the paths to the test scripts
    * @return an array of query or JSON strings
    * @throws URISyntaxException when a handle can't be attached to the test file
@@ -354,7 +390,7 @@ public class ServiceTest
     for (int i = 0; i < paths.length; i++)
     {
       params = (String[]) ArrayUtils.addAll(params, loadResource(paths[i]));
-      
+
       if (engine != null)
       {
         String enginePath = paths[i].replace(".txt", "_" + engine + ".txt");
@@ -381,7 +417,7 @@ public class ServiceTest
   /**
    * Evaluates text line in resource, returning {@code true} if line starts with
    * a hashmark: {@code #}
-   * 
+   *
    * @param query the line from the test script to test
    * @return {@code true} if line starts with {@code #}
    */
@@ -397,7 +433,7 @@ public class ServiceTest
   /**
    * Tests if the current execution environment is a variant of Windows, which
    * will cause some tests to fail.
-   * 
+   *
    * @return {@code true} if the {@code os.name} property does not contain the
    *         string {@code win}, otherwise {@code false}
    */
@@ -409,14 +445,14 @@ public class ServiceTest
   /**
    * Creates a {@link com.novartis.opensource.yada.YADARequest} object and
    * populates it with values in {@code query}
-   * 
+   *
    * @param query the query to use in the request
    * @return a {@link com.novartis.opensource.yada.YADARequest} object
    * @throws YADAQueryConfigurationException when request creation fails
    */
   public YADARequest getYADAReq(String query) throws YADAQueryConfigurationException
   {
-    
+
     logQuery(query);
     YADARequest yadaReq = new YADARequest();
     yadaReq.setUpdateStats(new String[] { "false" });
@@ -456,7 +492,7 @@ public class ServiceTest
     	}
     }
     values.add(b.toString()); // the last one
-    
+
     //String[] array = query.split(AMP);
     Map<String, String[]> paraMap = new HashMap<>();
     int i = 0;
@@ -474,8 +510,8 @@ public class ServiceTest
       }
       i++;
     }
-    
-    
+
+
     for (String key : paraMap.keySet())
     {
       String[] val = paraMap.get(key);//null;
@@ -503,7 +539,7 @@ public class ServiceTest
   /**
    * Creates a {@link com.novartis.opensource.yada.YADARequest} object and
    * populates it with values in {@code ja}
-   * 
+   *
    * @param ja the parameter to use in the request
    * @return a {@link com.novartis.opensource.yada.YADARequest} object
    * @throws YADAQueryConfigurationException when request creation fails
@@ -518,7 +554,7 @@ public class ServiceTest
 
   /**
    * The main DataProvider of the test class
-   * 
+   *
    * @param theMethod the test to run
    * @return the array of Object arrays required of DataProviders by the TestNG
    *         framework
@@ -539,10 +575,52 @@ public class ServiceTest
     }
     return result;
   }
+  
+  /**
+   * Authenticates the logged user using the xml param
+   * @throws YADAQueryConfigurationException 
+   * 
+   */
+  @BeforeMethod(groups = { "sec" })  
+  public void login() throws YADAQueryConfigurationException
+  {    
+    l.debug("Logging in...");
+    YADARequest yadaReq = new YADARequest();
+    yadaReq.setUpdateStats(new String[] { "false" });
+    
+    yadaReq.setQname(new String[] { "YADATEST/resource access" });
+    yadaReq.setPlugin(new String[] { "Authorizer" });
+    JSONObject hdrs = new JSONObject();
+    try
+    {
+      byte[] toEncode = (this.user+":"+this.pass).getBytes("utf-8");
+      String basic    = "Basic " + Base64.getEncoder().encodeToString(toEncode);
+      hdrs.put("Authorization", basic);
+      yadaReq.setHTTPHeaders(new String[] { hdrs.toString() });
+      Service svc = new Service(yadaReq);
+      this.secData = new JSONObject(svc.execute());
+      l.debug(secData.toString(2));      
+    }
+    catch (JSONException e)
+    {
+      String msg = "Unable to encapsulate header or result value as json";
+      throw new YADAQueryConfigurationException(msg, e);
+    }
+    catch (UnsupportedEncodingException e)
+    {
+      String msg = "Unable to encode credentials";
+      throw new YADAQueryConfigurationException(msg, e);
+    }
+    catch (YADARequestException e)
+    {
+      String msg = "Unable to set headers";
+      throw new YADAQueryConfigurationException(msg, e);
+    }    
+  }
 
   /**
    * Sets the proxy string
-   * 
+   *
    * @param proxy the host:port of the proxy server passed in xml config file
    */
   @BeforeMethod(groups = { "proxy" })
@@ -564,7 +642,7 @@ public class ServiceTest
   /**
    * Convenience method to stitch together url-encoded versions of params passed
    * in queries
-   * 
+   *
    * @param param the name/value pair representing the url parameter
    * @return the encoded name/value pair
    * @throws YADAExecutionException when the encoder throws an exception
@@ -589,7 +667,7 @@ public class ServiceTest
   /**
    * Preps the db before each test execution by populating the test table with a
    * mix of data from the resaurce {@code /test/inserts_single_json_prep.txt}
-   * 
+   *
    * @throws URISyntaxException when a handle can't be attached to the test file
    *         path
    * @throws YADAQueryConfigurationException when request creation fails
@@ -597,7 +675,7 @@ public class ServiceTest
    *         can't be closed
    */
   @BeforeMethod(groups = { "json", "standard", "options", "api", "jsp", "plugins", "sqlite_debug" })
-  public void dbPrep() throws URISyntaxException, YADAQueryConfigurationException, IOException
+  public void dbPrep() throws URISyntaxException, YADAQueryConfigurationException, IOException, YADAResourceException
   {
     prepOrClean(new String[] { "/test/inserts_single_json_prep.txt" });
   }
@@ -618,7 +696,7 @@ public class ServiceTest
   /**
    * Cleans the db after each test execution by executing the queries in
    * {@code /test/deletes_single_json.txt}
-   * 
+   *
    * @throws URISyntaxException when a handle can't be attached to the test file
    *         path
    * @throws YADAQueryConfigurationException when request creation fails
@@ -634,9 +712,9 @@ public class ServiceTest
   /**
    * Utility method to prep or clean the db before or after each test execution
    * by executing the queries in {@code paths}
-   * 
+   *
    * @param paths the list of files containing the queries to process
-   * 
+   *
    * @throws URISyntaxException when a handle can't be attached to the test file
    *         path
    * @throws YADAQueryConfigurationException when request creation fails
@@ -656,7 +734,7 @@ public class ServiceTest
   /**
    * Convenience method to instantiate a {@link Service} object for processing
    * {@code query}.
-   * 
+   *
    * @param query the test string
    * @return the {@link Service} object for query execution or further
    *         modification
@@ -668,22 +746,106 @@ public class ServiceTest
     Service svc = new Service(yadaReq);
     return svc;
   }
-  
+
   /**
-   * Method stub for testing with environment-specific authentication credential 
+   * For testing with environment-specific authentication credential
    * @param connection the connection to imbue with authentication properties
    * @throws YADAExecutionException when any authentication method fails. Any exception thrown internally by authentication methods can be caught and rethrown as {@link YADAExecutionException}s.
    */
-  public void setAuthentication(HttpURLConnection connection) throws YADAExecutionException
+  public void setAuthentication() throws YADAExecutionException
   {
-    // stubbed method - nothing to do
+    if(null != this.secData && this.secData.length() > 0)
+    {
+      return;
+    }
+    
+    byte[] toEncode = null;
+    try
+    {
+      toEncode = (this.user+":"+this.pass).getBytes("utf-8");
+    }
+    catch (UnsupportedEncodingException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    
+    String basic    = "Basic " + Base64.getEncoder().encodeToString(toEncode);
+    String query = "YADA/q/YADATEST/resource access/pl/Authorizer";
+    String[] splits = query.split("/");    
+    String encQuery = "";
+    for(String s : splits)
+    {
+      try
+      {
+//        if(encQuery.length() > 0)
+//          encQuery += "/";
+        encQuery += "/" + URLEncoder.encode(s,UTF8);
+      }
+      catch (UnsupportedEncodingException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+       
+    
+    String target = "http://" + this.host + encQuery;
+    URL url = null;
+    try
+    {
+      url = new URL(target);
+    }
+    catch (MalformedURLException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    
+    HttpURLConnection connection = null;
+    try
+    {
+      connection = (HttpURLConnection) url.openConnection();
+    }
+    catch (IOException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+        
+    connection.setRequestProperty("Authorization", basic);
+    connection.setUseCaches(false);
+    connection.setDoInput(true);
+    connection.setDoOutput(true);
+    
+
+    // Get Response
+    try(InputStream is = connection.getInputStream())
+    {
+      try(BufferedReader rd = new BufferedReader(new InputStreamReader(is)))
+      {
+        String line;
+        StringBuffer result = new StringBuffer();
+        while ((line = rd.readLine()) != null)
+        {
+          result.append(line);
+        }
+        l.debug(result);
+        this.secData = new JSONObject(result.toString());        
+      }
+    }
+    catch (IOException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   /**
    * This test is a workaround for https://github.com/cbeust/testng/issues/787
    * See the readme at https://github.com/varontron/testng-annoxform2-bug for
    * details.
-   * 
+   *
    * @param query a null string
    */
   @Test(enabled = true, dataProvider = "QueryTests")
@@ -694,8 +856,8 @@ public class ServiceTest
   }
 
   /**
-   * Executes json-based requests 
-   * 
+   * Executes json-based requests
+   *
    * @param query query to test
    * @throws YADAResponseException when the test result is invalid
    * @throws YADAQueryConfigurationException when request creation fails
@@ -710,7 +872,7 @@ public class ServiceTest
 
   /**
    * Execute standard parameter tests
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    * @throws YADAResponseException when the test result is invalid
@@ -725,7 +887,7 @@ public class ServiceTest
 
   /**
    * Tests all json and standard queries using HTTP POST
-   * 
+   *
    * @param query the query to execute
    * @throws YADAExecutionException when the test fails
    */
@@ -767,7 +929,9 @@ public class ServiceTest
       // auth
       if (Boolean.parseBoolean(this.auth))
       {
-        setAuthentication(connection);
+        setAuthentication();
+        connection.setRequestProperty("X-CSRF-Token", (String) this.secData.get("X-CSRF-Token"));
+        connection.setRequestProperty("Authorization", (String) this.secData.get("Bearer"));
       }
 
       // Send request
@@ -821,7 +985,7 @@ public class ServiceTest
 
   /**
    * Tests all json and standard queries using HTTP GET
-   * 
+   *
    * @param query the query to execute
    * @throws YADAExecutionException when the test fails
    */
@@ -880,7 +1044,9 @@ public class ServiceTest
       // auth
       if (Boolean.parseBoolean(this.auth))
       {
-        setAuthentication(connection);
+        setAuthentication();        
+        connection.setRequestProperty("X-CSRF-Token", (String) this.secData.get("X-CSRF-Token"));
+        connection.setRequestProperty("Authorization", (String) this.secData.get("Bearer"));
       }
 
       // Get Response
@@ -927,7 +1093,7 @@ public class ServiceTest
 
   /**
    * Tests CSV response format with json params
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    * @throws YADAResponseException when the test result is invalid
@@ -941,7 +1107,7 @@ public class ServiceTest
 
   /**
    * Tests tab-delimited response with json params
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    * @throws YADAResponseException when the test result is invalid
@@ -955,7 +1121,7 @@ public class ServiceTest
 
   /**
    * Tests pipe-delimited response with json params
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    * @throws YADAResponseException when the test result is invalid
@@ -969,7 +1135,7 @@ public class ServiceTest
 
   /**
    * Tests XML response with json params
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    * @throws YADAResponseException when the test result is invalid
@@ -983,7 +1149,7 @@ public class ServiceTest
 
   /**
    * Tests HTML response format with json params
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    * @throws YADAResponseException when the test result is invalid
@@ -997,7 +1163,7 @@ public class ServiceTest
 
   /**
    * Tests Preprocessor plugin API
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    * @throws YADAResponseException when the test result is invalid
@@ -1013,7 +1179,7 @@ public class ServiceTest
   /**
    * Tests execution of a REST query using YADA as a proxy, and wraps results in
    * standard YADA JSON.
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    * @throws JSONException when the result does not conform
@@ -1027,10 +1193,10 @@ public class ServiceTest
     Service svc = prepareTest(query);
     Assert.assertTrue(validateThirdPartyJSONResult(svc.execute()) ,  "Data invalid for query: "+query);
   }
-  
+
   /**
    * Tests execution of a REST query using YADA as a proxy, and using HTTP POST
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    * @throws JSONException when the result does not conform
@@ -1047,10 +1213,10 @@ public class ServiceTest
     String result = svc.execute();
     Assert.assertTrue(validateThirdPartyJSONResult(result) ,  "Data invalid for query: "+query);
   }
-  
+
   /**
    * Tests execution of a REST query using YADA as a proxy, and using HTTP PUT
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    * @throws JSONException when the result does not conform
@@ -1067,10 +1233,10 @@ public class ServiceTest
     String result = svc.execute();
     Assert.assertTrue(validateThirdPartyJSONResult(result) ,  "Data invalid for query: "+query);
   }
-  
+
   /**
    * Tests execution of a REST query using YADA as a proxy, and using HTTP PATCH
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    * @throws JSONException when the result does not conform
@@ -1087,10 +1253,10 @@ public class ServiceTest
     String result = svc.execute();
     Assert.assertTrue(validateThirdPartyJSONResult(result) ,  "Data invalid for query: "+query);
   }
-  
+
   /**
    * Tests execution of a REST query using YADA as a proxy, and using HTTP DELETE
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    * @throws JSONException when the result does not conform
@@ -1111,7 +1277,7 @@ public class ServiceTest
   /**
    * Tests execution of a REST query using YADA as a proxy, and wraps results in
    * standard YADA JSON.
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    * @throws JSONException when the result does not conform
@@ -1131,7 +1297,7 @@ public class ServiceTest
   /**
    * Tests execution of a REST query using YADA as a proxy, passing through the
    * query result unchanged
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    * @throws JSONException when the result does not conform
@@ -1150,7 +1316,7 @@ public class ServiceTest
   /**
    * Tests execution of a REST query using YADA as a proxy, passing through the
    * query result unchanged
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    * @throws JSONException when the result does not conform
@@ -1169,7 +1335,7 @@ public class ServiceTest
 
   /**
    * Tests Postprocessor plugin api
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    */
@@ -1185,7 +1351,7 @@ public class ServiceTest
 
   /**
    * Executes a Bypass plugin test
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    */
@@ -1199,7 +1365,7 @@ public class ServiceTest
 
   /**
    * Tests the ScriptPostprocessor API
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    */
@@ -1216,7 +1382,7 @@ public class ServiceTest
 
   /**
    * Test the ScriptBypass API
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    */
@@ -1233,7 +1399,7 @@ public class ServiceTest
 
   /**
    * Tests Script Preprocessor API
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    */
@@ -1246,12 +1412,12 @@ public class ServiceTest
     String result = svc.execute();
     JSONObject j = new JSONObject(result).getJSONObject(RESULTSET).getJSONArray(ROWS).getJSONObject(0);
     logJSONResult(j);
-    Assert.assertTrue(j.has("APP") || j.has("app"),"The plugin appears to have failed."); // postgres lowercases without quotes around alias
+    Assert.assertTrue(j.has("col1") || j.has("col1"),"The plugin appears to have failed."); // postgres lowercases without quotes around alias
   }
-  
+
   /**
    * Tests Security API by causing failures (negative tests)
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    */
@@ -1264,24 +1430,24 @@ public class ServiceTest
       YADAUtils.executeYADAGet(new String[] {"YADA insert prop"}, new String[] {"YADATEST,protected,true"});
     else if(query.equals("q=YADATEST test sec query property"))
       YADAUtils.executeYADAGet(new String[] {"YADA insert prop"}, new String[] {"YADATEST test sec query property,protected,true"});
-    
+
     Service svc = prepareTest(query);
     String result = svc.execute();
-    
+
     if(query.equals("q=YADATEST test sec app property"))
       YADAUtils.executeYADAGet(new String[] {"YADA delete prop for target"}, new String[] {"YADATEST"});
     else if(query.equals("q=YADATEST test sec query property"))
       YADAUtils.executeYADAGet(new String[] {"YADA delete prop for target"}, new String[] {"YADATEST test sec query property"});
-    
+
     JSONObject j = new JSONObject(result);
     logJSONResult(j);
-    Assert.assertTrue(j.has("Exception") && j.get("Exception").equals("com.novartis.opensource.yada.plugin.YADASecurityException") 
-        && j.has("Message") && j.getString("Message").startsWith("Unable to process security spec"), "The Security API appears to have failed."); 
+    Assert.assertTrue(j.has("Exception") && j.get("Exception").equals("com.novartis.opensource.yada.plugin.YADASecurityException")
+        && j.has("Message") && j.getString("Message").startsWith("Unable to process security spec"), "The Security API appears to have failed.");
   }
-  
+
   /**
    * Tests Security API using default parameters
-   * 
+   *
    * @param query the query to execute
    * @throws YADAQueryConfigurationException when request creation fails
    * @throws YADAResponseException when the test result is invalid
@@ -1294,11 +1460,10 @@ public class ServiceTest
     Service svc = prepareTest(query);
     Assert.assertTrue(validate(svc.getYADARequest(), svc.execute()) ,  "Data invalid for query: "+query);
   }
-  
 
   /**
    * Tests listing the files in the yada io/in mapped directory.
-   * 
+   *
    * @param query the parameter string issue by the data provider
    * @throws YADAQueryConfigurationException when there is a malformed query
    * @throws UnsupportedEncodingException when the query is not decodable as
@@ -1318,7 +1483,7 @@ public class ServiceTest
 
   /**
    * Tests reading text files in the yada io/in mapped directory.
-   * 
+   *
    * @param query the parameter string issue by the data provider
    * @throws YADAQueryConfigurationException when there is a malformed query
    * @throws UnsupportedEncodingException when the query is not decodable as
@@ -1338,7 +1503,7 @@ public class ServiceTest
 
   /**
    * Tests appending text to files in the yada io/in mapped directory.
-   * 
+   *
    * @param query the parameter string issue by the data provider
    * @throws YADAQueryConfigurationException when there is a malformed query
    * @throws UnsupportedEncodingException when the query is not decodable as
@@ -1351,7 +1516,7 @@ public class ServiceTest
     Service svc = prepareTest(query);
     String result = svc.execute();
 
-    String q = "q=YADAFSIN test read content&p=test.txt";
+    String q = "q=YADAFSIN/test read content&p=test.txt";
     svc = prepareTest(q);
     result = svc.execute();
 
@@ -1360,12 +1525,12 @@ public class ServiceTest
     String s = jRes.getJSONObject(RESULTSET).getJSONArray(ROWS).getJSONObject(0).getString("content");
     Assert.assertEquals(s,"writingappend","The json result does not contain the expected content.");
   }
-  
+
   /**
    * Tests {@code harmonyMap} specs on REST queries using literal results for validation
    * @param query the parameter string issue by the data provider
    * @throws YADAQueryConfigurationException when there is a malformed query
-   * @throws YADAResponseException when the test result is invalid 
+   * @throws YADAResponseException when the test result is invalid
    */
   @Test(enabled = true, dataProvider = "QueryTests", groups = { "proxy" })
   @QueryFile(list = {})
@@ -1386,12 +1551,12 @@ public class ServiceTest
       logJSONResult(new JSONObject(actual));
     Assert.assertEquals(actual, expected);
   }
-  
+
   /**
    * Tests a miscellaneous string literal, e.g., question mark (?)
    * @param query the parameter string issue by the data provider
    * @throws YADAQueryConfigurationException when there is a malformed query
-   * @throws YADAResponseException when the test result is invalid 
+   * @throws YADAResponseException when the test result is invalid
    */
   @Test(enabled = true, dataProvider = "QueryTests", groups = { "standard", "api" })
   @QueryFile(list = {})
@@ -1412,8 +1577,8 @@ public class ServiceTest
       logJSONResult(new JSONObject(actual));
     Assert.assertEquals(actual, expected);
   }
-  
-  /** 
+
+  /**
    * Tests many aspects of {@code harmonyMap} or {@code h} YADA parameter results including
    * for CSV: column counts, header values, row counts, row/column content; and for JSON:
    * singular result set, correct mapped/unmapped keys and values, record count.
@@ -1435,17 +1600,17 @@ public class ServiceTest
     req.setPageSize(new String[] {"-1"});
     JSONArray spec     = req.getHarmonyMap();
     String result      = svc.execute();
-    
+
     int qCount = StringUtils.countMatches(query,"qname") + StringUtils.countMatches(query,"q=");
     String line = null;
     int lineCount = 0;
     if (req.getFormat().equals(YADARequest.FORMAT_CSV))
     {
-      logStringResult(result); 
+      logStringResult(result);
       Pattern rx = Pattern.compile("^(\"([A-Z,]+)\"),(\"([0-9]+)\")?,(\"([0-9.]+)\")?,?(\"(201[3-5]-0[0-9]-[0-9]{2}(\\s00:00:00)?|1362373200|1396584000)\")?,?(\"(201[3-5]-0[0-9]-[0-9]{2} ([0-9]{2}:){2}[0-9]{2}|1441500273000)(\\.0+)?\")?$");
       // count columns
       // check for correct values in mapped columns
-      
+
       try(BufferedReader br = new BufferedReader(new StringReader(result)))
       {
         while((line = br.readLine()) != null)
@@ -1455,13 +1620,13 @@ public class ServiceTest
             Matcher m = rx.matcher(line);
             Assert.assertTrue(m.matches());
             // first query only returns three columns
-            if(lineCount<9) 
+            if(lineCount<9)
             {
               Assert.assertTrue(validateInteger(m.group(4))); // col 2
               Assert.assertTrue(validateNumber(m.group(6)));  // col 3
               Assert.assertNull(m.group(8)); // col 4
               Assert.assertNull(m.group(11)); // col 5
-            }    
+            }
             else if(lineCount > 8 && lineCount < 17)
             // 2nd query
             {
@@ -1481,23 +1646,23 @@ public class ServiceTest
           }
           lineCount++;
         }
-      } 
-      catch (IOException e) 
+      }
+      catch (IOException e)
       {
         throw new YADAResponseException("Result was unreadable.",e);
-      } 
-      catch (ParseException e) 
+      }
+      catch (ParseException e)
       {
         throw new YADAResponseException("Result was unparsable.",e);
       }
-      
+
       //TODO confirm correct mapped/unmapped column headers
 
-      // count rows 
+      // count rows
       Assert.assertEquals(lineCount - 1, qCount*8);
-      
+
       //TODO check for "empty values" in unmapped columns
-      
+
     }
     else if(req.getFormat().equals(YADARequest.FORMAT_XML))
     {
@@ -1519,13 +1684,13 @@ public class ServiceTest
             Matcher m = rx.matcher(line);
             Assert.assertTrue(m.matches());
             // first query only returns three columns
-            if(lineCount < 18) 
+            if(lineCount < 18)
             {
               Assert.assertTrue(validateInteger(m.group(4))); // col 2
               Assert.assertTrue(validateNumber(m.group(6)));  // col 3
               Assert.assertNull(m.group(8)); // col 4
               Assert.assertNull(m.group(11)); // col 5
-            }    
+            }
             else if(lineCount > 17 && lineCount < 26)
             // 2nd query
             {
@@ -1549,17 +1714,17 @@ public class ServiceTest
           }
           lineCount++;
         }
-      } 
-      catch (IOException e) 
+      }
+      catch (IOException e)
       {
         throw new YADAResponseException("Result was unreadable.",e);
-      } 
-      catch (ParseException e) 
+      }
+      catch (ParseException e)
       {
         throw new YADAResponseException("Result was unparsable.",e);
       }
 
-      // count rows 
+      // count rows
       Assert.assertEquals(lineCount - 1, (qCount*8)+13); // adding 13 for non-data row html tags
     }
     else // JSON
@@ -1570,7 +1735,7 @@ public class ServiceTest
       int resultCount = 8;
       if(YADAUtils.useJSONParams(req))
       {
-        JSONParams jp = req.getJsonParams(); 
+        JSONParams jp = req.getJsonParams();
         String[] qnameKeys = jp.getKeys();
         qCount = qnameKeys.length;
         for(String qname : qnameKeys)
@@ -1585,7 +1750,7 @@ public class ServiceTest
       }
       JSONObject jo = new JSONObject(result);
       logJSONResult(jo);
-        
+
       // confirm singular result set
       Assert.assertNull(jo.optJSONObject(RESULTSETS));
       Assert.assertTrue(jo.has(RESULTSET));
@@ -1593,10 +1758,10 @@ public class ServiceTest
       int actualRecCount = jo.getJSONObject(RESULTSET).getInt(RECORDS);
       int expectRecCount = qCount*resultCount;
       Assert.assertEquals(actualRecCount, expectRecCount, "Result count invalid for query: "+query);
-      
+
       // confirm correct mapped/unmapped keys
       JSONArray rows = jo.getJSONObject(RESULTSET).getJSONArray(ROWS);
-      
+
       // For each query, find the hmap
       // test 8 records corresponding to query index
       // NOTE: This does not test for presence of unmapped keys, but does test all values
@@ -1612,8 +1777,8 @@ public class ServiceTest
             currentSpec = spec.getJSONObject(j);    // it's an embedded param, and JSONArray returns in reverse order
           }
         }
-          
-        
+
+
         // Deconstruct spec into keys and vals
         String[] currentSpecKeys = new String[currentSpec.length()];
         String[] currentSpecVals = new String[currentSpec.length()];
@@ -1627,13 +1792,13 @@ public class ServiceTest
             j++;
           }
         }
-        
+
         // check results
         for(j=0;j<resultCount;j++)            // for each set of results
         {
           JSONObject row = rows.getJSONObject(j); // the "row"
           String[] rowKeys = JSONObject.getNames(row);
-          for(String key : rowKeys)               // iterate over the row keys 
+          for(String key : rowKeys)               // iterate over the row keys
           {
             if(key.matches("[A-Z]+"))            // upper case are spec vals
               Assert.assertTrue(ArrayUtils.contains(currentSpecVals, key));  // row key is in current spec vals
@@ -1643,7 +1808,7 @@ public class ServiceTest
               Assert.assertFalse(ArrayUtils.contains(currentSpecKeys, key)); // row key is in current spec keys
             }
           }
-          
+
           for(String col : allKeys)             // confirm datatype of values
           {
             if(row.has(col))
@@ -1669,8 +1834,36 @@ public class ServiceTest
         }
       }
     }
+  }  
+  
+  /**
+   * @param query 
+   * @throws YADAQueryConfigurationException 
+   * @throws YADAResponseException 
+   * @throws YADASecurityException 
+   * @since 9.0.0
+   */
+  @Test(enabled = true, dataProvider = "QueryTests", groups = { "sec" })
+  @QueryFile(list = {})
+  public void testYADASec(String query) throws YADAQueryConfigurationException, YADAResponseException, YADASecurityException
+  {
+    Service svc = prepareTest(query);
+    YADARequest req = svc.getYADARequest();
+    try
+    {
+      JSONObject hdrs = new JSONObject();
+      hdrs.put("X-CSRF-Token", this.secData.get("X-CSRF-Token"));
+      hdrs.put("Authorization", this.secData.get("Bearer"));
+      req.setHTTPHeaders(new String[] { hdrs.toString() });
+    }
+    catch (JSONException | YADARequestException e)
+    {      
+      String msg = "Unable to set headers";
+      throw new YADAQueryConfigurationException(msg, e);
+    }
+    Assert.assertTrue(validate(svc.getYADARequest(), svc.execute()) ,  "Data invalid for query: "+query);
   }
-
+  
   /**
    * @param req the {@link YADARequest} containing the test query
    * @param result the {@link String} returned by {@link Service#execute()}
@@ -1717,7 +1910,7 @@ public class ServiceTest
   /**
    * As the name suggests, confirms that the value of {@code result} is an
    * integer, or throws an exception.
-   * 
+   *
    * @param result the {@link String} returned by {@link Service#execute()}
    * @param log {@code true} to print the value of the integer, {@code false} to suppress
    * @return {@code true} when the value of {@code result} can be converted to
@@ -1732,7 +1925,7 @@ public class ServiceTest
       logStringResult(result);
     return true;
   }
-  
+
   /**
    * Calls {@link #validateInteger(String, boolean)} with {@code log=false}
    * @param result the {@link String} returned by {@link Service#execute()}
@@ -1749,7 +1942,7 @@ public class ServiceTest
   /**
    * As the name suggests, confirms that the value of {@code result} is a float,
    * or throws an exception.
-   * 
+   *
    * @param result the {@link String} returned by {@link Service#execute()}
    * @return {@code true} when the value of {@code result} can be converted to a
    *         {@link Float}
@@ -1771,8 +1964,8 @@ public class ServiceTest
    * <p>
    * Valid values for date fields are {@code 2015-03-04 00:00:00 (1362373200000L)}
    * and {@code 2015-04-14 00:00:00 (1365912000000L)}
-   * </p> 
-   * 
+   * </p>
+   *
    * @param result the {@link String} returned by {@link Service#execute()}
    * @return {@code true} when the value of {@code result} can be converted to a
    *         {@link java.util.Date}
@@ -1839,11 +2032,11 @@ public class ServiceTest
     return d.getTime() == 1441500273000L || d.getTime() == 1441500286000L || d.getTime() == 1378428299000L;
   }
 
-  
+
   /**
-   * Evaluates the query result content to ensure data values are consistent with expected type and 
+   * Evaluates the query result content to ensure data values are consistent with expected type and
    * for date and time, with value.
-   * 
+   *
    * @param j the {@link JSONObject} to evaluate
    * @return {@code true} if each column's data type is preserved and values are parsable
    * @throws YADAResponseException when {@code j} is malformed or contains invalid data
@@ -1875,11 +2068,11 @@ public class ServiceTest
   }
 
   /**
-   * Evaluates the query result content to ensure data values are consistent with expected type and 
+   * Evaluates the query result content to ensure data values are consistent with expected type and
    * for date and time, with value.
    * @param result the subset of data (usu. one line) returned by the query
    * @param delimiter the character separating columns, i.e., tab, pipe, comma, etc.
-   * 
+   *
    * @return {@code true} if each column's data type is preserved and values are parsable
    * @throws YADAResponseException when {@code result} is malformed or contains invalid data
    */
@@ -1926,7 +2119,7 @@ public class ServiceTest
    * <li>Result has "RESULTSET" key, and has "total" key with value > 0, or</li>
    * <li>Result has "RESULTSET" key (but no "total" key)</li>
    * </ul>
-   * 
+   *
    * @param result the query result
    * @return {@code true} if result complies with expected output spec
    * @throws YADAResponseException when the test produces malformed results
@@ -1936,7 +2129,7 @@ public class ServiceTest
     JSONObject res = new JSONObject(result);
     logJSONResult(res);
     if (res.has("Exception"))
-      throw new YADAResponseException(res.getString("StackTrace"));
+      throw new YADAResponseException(res.getJSONArray("StackTrace").toString());
     else if (res.has(RESULTSETS))
     {
       JSONArray sets = res.getJSONArray(RESULTSETS);
@@ -1967,7 +2160,7 @@ public class ServiceTest
       		throw new YADAResponseException("Test produced results that do not contain valid JSON objects in ROWS.  Try using validateThirdPartyJSONResult.");
       	}
       }
-       
+
       return res.getJSONObject(RESULTSET).getInt("total") > 0;
     }
     else
@@ -1976,7 +2169,7 @@ public class ServiceTest
 
   /**
    * Validation method for external REST result
-   * 
+   *
    * @param result the query result
    * @return {@code true} if result complies with expected output spec
    * @throws YADAExecutionException when the test fails
@@ -2007,7 +2200,7 @@ public class ServiceTest
 
   /**
    * Validation method for CSV response
-   * 
+   *
    * @param result the query result
    * @return {@code true} if result complies with expected output spec
    * @throws YADAResponseException when the result is unreadable or does not
@@ -2020,7 +2213,7 @@ public class ServiceTest
       String line;
       int lineNum = 0;
       String header = "";
-      
+
       while ((line = rd.readLine()) != null)
       {
         if (lineNum == 0)
@@ -2052,7 +2245,7 @@ public class ServiceTest
 
   /**
    * Validation method for tab-delimited response
-   * 
+   *
    * @param result the query result
    * @return {@code true} if result complies with expected output spec
    * @throws YADAResponseException when the test result is invalid
@@ -2095,7 +2288,7 @@ public class ServiceTest
 
   /**
    * Validation method for pipe-delimited response
-   * 
+   *
    * @param result the query result
    * @return {@code true} if result complies with expected output spec
    * @throws YADAResponseException when the test result is invalid
@@ -2139,7 +2332,7 @@ public class ServiceTest
 
   /**
    * Validation method for HTML response.  Unlike other formats, HTML is still validated only on syntax and not content.
-   * 
+   *
    * @param result the query result
    * @return {@code true} if result complies with expected output spec
    * @throws YADAResponseException when the test result is invalid
@@ -2199,7 +2392,7 @@ public class ServiceTest
 
   /**
    * Validation method for XML response
-   * 
+   *
    * @param result the query result
    * @return {@code true} if result complies with expected output spec
    * @throws YADAResponseException when the test result is invalid
@@ -2225,7 +2418,7 @@ public class ServiceTest
       XPathExpression colTim = xpath.compile("//"+COL_TIME+"[1]");
       if ((evalSets != null && evalSets.length() > 0) || (evalSet != null && evalSet.length() > 0))
       {
-        String eval = nestedTotal.evaluate(doc); 
+        String eval = nestedTotal.evaluate(doc);
         if (eval != null && eval.length() > 0 && Integer.parseInt(eval) > 0)
         {
           logMarkupResult(result);
@@ -2275,12 +2468,12 @@ public class ServiceTest
     }
     return true;
   }
-  
+
   /**
    * Convenience method for printing out query name during processing.
    * @param query the query string to process
    */
-  public static void logQuery(String query) 
+  public static void logQuery(String query)
   {
     //if(System.getProperty(LOG_STDOUT) != null )
     System.out.println("\nQuery: " + query + " ");
@@ -2289,7 +2482,7 @@ public class ServiceTest
 
   /**
    * Convenience method to output results from tests
-   * 
+   *
    * @param res the JSON array containing the query result
    */
   public static void logJSONResult(JSONArray res)
@@ -2299,7 +2492,7 @@ public class ServiceTest
 
   /**
    * Convenience method to output results from tests
-   * 
+   *
    * @param res the JSON object containing the query result
    */
   public static void logJSONResult(JSONObject res)
@@ -2309,7 +2502,7 @@ public class ServiceTest
 
   /**
    * Convenience method to output results from tests
-   * 
+   *
    * @param res the String object containing the query result
    */
   public static void logStringResult(String res)
@@ -2321,7 +2514,7 @@ public class ServiceTest
 
   /**
    * Convenience method to output results from tests
-   * 
+   *
    * @param res the String object containing the query result
    */
   public static void logMarkupResult(String res)

@@ -1,0 +1,14 @@
+{
+  "source": "jdbc:postgresql://localhost/yada",
+  "props": {
+    "username": "yada",
+    "password": "yada",
+    "autoCommit": "true",
+    "connectionTimeout": "300000",
+    "idleTimeout": "600000",
+    "maxLifetime": "1800000",
+    "minimumIdle": "5",
+    "maximumPoolSize": "100",
+    "driverClassName": "org.postgresql.Driver"
+  }
+}

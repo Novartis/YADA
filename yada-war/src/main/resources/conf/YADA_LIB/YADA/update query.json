@@ -1,0 +1,67 @@
+{
+  "query": "update yada_query set qname=?v, query=?v, modified_by=?v, modified=?t, comments=?v where qname=?v and app=?v",
+  "params": [
+    {
+      "name": "pl",
+      "value": "Gatekeeper",
+      "spec": {
+        "columns": [
+          "userid:getLoggedUser()"
+        ],
+        "policy": "E",
+        "protector": "YADA crud protector",
+        "type": "allow"
+      },
+      "rule": 1
+    },
+    {
+      "name": "pl",
+      "value": "CachedQueryUpdater",
+      "rule": 1,
+      "spec": {
+        "policy": "E",
+        "protector": "YADA crud protector",
+        "type": "allow"
+      }
+    },
+    {
+      "name": "cv",
+      "value": "RESTResultJSONConverter",
+      "rule": 1,
+      "spec": {
+        "qualifier": [
+          "YADA crud protector"
+        ],
+        "type": "allow"
+      }
+    },
+    {
+      "name": "cq",
+      "value": "true",
+      "rule": 1,
+      "spec": {
+        "qualifier": [
+          "YADA crud protector"
+        ],
+        "type": "allow"
+      }
+    },
+    {
+      "name": "c",
+      "value": "false",
+      "rule": 1,
+      "spec": {
+        "qualifier": [
+          "YADA crud protector"
+        ],
+        "type": "allow"
+      }
+    }
+  ],
+  "props": [
+    {
+      "name": "protected",
+      "value": "true"
+    }
+  ]
+}

@@ -1,23 +1,23 @@
 # 2-way joins (parameter works test)
-j=[{"qname":"YADA test SELECT JOIN A","DATA":[{}]},{"qname":"YADA test SELECT JOIN B","DATA":[{}]}]&join=col1
-j=[{"qname":"YADA test SELECT JOIN A","DATA":[{}]},{"qname":"YADA test SELECT JOIN B","DATA":[{}]}]&join=COL1
+j=[{"qname":"YADATEST/test SELECT JOIN A","DATA":[{}]},{"qname":"YADATEST/test SELECT JOIN B","DATA":[{}]}]&join=col1
+j=[{"qname":"YADATEST/test SELECT JOIN A","DATA":[{}]},{"qname":"YADATEST/test SELECT JOIN B","DATA":[{}]}]&join=COL1
 
 # 2-way joins (parameter="true" test)
-j=[{"qname":"YADA test SELECT JOIN A","DATA":[{}]},{"qname":"YADA test SELECT JOIN B","DATA":[{}]}]&join=true
+j=[{"qname":"YADATEST/test SELECT JOIN A","DATA":[{}]},{"qname":"YADATEST/test SELECT JOIN B","DATA":[{}]}]&join=true
 
 # 2-way leftJoins (parameter is read test)
-j=[{"qname":"YADA test SELECT JOIN A","DATA":[{}]},{"qname":"YADA test SELECT JOIN B","DATA":[{}]}]&leftJoin=col1
-j=[{"qname":"YADA test SELECT JOIN A","DATA":[{}]},{"qname":"YADA test SELECT JOIN B","DATA":[{}]}]&leftJoin=COL1
+j=[{"qname":"YADATEST/test SELECT JOIN A","DATA":[{}]},{"qname":"YADATEST/test SELECT JOIN B","DATA":[{}]}]&leftJoin=col1
+j=[{"qname":"YADATEST/test SELECT JOIN A","DATA":[{}]},{"qname":"YADATEST/test SELECT JOIN B","DATA":[{}]}]&leftJoin=COL1
 
 # 2-way joins (parameter="true" test)
-j=[{"qname":"YADA test SELECT JOIN A","DATA":[{}]},{"qname":"YADA test SELECT JOIN B","DATA":[{}]}]&leftJoin=true
+j=[{"qname":"YADATEST/test SELECT JOIN A","DATA":[{}]},{"qname":"YADATEST/test SELECT JOIN B","DATA":[{}]}]&leftJoin=true
 
 # 3-way joins (parameter="true")
-j=[{"qname":"YADA test SELECT JOIN D1","DATA":[{}]},{"qname":"YADA test SELECT JOIN D2","DATA":[{}]},{"qname":"YADA test SELECT JOIN D3","DATA":[{}]}]&join=col2,col3
-j=[{"qname":"YADA test SELECT JOIN D1","DATA":[{}]},{"qname":"YADA test SELECT JOIN D2","DATA":[{}]},{"qname":"YADA test SELECT JOIN D3","DATA":[{}]}]&join=COL2,COL3
-j=[{"qname":"YADA test SELECT JOIN D1","DATA":[{}]},{"qname":"YADA test SELECT JOIN D2","DATA":[{}]},{"qname":"YADA test SELECT JOIN D3","DATA":[{}]}]&join=true
+j=[{"qname":"YADATEST/test SELECT JOIN D1","DATA":[{}]},{"qname":"YADATEST/test SELECT JOIN D2","DATA":[{}]},{"qname":"YADATEST/test SELECT JOIN D3","DATA":[{}]}]&join=col2,col3
+j=[{"qname":"YADATEST/test SELECT JOIN D1","DATA":[{}]},{"qname":"YADATEST/test SELECT JOIN D2","DATA":[{}]},{"qname":"YADATEST/test SELECT JOIN D3","DATA":[{}]}]&join=COL2,COL3
+j=[{"qname":"YADATEST/test SELECT JOIN D1","DATA":[{}]},{"qname":"YADATEST/test SELECT JOIN D2","DATA":[{}]},{"qname":"YADATEST/test SELECT JOIN D3","DATA":[{}]}]&join=true
 
 # 3-way joins
-j=[{"qname":"YADA test SELECT JOIN E1","DATA":[{"COL1":"Z"}]},{"qname":"YADA test SELECT JOIN E2","DATA":[{"COL2":10}]},{"qname":"YADA test SELECT JOIN E3","DATA":[{"COL3":7.5}]}]&join=col2,col3
-j=[{"qname":"YADA test SELECT JOIN E1","DATA":[{"COL1":"Z"}]},{"qname":"YADA test SELECT JOIN E2","DATA":[{"COL2":10}]},{"qname":"YADA test SELECT JOIN E3","DATA":[{"COL3":7.5}]}]&join=COL2,COL3
-j=[{"qname":"YADA test SELECT JOIN E1","DATA":[{"COL1":"Z"}]},{"qname":"YADA test SELECT JOIN E2","DATA":[{"COL2":"10"}]},{"qname":"YADA test SELECT JOIN E3","DATA":[{"COL3":"7.5"}]}]&join=true
+j=[{"qname":"YADATEST/test SELECT JOIN E1","DATA":[{"COL1":"Z"}]},{"qname":"YADATEST/test SELECT JOIN E2","DATA":[{"COL2":10}]},{"qname":"YADATEST/test SELECT JOIN E3","DATA":[{"COL3":7.5}]}]&join=col2,col3
+j=[{"qname":"YADATEST/test SELECT JOIN E1","DATA":[{"COL1":"Z"}]},{"qname":"YADATEST/test SELECT JOIN E2","DATA":[{"COL2":10}]},{"qname":"YADATEST/test SELECT JOIN E3","DATA":[{"COL3":7.5}]}]&join=COL2,COL3
+j=[{"qname":"YADATEST/test SELECT JOIN E1","DATA":[{"COL1":"Z"}]},{"qname":"YADATEST/test SELECT JOIN E2","DATA":[{"COL2":"10"}]},{"qname":"YADATEST/test SELECT JOIN E3","DATA":[{"COL3":"7.5"}]}]&join=true

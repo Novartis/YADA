@@ -1,2 +1,2 @@
-q=YADA test SELECT&pl=TestBypass
-qname=YADA test SELECT&plugin=TestBypass
+q=YADATEST/test SELECT&pl=TestBypass
+qname=YADATEST/test SELECT&plugin=TestBypass

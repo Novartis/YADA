@@ -1,0 +1,25 @@
+{
+  "query": "update YADA_PARAM set value = ?v, rule = ?i where target = ?v and name = ?v",
+  "params": [
+    {
+      "name": "pl",
+      "value": "Gatekeeper",
+      "spec": {
+        "columns": [
+          "qname:getValue(TARGET)",
+          "userid:getLoggedUser()"
+        ],
+        "policy": "E",
+        "protector": "YADA crud by qname protector",
+        "type": "allow"
+      },
+      "rule": 1
+    }
+  ],
+  "props": [
+    {
+      "name": "protected",
+      "value": "true"
+    }
+  ]
+}

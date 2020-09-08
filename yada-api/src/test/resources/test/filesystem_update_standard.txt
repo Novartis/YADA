@@ -1,2 +1,2 @@
-q=YADAFSIN test append&p=append
-qname=YADAFSIN test append&params=append
+q=YADAFSIN/test append&p=append
+qname=YADAFSIN/test append&params=append

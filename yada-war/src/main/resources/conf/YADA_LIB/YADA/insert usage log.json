@@ -1,0 +1,24 @@
+{
+  "query": "insert into yada_usage_log (userid, href, action, note, id) values (?v, ?v, ?v, ?v, yada_usage_log_seq.nextval)",
+  "params": [
+    {
+      "name": "pl",
+      "value": "Gatekeeper",
+      "spec": {
+        "columns": [
+          "userid:getLoggedUser()"
+        ],
+        "policy": "E",
+        "protector": "YADA crud protector",
+        "type": "allow"
+      },
+      "rule": 1
+    }
+  ],
+  "props": [
+    {
+      "name": "protected",
+      "value": "true"
+    }
+  ]
+}

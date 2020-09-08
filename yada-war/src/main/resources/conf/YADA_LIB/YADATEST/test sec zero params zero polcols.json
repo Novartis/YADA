@@ -1,0 +1,21 @@
+{
+  "query": "select * from yada_test",
+  "params": [
+    {
+      "name": "pl",
+      "value": "Gatekeeper",
+      "spec": {
+        "policy": "E",
+        "protector": "YADATEST/test sec zero params zero polcols protector",
+        "type": "allow"
+      },
+      "rule": 1
+    }
+  ],
+  "props": [
+    {
+      "name": "protected",
+      "value": "true"
+    }
+  ]
+}

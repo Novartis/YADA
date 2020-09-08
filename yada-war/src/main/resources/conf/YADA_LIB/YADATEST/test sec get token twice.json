@@ -1,0 +1,20 @@
+{
+  "query": "select * from yada_test",
+  "params": [
+    {
+      "name": "pl",
+      "value": "Gatekeeper",
+      "spec": {
+        "predicate": "user=getLoggedUser() and user=getLoggedUser()",
+        "policy": "C"
+      },
+      "rule": 1
+    }
+  ],
+  "props": [
+    {
+      "name": "protected",
+      "value": "true"
+    }
+  ]
+}

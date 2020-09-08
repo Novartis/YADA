@@ -122,7 +122,7 @@ public class QueryUtils
 	 */
 	public static final String RX_JDBC_JNDI = "^java:.+/jdbc/.+$";
 	/**
-   * A constant equal to: {@value}
+   * A constant equal to: {@value}. {@code (?s)} means "dot matches newline for rest of regex.
    * @since 8.0.0
    */
   public static final String RX_JDBC_CONF = "(?s).*jdbcUrl=jdbc:.+";

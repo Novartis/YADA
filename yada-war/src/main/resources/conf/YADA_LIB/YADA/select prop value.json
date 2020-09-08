@@ -1,0 +1,3 @@
+{
+  "query": "select value \"VALUE\" from YADA_PROP where target=?v and name=?v"
+}

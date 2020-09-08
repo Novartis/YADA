@@ -1,2 +1,2 @@
-j=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"X,Y,Z,M,N"}]}]&f=xml
-JSONParams=[{"qname":"YADA test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"X,Y,Z,M,N"}]}]&format=xml
+j=[{"qname":"YADATEST/test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"X,Y,Z,M,N"}]}]&f=xml
+JSONParams=[{"qname":"YADATEST/test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"},{"COL1":"X,Y,Z,M,N"}]}]&format=xml

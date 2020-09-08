@@ -1,0 +1,15 @@
+q=YADA test SELECT&pl=com.novartis.opensource.yada.plugin.ScriptPostprocessor&a=scriptPluginPostTest.pl&c=false
+q=YADA test SELECT&pl=com.novartis.opensource.yada.plugin.ScriptPostprocessor&pa=scriptPluginPostTest.pl&c=false
+q=YADA test SELECT&pl=ScriptPostprocessor&a=scriptPluginPostTest.pl&c=false
+q=YADA test SELECT&pl=ScriptPostprocessor&pa=scriptPluginPostTest.pl&c=false
+q=YADA test SELECT&pa=scriptPluginPostTest.pl&c=false
+qname=YADA test SELECT&plugin=com.novartis.opensource.yada.plugin.ScriptPostprocessor&args=scriptPluginPostTest.pl&count=false
+qname=YADA test SELECT&plugin=com.novartis.opensource.yada.plugin.ScriptPostprocessor&postargs=scriptPluginPostTest.pl&count=false
+qname=YADA test SELECT&plugin=ScriptPostprocessor&args=scriptPluginPostTest.pl&count=false
+qname=YADA test SELECT&plugin=ScriptPostprocessor&postargs=scriptPluginPostTest.pl&count=false
+qname=YADA test SELECT&postargs=scriptPluginPostTest.pl&count=false
+
+q=YADA test SELECT&pl=com.novartis.opensource.yada.plugin.ScriptPostprocessor,scriptPluginPostTest.pl&c=false
+q=YADA test SELECT&pl=ScriptPostprocessor,scriptPluginPostTest.pl&c=false
+qname=YADA test SELECT&plugin=com.novartis.opensource.yada.plugin.ScriptPostprocessor,scriptPluginPostTest.pl&count=false
+qname=YADA test SELECT&plugin=ScriptPostprocessor,scriptPluginPostTest.pl&count=false

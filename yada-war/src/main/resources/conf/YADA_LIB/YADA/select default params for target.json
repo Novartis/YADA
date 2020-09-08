@@ -1,0 +1,56 @@
+{
+  "query": "SELECTdistinct a.id as \"ID\",a.target as \"TARGET\",a.name as \"NAME\",a.value as \"VALUE\",a.rule as \"RULE\",'false' as \"SPP\" ,case when a.name = 'pl' then coalesce(b.policy,'NA') else 'NA' end as \"POLICY\",case when a.name = 'pl' then coalesce(b.type, 'NA') else 'NA' end as \"TYPE\",case when a.name = 'pl' then coalesce(b.qname, 'NA') else 'NA' end as \"QNAME\"FROM YADA_PARAM aLEFT JOIN YADA_A11N b on a.target = b.targetwhere a.target = ?v",
+  "params": [
+    {
+      "name": "pl",
+      "value": "Gatekeeper",
+      "spec": {
+        "columns": [
+          "userid:getLoggedUser()"
+        ],
+        "policy": "E",
+        "protector": "YADA view protector",
+        "type": "allow"
+      },
+      "rule": 1
+    },
+    {
+      "name": "pz",
+      "value": "-1",
+      "rule": 1,
+      "spec": {
+        "qualifier": [
+          "YADA view protector"
+        ],
+        "type": "allow"
+      }
+    },
+    {
+      "name": "pl",
+      "value": "SecurityPluginDetector",
+      "rule": 1,
+      "spec": {
+        "policy": "E",
+        "protector": "YADA view protector",
+        "type": "allow"
+      }
+    },
+    {
+      "name": "c",
+      "value": "false",
+      "rule": 1,
+      "spec": {
+        "qualifier": [
+          "YADA view protector"
+        ],
+        "type": "allow"
+      }
+    }
+  ],
+  "props": [
+    {
+      "name": "protected",
+      "value": "true"
+    }
+  ]
+}
