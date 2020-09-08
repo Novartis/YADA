@@ -261,7 +261,7 @@
                 <id>default-test</id>
                 <phase>integration-test</phase>
                 <configuration>
-                  <skipTests>false</skipTests>
+                  <skipTests>${skip.tests}</skipTests>
                 </configuration>
                 <goals>
                   <goal>integration-test</goal>
@@ -421,7 +421,7 @@
             <id>default-test</id>
             <phase>integration-test</phase>
             <configuration>
-              <skipTests>false</skipTests>
+              <skipTests>${skip.tests}</skipTests>
             </configuration>
             <goals>
               <goal>integration-test</goal>
@@ -430,9 +430,12 @@
           <execution>
             <id>verify</id>
             <phase>verify</phase>
+            <configuration>
+              <skipTests>${skip.tests}</skipTests>
+            </configuration>
             <goals>
               <goal>verify</goal>
-            </goals>
+            </goals>            
           </execution>
         </executions>
       </plugin>
