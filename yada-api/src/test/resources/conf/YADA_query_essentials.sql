@@ -303,16 +303,18 @@ INSERT into YADA_QUERY (qname,query,created_by,app) VALUES ('YADA select prop va
 -- ADMIN role has full crud for APP
 -- USER role can has read-only for APP (eventually USER should have full crud for his/her authored queries)
 -- YADA userid has full crud for all APPs
-INSERT INTO YADA_USER (USERID,PW) VALUES ('YADA','yada');
-INSERT INTO YADA_USER (USERID,PW) VALUES ('YADAUSER','yada');
-INSERT INTO YADA_USER (USERID,PW) VALUES ('test','testt');
+-- INSERT INTO YADA_USER (USERID,PW) VALUES ('YADA','yada');
+-- INSERT INTO YADA_USER (USERID,PW) VALUES ('YADAUSER','yada');
+-- INSERT INTO YADA_USER (USERID,PW) VALUES ('test','testt');
+INSERT INTO YADA_USER (USERID,PW) VALUES ('foo@bar.com','test');
 
-INSERT into YADA_UG (app,userid,role) VALUES ('YADA','YADA','ADMIN');
-INSERT into YADA_UG (app,userid,role) VALUES ('YADA','YADAUSER','USER');
-INSERT into YADA_UG (app,userid,role) VALUES ('YADAFSIN','test','ADMIN');
-INSERT into YADA_UG (app,userid,role) VALUES ('QGO','test','USER');
-INSERT into YADA_UG (app,userid,role) VALUES ('YADATEST','test','ADMIN');
-INSERT into YADA_UG (app,userid,role) VALUES ('RESTTEST','test','ADMIN');
+-- INSERT into YADA_UG (app,userid,role) VALUES ('YADA','YADA','ADMIN');
+-- INSERT into YADA_UG (app,userid,role) VALUES ('YADA','YADAUSER','USER');
+-- INSERT into YADA_UG (app,userid,role) VALUES ('YADAFSIN','test','ADMIN');
+-- INSERT into YADA_UG (app,userid,role) VALUES ('QGO','test','USER');
+-- INSERT into YADA_UG (app,userid,role) VALUES ('YADATEST','test','ADMIN');
+-- INSERT into YADA_UG (app,userid,role) VALUES ('RESTTEST','test','ADMIN');
+INSERT into YADA_UG (app,userid,role) VALUES ('YADA','foo@bar.com','ADMIN');
 
 
 -- configuration

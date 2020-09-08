@@ -33,6 +33,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -272,6 +273,22 @@ public class ServiceTest
    * The flag to use authentication
    */
   protected String auth = "false";
+  
+  /**
+   * Container for tokens
+   * @since 9.0.0
+   */
+  protected JSONObject secData;
+  
+  /** 
+   * @since 9.0.0
+   */
+  protected String user = "";
+  
+  /**
+   * @since 9.0.0
+   */
+  protected String pass = "";
 
   /**
    * One-arg constructor passes in host from config file;
@@ -675,9 +692,93 @@ public class ServiceTest
    * @param connection the connection to imbue with authentication properties
    * @throws YADAExecutionException when any authentication method fails. Any exception thrown internally by authentication methods can be caught and rethrown as {@link YADAExecutionException}s.
    */
-  public void setAuthentication(HttpURLConnection connection) throws YADAExecutionException
+  public void setAuthentication() throws YADAExecutionException
   {
-    // stubbed method - nothing to do
+    if(null != this.secData && this.secData.length() > 0)
+    {
+      return;
+    }
+    
+    byte[] toEncode = null;
+    try
+    {
+      toEncode = (this.user+":"+this.pass).getBytes("utf-8");
+    }
+    catch (UnsupportedEncodingException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    
+    String basic    = "Basic " + Base64.getEncoder().encodeToString(toEncode);
+    String query = "YADA/q/YADA resource access/pl/Authorizer,YADA";
+    String[] splits = query.split("/");    
+    String encQuery = "";
+    for(String s : splits)
+    {
+      try
+      {
+//        if(encQuery.length() > 0)
+//          encQuery += "/";
+        encQuery += "/" + URLEncoder.encode(s,UTF8);
+      }
+      catch (UnsupportedEncodingException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+       
+    
+    String target = "http://" + this.host + encQuery;
+    URL url = null;
+    try
+    {
+      url = new URL(target);
+    }
+    catch (MalformedURLException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    
+    HttpURLConnection connection = null;
+    try
+    {
+      connection = (HttpURLConnection) url.openConnection();
+    }
+    catch (IOException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+        
+    connection.setRequestProperty("Authorization", basic);
+    connection.setUseCaches(false);
+    connection.setDoInput(true);
+    connection.setDoOutput(true);
+    
+
+    // Get Response
+    try(InputStream is = connection.getInputStream())
+    {
+      try(BufferedReader rd = new BufferedReader(new InputStreamReader(is)))
+      {
+        String line;
+        StringBuffer result = new StringBuffer();
+        while ((line = rd.readLine()) != null)
+        {
+          result.append(line);
+        }
+        l.debug(result);
+        this.secData = new JSONObject(result.toString());        
+      }
+    }
+    catch (IOException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -768,7 +869,9 @@ public class ServiceTest
       // auth
       if (Boolean.parseBoolean(this.auth))
       {
-        setAuthentication(connection);
+        setAuthentication();
+        connection.setRequestProperty("X-CSRF-Token", (String) this.secData.get("X-CSRF-Token"));
+        connection.setRequestProperty("Authorization", (String) this.secData.get("Bearer"));
       }
 
       // Send request
@@ -882,7 +985,9 @@ public class ServiceTest
       // auth
       if (Boolean.parseBoolean(this.auth))
       {
-        setAuthentication(connection);
+        setAuthentication();
+        connection.setRequestProperty("X-CSRF-Token", (String) this.secData.get("X-CSRF-Token"));
+        connection.setRequestProperty("Authorization", (String) this.secData.get("Bearer"));
       }
 
       // Get Response

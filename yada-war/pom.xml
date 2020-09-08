@@ -304,6 +304,8 @@
                     -Djava.compiler=NONE
                     -Dsecurity.token=YADAYADA
                     -DYADA.properties.path=/YADA_pre9.properties
+                    -Djwt.iss=yada
+                    -Djws.key=drphilscrypto
                     <!-- -Djavax.net.ssl.keyStore=~/.keystore -Djavax.net.ssl.keyStorePassword=changeit 
                       -Djavax.net.ssl.trustStore=~/.keystore -Djavax.net.ssl.trustStorePassword=changeit -->
                   </cargo.jvmargs>
