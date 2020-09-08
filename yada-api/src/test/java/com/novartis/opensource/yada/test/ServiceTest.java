@@ -1065,7 +1065,11 @@ public class ServiceTest
             if (method != null && method.equals(YADARequest.METHOD_UPDATE))
               Assert.assertTrue(validateInteger(result.toString(),true) ,  "Data invalid for query: "+query);
             else
+            {
               Assert.assertTrue(validateJSONResult(result.toString()) ,  "Data invalid for query: "+query);
+              l.debug("YADA version header: "+ connection.getHeaderField("X-YADA-VERSION"));
+              Assert.assertTrue(connection.getHeaderField("X-YADA-VERSION") != null , "X-YADA-VERSION Header not found");
+            }
           }
           catch (Exception e)
           {

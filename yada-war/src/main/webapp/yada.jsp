@@ -19,7 +19,7 @@
  																		 org.apache.commons.fileupload.servlet.*,
  																		 org.apache.commons.fileupload.disk.*" %><%Service service  = new Service();
 //   "Exception": "com.novartis.opensource.yada.YADAFinderException",
-final String EXCEPTION = "(?s)^.*\\{\\n\\s+.+\"Exception\":.*$"; 
+final String EXCEPTION = "(?s)^.*\\{\\n\\s+.+\"Exception\":.*$";
 final String PACKAGE   = "com.novartis.opensource.yada.";
 final String BASE_EXCEPTION                = PACKAGE + "YADAException";
 final String EXECUTION_EXCEPTION           = PACKAGE + "YADAExecutionException";
@@ -92,6 +92,8 @@ else
 	service.handleRequest(request);
 }
 
+response.addHeader("X-YADA-VERSION","${project.version}");
+
 if(ServletFileUpload.isMultipartContent(request))
 {
 	FileItemFactory factory = new DiskFileItemFactory();
@@ -109,7 +111,7 @@ if(ServletFileUpload.isMultipartContent(request))
 	  JSONObject e = new JSONObject(result);
 	  String exceptionClass = e.getString("Exception");
 	  Integer errorCode = statusCodes.get(UNHANDLED_EXCEPTION);
-	  if(statusCodes.containsKey(exceptionClass)) 
+	  if(statusCodes.containsKey(exceptionClass))
 	  {
 	    errorCode = statusCodes.get(exceptionClass);
 	  }
@@ -117,14 +119,14 @@ if(ServletFileUpload.isMultipartContent(request))
     e.put("Status",ec);
     e.put("StatusText",statusText.get(errorCode));
     request.getSession().setAttribute("YADAException",e.toString());
-    response.sendError(errorCode); 
+    response.sendError(errorCode);
   }%><%=result%><%
 }
 else
 {
 /*	String help = request.getParameter("help");
-	if (new Boolean(help).booleanValue() 
-			|| "yes".equals(help) 
+	if (new Boolean(help).booleanValue()
+			|| "yes".equals(help)
 			|| "1".equals(help)
 	{  */
 %><%-- link to user guide --%><%// get and prep result
@@ -146,13 +148,13 @@ else
 		if (YADARequest.FORMAT_JSON.equals(fmt)
 				|| exception)
 		{
-			response.setContentType("application/json;charset=UTF-8");	
+			response.setContentType("application/json;charset=UTF-8");
 			if(exception)
 			{
 			  JSONObject e = new JSONObject(result);
 			  String exceptionClass = e.getString("Exception");
 		    Integer errorCode = statusCodes.get(UNHANDLED_EXCEPTION);
-		    if(statusCodes.containsKey(exceptionClass)) 
+		    if(statusCodes.containsKey(exceptionClass))
 		    {
 		      errorCode = statusCodes.get(exceptionClass);
 		    }
@@ -160,7 +162,7 @@ else
 			  e.put("Status",ec);
 			  e.put("StatusText",statusText.get(errorCode));
 			  request.getSession().setAttribute("YADAException",e.toString());
-			  response.sendError(errorCode); 
+			  response.sendError(errorCode);
 			}
 		}
 		else if (YADARequest.FORMAT_XML.equals(fmt))
