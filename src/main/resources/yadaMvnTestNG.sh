@@ -1,9 +1,10 @@
 #!/bin/bash
 
 usage() {
-printf "Usage: $0 [-T surefire|failsafe] [-x surefire|failsafe] [-p test|test_pre9] [-Xtd] \n\n \
-  -T  Execute either surefire (api) or failsafe (http) testing. Omit argument to suppress both. \n \
-      Failsafe suppression will also suppress cargo deployment. Default (arg omitted) is to execute both. \n \
+printf "Usage: $0 [-T surefire|failsafe] [-x surefire|failsafe] [-p test|test_pre9] [-Xtdsi] \n\n \
+-T  Execute either surefire (api) or failsafe (http) testing. Omit argument to suppress both. \n \
+     Failsafe suppression will also suppress cargo deployment. Default (option -T omitted altogether) \n \
+     is to execute both. \n \
   -x  debug surefire or failsafe execution. Leave argument empty to debug both. \n \
   -p  choose the profile. 'test' is the currently preferred test profile.  \n \
       If 'test_pre9' is selected, the YADA.properties will be modified accordingly. \n \
@@ -11,6 +12,7 @@ printf "Usage: $0 [-T surefire|failsafe] [-x surefire|failsafe] [-p test|test_pr
   -t  use the 'tmp_toggle' file to cherry pick tests. Default is all tests. \n \
   -d  show java debug log output. Default log level is 'info'. \n \
   -s  deloy snapshot to maven central.  Implies -T \n \
+  -i  test the webapp interactively. Combine with  '-x failsafe' to debug as well \n \
   -?  show this help \n\n \
 " 1>&2; exit 1; }
 
@@ -26,12 +28,17 @@ YADA_PROPS=
 SKIP_SUREFIRE=
 SKIP_FAILSAFE=
 DEPLOY_SNAPSHOT=
+INTERACTIVE=
 
 OPTERR=0
 while getopts "x:Xtdp:T:s" opt; do
   case ${opt} in
+    i )
+      INTERACTIVE=1
+      ;;
     s )
       DEPLOY_SNAPSHOT=1
+      ;;
     T )
       if [ "surefire" == "$OPTARG" ]
       then
@@ -133,6 +140,16 @@ fi
 if [ 1 -eq "$DEPLOY_SNAPSHOT"]
 then
   CMD="$MAVEN ${SKIP_FAILSAFE} ${SKIP_SUREFIRE} ${SKIP_LICENSE} -DskipTests=true clean deploy"
+elif [ 1 -eq "$INTERACTIVE" ]
+then
+  if [ 1 -eq "$FAILSAFE_X" ]
+  then
+    DEBUG='-Dcargo.start.jvmargs="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Xnoagent -Djava.compiler=NONE'
+  fi
+  GOAL=org.codehaus.cargo:cargo-maven2-plugin:run
+  CONTAINER_ID=-Dcargo.maven.containerId=tomcat8x
+  CONTAINER_URL=-Dcargo.maven.containerUrl=https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/8.5.49/tomcat-8.5.49.zip
+  CMD="${MAVEN} ${GOAL} ${CONTAINER_ID} ${CONTAINER_URL} ${DEBUG}"
 else
   CMD="$MAVEN $MAVEN_DEBUG clean verify -P${PROFILE},deploy-war $DEBUG -Dsuspend.debugger=$SUSPEND $COMMON_VARS"
 fi
