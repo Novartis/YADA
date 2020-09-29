@@ -2413,14 +2413,26 @@ public class YADARequest {
 		List<String[]> paramList = new ArrayList<>();
 		StringBuffer param     = new StringBuffer(), 
 								 array     = null;
+		int          escape    = 0;
 		for(int i=0;i<p.length;i++)
 		{
 			char c = p[i];
 			// first char of array param
-			if(c == '[')  
+			if(c == '\\')
+		  {
+		    escape++;
+		  }
+			else if(c == '[')  
 			{
-				// create the array
-				array = new StringBuffer(); 
+			  if(escape == 0)
+			  {
+  				// create the array
+  				array = new StringBuffer(); 
+			  }
+			  else
+			  {
+			    param.append(c);
+			  }
 			}
 			// last char of array param
 			else if(c == ']')
@@ -2430,6 +2442,19 @@ public class YADARequest {
 				{
 					paramList.add(array.toString().split(","));
 					array = null;
+				}
+				else
+				{
+				  param.append(c);
+  				if(escape == 1)
+  				{  				 
+  				  escape--;
+  				}
+  				if(i == p.length-1)
+  				{
+  				  // add the current param to the list
+            paramList.add(new String[] {param.toString()});
+  				}
 				}
 			}
 			// just a comma, and not in an array

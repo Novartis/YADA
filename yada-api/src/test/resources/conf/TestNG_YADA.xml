@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- <suite name="Suite" parallel="methods" thread-count="20" data-provider-thread-count="20" 
+<!-- <suite name="Suite" parallel="methods" thread-count="20" data-provider-thread-count="20"
   > -->
 <suite name="pgsql-suite" parallel="false">
   <parameter name="properties"
@@ -14,6 +14,7 @@
         <include name="options" />
         <include name="plugins" />
         <include name="sec" />
+        <include name="filesystem" />
       </run>
     </groups>
     <classes>

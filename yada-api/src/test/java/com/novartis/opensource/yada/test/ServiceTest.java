@@ -1498,6 +1498,7 @@ public class ServiceTest
   @QueryFile(list = {})
   public void testFileSystemContentRead(String query) throws YADAQueryConfigurationException, UnsupportedEncodingException
   {
+    l.debug(query);
     Service svc = prepareTest(query);
     String result = svc.execute();
     JSONObject jRes = new JSONObject(result);

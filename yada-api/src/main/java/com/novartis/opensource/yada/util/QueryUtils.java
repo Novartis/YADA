@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -80,6 +81,16 @@ public class QueryUtils
 	 * Local logger handle
 	 */
 	private static Logger l = Logger.getLogger(QueryUtils.class);
+	/**
+	 * A constant equal to: {@value}
+	 * @since 9.1.0
+	 */
+	public static final String KEY_ADAPTOR = "adaptor";
+	/**
+   * A constant equal to: {@value}
+   * @since 9.1.0
+   */
+  public static final String KEY_EXTENSION = "extn";
 	/**
 	 * A constant equal to: {@code com.novartis.opensource.yada.adaptor.JDBCAdaptor}
 	 */
@@ -332,15 +343,30 @@ public class QueryUtils
     }
     else if(type.equals(ConnectionFactory.TYPE_URL))
     {
-      String url = factory.getWsSourceMap().get(app);
+      Properties props = ConnectionFactory.getConnectionFactory().getWsSourceMap().get(app);    
+      String url  = props.getProperty(ConnectionFactory.YADA_CONF_SOURCE); 
       if (url.matches(RX_SOAP))
       {
         className = SOAP_ADAPTOR_CLASS_NAME;
       } 
       else if (url.matches(RX_FILE))
       {
-        className = FILESYSTEM_ADAPTOR_CLASS_NAME;
+        // interrogate url and or configuration object to obtain adaptor class or file extn
+        if(props.containsKey(KEY_ADAPTOR))
+        {
+          className = props.getProperty(KEY_ADAPTOR);
+        }
+        else if(props.containsKey(KEY_EXTENSION))
+        {
+          
+          className = Finder.getEnv(props.getProperty(KEY_EXTENSION.toLowerCase()));
+        }
+        else
+        {
+          className = FILESYSTEM_ADAPTOR_CLASS_NAME;
+        }
       }
+      // else default is REST, set up top
     }
     
     l.debug("JDBCAdaptor class is [" + className + "]");

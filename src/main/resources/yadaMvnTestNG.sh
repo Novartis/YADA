@@ -2,9 +2,9 @@
 
 usage() {
 printf "Usage: $0 [-T surefire|failsafe] [-x surefire|failsafe] [-p test|test_pre9] [-Xtdsi] \n\n \
--T  Execute either surefire (api) or failsafe (http) testing. Omit argument to suppress both. \n \
-     Failsafe suppression will also suppress cargo deployment. Default (option -T omitted altogether) \n \
-     is to execute both. \n \
+  -T  Execute either surefire (api) or failsafe (http) testing. Omit argument to suppress both. \n \
+      Failsafe suppression will also suppress cargo deployment. Default (option -T omitted altogether) \n \
+      is to execute both. \n \
   -x  debug surefire or failsafe execution. Leave argument empty to debug both. \n \
   -p  choose the profile. 'test' is the currently preferred test profile.  \n \
       If 'test_pre9' is selected, the YADA.properties will be modified accordingly. \n \
@@ -27,8 +27,8 @@ PROFILE=
 YADA_PROPS=
 SKIP_SUREFIRE=
 SKIP_FAILSAFE=
-DEPLOY_SNAPSHOT=
-INTERACTIVE=
+DEPLOY_SNAPSHOT=0
+INTERACTIVE=0
 
 OPTERR=0
 while getopts "x:Xtdp:T:s" opt; do
@@ -137,7 +137,7 @@ then
   DEBUG="${DEBUG} -DYADA_LIB=${YADA_LIB}"
 fi
 
-if [ 1 -eq "$DEPLOY_SNAPSHOT"]
+if [ 1 -eq "$DEPLOY_SNAPSHOT" ]
 then
   CMD="$MAVEN ${SKIP_FAILSAFE} ${SKIP_SUREFIRE} ${SKIP_LICENSE} -DskipTests=true clean deploy"
 elif [ 1 -eq "$INTERACTIVE" ]

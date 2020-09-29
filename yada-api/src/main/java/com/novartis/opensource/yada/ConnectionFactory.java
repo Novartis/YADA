@@ -222,7 +222,7 @@ public class ConnectionFactory {
    * 
    * @since 8.0.0
    */
-  private Map<String, String> wsSourceMap = new HashMap<>();
+  private Map<String, Properties> wsSourceMap = new HashMap<>();
 
   /**
    * The singleton instance of the class
@@ -382,8 +382,8 @@ public class ConnectionFactory {
    *                                 otherwise problematic
    * @since 8.0.0
    */
-  public void createDataSources() throws YADAConnectionException {
-    Map<String, Object> conf = new HashMap<String,Object>();
+  public void createDataSources() throws YADAConnectionException {    
+    Map<String, Object> conf;
     if (Finder.hasYADALib())
     {
       File   lib  = Finder.getYADALibDirectory();
@@ -392,6 +392,7 @@ public class ConnectionFactory {
       String[] apps = lib.list(new AndFileFilter(DirectoryFileFilter.DIRECTORY,new NotFileFilter(new NameFileFilter(Finder.GIT_DIR))));
       for (String app: apps)
       {
+        conf = new HashMap<String,Object>();
         try
         {
           File       fconf = new File(lib,app+"/conf.json");
@@ -453,6 +454,7 @@ public class ConnectionFactory {
         }
         while (rs.next())
         {
+          conf = new HashMap<String,Object>();
           String confStr = rs.getString(YADA_DS_CONF);
           conf.put(YADA_DS_APP, rs.getString(YADA_DS_APP));
           conf.put(YADA_DS_SOURCE, rs.getString(YADA_DS_SOURCE));
@@ -488,17 +490,25 @@ public class ConnectionFactory {
    * @param conf the webservice configuration object to parse
    */
   public void createWsDataSource(Map<?, ?> conf) {
+    Properties props = new Properties();
     String app = "";
     if(Finder.hasYADALib())
     {
       app = (String) conf.get(YADA_CONF_APP);
       if (app != null && !"".equals(app))
       {
+        props.put(YADA_CONF_SOURCE, conf.get(YADA_CONF_SOURCE));
         if (this.getWsSourceMap().get(app) == null)
-        {
-          String url = (String) conf.get(YADA_CONF_SOURCE);          
-          this.getWsSourceMap().put(app, url);
-          l.debug(app + " : " + url);
+        {          
+          if(conf.containsKey(YADA_CONF_PROPS))
+          {
+            for(String key : JSONObject.getNames((JSONObject)conf.get(YADA_CONF_PROPS)))
+            {           
+              props.put(key, ((JSONObject)conf.get(YADA_CONF_PROPS)).getString(key));            
+            }
+          }
+          this.getWsSourceMap().put(app, props);
+          l.debug(app + " : " + conf.get(YADA_CONF_SOURCE));
         }
       } 
     }
@@ -512,7 +522,8 @@ public class ConnectionFactory {
           String url = (String) conf.get(YADA_DS_CONF);
           if (url == null || "".equals(url))
             url = (String) conf.get(YADA_DS_SOURCE);
-          this.getWsSourceMap().put(app, url);
+          props.put(YADA_CONF_SOURCE, url);
+          this.getWsSourceMap().put(app, props);
           l.debug(app + " : " + url);
         }
       } 
@@ -720,7 +731,7 @@ public class ConnectionFactory {
    * @return the wsSourceMap
    * @since 8.0.0
    */
-  public Map<String, String> getWsSourceMap() {
+  public Map<String, Properties> getWsSourceMap() {
     return this.wsSourceMap;
   }
 

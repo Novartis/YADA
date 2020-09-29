@@ -25,6 +25,7 @@ import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -237,7 +238,8 @@ public class SOAPAdaptor extends Adaptor {
 	 */
 	@Override
 	public String build(YADAQuery yq) throws YADAAdaptorException {
-	  String conf     = ConnectionFactory.getConnectionFactory().getWsSourceMap().get(yq.getApp());
+    Properties props = ConnectionFactory.getConnectionFactory().getWsSourceMap().get(yq.getApp());    
+    String conf   = props.getProperty(ConnectionFactory.YADA_CONF_SOURCE); 
 		String queryStr = yq.getYADACode();
 		try {
 			JSONObject querySpec = new JSONObject(queryStr);

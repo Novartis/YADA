@@ -17,5 +17,5 @@
   		<class name="com.novartis.opensource.yada.test.pre9.ConnectionFactoryTest"/>
   		<class name="com.novartis.opensource.yada.test.pre9.ServiceTest"/>
   	</classes>
-  </test>  
+  </test>
 </suite> <!-- Suite -->
