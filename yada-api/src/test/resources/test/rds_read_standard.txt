@@ -1,0 +1,4 @@
+q=RDSTEST/test read&p=DL000001A seqObj.RDS
+q=RDSTEST/test read with param&p=DL000001A seqObj.RDS,\[1]
+q=RDSTEST/test read with param&p=DL000001A seqObj.RDS,\[[1]]
+q=RDSTEST/test read with param&p=DL000001A seqObj.RDS,\[[1]]$nodes.df

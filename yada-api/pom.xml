@@ -18,6 +18,13 @@
       <url>${distribution.site.url}/${project.artifactId}</url>
     </site>
   </distributionManagement>
+  <repositories>
+    <repository>
+      <id>bedatadriven</id>
+      <name>bedatadriven public repo</name>
+      <url>https://nexus.bedatadriven.com/content/groups/public/</url>
+    </repository>
+  </repositories>
   <properties>
     <YADA.branch>master</YADA.branch>
     <YADA.switch.branch>false</YADA.switch.branch>
@@ -757,5 +764,31 @@
       <version>1.1.1</version>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>org.renjin</groupId>
+      <artifactId>renjin-script-engine</artifactId>
+      <version>3.5-beta76</version>
+    </dependency>
+    <dependency>
+      <groupId>org.renjin.cran</groupId>
+      <artifactId>jsonlite</artifactId>
+      <version>1.6-b1</version>
+      <scope>runtime</scope>
+    </dependency>
+    <!-- <dependency>
+      <groupId>org.renjin.cran</groupId>
+      <artifactId>jsonify</artifactId>
+      <version>0.2.1-b1</version>
+    </dependency> -->
+    <dependency>
+      <groupId>org.renjin.cran</groupId>
+      <artifactId>rjson</artifactId>
+      <version>0.2.15-renjin-21</version>
+    </dependency>
+    <!-- <dependency>
+      <groupId>com.github.jbytecode</groupId>
+      <artifactId>RCaller</artifactId>
+      <version>3.0.2</version>
+    </dependency> -->
   </dependencies>
 </project>

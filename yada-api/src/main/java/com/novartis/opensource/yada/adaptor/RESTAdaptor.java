@@ -33,6 +33,7 @@ import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -703,7 +704,8 @@ public class RESTAdaptor extends Adaptor {
 	 */
 	@Override
 	public String build(YADAQuery yq) {
-	  String conf   = ConnectionFactory.getConnectionFactory().getWsSourceMap().get(yq.getApp());
+    Properties props = ConnectionFactory.getConnectionFactory().getWsSourceMap().get(yq.getApp());    
+    String conf   = props.getProperty(ConnectionFactory.YADA_CONF_SOURCE); 
 		String uri    = yq.getYADACode();
 		return conf + uri;
 	}

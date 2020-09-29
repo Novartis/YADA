@@ -17,6 +17,7 @@ package com.novartis.opensource.yada.adaptor;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,7 +47,7 @@ public class FileSystemAdaptor extends Adaptor
 	/**
 	 * Constant equal to: {@value}
 	 */
-	private   final static String  PROTOCOL        = "file://";
+	protected final static String  PROTOCOL        = "file://";
 	/**
    * Constant equal to: {@code ([\\/=:&lt;])(\\?[idvn])}
    */
@@ -60,9 +61,9 @@ public class FileSystemAdaptor extends Adaptor
    */
 	protected final static Pattern PARAM_URL_RX    = Pattern.compile(".+"+PARAM_SYMBOL_RX+".*");
 	/**
-   * Constant equal to: {@code "^file:\\/\\/\\/(io\\/(in|out))(\\/.+)*$"}
+   * Constant equal to: {@code "^file:\\/\\/\\/(io\\/(?:in|out\\/))?(.+)?$"}
    */
-	protected final static Pattern SOURCE_RX       = Pattern.compile("^file:\\/\\/\\/(io\\/(in|out))(\\/.+)*$");	
+	protected final static Pattern SOURCE_RX       = Pattern.compile("^file:\\/\\/\\/(io\\/(?:in|out\\/))?(.+)?$");	
 	
 //	/**
 //	 * Variable for storing file system access mode, either {@link #READ} (default), {@link #WRITE}, or {@link #APPEND}
@@ -191,40 +192,37 @@ public class FileSystemAdaptor extends Adaptor
 	 */
 	@Override
 	public String build(YADAQuery yq) throws YADAAdaptorException {
-		String conf   = ConnectionFactory.getConnectionFactory().getWsSourceMap().get(yq.getApp());
+	  Properties props = ConnectionFactory.getConnectionFactory().getWsSourceMap().get(yq.getApp());	  
+		String source = props.getProperty(ConnectionFactory.YADA_CONF_SOURCE); 
 		String uriStr = yq.getYADACode();
-		String env    = "";
+		String path   = "";
 		try
 		{
-			Matcher m   = SOURCE_RX.matcher(conf);
+			Matcher m   = SOURCE_RX.matcher(source); // ^file:\\/\\/\\/(io\\/(?:in|out\\/))?(.+)?$
 	
-			if(m.matches())
+			if(m.matches() && !(null == m.group(1) || "".contentEquals(m.group(1))) ) // has io/in or io/out subdir in source
 			{
 				try
 				{
-					env  = Finder.getEnv(m.group(1));
+					path  = Finder.getEnv(m.group(1));
 				} 
 				catch (YADAResourceException e)
 				{
 				  String msg = "The JNDI Resource could not be found.";
 				  throw new YADAAdaptorException(msg, e);
 				}
+			}			  
+			else
+			{  
+			  path = source;
 			}
-//			Matcher m1  = URI_RX.matcher(uriStr);
-//			if(m1.matches()) 
-//			{
-//				if(m1.groupCount() > 1 && m1.group(3) != null)
-//				{
-//					setType(m1.group(3));
-//				}
-//			}
 		}
 		catch(Exception e)
 		{
 			String msg = "There was a problem with the source or uri syntax";
 			throw new YADAAdaptorException(msg, e);
 		}
-		return env + uriStr;
+		return path + uriStr;
 	}
 	
 //	/**
