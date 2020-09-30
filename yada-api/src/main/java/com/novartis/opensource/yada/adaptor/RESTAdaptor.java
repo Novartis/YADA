@@ -46,6 +46,7 @@ import com.google.api.client.http.BasicAuthentication;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpContent;
+import com.google.api.client.http.HttpExecuteInterceptor;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
@@ -60,6 +61,7 @@ import com.novartis.opensource.yada.YADAQueryConfigurationException;
 import com.novartis.opensource.yada.YADAQueryResult;
 import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADASecurityException;
+import com.novartis.opensource.yada.util.YADAUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -297,6 +299,16 @@ public class RESTAdaptor extends Adaptor {
 				setOAuth(yq);
 			return setAuthenticationOAuth(url);			
 		}
+		else if(yq.hasParam(YADARequest.PS_HTTPHEADERS) || yq.hasParam(YADARequest.PL_HTTPHEADERS))
+    {
+		  String paramVal = yq.getParam(YADARequest.PS_HTTPHEADERS).get(0).getValue();
+		  if(null == paramVal || "".contentEquals(paramVal))
+		  {
+		    paramVal = yq.getParam(YADARequest.PL_HTTPHEADERS).get(0).getValue();
+		  }
+		  JSONObject auth = new JSONObject(paramVal);
+		  return setAuthenticationToken(url, auth.getString("Authorization"));
+    }
 		else if(url.getUserInfo() != null)
 		{
 			return setAuthenticatonBasic(url);
@@ -414,6 +426,30 @@ public class RESTAdaptor extends Adaptor {
 			String password = userinfo[1];
 			BasicAuthentication ba = new BasicAuthentication(username, password);
 			return ba;
+	}
+	
+	/**
+	 * @param url the REST url to process
+	 * @param token the auth token stored with the query
+	 * @return the interceptor to set the auth header
+	 */
+	private HttpRequestInitializer setAuthenticationToken(GenericUrl url, String token)
+	{
+	  class TokenAuthentication implements HttpRequestInitializer, HttpExecuteInterceptor {
+	    
+	    @Override
+      public void initialize(HttpRequest request) throws IOException {
+	      request.setInterceptor((HttpExecuteInterceptor) this);
+	    }
+	    
+	    @Override      
+      public void intercept(HttpRequest request) throws IOException {
+	      request.getHeaders().setAuthorization("Bearer "+token);
+	    }
+	  };
+	  
+	  return new TokenAuthentication();
+	  
 	}
 	
 	/**
