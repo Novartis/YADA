@@ -1948,13 +1948,19 @@ public class YADARequest {
 			}
 		}
 		
+		// header names are case-insentive: 
+		// https://tools.ietf.org/html/rfc2616#section-4.2
+		
 		if (m1.matches()) // it's a list of header names
 		{
 			String[] hdrList = hdrStr.split(",");
 			this.httpHeaders = new JSONObject();
 			for(String name : hdrList)
 			{
-				this.httpHeaders.put(name, reqHeaders.get(name));
+			  String hdr = reqHeaders.get(name);
+			  if(null == hdr || hdr.contentEquals(""))
+			    hdr = reqHeaders.get(name.toLowerCase());
+				this.httpHeaders.put(name, hdr);
 			}
 		}
 		else // it's a json object
@@ -1969,7 +1975,10 @@ public class YADARequest {
 					if(vals.optBoolean(i))
 					{
 						String name = names.getString(i);
-						this.httpHeaders.put(name,reqHeaders.get(name));
+						String hdr  = reqHeaders.get(name);
+		        if(null == hdr || hdr.contentEquals(""))
+		          hdr = reqHeaders.get(name.toLowerCase());
+						this.httpHeaders.put(name,hdr);
 					}
 				}
 			}
