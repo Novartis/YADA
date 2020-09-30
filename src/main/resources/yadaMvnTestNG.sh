@@ -123,7 +123,7 @@ rm $LOG
 cd $YADA_SRCDIR
 
 
-if [ "y" = "$SUSPEND" ]
+if [ "y" == "$SUSPEND" ]
 then
   SUREFIRE_DEBUG="-Dmaven.surefire.debug"
   FAILSAFE_DEBUG="-Dmaven.failsafe.debug"
