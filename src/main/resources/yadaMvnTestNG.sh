@@ -12,16 +12,19 @@ printf "Usage: $0 [-T [surefire|failsafe]] [-x surefire|failsafe] [-p test|test_
   -t  use the 'tmp_toggle' file to cherry pick tests. Default is all tests. \n \
   -d  show java debug log output. Default log level is 'info'. \n \
   -s  deloy snapshot to maven central.  Implies -T \n \
-  -i  test the webapp interactively. Combine with  '-x failsafe' to debug as well \n \
+  -i  print command to test webapp interactively. Combine with  '-x failsafe' to debug as well \n \
   -?  show this help \n\n \
 " 1>&2; exit 1; }
+
+# this option not working currently--has something to do with forking
+# -i  test the webapp interactively. Combine with  '-x failsafe' to debug as well \n \
 
 SUSPEND=n
 MAVEN_DEBUG=
 TOGGLE_TESTS=
 LOG_LEVEL="-Dlog.level=info"
-SUREFIRE_X=
-FAILSAFE_X=
+SUREFIRE_X=0
+FAILSAFE_X=0
 DEBUG=
 PROFILE=
 YADA_PROPS=
