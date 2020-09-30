@@ -1,7 +1,7 @@
 #!/bin/bash
 
 usage() {
-printf "Usage: $0 [-T surefire|failsafe] [-x surefire|failsafe] [-p test|test_pre9] [-Xtdsi] \n\n \
+printf "Usage: $0 [-T [surefire|failsafe]] [-x surefire|failsafe] [-p test|test_pre9] [-Xtdsi] \n\n \
   -T  Execute either surefire (api) or failsafe (http) testing. Omit argument to suppress both. \n \
       Failsafe suppression will also suppress cargo deployment. Default (option -T omitted altogether) \n \
       is to execute both. \n \
