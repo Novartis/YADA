@@ -276,7 +276,14 @@ public class Service {
   		{
   			getYADARequest().setJsonParams(paraMap.get(YADARequest.PS_JSONPARAMS));
   		}
-  		
+  		if (paraMap.get(YADARequest.PL_JSONFILTERS) != null)
+      {
+        getYADARequest().setJsonFilters(paraMap.get(YADARequest.PL_JSONFILTERS));
+      }
+      if (paraMap.get(YADARequest.PS_JSONFILTERS) != null)
+      {
+        getYADARequest().setJsonFilters(paraMap.get(YADARequest.PS_JSONFILTERS));
+      }
   		if (paraMap.get(YADARequest.PL_JOIN) != null)
       {
         getYADARequest().setJoin(paraMap.get(YADARequest.PL_JOIN));

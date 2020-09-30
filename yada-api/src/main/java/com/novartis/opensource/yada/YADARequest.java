@@ -2205,12 +2205,16 @@ public class YADARequest {
 	{
 	  // must set plugin manually here rather than calling setter because there are 
 	  // likely to be comma is the JMESPath string	  	 
+
+	  
 	  if(null == this.plugin || this.plugin.length == 0)
 	  {
+	    // plugin is first and only entry
       this.plugin = new String[] { JSON_RESPONSE_FILTER };
 	  }
 	  else
 	  {
+	    // plugin is last entry
 	    int origLen = this.plugin.length;
 	    this.plugin = Arrays.copyOf(this.plugin, origLen + 1);
 	    this.plugin[origLen] = JSON_RESPONSE_FILTER;

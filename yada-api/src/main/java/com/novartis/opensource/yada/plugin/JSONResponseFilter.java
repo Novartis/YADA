@@ -43,7 +43,7 @@ public class JSONResponseFilter extends AbstractPostprocessor {
     // Expressions need to be compiled before you can search. Compiled expressions
     // are reusable and thread safe. Compile your expressions once, just like database
     // prepared statements.
-    Expression<JsonNode> expression = jmespath.compile(yadaReq.getJsonFilters());
+    Expression<JsonNode> expression = jmespath.compile(yadaReq.getArgs().get(0));
     // This you have to fill in yourself, you're probably using Jackson's ObjectMapper
     // to load JSON data, and that should fit right in here.
     ObjectMapper mapper = new ObjectMapper();
