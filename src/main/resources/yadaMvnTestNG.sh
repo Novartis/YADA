@@ -34,7 +34,7 @@ DEPLOY_SNAPSHOT=0
 INTERACTIVE=0
 
 OPTERR=0
-while getopts "x:Xtdp:T:s" opt; do
+while getopts "Xtdisx:p:T:" opt; do
   case ${opt} in
     i )
       INTERACTIVE=1
@@ -147,7 +147,7 @@ elif [ 1 -eq "$INTERACTIVE" ]
 then
   if [ 1 -eq "$FAILSAFE_X" ]
   then
-    DEBUG='-Dcargo.start.jvmargs="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Xnoagent -Djava.compiler=NONE'
+    DEBUG="-Dcargo.start.jvmargs='-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Xnoagent -Djava.compiler=NONE'"
   fi
   GOAL=org.codehaus.cargo:cargo-maven2-plugin:run
   CONTAINER_ID=-Dcargo.maven.containerId=tomcat8x
@@ -157,6 +157,10 @@ else
   CMD="$MAVEN $MAVEN_DEBUG clean verify -P${PROFILE},deploy-war $DEBUG -Dsuspend.debugger=$SUSPEND $COMMON_VARS"
 fi
 echo $CMD
+if [ 1 -eq "$INTERACTIVE" ]
+then
+  exit 0
+fi
 exec $CMD > >(tee -i $LOG)
 echo "[$$] ${CMD}"
 
