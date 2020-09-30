@@ -37,6 +37,7 @@ import com.novartis.opensource.yada.YADAQuery;
 import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADARequestException;
 import com.novartis.opensource.yada.YADASecurityException;
+import com.novartis.opensource.yada.util.YADAUtils;
 
 /**
  * @author David Varon
@@ -44,11 +45,6 @@ import com.novartis.opensource.yada.YADASecurityException;
  *        ExecutionPolicy, ContentPolicy
  */
 public abstract class AbstractPostprocessor implements Postprocess, Authorization, TokenValidator {
-
-  /**
-   * A constant equal to {@value} for handling param value syntax
-   */
-  private static final String RX_NOTJSON = "^[^{].+$";
 
   /**
    * Constant with value: {@value}
@@ -300,7 +296,7 @@ public abstract class AbstractPostprocessor implements Postprocess, Authorizatio
    * @since 8.7.6
    */
   public void setHTTPHeaders(String[] httpHeaders) throws YADARequestException {
-    Matcher             m1         = Pattern.compile(RX_NOTJSON).matcher(Arrays.toString(httpHeaders));
+    Matcher             m1         = Pattern.compile(YADAUtils.RX_NOTJSON).matcher(Arrays.toString(httpHeaders));
     Map<String, String> reqHeaders = new HashMap<String, String>();
     // ignore key case
     // api circumvents http request so check for null    
