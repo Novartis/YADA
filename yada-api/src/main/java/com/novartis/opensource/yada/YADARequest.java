@@ -386,10 +386,15 @@ public class YADARequest {
 	public static final String PS_FORMAT      = "f";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
+	 * @since 9.0.0 (Short param aliases were first added in 4.0.0)
 	 */
-	public static final String PS_JSONPARAMS  = "j";
+	public static final String PS_JSONFILTERS  = "jf";
 	/**
+   * A constant equal to: {@value}
+   * @since 4.0.0 (Short param aliases were first added in 4.0.0)
+   */
+  public static final String PS_JSONPARAMS  = "j";
+  /**
    * A constant equal to: {@value}
    * @since 6.2.0
    */
@@ -638,6 +643,10 @@ public class YADARequest {
 	 */
 	public static final String PL_HTTPHEADERS = "HTTPHeaders";
 	/**
+   * A constant equal to: {@value}
+   */
+  public static final String PL_JSONFILTERS = "JSONFilters";
+  /**
 	 * A constant equal to: {@value}
 	 */
 	public static final String PL_JSONPARAMS  = "JSONParams";
@@ -817,6 +826,11 @@ public class YADARequest {
 	 * A thesaurus for long and short parameter name synonyms
 	 */
 	private static final Map<String,String> fieldAliasMap;
+	/**
+	 * The plugin class for handling JMESPath parameters
+	 * @since 9.0.0
+	 */
+  private static final String JSON_RESPONSE_FILTER = "JSONResponseFilter";
 	
 	static {
 		Map<String,String> map = new HashMap<>();
@@ -837,6 +851,7 @@ public class YADARequest {
 		map.put(PS_HARMONYMAP,PL_HARMONYMAP);
 		map.put(PS_HTTPHEADERS,PL_HTTPHEADERS);
 		map.put(PS_JSONPARAMS,PL_JSONPARAMS);
+		map.put(PS_JSONFILTERS,PL_JSONFILTERS);
 		map.put(PS_JOIN, PL_JOIN);
 		map.put(PS_LEFTJOIN, PL_LEFTJOIN);
 		map.put(PS_METHOD,PL_METHOD);
@@ -1074,6 +1089,11 @@ public class YADARequest {
 	@Deprecated
 	private Map<String,List<Map<String,String>>> 
 					   JSONParams           = new LinkedHashMap<>();
+	/**
+	 * A JMESPath json filter string
+	 * @since 9.0.0
+	 */
+	private String jsonFilters = "";
 	/**
 	 * A data structure for storing json params values
 	 */
@@ -2177,6 +2197,28 @@ public class YADARequest {
 		this.jsonParams = jp;
 	}
 	
+	/**
+	 * @param jf the JMESPath string to apply to the results 
+	 * @since 9.0.0
+	 */
+	public void setJsonFilters(String[] jf)
+	{
+	  // must set plugin manually here rather than calling setter because there are 
+	  // likely to be comma is the JMESPath string	  	 
+	  if(null == this.plugin || this.plugin.length == 0)
+	  {
+      this.plugin = new String[] { JSON_RESPONSE_FILTER };
+	  }
+	  else
+	  {
+	    int origLen = this.plugin.length;
+	    this.plugin = Arrays.copyOf(this.plugin, origLen + 1);
+	    this.plugin[origLen] = JSON_RESPONSE_FILTER;
+	  }
+    LinkedList<String> args = new LinkedList<>();
+    args.add(jf[0]);
+    this.addPluginArgs(args);
+	}
 	
 	/**
 	 * @deprecated As of YADA 4.0.0
@@ -2537,7 +2579,16 @@ public class YADARequest {
    */
   public void setPlugin(String[] configs) {
     int length = configs.length;
-    this.plugin = new String[length];
+    // new for 9.0.0, because the plugin array may have already been
+    // set by setJsonFilters
+    if(null == this.plugin || this.plugin.length == 0)
+    {
+      this.plugin = new String[length];
+    }
+    else
+    { 
+      this.plugin = Arrays.copyOf(this.plugin, this.plugin.length + configs.length);
+    }
     for(int i=0;i<configs.length;i++) //each plugin parameter
     {
       String   config       = configs[i];
@@ -3041,6 +3092,15 @@ public class YADARequest {
 	public JSONParams getJsonParams() {
 		return this.jsonParams;
 	}
+	
+	/**
+   * Returns the {@code JMESPath} string.
+   * @since 9.0.0
+   * @return {@link jsonFilters}
+   */
+  public String getJsonFilters() {
+    return this.jsonFilters;
+  }
 	
 	/**
 	 * This is currently unsupported.
