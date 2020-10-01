@@ -115,15 +115,14 @@
             <artifactId>cargo-maven2-plugin</artifactId>
             <version>1.4.4</version>
             <configuration>
-              <properties>
-              </properties>
               <skip>${skip.deploy.war}</skip>
               <container>
                 <containerId>tomcat8x</containerId>
                 <timeout>300000</timeout>
-                <zipUrlInstaller>
+                <home>${basedir}/cargo/installs/tomcat-8.5.49/apache-tomcat-8.5.49</home>
+                <!-- <zipUrlInstaller>
                   <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/8.5.49/tomcat-8.5.49.zip</url>
-                </zipUrlInstaller>
+                </zipUrlInstaller> -->
                 <!-- <containerId>tomcat9x</containerId> <zipUrlInstaller> 
                   <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/9.0.29/tomcat-9.0.29.zip</url> 
                   </zipUrlInstaller> -->
@@ -142,6 +141,7 @@
                     <!-- -Djavax.net.ssl.keyStore=~/.keystore -Djavax.net.ssl.keyStorePassword=changeit 
                       -Djavax.net.ssl.trustStore=~/.keystore -Djavax.net.ssl.trustStorePassword=changeit -->
                   </cargo.jvmargs>
+<!--                   <cargo.tomcat.connector.relaxedQueryChars>^&#96;{}[]|&quot;&lt;&gt;</cargo.tomcat.connector.relaxedQueryChars> -->
                   <cargo.logging>low</cargo.logging>
                   <cargo.standalone.ignoreNonExistingProperties>true</cargo.standalone.ignoreNonExistingProperties>
                 </properties>

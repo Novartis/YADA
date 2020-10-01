@@ -1,7 +1,7 @@
 #!/bin/bash
 
 usage() {
-printf "Usage: $0 [-T surefire|failsafe] [-x surefire|failsafe] [-p test|test_pre9] [-Xtdsi] \n\n \
+printf "Usage: $0 [-T [surefire|failsafe]] [-x surefire|failsafe] [-p test|test_pre9] [-Xtdsi] \n\n \
   -T  Execute either surefire (api) or failsafe (http) testing. Omit argument to suppress both. \n \
       Failsafe suppression will also suppress cargo deployment. Default (option -T omitted altogether) \n \
       is to execute both. \n \
@@ -12,16 +12,19 @@ printf "Usage: $0 [-T surefire|failsafe] [-x surefire|failsafe] [-p test|test_pr
   -t  use the 'tmp_toggle' file to cherry pick tests. Default is all tests. \n \
   -d  show java debug log output. Default log level is 'info'. \n \
   -s  deloy snapshot to maven central.  Implies -T \n \
-  -i  test the webapp interactively. Combine with  '-x failsafe' to debug as well \n \
+  -i  print command to test webapp interactively. Combine with  '-x failsafe' to debug as well \n \
   -?  show this help \n\n \
 " 1>&2; exit 1; }
+
+# this option not working currently--has something to do with forking
+# -i  test the webapp interactively. Combine with  '-x failsafe' to debug as well \n \
 
 SUSPEND=n
 MAVEN_DEBUG=
 TOGGLE_TESTS=
 LOG_LEVEL="-Dlog.level=info"
-SUREFIRE_X=
-FAILSAFE_X=
+SUREFIRE_X=0
+FAILSAFE_X=0
 DEBUG=
 PROFILE=
 YADA_PROPS=
@@ -29,9 +32,10 @@ SKIP_SUREFIRE=
 SKIP_FAILSAFE=
 DEPLOY_SNAPSHOT=0
 INTERACTIVE=0
+CONTAINER_OPT="-Dcargo.tomcat.connector.relaxedQueryChars='^&#96;{}[]|&quot;&lt;&gt;'"
 
 OPTERR=0
-while getopts "x:Xtdp:T:s" opt; do
+while getopts "Xtdisx:p:T:" opt; do
   case ${opt} in
     i )
       INTERACTIVE=1
@@ -123,7 +127,7 @@ rm $LOG
 cd $YADA_SRCDIR
 
 
-if [ "y" = "$SUSPEND" ]
+if [ "y" == "$SUSPEND" ]
 then
   SUREFIRE_DEBUG="-Dmaven.surefire.debug"
   FAILSAFE_DEBUG="-Dmaven.failsafe.debug"
@@ -144,16 +148,20 @@ elif [ 1 -eq "$INTERACTIVE" ]
 then
   if [ 1 -eq "$FAILSAFE_X" ]
   then
-    DEBUG='-Dcargo.start.jvmargs="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Xnoagent -Djava.compiler=NONE'
+    DEBUG="-Dcargo.start.jvmargs='-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Xnoagent -Djava.compiler=NONE'"
   fi
   GOAL=org.codehaus.cargo:cargo-maven2-plugin:run
   CONTAINER_ID=-Dcargo.maven.containerId=tomcat8x
   CONTAINER_URL=-Dcargo.maven.containerUrl=https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/8.5.49/tomcat-8.5.49.zip
-  CMD="${MAVEN} ${GOAL} ${CONTAINER_ID} ${CONTAINER_URL} ${DEBUG}"
+  CMD="${MAVEN} ${GOAL} ${CONTAINER_ID} ${CONTAINER_URL} ${CONTAINER_OPT} ${DEBUG}"
 else
-  CMD="$MAVEN $MAVEN_DEBUG clean verify -P${PROFILE},deploy-war $DEBUG -Dsuspend.debugger=$SUSPEND $COMMON_VARS"
+  CMD="$MAVEN $MAVEN_DEBUG clean verify -P${PROFILE},deploy-war $DEBUG -Dsuspend.debugger=$SUSPEND ${CONTAINER_OPT} $COMMON_VARS"
 fi
 echo $CMD
+if [ 1 -eq "$INTERACTIVE" ]
+then
+  exit 0
+fi
 exec $CMD > >(tee -i $LOG)
 echo "[$$] ${CMD}"
 

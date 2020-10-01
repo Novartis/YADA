@@ -521,6 +521,11 @@ public class ServiceTest
       	System.out.println(val[0]);
       	yadaReq.setJsonParams(new JSONParams(new JSONArray(val[0])));
       }
+      else if(key.equals(YADARequest.PL_JSONFILTERS) || key.equals(YADARequest.PS_JSONFILTERS) && val != null)
+      {
+        System.out.println(val[0]);
+        yadaReq.setJsonFilters(val);
+      }
       else
       {
         try
@@ -1311,6 +1316,25 @@ public class ServiceTest
   @Test(enabled = true, dataProvider = "QueryTests", groups = { "noproxy" })
   @QueryFile(list = {})
   public void testRESTExternalPassThru(String query) throws YADAQueryConfigurationException, JSONException, YADAExecutionException
+  {
+    Service svc = prepareTest(query);
+    YADARequest yadaReq = svc.getYADARequest();
+    yadaReq.setResponse(new String[] { "RESTPassThruResponse" });
+    Assert.assertTrue(validateThirdPartyJSONResult(svc.execute()) ,  "Data invalid for query: "+query);
+  }
+  
+  /**
+   * Tests execution of a REST query using YADA as a proxy, passing through the
+   * query result unchanged
+   *
+   * @param query the query to execute
+   * @throws YADAQueryConfigurationException when request creation fails
+   * @throws JSONException when the result does not conform
+   * @throws YADAExecutionException when the test fails
+   */
+  @Test(enabled = true, dataProvider = "QueryTests", groups = { "api" })
+  @QueryFile(list = {})
+  public void testRESTExternalPassThruFiltered(String query) throws YADAQueryConfigurationException, JSONException, YADAExecutionException
   {
     Service svc = prepareTest(query);
     YADARequest yadaReq = svc.getYADARequest();

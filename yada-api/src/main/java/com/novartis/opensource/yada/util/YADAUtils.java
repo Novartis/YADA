@@ -56,7 +56,11 @@ import com.novartis.opensource.yada.adaptor.YADAAdaptorExecutionException;
  */
 public class YADAUtils {
 	
-	
+	/** 
+	 * A constant equal to {@code ^[^{].+$}}
+	 * @since 9.0.0
+	 */
+  public static final String   RX_NOTJSON = "^[^{].+$";
   /**
    * A constant equal to: {@value}, the JNDI key for the framework version value
    */
