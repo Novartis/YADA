@@ -32,6 +32,7 @@ SKIP_SUREFIRE=
 SKIP_FAILSAFE=
 DEPLOY_SNAPSHOT=0
 INTERACTIVE=0
+CONTAINER_OPT="-Dcargo.tomcat.connector.relaxedQueryChars='^&#96;{}[]|&quot;&lt;&gt;'"
 
 OPTERR=0
 while getopts "Xtdisx:p:T:" opt; do
@@ -152,9 +153,9 @@ then
   GOAL=org.codehaus.cargo:cargo-maven2-plugin:run
   CONTAINER_ID=-Dcargo.maven.containerId=tomcat8x
   CONTAINER_URL=-Dcargo.maven.containerUrl=https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/8.5.49/tomcat-8.5.49.zip
-  CMD="${MAVEN} ${GOAL} ${CONTAINER_ID} ${CONTAINER_URL} ${DEBUG}"
+  CMD="${MAVEN} ${GOAL} ${CONTAINER_ID} ${CONTAINER_URL} ${CONTAINER_OPT} ${DEBUG}"
 else
-  CMD="$MAVEN $MAVEN_DEBUG clean verify -P${PROFILE},deploy-war $DEBUG -Dsuspend.debugger=$SUSPEND $COMMON_VARS"
+  CMD="$MAVEN $MAVEN_DEBUG clean verify -P${PROFILE},deploy-war $DEBUG -Dsuspend.debugger=$SUSPEND ${CONTAINER_OPT} $COMMON_VARS"
 fi
 echo $CMD
 if [ 1 -eq "$INTERACTIVE" ]
