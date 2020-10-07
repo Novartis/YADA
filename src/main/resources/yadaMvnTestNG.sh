@@ -123,7 +123,10 @@ $TOGGLE_TESTS \
 $LOG_LEVEL \
 $YADA_PROPS"
 
-rm $LOG
+if [ -f "$LOG" ]
+then
+  rm $LOG
+fi
 cd $YADA_SRCDIR
 
 
