@@ -15,6 +15,8 @@
 package com.novartis.opensource.yada.adaptor;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +26,8 @@ import java.lang.reflect.Method;
 import java.net.HttpCookie;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -31,7 +35,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
+import java.util.Base64;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
@@ -61,7 +67,6 @@ import com.novartis.opensource.yada.YADAQueryConfigurationException;
 import com.novartis.opensource.yada.YADAQueryResult;
 import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADASecurityException;
-import com.novartis.opensource.yada.util.YADAUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -178,6 +183,12 @@ public class RESTAdaptor extends Adaptor {
 	 * @since 8.5.0
 	 */
 	private String method = YADARequest.METHOD_GET;
+	
+	/**
+	 * Variable denoting the mimetype of the requested resources, where applicable
+	 * @since 9.0.0
+	 */
+	private String mimeType = "";
 
 	/**
 	 * Default constructor
@@ -525,6 +536,25 @@ public class RESTAdaptor extends Adaptor {
 	}
 	
 	/**
+	 * Standard accessor for ivar
+	 * @return the mimetype {@link String}
+	 * @since 9.0.0
+	 */
+	public String getMimeType() {
+    return mimeType;
+  }
+
+  /**
+   * Standard mutator for ivar
+   * @param mimeType the mimeType {@link String} to store
+   * @since 9.0.0
+   */
+  public void setMimeType(String mimeType) {
+    this.mimeType = mimeType;
+  }
+  
+
+  /**
 	 * Returns true if <code>method</code> matches <code>POST</code>, <code>PUT</code>, or <code>PATCH</code>
 	 * @param method the http method of the request to check
 	 * @return true if <code>method</code> matches <code>POST</code>, <code>PUT</code>, or <code>PATCH</code>
@@ -569,19 +599,42 @@ public class RESTAdaptor extends Adaptor {
 			throw new YADAAdaptorExecutionException(msg,e);
 		}
 		
-		try(BufferedReader in = new BufferedReader(new InputStreamReader(response.getContent())))
+//		String ct = response.getContentType();
+		String mt = this.getMimeType();
+		if(mt.contentEquals(""))
+		  this.setMimeType(response.getContentType());
+		if(mt.startsWith("text") 
+		    || mt.matches("application/(?:json|ld\\+json|x-httpd-php|rtf|x-sh|xml).*"))
 		{
-		  String 		   inputLine;
-		  while ((inputLine = in.readLine()) != null)
-      {
-        result += String.format("%1s%n",inputLine);
-      }
-		} 
-		catch (IOException e) 
-		{
-			String msg = "There was a problem reading from the response's input stream";
-			throw new YADAAdaptorExecutionException(msg, e);
+		  try(BufferedReader in = new BufferedReader(new InputStreamReader(response.getContent())))
+	    {
+	      String       inputLine;
+	      while ((inputLine = in.readLine()) != null)
+	      {
+	        result += String.format("%1s%n",inputLine);
+	      }
+	    } 
+	    catch (IOException e) 
+	    {
+	      String msg = "There was a problem reading from the response's input stream";
+	      throw new YADAAdaptorExecutionException(msg, e);
+	    }		  
 		}
+		else 
+		{
+		  this.getServiceParameters().setFormat(new String[] { YADARequest.FORMAT_BINARY });		  
+		  try(ByteArrayOutputStream baos = new ByteArrayOutputStream())
+		  {
+		    response.download(baos);
+		    result = String.format("data:%s;base64, %s",mt,Base64.getEncoder().encodeToString(baos.toByteArray()));
+		  }
+      catch (IOException e) 
+      {
+        String msg = "There was a problem reading from the response's input stream or encoding to Base64";
+        throw new YADAAdaptorExecutionException(msg, e);
+      }     
+		}
+		
 		return result;
 	}
 	
@@ -702,6 +755,9 @@ public class RESTAdaptor extends Adaptor {
 				
 				// init url
 				GenericUrl url     = new GenericUrl(urlString);
+				List<String> path = url.getPathParts();
+				String fn = path.get(path.size()-1);
+				this.setMimeType(URLConnection.guessContentTypeFromName(fn));
 				
 				// build request, handling auth if necessary
 				request = buildRequest(yq,payload,url);

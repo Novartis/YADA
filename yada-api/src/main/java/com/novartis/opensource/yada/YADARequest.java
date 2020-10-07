@@ -144,6 +144,11 @@ public class YADARequest {
 	 * @since 8.5.0
 	 */
 	public static final String FORMAT_PLAINTEXT  	= "text";
+	 /**
+   * A constant equal to: {@value}
+   * @since 9.0.0
+   */
+	public static final String FORMAT_BINARY      = "binary";
 	/**
 	 * A constant equal to: {@value}
 	 */
@@ -831,6 +836,7 @@ public class YADARequest {
 	 * @since 9.0.0
 	 */
   private static final String JSON_RESPONSE_FILTER = "JSONResponseFilter";
+  
 	
 	static {
 		Map<String,String> map = new HashMap<>();
