@@ -164,7 +164,7 @@ else
 			  request.getSession().setAttribute("YADAException",e.toString());
 			  response.sendError(errorCode);
 			}
-		}		
+		}
 		else if (YADARequest.FORMAT_XML.equals(fmt))
 		{
 			response.setContentType("text/xml");
@@ -184,9 +184,9 @@ else
 		else if (YADARequest.FORMAT_HTML.equals(fmt))
 		{
 			response.setContentType("text/html");
-		}		
+		}
 		else if (YADARequest.FORMAT_BINARY.equals(fmt))
-    {           		  
+    {
 		  String  ct = "application/octet-stream";
 		  Pattern rx = Pattern.compile("^data:(.+/.+);base64, .+$",Pattern.DOTALL);
 		  Matcher m  = rx.matcher(result);
@@ -195,7 +195,7 @@ else
 		    ct = m.group(1);
 		  }
       response.setContentType(ct);
-    }   
+    }
 	}%><%=result%><%
 }
 %>
