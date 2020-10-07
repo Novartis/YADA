@@ -124,7 +124,7 @@ if(ServletFileUpload.isMultipartContent(request))
 }
 else
 {
-/*	String help = request.getParameter("help");
+  /*	String help = request.getParameter("help");
 	if (new Boolean(help).booleanValue()
 			|| "yes".equals(help)
 			|| "1".equals(help)
@@ -185,6 +185,17 @@ else
 		{
 			response.setContentType("text/html");
 		}
+		else if (YADARequest.FORMAT_BINARY.equals(fmt))
+    {
+		  String  ct = "application/octet-stream";
+		  Pattern rx = Pattern.compile("^data:(.+/.+);base64, .+$",Pattern.DOTALL);
+		  Matcher m  = rx.matcher(result);
+		  if(m.matches())
+		  {
+		    ct = m.group(1);
+		  }
+      response.setContentType(ct);
+    }
 	}%><%=result%><%
 }
 %>

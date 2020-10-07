@@ -20,9 +20,9 @@ import com.novartis.opensource.yada.YADARequest;
  * @author dvaron
  * @since 9.1.0
  */
-public class Rds extends FileSystemAdaptor {
+public class RdsAdaptor extends FileSystemAdaptor {
   
-  private static Logger l = Logger.getLogger(Rds.class);
+  private static Logger l = Logger.getLogger(RdsAdaptor.class);
   
   /**
    * Delimeter separating file name and references to objects in file
@@ -43,13 +43,13 @@ public class Rds extends FileSystemAdaptor {
   /**
    * No arg constructor (unused)
    */
-  public Rds() {
+  public RdsAdaptor() {
   }
 
   /**
    * @param yadaReq the request containing the query the adaptor will execute
    */
-  public Rds(YADARequest yadaReq) {
+  public RdsAdaptor(YADARequest yadaReq) {
     super(yadaReq);
   }
   
@@ -131,9 +131,7 @@ public class Rds extends FileSystemAdaptor {
           lcmd = String.format("library('org.renjin.cran:%s')", pkg);
           engine.eval(lcmd);
           jobj = (SEXP)engine.eval(jcmd);
-        }
-        
-
+        }        
         result = jobj.toString();
       }
       

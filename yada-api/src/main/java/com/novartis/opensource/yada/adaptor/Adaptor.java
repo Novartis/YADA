@@ -99,7 +99,8 @@ public abstract class Adaptor
 		try
 		{
 			// placeholder
-		} catch (Exception e)
+		} 
+		catch (Exception e)
 		{
 			String msg = "There was an error.";
 			throw new YADAAdaptorException(msg, e);
