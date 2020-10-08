@@ -599,12 +599,12 @@ public class RESTAdaptor extends Adaptor {
 			throw new YADAAdaptorExecutionException(msg,e);
 		}
 		
-//		String ct = response.getContentType();
-		String mt = this.getMimeType();
-		if(mt.contentEquals(""))
+		if(null == this.getMimeType() || this.getMimeType().contentEquals(""))
+		{
 		  this.setMimeType(response.getContentType());
-		if(mt.startsWith("text") 
-		    || mt.matches("application/(?:json|ld\\+json|x-httpd-php|rtf|x-sh|xml).*"))
+		}
+		if(this.getMimeType().startsWith("text") 
+		    || this.getMimeType().matches("application/(?:json|ld\\+json|x-httpd-php|rtf|x-sh|xml).*"))
 		{
 		  try(BufferedReader in = new BufferedReader(new InputStreamReader(response.getContent())))
 	    {
@@ -626,7 +626,7 @@ public class RESTAdaptor extends Adaptor {
 		  try(ByteArrayOutputStream baos = new ByteArrayOutputStream())
 		  {
 		    response.download(baos);
-		    result = String.format("data:%s;base64, %s",mt,Base64.getEncoder().encodeToString(baos.toByteArray()));
+		    result = String.format("data:%s;base64, %s",this.getMimeType(),Base64.getEncoder().encodeToString(baos.toByteArray()));
 		  }
       catch (IOException e) 
       {
