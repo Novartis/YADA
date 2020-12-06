@@ -17,6 +17,10 @@ package com.novartis.opensource.yada.adaptor;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,15 +53,19 @@ public class FileSystemAdaptor extends Adaptor
 	 */
 	protected final static String  PROTOCOL        = "file://";
 	/**
+   * Constant equal to: {@code \\?[idvn]}
+   */
+  protected final static String  PARAM_MARKUP_RX = "\\?[idvn]";
+	/**
    * Constant equal to: {@code ([\\/=:&lt;])(\\?[idvn])}
    */
-	protected final static String  PARAM_SYMBOL_RX = "([\\/=:<])(\\?[idvn])";
+  protected final static String  PARAM_SYMBOL_RX = "([\\/=:<])("+PARAM_MARKUP_RX+")";
 	/**
    * Constant equal to: {@code &lt;&lcub;1,2&rcub;.*}
    */
 	protected final static String  NON_READ_SFX_RX = "<{1,2}.*";
 	/**
-   * Constant equal to: {@code ".+"+PARAM_SYMBOL_RX+".*"}
+   * Constant equal to: {@code ".+([\\/=:<])(\\?[idvn]).*"}
    */
 	protected final static Pattern PARAM_URL_RX    = Pattern.compile(".+"+PARAM_SYMBOL_RX+".*");
 	/**
@@ -97,57 +105,70 @@ public class FileSystemAdaptor extends Adaptor
 	}
 	
 	/**
-	 * Currently supports directory READ, only that return single-level depth
-	 * and WRITE and APPEND operations for single files. WRITEs can be performed
-	 * on non-existent files, and currently there is no security attached to 
-	 * ensure non-executables only can be written.
-	 * @throws YADAAdaptorExecutionException when the execution fails as a result of an IO error or Resource error, e.g., a problem accessing or reading a file
+	 * Currently supports directory READ, WRITE, and APPEND operations 
+	 * for single files or directories. WRITEs can be performed on non-existent 
+	 * files.  All files written are stored as non-executable.
+	 * @throws YADAAdaptorExecutionException when the execution 
+	 *   fails as a result of an IO error or Resource error, 
+	 *   e.g., a problem accessing or reading a file
 	 */
-	//TODO support parameters for filesystem depth
 	@Override
 	public void execute(YADAQuery yq) throws YADAAdaptorExecutionException
 	{
+	  boolean isWrite = yq.getType().equals(QueryUtils.WRITE);
+	  boolean isAppend = yq.getType().equals(QueryUtils.APPEND);
 		Object result = null;
 		resetCountParameter(yq);
 		for(int row=0;row<yq.getData().size();row++)
 		{
 			yq.setResult();
-			YADAQueryResult yqr    = yq.getResult();
+			YADAQueryResult yqr    = yq.getResult();			
+			String          urlStr = yq.getUrl(row);			
+			String[]        parts  = urlStr.split(PARAM_MARKUP_RX);
+			StringBuffer    urlOut = new StringBuffer();
 			yqr.setApp(yq.getApp());
-			String          urlStr = yq.getUrl(row);
-			
 			for(int i=0;i<yq.getParamCount(row);i++)
 			{
 				String param = "";
+				// 2020-12-05 DV new logic to support depth
+				// if matches (urlStr contains either markup preceded by a symbol e.g., /=:<)
+				//   if (markup mark), replace first
+				//   else (append or write mark), replace first with empty string and setData(param)
+				
+				
 				Matcher m = PARAM_URL_RX.matcher(urlStr);
 				if(m.matches())
-				{
+				{				  
 					param = yq.getVals(row).get(i);
-					if(i==yq.getParamCount(row)-1                                 // last param
-							&& (yq.getType().equals(QueryUtils.WRITE) || yq.getType().equals(QueryUtils.APPEND))) // non-read
+					// are we at the last param and in write or append mode?
+					if(i==yq.getParamCount(row)-1 && (isWrite || isAppend)) // last param and non-read
 					{
-						urlStr = urlStr.replaceFirst(NON_READ_SFX_RX, "");
 						setData(param);
+						if(yq.getParamCount(row) == 1)
+						  urlOut.append(parts[i].replaceAll("<",""));
 					}
 					else
 					{
-						urlStr = urlStr.replaceFirst(PARAM_SYMBOL_RX,m.group(1)+param);
+					  urlOut.append(parts[i]);					  
+					  urlOut.append(param);
 					}
 				}
-				
 			}
+			// file handle for writes
+			File f = new File(urlOut.toString().replace(PROTOCOL, ""));
 			
-			File f = new File(urlStr.replace(PROTOCOL, ""));
-			
-			//TODO Prevent writing of unix executables. does this require simply checking for hashbang?
-			//TODO Ensure no written files have x privs
-			//TODO Enable creation of directories, maybe.
-			if(yq.getType().equals(QueryUtils.WRITE) || yq.getType().equals(QueryUtils.APPEND))
+
+			if(isWrite || isAppend)
 			{
-				boolean append = yq.getType().equals(QueryUtils.APPEND);
-				try(FileWriter out = new FileWriter(f,append)) 
+			  if(isWrite)
+	      {
+			    // check parent dirs exist and create if necessary
+	        File d = f.getParentFile();               
+	        if(!d.exists())
+	          d.mkdirs();
+	      }
+				try(FileWriter out = new FileWriter(f,isAppend)) 
 				{
-			    
 			    out.write(getData());
 			    out.flush();
 			  } 
@@ -156,12 +177,26 @@ public class FileSystemAdaptor extends Adaptor
 					String msg = "There was a problem writing the file.";
 					throw new YADAAdaptorExecutionException(msg,e);
 				}
+				Path fp = f.toPath();
+				// Check if new file is executable and remove those privs if so
+				if(Files.isExecutable(fp))
+				{				  
+				  try
+				  {
+            String perms = PosixFilePermissions.toString(Files.getPosixFilePermissions(fp, new LinkOption[] {LinkOption.NOFOLLOW_LINKS}));
+            Files.setPosixFilePermissions(fp, PosixFilePermissions.fromString(perms.replace("x","-")));
+          }
+          catch (IOException e)
+          {
+             throw new YADAAdaptorExecutionException(e);
+          }
+				}
 			}
-			else
+			else // read stuff
 			{
 			  if(f.isDirectory())
 			  {
-			    result = FileUtils.getFileList(f,0);
+			    result = FileUtils.getFileList(f,-1);
 			  }
 			  else
 			  {
