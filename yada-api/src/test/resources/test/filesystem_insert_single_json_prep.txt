@@ -1,2 +1,4 @@
 j=[{"qname":"YADAFSIN/test write","DATA":[{"YADA_1":"writing"}]}]
 JSONParams=[{"qname":"YADAFSIN/test write","DATA":[{"YADA_1":"writing"}]}]
+j=[{"qname":"YADAFSIN/test write multiparam","DATA":[{"YADA_1":"testdir","YADA_2":"writing"}]}]
+JSONParams=[{"qname":"YADAFSIN/test write multiparam","DATA":[{"YADA_1":"testdir","YADA_2":"writing"}]}]
