@@ -440,7 +440,6 @@ public class Authorizer extends AbstractPostprocessor implements Authorization {
 
     if (Finder.hasYADALib())
     {
-      // TODO implement a salt hash for password
 
       // Steps to build id:
       // execute query to obtain app, role for user_id

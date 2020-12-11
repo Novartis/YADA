@@ -117,6 +117,8 @@ public class FileSystemAdaptor extends Adaptor
 	{
 	  boolean isWrite = yq.getType().equals(QueryUtils.WRITE);
 	  boolean isAppend = yq.getType().equals(QueryUtils.APPEND);
+	  boolean isRm = yq.getType().equals(QueryUtils.RM);
+	  boolean isMkdir = yq.getType().equals(QueryUtils.MKDIR);
 		Object result = null;
 		resetCountParameter(yq);
 		for(int row=0;row<yq.getData().size();row++)
@@ -158,39 +160,54 @@ public class FileSystemAdaptor extends Adaptor
 			File f = new File(urlOut.toString().replace(PROTOCOL, ""));
 			
 
-			if(isWrite || isAppend)
+			if(isWrite || isAppend || isMkdir || isRm)
 			{
+			  File d = f.getParentFile();
 			  if(isWrite)
 	      {
-			    // check parent dirs exist and create if necessary
-	        File d = f.getParentFile();               
+			    // check parent dirs exist and create if necessary	                       
 	        if(!d.exists())
-	          d.mkdirs();
-	      }
-				try(FileWriter out = new FileWriter(f,isAppend)) 
-				{
-			    out.write(getData());
-			    out.flush();
-			  } 
-				catch (IOException e) 
-				{
-					String msg = "There was a problem writing the file.";
-					throw new YADAAdaptorExecutionException(msg,e);
-				}
-				Path fp = f.toPath();
-				// Check if new file is executable and remove those privs if so
-				if(Files.isExecutable(fp))
-				{				  
-				  try
-				  {
-            String perms = PosixFilePermissions.toString(Files.getPosixFilePermissions(fp, new LinkOption[] {LinkOption.NOFOLLOW_LINKS}));
-            Files.setPosixFilePermissions(fp, PosixFilePermissions.fromString(perms.replace("x","-")));
-          }
-          catch (IOException e)
-          {
-             throw new YADAAdaptorExecutionException(e);
-          }
-				}
+	          d.mkdirs();	        
+	      }		
+			  else if(isMkdir)
+        {
+          // check path/to/dir exist and create if necessary                         
+          if(!f.exists())
+            result = String.valueOf(f.mkdirs());          
+        }   
+			  else if(isRm)
+			  {
+			    if(f.exists())			    
+			      result = String.valueOf(f.delete());			    
+			  }
+			  if(isWrite || isAppend)
+			  {
+  				try(FileWriter out = new FileWriter(f,isAppend)) 
+  				{
+  			    out.write(getData());
+  			    out.flush();
+  			    result = String.valueOf(true);
+  			  } 
+  				catch (IOException e) 
+  				{
+  					String msg = "There was a problem writing the file.";
+  					throw new YADAAdaptorExecutionException(msg,e);
+  				}
+  				Path fp = f.toPath();
+  				// Check if new file is executable and remove those privs if so
+  				if(Files.isExecutable(fp))
+  				{				  
+  				  try
+  				  {
+              String perms = PosixFilePermissions.toString(Files.getPosixFilePermissions(fp, new LinkOption[] {LinkOption.NOFOLLOW_LINKS}));
+              Files.setPosixFilePermissions(fp, PosixFilePermissions.fromString(perms.replace("x","-")));
+            }
+            catch (IOException e)
+            {
+               throw new YADAAdaptorExecutionException(e);
+            }
+  				}
+			  }
 			}
 			else // read stuff
 			{

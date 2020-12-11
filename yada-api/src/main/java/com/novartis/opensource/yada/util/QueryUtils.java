@@ -166,25 +166,41 @@ public class QueryUtils
 	 */
 	public static final String RX_DELETE = "^DELETE.*";
 	/**
-	 * A constant equal to: {@code ^([^&lt;]+)((&lt;&lcub;1,2&rcub;)(.+))*$ }
-	 * @since PROVISIONAL
+	 * A constant equal to: {@code ^([^&lt;]+)((&lt;&lcub;1,2&rcub;)((?!rm|mkdir).+))*$ } 
 	 */
-	public final static String RX_FILE_URI = "^([^<]+)((<{1,2})(.+))?$";
+	public final static String RX_FILE_URI = "^([^<]+)((<{1,2})((?!rm|mkdir).+))?$";
+	/**
+   * A constant equal to: {@code ^[^<]+<mkdir$ }
+   */
+  public final static String RX_FILE_MKDIR = "^[^<]+<mkdir$";
+  /**
+   * A constant equal to: {@code ^[^<]+<rm$ }
+   * @since 9.0.3
+   */
+  public final static String RX_FILE_RM = "^[^<]+<rm$";
 	/**
 	 * A constant equal to: {@value}
-	 * @since PROVISIONAL
+	 * @since 9.0.2
 	 */
 	public static final String READ = "";
 	/**
 	 * A constant equal to: {@code &lt;}
-	 * @since PROVISIONAL
 	 */
 	public static final String WRITE = "<";
 	/**
 	 * A constant equal to: {@code &lt;&lt;}
-	 * @since PROVISIONAL
 	 */
 	public static final String APPEND = "<<";
+	/**
+   * A constant equal to: {@code RM}
+   * @since 9.0.3
+   */
+  public static final String RM = "RM";
+  /**
+   * A constant equal to: {@code MKDIR}
+   * @since 9.0.3
+   */
+  public static final String MKDIR = "MKDIR";
 	/**
 	 * A constant equal to: {@value}
 	 */
@@ -611,7 +627,11 @@ public class QueryUtils
 			else if (isWrite(code))
 				yq.setType(WRITE);
 			else if (isAppend(code))
-				yq.setType(APPEND);
+        yq.setType(APPEND);
+			else if (isRm(code))
+        yq.setType(RM);
+			else if (isMkdir(code))
+        yq.setType(MKDIR);
 		} 
 		else
 		{
@@ -791,14 +811,12 @@ public class QueryUtils
 		return false;
 	}
 	/**
-	 * Returns {@code true} if the query content matches an SQL DELETE statement
-	 * syntax (see {@link #RX_DELETE}.
+	 * Returns {@code true} if the query content matches an the {@link #RX_FILE_URI} regex
 	 * 
 	 * @param code
 	 *          stored code (with YADA markup)
-	 * @return {@code true} if the query content matches an SQL DELETE statement
-	 *         syntax
-	 * @since PROVISIONAL
+	 * @return {@code true} if the query content matches
+	 *         
 	 */
 	public boolean isWrite(String code)
 	{
@@ -814,6 +832,34 @@ public class QueryUtils
 		}
 		return false;
 	}
+	
+	/**
+   * Returns {@code true} if the query content matches an the {@link #RX_FILE_RM} regex
+   * 
+   * @param code
+   *          stored code (with YADA markup)
+   * @return {@code true} if the query content matches
+   * @since 9.0.3        
+   */
+  public boolean isRm(String code)
+  {
+    Matcher m1 = Pattern.compile(RX_FILE_RM).matcher(code);
+    return m1.matches();
+  }
+  
+  /**
+   * Returns {@code true} if the query content matches an the {@link #RX_FILE_MKDIR} regex
+   * 
+   * @param code
+   *          stored code (with YADA markup)
+   * @return {@code true} if the query content matches
+   * @since 9.0.3        
+   */
+  public boolean isMkdir(String code)
+  {
+    Matcher m1 = Pattern.compile(RX_FILE_MKDIR).matcher(code);
+    return m1.matches();
+  }
 
 	/**
 	 * Test if the query requires a stored connection
