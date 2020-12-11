@@ -42,6 +42,8 @@ while getopts "Xtdisx:p:T:" opt; do
       ;;
     s )
       DEPLOY_SNAPSHOT=1
+      SKIP_SUREFIRE=-Dsurefire.skip=true
+      SKIP_FAILSAFE="-Dskip.tests=true -Dskip.deploy.war=true"
       ;;
     T )
       if [ "surefire" == "$OPTARG" ]
