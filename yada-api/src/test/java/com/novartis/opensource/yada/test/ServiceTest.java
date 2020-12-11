@@ -1555,6 +1555,48 @@ public class ServiceTest
     String s = jRes.getJSONObject(RESULTSET).getJSONArray(ROWS).getJSONObject(0).getString("content");
     Assert.assertEquals(s,"writingappend","The json result does not contain the expected content.");
   }
+  
+  /**
+   * Tests deleting text files in the yada io/in mapped directory.
+   *
+   * @param query the parameter string issue by the data provider
+   * @throws YADAQueryConfigurationException when there is a malformed query
+   * @throws UnsupportedEncodingException when the query is not decodable as
+   *         UTF-8
+   */
+  @Test(enabled = true, dataProvider = "QueryTests", groups = { "filesystem" })
+  @QueryFile(list = {})
+  public void testFileSystemRm(String query) throws YADAQueryConfigurationException, UnsupportedEncodingException
+  {
+    l.debug(query);
+    Service svc = prepareTest(query);
+    String result = svc.execute();
+    JSONObject jRes = new JSONObject(result);
+    logJSONResult(jRes);
+    String s = jRes.getJSONObject(RESULTSET).getJSONArray(ROWS).getJSONObject(0).getString("content");
+    Assert.assertEquals(s,"true","The json result does not contain the expected content.");
+  }
+  
+  /**
+   * Tests deleting text files in the yada io/in mapped directory.
+   *
+   * @param query the parameter string issue by the data provider
+   * @throws YADAQueryConfigurationException when there is a malformed query
+   * @throws UnsupportedEncodingException when the query is not decodable as
+   *         UTF-8
+   */
+  @Test(enabled = true, dataProvider = "QueryTests", groups = { "filesystem" })
+  @QueryFile(list = {})
+  public void testFileSystemMkdir(String query) throws YADAQueryConfigurationException, UnsupportedEncodingException
+  {
+    l.debug(query);
+    Service svc = prepareTest(query);
+    String result = svc.execute();
+    JSONObject jRes = new JSONObject(result);
+    logJSONResult(jRes);
+    String s = jRes.getJSONObject(RESULTSET).getJSONArray(ROWS).getJSONObject(0).getString("content");
+    Assert.assertEquals(s,"true","The json result does not contain the expected content.");
+  }
 
   /**
    * Tests {@code harmonyMap} specs on REST queries using literal results for validation
