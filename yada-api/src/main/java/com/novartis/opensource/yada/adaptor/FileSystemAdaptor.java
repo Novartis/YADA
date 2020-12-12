@@ -119,40 +119,63 @@ public class FileSystemAdaptor extends Adaptor
 	  boolean isAppend = yq.getType().equals(QueryUtils.APPEND);
 	  boolean isRm = yq.getType().equals(QueryUtils.RM);
 	  boolean isMkdir = yq.getType().equals(QueryUtils.MKDIR);
+	  boolean isRead = yq.getType().equals(QueryUtils.READ);
 		Object result = null;
 		resetCountParameter(yq);
 		for(int row=0;row<yq.getData().size();row++)
 		{
 			yq.setResult();
-			YADAQueryResult yqr    = yq.getResult();			
-			String          urlStr = yq.getUrl(row);			
-			String[]        parts  = urlStr.split(PARAM_MARKUP_RX);
-			StringBuffer    urlOut = new StringBuffer();
+			YADAQueryResult yqr      = yq.getResult();			
+			String          urlStr   = yq.getUrl(row);			
+			String          lastPart = "";
+			String[]        parts    = urlStr.split(PARAM_MARKUP_RX);
+			StringBuffer    urlOut   = new StringBuffer();
+			int             partCount       = parts.length;
+			int             paramCount      = yq.getParamCount(row);
+			int             lastParamIndex  = paramCount - 1;
+			boolean         hasOnlyOneParam = yq.getParamCount(row) == 1;
 			yqr.setApp(yq.getApp());
-			for(int i=0;i<yq.getParamCount(row);i++)
-			{
-				String param = "";
-				// 2020-12-05 DV new logic to support depth
-				// if matches (urlStr contains either markup preceded by a symbol e.g., /=:<)
-				//   if (markup mark), replace first
-				//   else (append or write mark), replace first with empty string and setData(param)
-				
-				
-				Matcher m = PARAM_URL_RX.matcher(urlStr);
-				if(m.matches())
-				{				  
-					param = yq.getVals(row).get(i);
-					// are we at the last param and in write or append mode?
-					if(i==yq.getParamCount(row)-1 && (isWrite || isAppend)) // last param and non-read
+			Matcher m = PARAM_URL_RX.matcher(urlStr);
+      if(m.matches()) // will match every variation at least one markup symbol
+      {
+  			for(int i=0;i<paramCount;i++)
+  			{
+  				String nextParam = yq.getVals(row).get(i);
+  				String nextPart = parts[i];
+  				
+  				// 2020-12-05 DV new logic to support depth
+  				// if matches (urlStr contains either markup preceded by a symbol e.g., /=:<)
+  				//   if (markup mark), replace first
+  				//   else (append or write mark), replace first with empty string and setData(param)
+  				  								 					
+					// are we at the last param and in write or append mode?  	
+  				if(i < lastParamIndex || isRead) // build path incrementally
+  				{
+            urlOut.append(nextPart);            
+            urlOut.append(nextParam);
+  				}
+  				else //if(i == lastParamIndex && !isRead ) // last param
 					{
-						setData(param);
-						if(yq.getParamCount(row) == 1)
-						  urlOut.append(parts[i].replaceAll("<",""));
-					}
-					else
-					{
-					  urlOut.append(parts[i]);					  
-					  urlOut.append(param);
+					  if(isWrite || isAppend) 					  
+  					{
+  						setData(nextParam);
+  						if(hasOnlyOneParam)
+  						{
+  						  lastPart = nextPart.replaceAll("<",""); 
+  						  urlOut.append(lastPart);
+  						}
+  					}
+  					else if(isRm || isMkdir) 
+  					{
+  					  urlOut.append(nextPart);
+  					  urlOut.append(nextParam);
+  					// /path/?v/to/?v/dir<mkdir has 2 params and 3 parts
+  					  if(partCount > paramCount) 
+  					  {
+  					    lastPart = parts[i+1].replaceAll("<(?:rm|mkdir)", "");
+  					    urlOut.append(lastPart);
+  					  }  					  
+  					}
 					}
 				}
 			}
