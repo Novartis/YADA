@@ -234,28 +234,41 @@ public class FileSystemAdaptor extends Adaptor
 			}
 			else // read stuff
 			{
-			  if(f.isDirectory())
-			  {
-			    result = FileUtils.getFileList(f,-1);
-			  }
-			  else
-			  {
-			    try 
-			    {
-            result = FileUtils.getText(f);
-          } 
-			    catch (YADAIOException e) 
-			    {
-			      throw new YADAAdaptorExecutionException(e);
-          }
-			    catch (YADAResourceException e) 
-          {
-            throw new YADAAdaptorExecutionException(e);
-          }
-			  }
+			  result = read(f);
 			}
 			yqr.addResult(row, result);
 		}		
+	}
+	
+	/**
+	 * Returns either the content of the {@link File} {@code f} or the directory listing as a list files.
+	 * NOTE: does not return empty directories or file status information.  @see FileSystemAnnotatedAdaptor
+	 * @param f the directory or file to read
+	 * @return the content of the file
+	 * @throws YADAAdaptorExecutionException
+	 */
+	protected Object read(File f) throws YADAAdaptorExecutionException {
+	  Object result;
+	  if(f.isDirectory())
+    {
+      result = FileUtils.getFileList(f,-1);
+    }
+    else
+    {
+      try 
+      {
+        result = FileUtils.getText(f);
+      } 
+      catch (YADAIOException e) 
+      {
+        throw new YADAAdaptorExecutionException(e);
+      }
+      catch (YADAResourceException e) 
+      {
+        throw new YADAAdaptorExecutionException(e);
+      }
+    }
+	  return result;
 	}
 	
 	/**

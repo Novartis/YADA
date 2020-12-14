@@ -24,6 +24,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.novartis.opensource.yada.Finder;
 import com.novartis.opensource.yada.YADARequest;
@@ -163,6 +165,70 @@ public class FileUtils {
 		return getFileList(d,-1);
 	}
 
+	/**
+   * Gets a recursive list of directory contents annotated with file type  data
+	 * @param jlist the {@link JSONArray containing the file data}
+   * @param d the directory to interrogate
+   * @param depth the number of level to recurse
+   * @return a list of directory contents
+	 * @throws YADAIOException when there is a problem obtaining a file or directory path
+   */
+  public static JSONArray getAnnotatedFileList(JSONArray jlist, File d, int depth) throws YADAIOException 
+  {    
+    l.debug("checking ["+d.getName()+"]");
+    if (d.canRead() && d.isDirectory())
+    {
+      try {
+        // create object to hold 
+        JSONObject dir = new JSONObject();
+        dir.put("type", "d");
+        dir.put("path", d.getCanonicalPath());
+        jlist.put(dir);
+            
+        File[] list = d.listFiles();
+        if(list.length > 0)
+        {
+          // there's content in this dir, so create an array to hold them
+          JSONArray sub = new JSONArray();
+          dir.put("contents", sub);
+          
+          // iterate over contents
+          for (int i=0;i<list.length;i++)
+          {
+            File f = list[i];
+            if (f.isFile()) 
+            { 
+              // add the file to the subdir listing
+              JSONObject file = new JSONObject();
+              file.put("type", "file");
+              file.put("path", f.getCanonicalPath());
+              sub.put(file);           
+              l.debug("Adding ["+f.getName()+"]");
+            }
+            else 
+            { 
+              // it's a directory
+              if(depth > 0)
+              {
+                l.debug("Descending...");
+                getAnnotatedFileList(sub,f,depth-1);
+              }
+              else if(depth == -1)
+              {
+                getAnnotatedFileList(sub,f,-1);
+              }
+            }
+          }
+        }
+      }
+      catch (IOException e)
+      {
+        String msg = "Unable to get path to file.";
+        throw new YADAIOException(msg, e);
+      }
+    }
+    return jlist;
+  }
 	
 	/**
 	 * Gets a recursive list of directory contents
