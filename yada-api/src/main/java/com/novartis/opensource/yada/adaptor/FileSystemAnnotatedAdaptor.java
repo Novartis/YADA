@@ -48,15 +48,7 @@ public class FileSystemAnnotatedAdaptor extends FileSystemAdaptor {
     Object result;
     if(f.isDirectory())
     {
-      try
-      {
-        result = FileUtils.getAnnotatedFileList(new JSONArray(), f,-1);
-      }
-      catch (YADAIOException e)
-      {
-        String msg = "Unable to obtain directory listing.";
-        throw new YADAAdaptorExecutionException(msg, e);        
-      }
+       result = FileUtils.getAnnotatedFileList(new JSONArray(), f,-1);
     }
     else
     {

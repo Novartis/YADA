@@ -173,16 +173,17 @@ public class FileUtils {
    * @return a list of directory contents
 	 * @throws YADAIOException when there is a problem obtaining a file or directory path
    */
-  public static JSONArray getAnnotatedFileList(JSONArray jlist, File d, int depth) throws YADAIOException 
+  public static JSONArray getAnnotatedFileList(JSONArray jlist, File d, int depth)
   {    
     l.debug("checking ["+d.getName()+"]");
     if (d.canRead() && d.isDirectory())
     {
-      try {
+//      try {
         // create object to hold 
         JSONObject dir = new JSONObject();
-        dir.put("type", "d");
-        dir.put("path", d.getCanonicalPath());
+        dir.put("type", "d");        
+        dir.put("name", d.getName());
+        dir.put("path", d.getParent());
         jlist.put(dir);
             
         File[] list = d.listFiles();
@@ -200,8 +201,8 @@ public class FileUtils {
             { 
               // add the file to the subdir listing
               JSONObject file = new JSONObject();
-              file.put("type", "file");
-              file.put("path", f.getCanonicalPath());
+              file.put("type", "f");
+              file.put("name", f.getName());
               sub.put(file);           
               l.debug("Adding ["+f.getName()+"]");
             }
@@ -220,12 +221,6 @@ public class FileUtils {
             }
           }
         }
-      }
-      catch (IOException e)
-      {
-        String msg = "Unable to get path to file.";
-        throw new YADAIOException(msg, e);
-      }
     }
     return jlist;
   }
