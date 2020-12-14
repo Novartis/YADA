@@ -180,7 +180,7 @@ public class QueryUtils
   public final static String RX_FILE_RM = "^[^<]+<rm$";
 	/**
 	 * A constant equal to: {@value}
-	 * @since 9.0.2
+	 * @since 9.2.0
 	 */
 	public static final String READ = "";
 	/**
@@ -436,31 +436,31 @@ public class QueryUtils
 													.newInstance(yadaReq);
 		} catch (InstantiationException e)
 		{
-			String msg = "Error instanting adaptor for class" + adaptorClass.getName();
+			String msg = "Error instanting adaptor for class " + adaptorClass.getName();
 			throw new YADAUnsupportedAdaptorException(msg, e);
 		} catch (IllegalAccessException e)
 		{
-			String msg = "Error instanting adaptor for class" + adaptorClass.getName();
+			String msg = "Error instanting adaptor for class " + adaptorClass.getName();
 			throw new YADAUnsupportedAdaptorException(msg, e);
 		} 
 		catch (IllegalArgumentException e)
 		{
-			String msg = "Error instanting adaptor for class" + adaptorClass.getName();
+			String msg = "Error instanting adaptor for class " + adaptorClass.getName();
 			throw new YADAUnsupportedAdaptorException(msg, e);
 		} 
 		catch (SecurityException e)
 		{
-			String msg = "Error instanting adaptor for class" + adaptorClass.getName();
+			String msg = "Error instanting adaptor for class " + adaptorClass.getName();
 			throw new YADAUnsupportedAdaptorException(msg, e);
 		} 
 		catch (InvocationTargetException e)
 		{
-			String msg = "Error instanting adaptor for class" + adaptorClass.getName();
+			String msg = "Error instanting adaptor for class " + adaptorClass.getName();
 			throw new YADAUnsupportedAdaptorException(msg, e);
 		} 
 		catch (NoSuchMethodException e)
 		{
-			String msg = "Error instanting adaptor for class" + adaptorClass.getName();
+			String msg = "Error instanting adaptor for class  s" + adaptorClass.getName();
 			throw new YADAUnsupportedAdaptorException(msg, e);
 		}
 

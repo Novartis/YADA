@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.novartis.opensource</groupId>
     <artifactId>YADA</artifactId>
-    <version>9.0.2-SNAPSHOT</version>
+    <version>9.2.0-SNAPSHOT</version>
   </parent>
   <artifactId>yada-war</artifactId>
   <name>yada-war</name>
@@ -124,7 +124,7 @@
                   <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/8.5.49/tomcat-8.5.49.zip</url>
                 </zipUrlInstaller> -->
                 <!-- <containerId>tomcat9x</containerId> <zipUrlInstaller> 
-                  <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/9.0.29/tomcat-9.0.29.zip</url> 
+                  <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/9.2.09/tomcat-9.2.09.zip</url> 
                   </zipUrlInstaller> -->
               </container>
               <configuration>
@@ -305,7 +305,7 @@
                   <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/8.5.49/tomcat-8.5.49.zip</url>
                 </zipUrlInstaller>
                 <!-- <containerId>tomcat9x</containerId> <zipUrlInstaller> 
-                  <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/9.0.29/tomcat-9.0.29.zip</url> 
+                  <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/9.2.09/tomcat-9.2.09.zip</url> 
                   </zipUrlInstaller> -->
               </container>
               <configuration>
