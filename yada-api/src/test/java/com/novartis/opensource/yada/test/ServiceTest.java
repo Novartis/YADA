@@ -1196,7 +1196,7 @@ public class ServiceTest
    * @throws YADAResponseException when the test result is invalid
    * @throws YADAExecutionException when the test execution fails
    */
-  @Test(enabled = true, dataProvider = "QueryTests", groups = { "noproxy" })
+  @Test(enabled = true, dataProvider = "QueryTests", groups = { "api","noproxy" })
   @QueryFile(list = {})
   public void testRESTExternal(String query) throws YADAResponseException, YADAQueryConfigurationException, YADAExecutionException
   {
@@ -1313,7 +1313,7 @@ public class ServiceTest
    * @throws JSONException when the result does not conform
    * @throws YADAExecutionException when the test fails
    */
-  @Test(enabled = true, dataProvider = "QueryTests", groups = { "noproxy" })
+  @Test(enabled = true, dataProvider = "QueryTests", groups = { "api","noproxy" })
   @QueryFile(list = {})
   public void testRESTExternalPassThru(String query) throws YADAQueryConfigurationException, JSONException, YADAExecutionException
   {

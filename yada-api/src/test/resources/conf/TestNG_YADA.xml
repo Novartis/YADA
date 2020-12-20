@@ -15,6 +15,7 @@
         <include name="plugins" />
         <include name="sec" />
         <include name="filesystem" />
+        <!-- <include name="noproxy" /> -->
       </run>
     </groups>
     <classes>

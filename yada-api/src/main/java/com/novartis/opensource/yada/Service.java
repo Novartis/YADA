@@ -325,6 +325,14 @@ public class Service {
   		{
   			getYADARequest().setOAuth(paraMap.get(YADARequest.PS_OAUTH));
   		}
+  		if (paraMap.get(YADARequest.PL_OAUTH2) != null)
+      {
+        getYADARequest().setOAuth2(paraMap.get(YADARequest.PL_OAUTH2));
+      }
+      if (paraMap.get(YADARequest.PS_OAUTH2) != null)
+      {
+        getYADARequest().setOAuth2(paraMap.get(YADARequest.PS_OAUTH2));
+      }
   		if (paraMap.get(YADARequest.PL_BYPASSARGS) != null)
   		{
   		  setDeprecatedPlugin(paraMap, YADARequest.PL_BYPASSARGS);

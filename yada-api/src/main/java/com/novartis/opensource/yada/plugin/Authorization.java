@@ -119,6 +119,16 @@ public interface Authorization {
    * Constant equal to: 14399
    */
   public final static Integer YADA_IDENTITY_TTL = 14399;
+  
+  /**
+   * Constant equal to: {@value}
+   */
+  public final static String YADA_CREDENTIAL_CACHE = "credential";
+
+  /**
+   * Constant equal to: 14399
+   */
+  public final static Integer YADA_CREDENTIAL_TTL = 14399;
 
   /**
    * Constant equal to: {@value}

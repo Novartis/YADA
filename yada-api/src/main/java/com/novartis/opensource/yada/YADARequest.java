@@ -435,6 +435,11 @@ public class YADARequest {
 	 */
 	public static final String PS_OAUTH       = "o";
 	/**
+   * a constant equals to: {@value}
+   * @since 9.2.0
+   */
+  public static final String PS_OAUTH2      = "o2";
+	/**
 	 * A constant equal to: {@value}
 	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
 	 * @deprecated as of 7.1.0
@@ -688,6 +693,12 @@ public class YADARequest {
 	 * @since 8.7.0
 	 */
 	public static final String PL_OAUTH       = "oauth";
+	/**
+   * A constant equals to: {@value}.
+   * 
+   * @since 9.2.0
+   */
+  public static final String PL_OAUTH2       = "oauth2";
 	/**
 	 * A constant equal to: {@value}.  Use {@link YADARequest#PL_BYPASSARGS} instead.
 	 * @deprecated as of 4.0.0
@@ -1050,6 +1061,11 @@ public class YADARequest {
 	 * @since 8.7.0 
 	 */
 	private JSONObject oauth        = null;
+	/**
+   * A JSON object containing requisite oauth2 keys and ids for authenticated requests
+   * @since 9.2.0 
+   */
+  private JSONObject oauth2       = null;
 	/**
 	 * The name of the query to be executed, when coupled with {@link #params}, or {@link #plugin}.  Defaults to {@link #DEFAULT_QNAME}
 	 */
@@ -2309,6 +2325,24 @@ public class YADARequest {
 	}
 	
 	/**
+   * @since 9.2.0
+   * @param oauth2 oauth2 parameters
+   * @throws YADARequestException if the parameter string is not malformed
+   */
+  public void setOAuth2(String[] oauth2) throws YADARequestException
+  {
+    try
+    {
+      this.oauth2 = new JSONObject(oauth2[0]);
+    }
+    catch(JSONException e)
+    {
+      String msg = "The OAuth2 parameter JSON string appears to be malformed.";
+      throw new YADARequestException(msg, e);
+    }
+  }
+	
+	/**
 	 * @since 4.0.0
 	 * @param argArr bypass plugin arguments
    * @deprecated as of 7.1.0
@@ -3160,16 +3194,28 @@ public class YADARequest {
 	}
 	
 	/**
-	 * Returns an {@link JSONObject} containing oauth parameters such as <code>consumer_key</code>, 
+	 * Returns a {@link JSONObject} containing oauth parameters such as <code>consumer_key</code>, 
 	 * <code>secret</code>, etc. See the YADA OAuth 1.0a specification or YADA parameter documentation
 	 * for details. 
 	 * @return the oauth parameters object
 	 * @since 8.7.0
 	 */
-	//TODO Add link to YADA OAuth 1.0a spec 
+	//TODO Add link to YADA OAuth2 spec 
 	public JSONObject getOAuth() {
 		return this.oauth;
 	}
+	
+	/**
+   * Returns a {@link JSONObject} containing oauth2 parameters such as <code>client_id</code>, 
+   * <code>secret</code>, etc. See the YADA OAuth2 specification or YADA parameter documentation
+   * for details. 
+   * @return the oauth2 parameters object
+   * @since 9.2.0
+   */
+  //TODO Add link to YADA OAuth2 spec 
+  public JSONObject getOAuth2() {
+    return this.oauth2;
+  }
 	
 	/**
 	 * Returns the results from page {@code pageStart}, using {@link #getPageSize()} to determine which row should

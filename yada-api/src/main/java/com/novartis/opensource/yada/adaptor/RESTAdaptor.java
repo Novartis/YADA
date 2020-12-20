@@ -15,7 +15,6 @@
 package com.novartis.opensource.yada.adaptor;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -26,8 +25,6 @@ import java.lang.reflect.Method;
 import java.net.HttpCookie;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -48,6 +45,10 @@ import org.apache.log4j.Logger;
 
 import com.google.api.client.auth.oauth.OAuthParameters;
 import com.google.api.client.auth.oauth.OAuthRsaSigner;
+import com.google.api.client.auth.oauth2.BearerToken;
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.auth.oauth2.TokenRequest;
+import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.http.BasicAuthentication;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.GenericUrl;
@@ -59,14 +60,20 @@ import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpResponseException;
+import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
-
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.novartis.opensource.yada.ConnectionFactory;
+import com.novartis.opensource.yada.Finder;
 import com.novartis.opensource.yada.YADAQuery;
 import com.novartis.opensource.yada.YADAQueryConfigurationException;
 import com.novartis.opensource.yada.YADAQueryResult;
 import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADASecurityException;
+import com.novartis.opensource.yada.plugin.Authorization;
+
+import net.sf.ehcache.CacheManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,7 +84,7 @@ import org.json.JSONObject;
  * @author David Varon
  *
  */
-public class RESTAdaptor extends Adaptor {
+public class RESTAdaptor extends Adaptor implements Authorization {
 
 	/**
 	 * Local logger handle
@@ -133,6 +140,50 @@ public class RESTAdaptor extends Adaptor {
 	private final static String OAUTH_TOKEN            = "oauth_token";
 	
 	/**
+   * Constant equal to: {@value}.  The {@code oauth2} request parameter property name.
+   * @since 9.2.0
+   */
+  private final static String OAUTH2_CLIENTID        = "client_id";
+  /**
+   * Constant equal to: {@value}.  The {@code oauth2} request parameter property name.
+   * @since 9.2.0
+   */
+  private final static String OAUTH2_SCOPE           = "scope";
+  /**
+   * Constant equal to: {@value}.  The {@code oauth2} request parameter property name.
+   * @since 9.2.0
+   */
+  private final static String OAUTH2_CLIENTSECRET    = "client_secret";
+  /**
+   * Constant equal to: {@value}.  The {@code oauth2} request parameter property name.
+   * @since 9.2.0
+   */
+  private final static String OAUTH2_GRANTTYPE       = "grant_type";
+  /**
+   * Constant equal to: {@value}.  The {@code oauth2} request parameter property name.
+   * @since 9.2.0
+   */
+  private final static String OAUTH2_TOKENURL       = "token_url";
+  /**
+   * Constant equal to: {@value}.  The {@code oauth2} response parameter property name.
+   * @since 9.2.0
+   */
+  private final static String OAUTH2_ACCESSTOKEN    = "access_token";
+  /**
+   * Constant equal to: {@value}.  The {@code oauth2} response parameter property name.
+   * @since 9.2.0
+   */
+  private final static String OAUTH2_EXPIRESIN    = "expires_in";
+  /**
+   * Constant equal to: {@value}.  The {@code oauth2} response parameter property name.
+   * @since 9.2.0
+   */
+  private final static String OAUTH2_TOKENTYPE    = "token_type";
+  
+	
+	
+	
+	/**
 	 * Constant equal to: {@value}
 	 */
 	protected final static String  PARAM_SYMBOL_RX = "([\\/=:~]|%(?:2F|3D|3A|7E))(\\?[idvnt])";
@@ -177,6 +228,12 @@ public class RESTAdaptor extends Adaptor {
 	 * Variable to hold the oauth parameters
 	 */
 	private JSONObject oauth = null;
+	
+	/** 
+   * Variable to hold the oauth2 parameters
+   * @since 9.2.0
+   */
+  private JSONObject oauth2 = null;
 	
 	/**
 	 * Variable denoting the HTTP method
@@ -238,6 +295,24 @@ public class RESTAdaptor extends Adaptor {
 	private void setOAuth(YADAQuery yq) {
 		this.oauth = new JSONObject(yq.getYADAQueryParamValue(YADARequest.PS_OAUTH)[0]);
 	}
+	
+	/**
+   * Standard mutator for variable
+   * @param oauth the JSONObject store in the {@link YADARequest}
+   * @since 9.2.0
+   */
+  private void setOAuth2(JSONObject oauth2) {
+    this.oauth2 = oauth2;
+  }
+  
+  /**
+   * Standard mutator for variable which converts {@link String} to {@link JSONObject}
+   * @param yq The {@link YADAQuery} containing the {@code oauth} or {@code o} parameter
+   * @since 8.7.1
+   */
+  private void setOAuth2(YADAQuery yq) {
+    this.oauth2 = new JSONObject(yq.getYADAQueryParamValue(YADARequest.PS_OAUTH2)[0]);
+  }
 
 	/**
 	 * Tests if proxy has been set in {@link YADARequest#setProxy(String[])}
@@ -297,19 +372,31 @@ public class RESTAdaptor extends Adaptor {
 	 */
 	private HttpRequestInitializer setAuthentication(YADAQuery yq, GenericUrl url) throws YADAQueryConfigurationException, YADASecurityException 
 	{		
-		if(yq.hasParam(YADARequest.PS_OAUTH) || yq.hasParam(YADARequest.PL_OAUTH))
-		{
-			if(url.getUserInfo() != null) 
-			{
-				String msg  = "A query cannot contain both basic and oauth configurations. "
-						        + "When using oauth, make sure the REST data source is not also configured with "
-						   		  + "basic auth values.";
-				throw new YADAQueryConfigurationException(msg);
-			}
-			if(null == this.oauth) // not in the request
-				setOAuth(yq);
-			return setAuthenticationOAuth(url);			
-		}
+	  if(yq.hasParam(YADARequest.PS_OAUTH2) || yq.hasParam(YADARequest.PL_OAUTH2)
+	      || yq.hasParam(YADARequest.PS_OAUTH) || yq.hasParam(YADARequest.PL_OAUTH))
+	  {
+	    if(url.getUserInfo() != null) 
+      {
+        String msg  = "A query cannot contain both basic and oauth configurations. "
+                    + "When using oauth, make sure the REST data source is not also configured with "
+                    + "basic auth values.";
+        throw new YADAQueryConfigurationException(msg);
+      }
+	    
+	    if(yq.hasParam(YADARequest.PS_OAUTH2) || yq.hasParam(YADARequest.PL_OAUTH2))
+	    {
+	      if(null == this.oauth2) // not in the request
+          setOAuth2(yq);
+        return setAuthenticationOAuth2(url); 
+	    }
+	    else if(yq.hasParam(YADARequest.PS_OAUTH) || yq.hasParam(YADARequest.PL_OAUTH))
+  		{
+  			
+  			if(null == this.oauth) // not in the request
+  				setOAuth(yq);
+  			return setAuthenticationOAuth(url);			
+  		}
+	  }
 		else if(yq.hasParam(YADARequest.PS_HTTPHEADERS) || yq.hasParam(YADARequest.PL_HTTPHEADERS))
     {
 		  String paramVal = yq.getParam(YADARequest.PS_HTTPHEADERS).get(0).getValue();
@@ -359,6 +446,77 @@ public class RESTAdaptor extends Adaptor {
     return pk;
   }
   
+  /**
+   * @param url 
+   * @return 
+   * @throws YADAAdaptorExecutionException 
+   * @since 9.2.0
+   */
+  private HttpRequestInitializer setAuthenticationOAuth2(GenericUrl url) throws YADASecurityException
+  {
+    Credential credential = (Credential) getCacheEntry(YADA_CREDENTIAL_CACHE, oauth2.getString(OAUTH2_CLIENTID));    
+    if(credential == null)
+    {            
+      HttpTransport httpTrans = new NetHttpTransport();
+      JsonFactory   jf        = new com.google.api.client.json.jackson2.JacksonFactory();
+      
+      HttpContent            content        = null;
+      HttpRequestFactory     requestFactory = new NetHttpTransport().createRequestFactory();
+      GenericUrl             tokenUrl       = new GenericUrl(oauth2.getString(OAUTH2_TOKENURL));
+      StringBuilder          payload        = new StringBuilder();
+      payload.append(String.format("%s=%s", OAUTH2_CLIENTID, oauth2.getString(OAUTH2_CLIENTID)));
+      payload.append(String.format("&%s=%s", OAUTH2_SCOPE, oauth2.getString(OAUTH2_SCOPE)));
+      payload.append(String.format("&%s=%s", OAUTH2_CLIENTSECRET, oauth2.getString(OAUTH2_CLIENTSECRET)));
+      payload.append(String.format("&%s=%s", OAUTH2_GRANTTYPE, oauth2.getString(OAUTH2_GRANTTYPE)));
+      content = ByteArrayContent.fromString(null, payload.toString());
+      
+      
+      try
+      {
+         
+        HttpRequest tokenRequest = requestFactory.buildRequest(YADARequest.METHOD_POST, tokenUrl, content);
+        JSONObject tokenResponse = new JSONObject(processResponse(tokenRequest));
+        
+        TokenResponse tr = new TokenResponse();
+        tr.setAccessToken(tokenResponse.getString(OAUTH2_ACCESSTOKEN));
+        tr.setExpiresInSeconds(tokenResponse.getLong(OAUTH2_EXPIRESIN));
+        tr.setScope(oauth2.getString(OAUTH2_SCOPE));
+        tr.setTokenType(tokenResponse.getString(OAUTH2_TOKENTYPE));
+        credential = new Credential(BearerToken.authorizationHeaderAccessMethod()).setFromTokenResponse(tr);
+//        credential = new Credential(null);
+//        credential.setAccessToken(tokenResponse.getString(OAUTH2_ACCESSTOKEN));
+//        credential.setExpiresInSeconds(tokenResponse.getLong(OAUTH2_EXPIRESIN));
+        setCacheEntry(YADA_CREDENTIAL_CACHE, oauth2.getString(OAUTH2_CLIENTID), credential, tokenResponse.getInt(OAUTH2_EXPIRESIN));
+      } 
+      catch (IOException e) 
+      {
+        String msg = "Unable to initialize the POST request for ["+tokenUrl+"]";
+        throw new YADASecurityException(msg,e);
+      }
+      catch (YADAAdaptorExecutionException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      
+     
+//      try
+//      {
+//        final TokenResponse tknResp = tknReq.execute();
+//        setCacheEntry(YADA_CREDENTIAL_CACHE,
+//            oauth2.getString(OAUTH2_CLIENTID),
+//            tknResp.get(OAUTH2_ACCESSTOKEN),
+//            (Integer) tknResp.get(OAUTH2_EXPIRESIN));
+//      }
+//      catch (IOException e)
+//      {
+//        String msg = "Unable to acquire access token.";
+//        throw new YADASecurityException(msg, e);
+//      }
+    }
+    return credential;
+    
+  }
   
   /**
    * Creates the {@link OAuthParameters} {@link HttpRequestInitializer}. 
@@ -585,13 +743,14 @@ public class RESTAdaptor extends Adaptor {
 		} 
 		catch (HttpResponseException e)
 		{
+		  l.error(e.getStatusCode() + ": " + e.getMessage());
 			int code = e.getStatusCode();
 			if(code == HTTP_STATUS_401 || code == HTTP_STATUS_403)
 			{
 				String msg = "Unauthorized: "+e.getStatusMessage();
 				throw new YADASecurityException(msg,e);
 			}
-				
+			
 		}
 		catch (IOException e) 
 		{
@@ -634,7 +793,7 @@ public class RESTAdaptor extends Adaptor {
         throw new YADAAdaptorExecutionException(msg, e);
       }     
 		}
-		
+		l.debug(result);
 		return result;
 	}
 	
@@ -757,7 +916,7 @@ public class RESTAdaptor extends Adaptor {
 				GenericUrl url     = new GenericUrl(urlString);
 				List<String> path = url.getPathParts();
 				String fn = path.get(path.size()-1);
-				this.setMimeType(URLConnection.guessContentTypeFromName(fn));
+//				this.setMimeType(URLConnection.guessContentTypeFromName(fn));
 				
 				// build request, handling auth if necessary
 				request = buildRequest(yq,payload,url);
@@ -801,4 +960,22 @@ public class RESTAdaptor extends Adaptor {
 		String uri    = yq.getYADACode();
 		return conf + uri;
 	}
+
+  @Override
+  public void authorize(String payload) throws YADASecurityException {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void authorize() throws YADASecurityException {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void authorizeYADARequest(YADARequest yadaReq, String result) throws YADASecurityException {
+    // TODO Auto-generated method stub
+    
+  }
 }
