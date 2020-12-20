@@ -3140,7 +3140,7 @@ public class YADARequest {
 	/**
    * Returns the {@code JMESPath} string.
    * @since 9.0.0
-   * @return {@link jsonFilters}
+   * @return {@link #jsonFilters}
    */
   public String getJsonFilters() {
     return this.jsonFilters;

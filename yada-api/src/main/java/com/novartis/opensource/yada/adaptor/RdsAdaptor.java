@@ -11,7 +11,6 @@ import org.renjin.eval.EvalException;
 import org.renjin.script.RenjinScriptEngineFactory;
 import org.renjin.sexp.SEXP;
 
-import com.novartis.opensource.yada.Service;
 import com.novartis.opensource.yada.YADAQuery;
 import com.novartis.opensource.yada.YADAQueryResult;
 import com.novartis.opensource.yada.YADARequest;
@@ -22,6 +21,9 @@ import com.novartis.opensource.yada.YADARequest;
  */
 public class RdsAdaptor extends FileSystemAdaptor {
   
+  /**
+   * Local logger instance
+   */
   private static Logger l = Logger.getLogger(RdsAdaptor.class);
   
   /**

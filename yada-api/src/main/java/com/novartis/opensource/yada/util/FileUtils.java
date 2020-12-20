@@ -171,7 +171,7 @@ public class FileUtils {
    * @param d the directory to interrogate
    * @param depth the number of level to recurse
    * @return a list of directory contents
-	 * @throws YADAIOException when there is a problem obtaining a file or directory path
+   * @since 9.1.0
    */
   public static JSONArray getAnnotatedFileList(JSONArray jlist, File d, int depth)
   {    

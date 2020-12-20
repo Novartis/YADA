@@ -245,7 +245,7 @@ public class FileSystemAdaptor extends Adaptor
 	 * NOTE: does not return empty directories or file status information.  @see FileSystemAnnotatedAdaptor
 	 * @param f the directory or file to read
 	 * @return the content of the file
-	 * @throws YADAAdaptorExecutionException
+	 * @throws YADAAdaptorExecutionException when the filesystem read fails for any reason (e.g., permissions)
 	 */
 	protected Object read(File f) throws YADAAdaptorExecutionException {
 	  Object result;

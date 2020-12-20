@@ -47,7 +47,6 @@ import com.google.api.client.auth.oauth.OAuthParameters;
 import com.google.api.client.auth.oauth.OAuthRsaSigner;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.auth.oauth2.TokenRequest;
 import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.http.BasicAuthentication;
 import com.google.api.client.http.ByteArrayContent;
@@ -60,12 +59,8 @@ import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpResponseException;
-import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.novartis.opensource.yada.ConnectionFactory;
-import com.novartis.opensource.yada.Finder;
 import com.novartis.opensource.yada.YADAQuery;
 import com.novartis.opensource.yada.YADAQueryConfigurationException;
 import com.novartis.opensource.yada.YADAQueryResult;
@@ -73,7 +68,6 @@ import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADASecurityException;
 import com.novartis.opensource.yada.plugin.Authorization;
 
-import net.sf.ehcache.CacheManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -298,7 +292,7 @@ public class RESTAdaptor extends Adaptor implements Authorization {
 	
 	/**
    * Standard mutator for variable
-   * @param oauth the JSONObject store in the {@link YADARequest}
+   * @param oauth2 the JSONObject store in the {@link YADARequest}
    * @since 9.2.0
    */
   private void setOAuth2(JSONObject oauth2) {
@@ -447,9 +441,27 @@ public class RESTAdaptor extends Adaptor implements Authorization {
   }
   
   /**
-   * @param url 
-   * @return 
-   * @throws YADAAdaptorExecutionException 
+   * Creates the {@link Credential} {@link HttpRequestInitializer}. 
+   * This method relies on inclusion of {@link YADARequest#getOAuth2()} which returns 
+   * a {@link JSONObject} containing:
+   * 
+   *   <ul>
+   *    <li><code>token_url</code></li>
+   *    <li><code>client_id</code></li>
+   *    <li><code>scope</code></li>
+   *    <li><code>client_secret</code></li>
+   *    <li><code>grant_type</code></li>
+   *   </ul>
+   *   
+   * After retrieval of the request token using the above parameters, the access token will be
+   * stored in the {@link Authorization#YADA_CREDENTIAL_CACHE} using the {@code client_secret} as a key,
+   * using the token expiry as the cache entry ttl.
+   * 
+   * The cache is checked before requesting a new token.
+   * 
+   * @param url the desired REST endpoint
+   * @return the initializer to pass to the requestFactory
+   * @throws YADASecurityException if the credentials settings fail to result in obtaining a valid token
    * @since 9.2.0
    */
   private HttpRequestInitializer setAuthenticationOAuth2(GenericUrl url) throws YADASecurityException
@@ -457,9 +469,6 @@ public class RESTAdaptor extends Adaptor implements Authorization {
     Credential credential = (Credential) getCacheEntry(YADA_CREDENTIAL_CACHE, oauth2.getString(OAUTH2_CLIENTID));    
     if(credential == null)
     {            
-      HttpTransport httpTrans = new NetHttpTransport();
-      JsonFactory   jf        = new com.google.api.client.json.jackson2.JacksonFactory();
-      
       HttpContent            content        = null;
       HttpRequestFactory     requestFactory = new NetHttpTransport().createRequestFactory();
       GenericUrl             tokenUrl       = new GenericUrl(oauth2.getString(OAUTH2_TOKENURL));
@@ -469,7 +478,6 @@ public class RESTAdaptor extends Adaptor implements Authorization {
       payload.append(String.format("&%s=%s", OAUTH2_CLIENTSECRET, oauth2.getString(OAUTH2_CLIENTSECRET)));
       payload.append(String.format("&%s=%s", OAUTH2_GRANTTYPE, oauth2.getString(OAUTH2_GRANTTYPE)));
       content = ByteArrayContent.fromString(null, payload.toString());
-      
       
       try
       {
@@ -483,36 +491,13 @@ public class RESTAdaptor extends Adaptor implements Authorization {
         tr.setScope(oauth2.getString(OAUTH2_SCOPE));
         tr.setTokenType(tokenResponse.getString(OAUTH2_TOKENTYPE));
         credential = new Credential(BearerToken.authorizationHeaderAccessMethod()).setFromTokenResponse(tr);
-//        credential = new Credential(null);
-//        credential.setAccessToken(tokenResponse.getString(OAUTH2_ACCESSTOKEN));
-//        credential.setExpiresInSeconds(tokenResponse.getLong(OAUTH2_EXPIRESIN));
         setCacheEntry(YADA_CREDENTIAL_CACHE, oauth2.getString(OAUTH2_CLIENTID), credential, tokenResponse.getInt(OAUTH2_EXPIRESIN));
       } 
-      catch (IOException e) 
+      catch (IOException | JSONException | YADAAdaptorExecutionException e) 
       {
         String msg = "Unable to initialize the POST request for ["+tokenUrl+"]";
         throw new YADASecurityException(msg,e);
-      }
-      catch (YADAAdaptorExecutionException e)
-      {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-      
-     
-//      try
-//      {
-//        final TokenResponse tknResp = tknReq.execute();
-//        setCacheEntry(YADA_CREDENTIAL_CACHE,
-//            oauth2.getString(OAUTH2_CLIENTID),
-//            tknResp.get(OAUTH2_ACCESSTOKEN),
-//            (Integer) tknResp.get(OAUTH2_EXPIRESIN));
-//      }
-//      catch (IOException e)
-//      {
-//        String msg = "Unable to acquire access token.";
-//        throw new YADASecurityException(msg, e);
-//      }
+      }            
     }
     return credential;
     
