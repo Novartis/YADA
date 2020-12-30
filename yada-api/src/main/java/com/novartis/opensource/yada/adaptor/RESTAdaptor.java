@@ -32,6 +32,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
@@ -62,13 +63,14 @@ import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.novartis.opensource.yada.ConnectionFactory;
 import com.novartis.opensource.yada.YADAQuery;
+import com.novartis.opensource.yada.YADAParam;
 import com.novartis.opensource.yada.YADAQueryConfigurationException;
 import com.novartis.opensource.yada.YADAQueryResult;
 import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADASecurityException;
 import com.novartis.opensource.yada.plugin.Authorization;
 
-
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -240,6 +242,12 @@ public class RESTAdaptor extends Adaptor implements Authorization {
 	 * @since 9.0.0
 	 */
 	private String mimeType = "";
+	
+	/**
+	 * Storage for query properties stored in application configuration
+	 * @since 9.3.0
+	 */
+	private Properties props  = null;
 
 	/**
 	 * Default constructor
@@ -300,12 +308,14 @@ public class RESTAdaptor extends Adaptor implements Authorization {
   }
   
   /**
-   * Standard mutator for variable which converts {@link String} to {@link JSONObject}
+   * Standard mutator for variable which converts {@link String} to {@link JSONObject}.
+   * Looks in query configuration first, if not there, looks in app config for o2 config data.
    * @param yq The {@link YADAQuery} containing the {@code oauth} or {@code o} parameter
    * @since 8.7.1
    */
   private void setOAuth2(YADAQuery yq) {
-    this.oauth2 = new JSONObject(yq.getYADAQueryParamValue(YADARequest.PS_OAUTH2)[0]);
+    String yqParamValue = yq.getYADAQueryParamValue(YADARequest.PS_OAUTH2)[0];    
+    this.setOAuth2(new JSONObject(yqParamValue));
   }
 
 	/**
@@ -899,9 +909,6 @@ public class RESTAdaptor extends Adaptor implements Authorization {
 				
 				// init url
 				GenericUrl url     = new GenericUrl(urlString);
-				List<String> path = url.getPathParts();
-				String fn = path.get(path.size()-1);
-//				this.setMimeType(URLConnection.guessContentTypeFromName(fn));
 				
 				// build request, handling auth if necessary
 				request = buildRequest(yq,payload,url);
@@ -940,8 +947,20 @@ public class RESTAdaptor extends Adaptor implements Authorization {
 	 */
 	@Override
 	public String build(YADAQuery yq) {
-    Properties props = ConnectionFactory.getConnectionFactory().getWsSourceMap().get(yq.getApp());    
-    String conf   = props.getProperty(ConnectionFactory.YADA_CONF_SOURCE); 
+	  this.setProps(ConnectionFactory.getConnectionFactory().getWsSourceMap().get(yq.getApp()));
+    List<YADAParam> yqParams = new ArrayList<>();
+    JSONArray yqp = new JSONArray(this.getProps().getProperty("params"));
+    for (int i=0; i<yqp.length(); i++)
+    {
+      JSONObject jo = yqp.getJSONObject(i);
+      YADAParam  yp = new YADAParam();      
+      yp.setName(jo.getString("name"));
+      yp.setValue(jo.getString("value"));
+      yp.setRule(jo.getInt("rule"));
+      yqParams.add(yp);
+    }
+	  yq.setYADAQueryParams(yqParams);
+    String conf   = this.getProps().getProperty(ConnectionFactory.YADA_CONF_SOURCE); 
 		String uri    = yq.getYADACode();
 		return conf + uri;
 	}
@@ -962,5 +981,23 @@ public class RESTAdaptor extends Adaptor implements Authorization {
   public void authorizeYADARequest(YADARequest yadaReq, String result) throws YADASecurityException {
     // TODO Auto-generated method stub
     
+  }
+
+  /**
+   * Standard accessor for variable
+   * @return query properties stored in application conf
+   * @since 9.3.0 
+   */
+  public Properties getProps() {
+    return props;
+  }
+
+  /**
+   * standard mutator for variable
+   * @param props query properties stored in application conf
+   * @since 9.3.0
+   */
+  public void setProps(Properties props) {
+    this.props = props;
   }
 }

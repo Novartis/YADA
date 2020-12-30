@@ -502,6 +502,8 @@ public class ConnectionFactory {
         {          
           if(conf.containsKey(YADA_CONF_PROPS))
           {
+            // for each property in the "props" json object, extract the property value with the key
+            // and store it as a property
             for(String key : JSONObject.getNames((JSONObject)conf.get(YADA_CONF_PROPS)))
             {           
               props.put(key, ((JSONObject)conf.get(YADA_CONF_PROPS)).getString(key));            
