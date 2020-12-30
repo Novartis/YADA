@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.novartis.opensource</groupId>
     <artifactId>YADA</artifactId>
-    <version>9.2.0-SNAPSHOT</version>
+    <version>9.3.0-SNAPSHOT</version>
   </parent>
   <artifactId>yada-war</artifactId>
   <name>yada-war</name>
@@ -19,7 +19,7 @@
       <url>${distribution.site.url}/${project.artifactId}</url>
     </site>
   </distributionManagement>
-  <properties>        
+  <properties>
     <!-- YADA 9 git specs -->
     <YADA.properties>YADA.properties</YADA.properties>
     <YADA.branch>master</YADA.branch>
@@ -27,7 +27,7 @@
     <YADA.pull.on.launch>false</YADA.pull.on.launch>
     <!-- default log level -->
     <log.level>info</log.level>
-        
+
     <display.version>${project.version}</display.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- default tests are skipped -->
@@ -36,10 +36,10 @@
     <skip.noproxy.test>true</skip.noproxy.test>
     <skip.fs.test>true</skip.fs.test>
     <skip.deploy.war>true</skip.deploy.war>
-    
+
     <!-- test deployment default -->
     <deployment.goal>start</deployment.goal>
-    
+
     <!--  other -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <main.basedir>${project.parent.basedir}</main.basedir>
@@ -49,13 +49,13 @@
       <id>test</id>
       <properties>
         <!-- log level usu. overriden on command line.  See YADA/src/main/resources/yadaMvnTestNG.sh -->
-        <log.level>info</log.level>        
+        <log.level>info</log.level>
         <!-- YADA 9 git spects -->
         <YADA.branch>testng</YADA.branch>
         <YADA.switch.branch>true</YADA.switch.branch>
         <YADA.pull.on.launch>false</YADA.pull.on.launch>
         <!-- YADA 9 test specs -->
-        <test.properties>/conf/TestNG_YADA_HTTP.properties</test.properties>        
+        <test.properties>/conf/TestNG_YADA_HTTP.properties</test.properties>
         <!-- test db instance for testing jdbc queries -->
         <YADA.index.url>${YADATEST.pgsql.index.url}</YADA.index.url>
         <YADA.index.username>${YADATEST.pgsql.index.username}</YADA.index.username>
@@ -123,8 +123,8 @@
                 <!-- <zipUrlInstaller>
                   <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/8.5.49/tomcat-8.5.49.zip</url>
                 </zipUrlInstaller> -->
-                <!-- <containerId>tomcat9x</containerId> <zipUrlInstaller> 
-                  <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/9.2.09/tomcat-9.2.09.zip</url> 
+                <!-- <containerId>tomcat9x</containerId> <zipUrlInstaller>
+                  <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/9.2.09/tomcat-9.2.09.zip</url>
                   </zipUrlInstaller> -->
               </container>
               <configuration>
@@ -138,7 +138,7 @@
                     -Dsecurity.token=YADAYADA
                     -Djwt.iss=yada
                     -Djws.key=drphilscrypto
-                    <!-- -Djavax.net.ssl.keyStore=~/.keystore -Djavax.net.ssl.keyStorePassword=changeit 
+                    <!-- -Djavax.net.ssl.keyStore=~/.keystore -Djavax.net.ssl.keyStorePassword=changeit
                       -Djavax.net.ssl.trustStore=~/.keystore -Djavax.net.ssl.trustStorePassword=changeit -->
                   </cargo.jvmargs>
 <!--                   <cargo.tomcat.connector.relaxedQueryChars>^&#96;{}[]|&quot;&lt;&gt;</cargo.tomcat.connector.relaxedQueryChars> -->
@@ -196,7 +196,7 @@
                   <webResources>
                     <resource>
                       <directory>${basedir}/src/main/resources/conf</directory>
-                      <targetPath>WEB-INF/classes</targetPath>                      
+                      <targetPath>WEB-INF/classes</targetPath>
                       <includes>
                         <include>log4j.properties</include>
                         <include>ehcache.xml</include>
@@ -304,8 +304,8 @@
                 <zipUrlInstaller>
                   <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/8.5.49/tomcat-8.5.49.zip</url>
                 </zipUrlInstaller>
-                <!-- <containerId>tomcat9x</containerId> <zipUrlInstaller> 
-                  <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/9.2.09/tomcat-9.2.09.zip</url> 
+                <!-- <containerId>tomcat9x</containerId> <zipUrlInstaller>
+                  <url>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/9.2.09/tomcat-9.2.09.zip</url>
                   </zipUrlInstaller> -->
               </container>
               <configuration>
@@ -320,7 +320,7 @@
                     -DYADA.properties.path=/YADA_pre9.properties
                     -Djwt.iss=yada
                     -Djws.key=drphilscrypto
-                    <!-- -Djavax.net.ssl.keyStore=~/.keystore -Djavax.net.ssl.keyStorePassword=changeit 
+                    <!-- -Djavax.net.ssl.keyStore=~/.keystore -Djavax.net.ssl.keyStorePassword=changeit
                       -Djavax.net.ssl.trustStore=~/.keystore -Djavax.net.ssl.trustStorePassword=changeit -->
                   </cargo.jvmargs>
                   <cargo.logging>low</cargo.logging>
@@ -469,7 +469,7 @@
             </configuration>
             <goals>
               <goal>verify</goal>
-            </goals>            
+            </goals>
           </execution>
         </executions>
       </plugin>
@@ -636,7 +636,7 @@
 
     </dependency>
     <!-- You'll need to install this jar manually in your maven repo -->
-    <!-- <dependency> <groupId>com.oracle</groupId> <artifactId>ojdbc6</artifactId> 
+    <!-- <dependency> <groupId>com.oracle</groupId> <artifactId>ojdbc6</artifactId>
       <version>11.2.0.3</version> <scope>test</scope> </dependency> -->
     <dependency>
       <groupId>org.xerial</groupId>

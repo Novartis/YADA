@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.novartis.opensource</groupId>
 	<artifactId>YADA</artifactId>
-	<version>9.2.0-SNAPSHOT</version>
+	<version>9.3.0-SNAPSHOT</version>
 	<name>YADA</name>
 	<url>http://github.com/Novartis/YADA</url>
 	<description>YADA (Yet Another Data Abstraction) Thin Server Framework</description>
@@ -124,7 +124,7 @@
 						<exclude>src/test/resources/test/**</exclude>
 						<exclude>src/main/resources/conf/**</exclude>
 						<exclude>src/main/webapp/META-INF/**</exclude>
-						<exclude>src/main/webapp/WEB-INF/**</exclude>            
+						<exclude>src/main/webapp/WEB-INF/**</exclude>
 						<exclude>src/main/webapp/yada-admin/**</exclude>
 						<exclude>yada-api/src/main/resaurces/utils/r.js</exclude>
                         <!-- post -->
@@ -137,7 +137,7 @@
                         <exclude>src/test/java/com/novartis/opensource/yada/test/pre9/*</exclude>
 						<!-- excluded due to requirement for line feed at end of license -->
 						<exclude>yada-war/src/main/webapp/yada.jsp</exclude>
-                                
+
 					</excludes>
 				</configuration>
 				<executions>
