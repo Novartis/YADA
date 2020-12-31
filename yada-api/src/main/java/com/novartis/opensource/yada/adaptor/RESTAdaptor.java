@@ -949,17 +949,21 @@ public class RESTAdaptor extends Adaptor implements Authorization {
 	public String build(YADAQuery yq) {
 	  this.setProps(ConnectionFactory.getConnectionFactory().getWsSourceMap().get(yq.getApp()));
     List<YADAParam> yqParams = new ArrayList<>();
-    JSONArray yqp = new JSONArray(this.getProps().getProperty("params"));
-    for (int i=0; i<yqp.length(); i++)
+    String paramStr = this.getProps().getProperty("params");
+    if(paramStr != null)
     {
-      JSONObject jo = yqp.getJSONObject(i);
-      YADAParam  yp = new YADAParam();      
-      yp.setName(jo.getString("name"));
-      yp.setValue(jo.getString("value"));
-      yp.setRule(jo.getInt("rule"));
-      yqParams.add(yp);
+      JSONArray yqp = new JSONArray(paramStr);
+      for (int i=0; i<yqp.length(); i++)
+      {
+        JSONObject jo = yqp.getJSONObject(i);
+        YADAParam  yp = new YADAParam();      
+        yp.setName(jo.getString("name"));
+        yp.setValue(jo.getString("value"));
+        yp.setRule(jo.getInt("rule"));
+        yqParams.add(yp);
+      }
+  	  yq.setYADAQueryParams(yqParams);
     }
-	  yq.setYADAQueryParams(yqParams);
     String conf   = this.getProps().getProperty(ConnectionFactory.YADA_CONF_SOURCE); 
 		String uri    = yq.getYADACode();
 		return conf + uri;
