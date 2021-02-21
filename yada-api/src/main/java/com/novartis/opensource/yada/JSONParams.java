@@ -54,10 +54,10 @@ public class JSONParams extends LinkedHashMap<String, JSONParamsEntry> {
 	
 	/**
 	 * Takes a json string as an argument and converts it into a {@link JSONParams} object.
-	 * The {@link String} must be a {@link String} reprentation of a {@link JSONArray}
+	 * The {@link String} must be a {@link String} representation of a {@link JSONArray}
 	 * and must conform to the <a href="../../../../../../jsonparams.html">JSONParams specification</a>, e.g.:
 	 * 
-	 * <code>[{"qname":"name of query","DATA":[{"col_1":"val_1",..."col_n":"val_n"},{...},...]}</code> 
+	 * <code>[{"qname":"name of query","DATA":[{"col_1":"val_1",..."col_n":"val_n"},{...},...]},...]</code> 
 	 * 
 	 * @since 4.0.0
 	 * @param jp the json string to convert to an object
