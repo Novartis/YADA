@@ -28,8 +28,8 @@ AbstractConverter <|-u- ResultSetResultHTMLConverter
 AbstractConverter <|-d- ResultSetResultJSONConverter
 AbstractConverter <|-d- ResultSetResultXMLConverter
 AbstractConverter <|-u- SOAPResultXMLConverter
-RESTResultJSONConverter  o-- Harmonizer 
-RESTResultDelimitedConverter o--  Harmonizer 
+RESTResultJSONConverter  o-- Harmonizer
+RESTResultDelimitedConverter o--  Harmonizer
 
 Harmonizer o-r-javax.script.ScriptEngineManager
 Harmonizer o-r-javax.script.ScriptEngine
@@ -50,7 +50,7 @@ class RESTPassThruResponse
 class SOAPPassThruResponse
 class XMLResponse
 
-Response <|.. AbstractResponse 
+Response <|.. AbstractResponse
 AbstractResponse <|-d- CountResponse
 AbstractResponse <|-r- DelimitedResponse
 AbstractResponse <|-l- HTMLResponse
@@ -68,8 +68,11 @@ ResultSetResultJSONConverter -[hidden]d- JSONResponse
 }
 
 package "com.novartis.opensource.yada.format Exceptions" {
-class YADAConverterException --|> class com.novartis.opensource.yada.YADAException
-class YADAResponseException --|> com.novartis.opensource.yada.YADAException
+class com.novartis.opensource.yada.YADAException
+class YADAConverterException
+class YADAResponseException
+YADAConverterException --|> com.novartis.opensource.yada.YADAException
+YADAResponseException --|> com.novartis.opensource.yada.YADAException
 }
 
 hide members

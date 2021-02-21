@@ -5,21 +5,32 @@ skinparam class {
   ArrowColor #923222
 }
 package "com.novartis.opensource.yada Exceptions" {
-class YADAException <|-- class YADAConnectionException
-YADAException <|-d- class YADAExecutionException
-YADAException <|-r- class YADAFinderException
-YADAException <|-d- class YADAParserException
-YADAException <|-u- class YADAQueryConfigurationException
-YADAException <|-l- class YADARequestException
-YADAException <|-u- class YADAResourceException
-YADAException <|-d- class YADASQLException
-YADAException <|-u- class YADAUnsupportedAdaptorException
+class YADAException
+class YADAConnectionException
+class YADAExecutionException
+class YADAFinderException
+class YADAParserException
+class YADAQueryConfigurationException
+class YADARequestException
+class YADAResourceException
+class YADASQLException
+class YADAUnsupportedAdaptorException
+ YADAException <|--  YADAConnectionException
+YADAException <|-d-  YADAExecutionException
+YADAException <|-r-  YADAFinderException
+YADAException <|-d-  YADAParserException
+YADAException <|-u-  YADAQueryConfigurationException
+YADAException <|-l-  YADARequestException
+YADAException <|-u-  YADAResourceException
+YADAException <|-d-  YADASQLException
+YADAException <|-u-  YADAUnsupportedAdaptorException
 }
 
 package "com.novartis.opensource.yada" {
 class ConnectionFactory
 class Finder
-class JSONParams -r-|> java.util.LinkedHashMap
+class JSONParams
+ JSONParams -r-|> java.util.LinkedHashMap
 class JSONParamsEntry
 class Parser
 class QueryManager

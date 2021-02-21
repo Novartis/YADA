@@ -18,12 +18,14 @@ YADABufferedReader : void setFileHelper()
 FileHelper : void setReader()
 'XMLFileHelper -[hidden]r- YADAIOException
 
-class YADAIOException -r-|> com.novartis.opensource.yada.YADAException
+class YADAIOException
+class com.novartis.opensource.yada.YADAException
+YADAIOException -r-|> com.novartis.opensource.yada.YADAException
 TabHelper -[hidden]- YADAIOException
 
 FileHelper <|-- TabHelper
-FileHelper <|-- class ADFHelper
-FileHelper <|-- class VCFHelper
+FileHelper <|-- ADFHelper
+FileHelper <|-- VCFHelper
 
 YADABufferedReader --* FileHelper
 YADABufferedReader *-- FileHelper

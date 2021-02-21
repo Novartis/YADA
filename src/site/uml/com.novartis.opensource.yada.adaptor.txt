@@ -39,15 +39,19 @@ JDBCAdaptor <|-- SQLServerAdaptor
 JDBCAdaptor <|-- VerticaAdaptor
 
 abstract class YADAAbstractResultSet
+interface java.sql.ResultSet
 class YADAResultSet
-YADAAbstractResultSet <|-- YADAResultSet 
-YADAAbstractResultSet ..|> interface java.sql.ResultSet
+YADAAbstractResultSet <|-- YADAResultSet
+YADAAbstractResultSet ..|> java.sql.ResultSet
 }
+
 
 package "com.novartis.opensource.yada.adaptor Exceptions" {
-class YADAAdaptorException --|> class com.novartis.opensource.yada.YADAException
-class YADAAdaptorExecutionException --|> com.novartis.opensource.yada.YADAException
+class com.novartis.opensource.yada.YADAException
+class YADAAdaptorException
+class YADAAdaptorExecutionException
+YADAAdaptorException --|> com.novartis.opensource.yada.YADAException
+YADAAdaptorExecutionException --|> com.novartis.opensource.yada.YADAException
 }
-
 hide members
 @enduml
