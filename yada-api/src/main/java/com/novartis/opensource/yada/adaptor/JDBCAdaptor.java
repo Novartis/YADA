@@ -598,9 +598,7 @@ public abstract class JDBCAdaptor extends Adaptor{
 			}
 		}
 		sql.append(NEWLINE+"       "+CLOSE_PAREN+SPACE);
-		sql.append(SQL_CORE_ALIAS);
-		sql.append(NEWLINE+SPACE+SPACE);
-		sql.append(LIMIT + SPACE + pageSize + SPACE + OFFSET + SPACE + (firstRow-1)); 
+		sql.append(SQL_CORE_ALIAS);		
 		sql.append(NEWLINE);
 		if (filters != null)
 		{
@@ -610,6 +608,8 @@ public abstract class JDBCAdaptor extends Adaptor{
 			sql.append(NEWLINE+CLOSE_PAREN+NEWLINE);
 		}
 		sql.append(CLOSE_PAREN+SPACE+SQL_WRAPPER_ALIAS);
+		sql.append(NEWLINE+SPACE+SPACE);
+    sql.append(LIMIT + SPACE + pageSize + SPACE + OFFSET + SPACE + (firstRow-1)); 
 		sql.append(NEWLINE);
 		return sql;
 	}
