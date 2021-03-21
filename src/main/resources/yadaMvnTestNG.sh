@@ -68,7 +68,7 @@ while getopts "Xtdisx:p:T:" opt; do
       elif [ "failsafe" == "$OPTARG" ]
       then
         FAILSAFE_X=1
-      elif [ "all" = "$OPTARG" ] || [ -z "$OPTARG"]
+      elif [ "all" = "$OPTARG" ] || [ -z "$OPTARG" ]
       then
         SUREFIRE_X=1
         FAILSAFE_X=1

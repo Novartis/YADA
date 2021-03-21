@@ -408,7 +408,7 @@ public class RESTAdaptor extends Adaptor implements Authorization {
 		  {
 		    paramVal = yq.getParam(YADARequest.PL_HTTPHEADERS).get(0).getValue();
 		  }
-		  JSONObject auth = new JSONObject(paramVal);
+		  JSONObject auth = new JSONObject(paramVal);		  
 		  return setAuthenticationToken(url, auth.getString("Authorization"));
     }
 		else if(url.getUserInfo() != null)
@@ -608,7 +608,14 @@ public class RESTAdaptor extends Adaptor implements Authorization {
 	    
 	    @Override      
       public void intercept(HttpRequest request) throws IOException {
-	      request.getHeaders().setAuthorization("Bearer "+token);
+	      if(token.startsWith("Basic "))
+	      {
+	        request.getHeaders().setAuthorization(token);
+	      }
+	      else
+	      {
+	        request.getHeaders().setAuthorization("Bearer "+token);
+	      }
 	    }
 	  };
 	  
