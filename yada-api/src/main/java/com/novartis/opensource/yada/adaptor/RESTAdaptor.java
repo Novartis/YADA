@@ -214,6 +214,12 @@ public class RESTAdaptor extends Adaptor implements Authorization {
 	 * @since 8.7.4
 	 */
 	private static final int HTTP_STATUS_403 = 403;
+	
+	/** 
+	 * Constant equal to: {@value}. 
+   * @since 9.3.4
+   */
+  private static final int HTTP_STATUS_404 = 404;
 
 	/**
 	 * Variable to hold the proxy server string if necessary
@@ -752,6 +758,10 @@ public class RESTAdaptor extends Adaptor implements Authorization {
 				String msg = "Unauthorized: "+e.getStatusMessage();
 				throw new YADASecurityException(msg,e);
 			}			
+			else if(code == HTTP_STATUS_404)
+			{
+			  throw new YADAAdaptorExecutionException(e.getMessage(), e);
+			}
 		}
 		catch (IOException e) 
 		{
