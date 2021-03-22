@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -133,12 +134,55 @@ public class Service {
 	 * Stores the {@code request} in the {@link YADARequest} object and calls {@link #handleRequest(String, Map)}.
 	 * @since 4.0.0
 	 * @param request the servlet request created by the servlet container 
+	 * @throws YADARequestException when JSON body content is malformed 
 	 */
 	@SuppressWarnings("unchecked")
-  public void handleRequest(HttpServletRequest request)
+  public void handleRequest(HttpServletRequest request) throws YADARequestException
 	{
 		getYADARequest().setRequest(request);
-		handleRequest(request.getHeader("referer"), request.getParameterMap());
+		if(request.getHeader("Content-Type").contentEquals("application/json"))
+		{		  
+      try
+      {
+        String     body = request.getReader().readLine();
+        JSONObject jo   = new JSONObject(body);
+        handleRequest(request.getHeader("referer"), buildMapFromJSON(jo));
+      }
+      catch (JSONException | IOException e)
+      {
+        String msg = "Unable to parse request body as JSON";
+        throw new YADARequestException(msg, e);
+      }		  
+		}
+		else
+		{
+		  handleRequest(request.getHeader("referer"), request.getParameterMap());
+		}
+	}
+	
+	/**
+	 * Convert {@code Content-Type: application/json} data passed in {@code POST}
+	 * request to a {@code Map<String,String[]} as if data were {@code www-form-urlencoded}
+	 * NOTE:  This will only work if no line feeds appear in the JSON <em>and</em> 
+	 * the {@code Content-Type: application/json} header is set.
+	 * @param jo the json object passed in request body
+	 * 
+	 * @return a {@link Map} containing the JSON data reformatted for parsing
+	 * @since 9.3.5
+	 */
+	private Map<String,String[]> buildMapFromJSON(JSONObject jo) 
+	{
+	  Map<String, String[]> map = new HashMap<>();
+	  String[] props = JSONObject.getNames(jo);
+	  for(int i=0;i<props.length;i++)
+	  {
+	    String prop = props[i];
+	    String value = prop.contentEquals(YADARequest.PS_JSONPARAMS) || prop.contentEquals(YADARequest.PL_JSONPARAMS)
+	                   ? jo.getJSONArray(prop).toString()
+	                   : jo.getString(prop);
+ 	    map.put(props[i], new String[] {value});
+	  }
+	  return map;
 	}
 	
 
