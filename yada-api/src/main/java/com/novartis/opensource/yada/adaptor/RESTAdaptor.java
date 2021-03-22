@@ -760,10 +760,11 @@ public class RESTAdaptor extends Adaptor implements Authorization {
 			throw new YADAAdaptorExecutionException(msg,e);
 		}
 		
-		if(null == this.getMimeType() || this.getMimeType().contentEquals(""))
+		if(null != response && (null == this.getMimeType() || this.getMimeType().contentEquals("")))
 		{
 		  this.setMimeType(response.getContentType());
 		}
+		
 		if(this.getMimeType().startsWith("text") 
 		    || this.getMimeType().matches("application/(?:json|ld\\+json|x-httpd-php|rtf|x-sh|xml).*"))
 		{
