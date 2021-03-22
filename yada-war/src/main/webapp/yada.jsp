@@ -87,7 +87,7 @@ else if (null != YADAPath && !("").equals(YADAPath))
 {
 	service.handleRequest(request, YADAPath);
 }
-else
+else  
 {
 	service.handleRequest(request);
 }
