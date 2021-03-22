@@ -791,7 +791,7 @@ public class RESTAdaptor extends Adaptor implements Authorization {
 	      throw new YADAAdaptorExecutionException(msg, e);
 	    }		  
 		}
-		else if(null != this.getMimeType())
+		else if(null != this.getMimeType() && !this.getMimeType().contentEquals(""))
 		{
 		  this.getServiceParameters().setFormat(new String[] { YADARequest.FORMAT_BINARY });		  
 		  try(ByteArrayOutputStream baos = new ByteArrayOutputStream())
