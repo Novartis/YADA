@@ -751,8 +751,7 @@ public class RESTAdaptor extends Adaptor implements Authorization {
 			{
 				String msg = "Unauthorized: "+e.getStatusMessage();
 				throw new YADASecurityException(msg,e);
-			}
-			
+			}			
 		}
 		catch (IOException e) 
 		{
@@ -782,7 +781,7 @@ public class RESTAdaptor extends Adaptor implements Authorization {
 	      throw new YADAAdaptorExecutionException(msg, e);
 	    }		  
 		}
-		else 
+		else if(null != this.getMimeType())
 		{
 		  this.getServiceParameters().setFormat(new String[] { YADARequest.FORMAT_BINARY });		  
 		  try(ByteArrayOutputStream baos = new ByteArrayOutputStream())
