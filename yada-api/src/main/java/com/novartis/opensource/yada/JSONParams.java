@@ -159,12 +159,12 @@ public class JSONParams extends LinkedHashMap<String, JSONParamsEntry> {
 			for (int i = 0; i < ja.length(); i++) // multiple queries
 			{
 				// object with the query and data
-				JSONObject      jobj  = ja.getJSONObject(i);
-				String          qname = jobj.getString(YADARequest.getParamKeyVal("PL_QNAME"));
-				if(qname == null)
-				{
-					qname = jobj.getString(YADARequest.getParamKeyVal("PS_QNAME"));
-				}
+				JSONObject jobj     = ja.getJSONObject(i);
+				String     qnameKey = YADARequest.getParamKeyVal("PL_QNAME");
+				String     qKey     = YADARequest.getParamKeyVal("PS_QNAME");
+				String     qname    = jobj.has(qnameKey) 
+				                      ? jobj.getString(qnameKey) 
+				                      : jobj.getString(qKey);				
 				JSONParamsEntry entry = new JSONParamsEntry(jobj);
 				put(qname,entry);
 			}
