@@ -140,7 +140,8 @@ public class Service {
   public void handleRequest(HttpServletRequest request) throws YADARequestException
 	{
 		getYADARequest().setRequest(request);
-		if(request.getHeader("Content-Type").contentEquals("application/json"))
+		if(null != request.getHeader("Content-Type") 
+		    && request.getHeader("Content-Type").contentEquals("application/json"))
 		{		  
       try
       {
