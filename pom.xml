@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.novartis.opensource</groupId>
 	<artifactId>YADA</artifactId>
-	<version>9.3.5-SNAPSHOT</version>
+	<version>9.3.6-SNAPSHOT</version>
 	<name>YADA</name>
 	<url>http://github.com/Novartis/YADA</url>
 	<description>YADA (Yet Another Data Abstraction) Thin Server Framework</description>

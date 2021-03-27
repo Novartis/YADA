@@ -561,7 +561,7 @@ public abstract class JDBCAdaptor extends Adaptor{
 	 * filtering with a where clause. 
 	 * @param core the code to wrap
 	 * @param sortKey the column on which to sort
-	 * @param sortOrder the sort order 'asc' or 'desc'
+	 * @param sortOrder deprecated: the sort order 'asc' or 'desc'. include sortorder in sortkey declaration
 	 * @param firstRow the lower limiter of the result set
 	 * @param pageSize the number of rows to return
 	 * @param filters a JSON object containing the WHERE criteria 
@@ -592,6 +592,9 @@ public abstract class JDBCAdaptor extends Adaptor{
 				sql.append(COMMA+SPACE);
 			}
 			sql.append(sortKey);
+			// sortorder is deprecated as of 9.3.6.  To establish sortorder, include
+			// asc or desc symbols in sortkey spec, e.g., "1, 2 desc" or "col1 desc, col2"
+			// omit for asc order, as that is usually the rdbms default
 			if (null != sortOrder && !sortOrder.equals(EMPTY))
 			{
 				 sql.append(SPACE + sortOrder);

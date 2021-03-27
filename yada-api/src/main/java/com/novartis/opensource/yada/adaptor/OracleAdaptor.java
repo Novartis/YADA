@@ -60,12 +60,13 @@ public class OracleAdaptor extends JDBCAdaptor {
 	 * filtering with a where clause. 
 	 * @param core the code to wrap
 	 * @param sortKey the column on which to sort
-	 * @param sortOrder the sort order 'asc' or 'desc'
+	 * @param sortOrder deprecated:  the sort order 'asc' or 'desc', include sort direction in sort key 
 	 * @param firstRow the lower limiter of the result set
 	 * @param pageSize the number of rows to return
 	 * @param filters a JSON object containing the WHERE criteria 
 	 * @return StringBuffer containing newly wrapped core sql, with pagination, filtering, and sorting, as desired
 	 * @throws YADAAdaptorException when the query filters can't be converted into a WHERE clause
+	 * @see JDBCAdaptor
 	 */
 	@Override
 	public StringBuffer buildSelect(String core, String sortKey, String sortOrder, int firstRow, int pageSize, JSONObject filters) throws YADAAdaptorException 

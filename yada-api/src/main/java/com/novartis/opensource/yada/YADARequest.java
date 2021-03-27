@@ -545,7 +545,9 @@ public class YADARequest {
 	 * This is a global parameter.
 	 * The default value associated to this param is {@link YADARequest#SORT_ASC}
 	 * @since 4.0.0 (Short param aliases were first added in 4.0.0)
+	 * @deprecated since 9.3.6
 	 */
+	@Deprecated
 	public static final String PS_SORTORDER   = "so";
 	/**
 	 * A constant equal to: {@value}
@@ -809,7 +811,9 @@ public class YADARequest {
 	 * This is a global parameter.
 	 * The default value associated to this param is {@link YADARequest#SORT_ASC}
 	 * @since 1.0.0
+	 * @deprecated since 9.3.6
 	 */
+	@Deprecated
 	public static final String PL_SORTORDER   = "sortorder";
 	/**
 	 * A constant equal to: {@value}
@@ -1090,7 +1094,9 @@ public class YADARequest {
 	private String     sortKey;
 	/**
 	 * The order of sorted results.  Defaults to {@link #SORT_ASC}
+	 * @deprecated since 9.3.6
 	 */
+	@Deprecated
 	private String     sortOrder   	= SORT_ASC;
 	/**
 	 * Flag indicating whether or not the {@link Finder} should execute a parallel op to update the query access count and date  
@@ -2865,7 +2871,9 @@ public class YADARequest {
 	 * Array mutator for variable, preferred for compatibility with {@link javax.servlet.http.HttpServletRequest#getParameterMap()}
 	 * @since 4.0.0
 	 * @param sortOrder the sort order, defaults to {@link #SORT_ASC}
+	 * @deprecated since 9.3.6
 	 */
+	@Deprecated
 	public void setSortOrder(String[] sortOrder) {
 		this.sortOrder = sortOrder[0];
 		l.debug(getFormattedDebugString("sortOrder", this.sortOrder));
@@ -3359,7 +3367,9 @@ public class YADARequest {
 	/**
 	 * Standard accessor for variable. Default is {@link #SORT_ASC}.
 	 * @return the value of the parameter
+	 * @deprecated since 9.3.6
 	 */
+	@Deprecated
 	public String getSortOrder() {
 		return this.sortOrder;
 	}

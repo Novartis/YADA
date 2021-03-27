@@ -126,7 +126,9 @@ public class YADAUtils {
 	public final static String   PARAM_FRAG_SORTKEY       = "SORTKEY";
 	/**
 	 * A constant equal to: {@value}
+	 * @deprecated since 9.3.6
 	 */
+	@Deprecated
 	public final static String   PARAM_FRAG_SORTORDER     = "SORTORDER";
 	/**
 	 * A constant equal to: {@value}
