@@ -78,10 +78,10 @@ public class SQLServerAdaptor extends JDBCAdaptor {
 				sql.append(", ");
 			}
 			sql.append(sortKey);
-			if (null != sortOrder && !sortOrder.equals(""))
-			{
-				 sql.append(" " + sortOrder);
-			}
+//			if (null != sortOrder && !sortOrder.equals(""))
+//			{
+//				 sql.append(" " + sortOrder);
+//			}
 		}
 		sql.append(NEWLINE+"       ) ");
 		sql.append(SQL_CORE_ALIAS);

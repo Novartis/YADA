@@ -95,10 +95,10 @@ public class OracleAdaptor extends JDBCAdaptor {
 				sql.append(COMMA+SPACE);
 			}
 			sql.append(sortKey);
-			if (null != sortOrder && !sortOrder.equals(EMPTY))
-			{
-				 sql.append(SPACE + sortOrder);
-			}
+//			if (null != sortOrder && !sortOrder.equals(EMPTY))
+//			{
+//				 sql.append(SPACE + sortOrder);
+//			}
 		}
 		sql.append(NEWLINE+"       "+CLOSE_PAREN+SPACE);
 		sql.append(SQL_CORE_ALIAS);

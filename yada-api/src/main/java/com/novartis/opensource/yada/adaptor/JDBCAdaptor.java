@@ -595,10 +595,10 @@ public abstract class JDBCAdaptor extends Adaptor{
 			// sortorder is deprecated as of 9.3.6.  To establish sortorder, include
 			// asc or desc symbols in sortkey spec, e.g., "1, 2 desc" or "col1 desc, col2"
 			// omit for asc order, as that is usually the rdbms default
-			if (null != sortOrder && !sortOrder.equals(EMPTY))
-			{
-				 sql.append(SPACE + sortOrder);
-			}
+//			if (null != sortOrder && !sortOrder.equals(EMPTY))
+//			{
+//				 sql.append(SPACE + sortOrder);
+//			}
 		}
 		sql.append(NEWLINE+"       "+CLOSE_PAREN+SPACE);
 		sql.append(SQL_CORE_ALIAS);		
