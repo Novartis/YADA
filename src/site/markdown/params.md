@@ -47,7 +47,6 @@
 - [response]  
 - [rowDelimiter]  
 - [sortkey]  
-- [sortorder]  
 - [updateStats]
 - [uploadItems] *(internal use only)*
 - [user]  
@@ -103,7 +102,6 @@
 - [response]
 - [rowDelimiter]
 - [sortkey]
-- [sortorder]
 
 ### Plugin Parameters
 
@@ -119,6 +117,7 @@
 - [plugintype]
 - [postargs]
 - [preargs]
+- [sortorder]
 
 <a name="ref"></a>
 ## Reference
@@ -584,17 +583,17 @@ _Identifies for the `com.novartis.opensource.yada.Service` object which JDBC met
 **Required**: No  
 **Default**: null  
 **Accepted Values**: any string  
-**Description**:   
+**Description**: A list of columns or indices, including sort direction if not ascending, indicating order of results  
 
 <a name="sortorder"></a>  
 
 ----
 
-**Name**: `sortorder`  
-**Alias**: `so`  
-**Required**: No  
-**Default**: `asc`  
-**Accepted Values**: `asc`, `desc`  
+**Name _(deprecated)_**: `sortorder`  
+**Alias _(deprecated)_**: `so`  
+**Required _(deprecated)_**: No  
+**Default _(deprecated)_**: `asc`  
+**Accepted Values _(deprecated)_**: **Deprecated**. `asc`, `desc`  
 **Description**:   
 
 <a name="updateStats"></a>  
