@@ -93,6 +93,36 @@ public abstract class JDBCAdaptor extends Adaptor{
 	 */
 	protected static final char   OUTPARAM_VARCHAR  = 'V';
 	/**
+   * Constant equal to: {@code '}
+   * @since 9.3.6
+   */
+  protected static final String APOS              = "'";
+  /**
+   * Constant equal to: {@code %}
+   * @since 9.3.6
+   */
+  protected static final String PERCENT           = "%";
+  /**
+   * Constant equal to: {@code .}
+   * @since 9.3.6
+   */
+  protected static final String DOT               = ".";
+  /**
+   * Constant equal to: {@code =}
+   * @since 9.3.6
+   */
+  protected static final String EQUAL             = "=";
+  /**
+   * Constant equal to: {@code <}
+   * @since 9.3.6
+   */
+  protected static final String LESSTHAN          = "<";
+  /**
+   * Constant equal to: {@code >}
+   * @since 9.3.6
+   */
+  protected static final String GREATERTHAN       = ">";
+	/**
 	 * Constant equal to: {@value}
 	 */
 	protected static final String NEWLINE           = "\n";
@@ -727,11 +757,11 @@ public abstract class JDBCAdaptor extends Adaptor{
 				for (int i=0;i<rules.length();i++)
 				{
 					JSONObject obj = rules.getJSONObject(i);
-					String field = obj.getString(FILTERKEY_FIELD);
-					String op    = obj.getString(FILTERKEY_OP);
+					String field   = obj.getString(FILTERKEY_FIELD);
+					String op      = obj.getString(FILTERKEY_OP);
 					
 					// set type
-					String type  = TYPE_TEXT;
+					String type    = TYPE_TEXT;
 					try
 					{
 						type  = obj.has(FILTERKEY_TYPE) ? obj.getString(FILTERKEY_TYPE) : type;
@@ -752,13 +782,13 @@ public abstract class JDBCAdaptor extends Adaptor{
 					// prepend group op if not 1st rule
 					if (i > 0)
 					{
-						lSql.append(" " + groupOp + " ");
+						lSql.append(SPACE + groupOp + SPACE);
 						
 					}
 					// nulls, not nulls
 					if(op.matches(FILTER_NULL + RX_ALT + FILTER_NOTNULL))
 					{
-						lSql.append(SQL_CORE_ALIAS+"." + field + " ");
+						lSql.append(SQL_CORE_ALIAS+DOT + field + SPACE);
 						lSql.append(SQL_IS);
 						if (FILTER_NOTNULL.equals(op))  {  lSql.append(SQL_NOT); }
 						lSql.append(SQL_NULL);
@@ -770,20 +800,36 @@ public abstract class JDBCAdaptor extends Adaptor{
 						// numbers:  eq, ne, lt, le, gt, ge, in, ni
 						if (TYPE_NUMBER.equals(type))
 						{
-							lSql.append(SQL_CORE_ALIAS+"." + field + " ");
-							if(FILTER_NOTEQUAL.equals(op))  {  lSql.append("<> ");  }
+							lSql.append(SQL_CORE_ALIAS+DOT + field + SPACE);
+							if(FILTER_NOTEQUAL.equals(op))  
+							{  
+							  lSql.append(LESSTHAN+GREATERTHAN);  
+							}
 							else if(op.matches(FILTER_LESSTHAN + RX_ALT + FILTER_LESSEQUAL))         
-															{  lSql.append("< ");   }
+							{  
+							  lSql.append(LESSTHAN);   
+							}
 							else if(op.matches(FILTER_GREATERTHAN + RX_ALT + FILTER_GREATEREQUAL))   
-															{  lSql.append("> ");   }
-							if(op.matches(FILTER_EQUAL + RX_ALT
-										  +FILTER_LESSEQUAL + RX_ALT
-										  +FILTER_GREATEREQUAL))     
-															{  lSql.append("= ");   }
-							if(FILTER_NOTIN.matches(op))    {  lSql.append(SQL_NOT); }
+							{  
+							  lSql.append(GREATERTHAN);   
+							}
+							if(op.matches(FILTER_EQUAL + RX_ALT + FILTER_LESSEQUAL + RX_ALT + FILTER_GREATEREQUAL))     
+							{  
+							  lSql.append(EQUAL);   
+							}
+							lSql.append(SPACE);
+							if(FILTER_NOTIN.matches(op))    
+							{  
+							  lSql.append(SQL_NOT);
+							}
 							if(op.matches(FILTER_IN + RX_ALT + FILTER_NOTIN))        
-															{  lSql.append(SQL_IN+"("+value+") "); }
-							else                            {  lSql.append(value);  }
+							{  
+							  lSql.append(SQL_IN + OPEN_PAREN + value + CLOSE_PAREN + SPACE); 
+							}
+							else 
+							{  
+							  lSql.append(value);  
+							}
 						}
 						// varchars
 						else if (TYPE_TEXT.equals(type) || (TYPE_EXACTTEXT.equals(type)))
@@ -791,15 +837,15 @@ public abstract class JDBCAdaptor extends Adaptor{
 							// case sensitive
 							if (TYPE_EXACTTEXT.equals(type))
 							{
-								lSql.append(SQL_CORE_ALIAS+"." + field + " ");
+								lSql.append(SQL_CORE_ALIAS+DOT + field + SPACE);
 							}
 							// case insensitive
 							else
 							{
-								lSql.append("LOWER("+SQL_CORE_ALIAS+"." + field + ") ");
+								lSql.append("LOWER" + OPEN_PAREN + SQL_CORE_ALIAS+DOT + field + CLOSE_PAREN + SPACE);
 							}
-							if(FILTER_EQUAL.equals(op))          {  lSql.append(" = "); }
-							else if(FILTER_NOTEQUAL.equals(op))  {  lSql.append(" <> ");}
+							if(FILTER_EQUAL.equals(op))          {  lSql.append(SPACE + EQUAL + SPACE); }
+							else if(FILTER_NOTEQUAL.equals(op))  {  lSql.append(SPACE + LESSTHAN+GREATERTHAN + SPACE);}
 							
 							// not contains, not begins with, not ends with
 							if(op.matches(FILTER_NOTCONTAINS + RX_ALT
@@ -818,12 +864,12 @@ public abstract class JDBCAdaptor extends Adaptor{
 									       +FILTER_BEGINSWITH + RX_ALT
 									       +FILTER_NOTBEGINSWITH + RX_ALT
 									       +FILTER_ENDSWITH + RX_ALT
-									       +FILTER_NOTENDSWITH)) {  lSql.append("'");     }
+									       +FILTER_NOTENDSWITH)) {  lSql.append(APOS);     }
 							
 							// contains, ends with, not ends with
 							if (op.matches(FILTER_CONTAINS + RX_ALT
 									       +FILTER_ENDSWITH + RX_ALT
-									       +FILTER_NOTENDSWITH)) {  lSql.append("%");   }
+									       +FILTER_NOTENDSWITH)) {  lSql.append(PERCENT);   }
 							if (op.matches(FILTER_EQUAL + RX_ALT
 									       +FILTER_NOTEQUAL + RX_ALT
 									       +FILTER_CONTAINS + RX_ALT
@@ -835,22 +881,22 @@ public abstract class JDBCAdaptor extends Adaptor{
 							// in, ni
 							else 
 							{
-								String[] split = value.split(",");
-								lSql.append(SQL_IN+"(");
+								String[] split = value.split(COMMA);
+								lSql.append(SQL_IN + OPEN_PAREN);
 								for (int j=0;j<split.length;j++)
 								{
-									lSql.append("'"+split[j]+"'");
+									lSql.append(APOS+split[j]+APOS);
 									if (j<split.length-1)
 									{
-										lSql.append(",");
+										lSql.append(COMMA);
 									}
 								}
-								lSql.append(")");
+								lSql.append(CLOSE_PAREN);
 							}
 							// contains, begins with, not begins with
 							if (op.matches(FILTER_CONTAINS + RX_ALT
 									       +FILTER_BEGINSWITH + RX_ALT
-									       +FILTER_NOTBEGINSWITH)) {  lSql.append("%"); }
+									       +FILTER_NOTBEGINSWITH)) {  lSql.append(PERCENT); }
 							if (op.matches(FILTER_EQUAL + RX_ALT
 								           +FILTER_NOTEQUAL + RX_ALT
 								           +FILTER_CONTAINS + RX_ALT
@@ -858,7 +904,7 @@ public abstract class JDBCAdaptor extends Adaptor{
 								           +FILTER_BEGINSWITH + RX_ALT
 								           +FILTER_NOTBEGINSWITH + RX_ALT
 								           +FILTER_ENDSWITH + RX_ALT
-								           +FILTER_NOTENDSWITH))   {  lSql.append("'"); }
+								           +FILTER_NOTENDSWITH))   {  lSql.append(APOS); }
 						} // end "text"
 					} // end "non null ops"
 				} // end rules iteration
@@ -869,13 +915,13 @@ public abstract class JDBCAdaptor extends Adaptor{
 				{
 					if (i > 0 || (rules != null && rules.length() > 0))
 					{
-						lSql.append("\n " + groupOp + NEWLINE);	
+						lSql.append(NEWLINE + SPACE + groupOp + NEWLINE);	
 					}
 					JSONObject filter = groups.getJSONObject(i);
-					lSql.append("(");
+					lSql.append(OPEN_PAREN);
 					// recursive call to getQueryFilters to process nested groups
 					this.getQueryFilters(false,lSql,filter);
-					lSql.append(")");
+					lSql.append(CLOSE_PAREN);
 				}
 			}
 		} // end try
