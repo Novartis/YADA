@@ -13,6 +13,7 @@ printf "Usage: $0 [-T [surefire|failsafe]] [-x surefire|failsafe] [-p test|test_
   -d  show java debug log output. Default log level is 'info'. \n \
   -s  deloy snapshot to maven central.  Implies -T \n \
   -i  print command to test webapp interactively. Combine with  '-x failsafe' to debug as well \n \
+  -r  local maven repository \n \
   -?  show this help \n\n \
 
   NOTES:
@@ -35,11 +36,14 @@ SKIP_SUREFIRE=
 SKIP_FAILSAFE=
 DEPLOY_SNAPSHOT=0
 INTERACTIVE=0
+MVN_REPO=""
 CONTAINER_OPT="-Dcargo.tomcat.connector.relaxedQueryChars='^&#96;{}[]|&quot;&lt;&gt;'"
 
 OPTERR=0
-while getopts "Xtdisx:p:T:" opt; do
+while getopts "Xtdisx:p:T:r:" opt; do
   case ${opt} in
+    r )
+      MVN_REPO="-Dmaven.repo.local=$OPTARG"
     i )
       INTERACTIVE=1
       ;;
@@ -126,6 +130,7 @@ $SKIP_JAVADOC \
 $SKIP_SOURCE \
 $TOGGLE_TESTS \
 $LOG_LEVEL \
+$MVN_REPO \
 $YADA_PROPS"
 
 if [ -f "$LOG" ]
