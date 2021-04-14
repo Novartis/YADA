@@ -58,288 +58,300 @@
 		<module>yada-api</module>
 		<module>yada-war</module>
 	</modules>
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-release-plugin</artifactId>
+                        <version>2.5</version>
+                        <configuration>
+                            <useReleaseProfile>false</useReleaseProfile>
+                            <autoVersionSubmodules>true</autoVersionSubmodules>
+                            <tagNameFormat>@{project.version}</tagNameFormat>
+                            <goals>deploy</goals>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.6</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.mycila</groupId>
+                        <artifactId>license-maven-plugin</artifactId>
+                        <version>2.11</version>
+                        <configuration>
+                            <header>${main.basedir}/src/main/resources/license.txt</header>
+                            <useDefaultExcludes>true</useDefaultExcludes>
+                            <properties>
+                                <year>${project.inceptionYear}</year>
+                            </properties>
+                            <includes>
+                                <include>**/*.java</include>
+                                <include>**/*.xml</include>
+                                <include>**/*.xsl</include>
+                                <include>**/*.pl</include>
+                                <include>**/*.js</include>
+                                <include>**/*.html</include>
+                                <include>**/*.css</include>
+                                <include>**/*.jsp</include>
+                            </includes>
+                            <excludes>
+                                <exclude>pom.xml</exclude>
+                                <exclude>target/**</exclude>
+                                <exclude>src/site/**</exclude>
+                                <exclude>src/test/resources/conf/**</exclude>
+                                <exclude>src/test/resources/test/**</exclude>
+                                <exclude>src/main/resources/conf/**</exclude>
+                                <exclude>src/main/webapp/META-INF/**</exclude>
+                                <exclude>src/main/webapp/WEB-INF/**</exclude>
+                                <exclude>src/main/webapp/yada-admin/**</exclude>
+                                <exclude>yada-api/src/main/resaurces/utils/r.js</exclude>
+                                <!-- post -->
+                                <exclude>src/main/java/com/novartis/opensource/yada/plugin/SecurityPreprocessor.java</exclude>
+                                <exclude>src/main/java/com/novartis/opensource/yada/plugin/SecurityPluginDetector.java</exclude>
+                                <exclude>src/main/java/com/novartis/opensource/yada/plugin/Authorizer.java</exclude>
+                                <exclude>src/main/java/com/novartis/opensource/yada/plugin/SourceExchanger.java</exclude>
+                                <exclude>src/main/java/com/novartis/opensource/yada/YADASecuritySpec.java</exclude>
+                                <exclude>src/main/java/com/novartis/opensource/yada/plugin/Authorization.java</exclude>
+                                <exclude>src/test/java/com/novartis/opensource/yada/test/pre9/*</exclude>
+                                <!-- excluded due to requirement for line feed at end of license -->
+                                <exclude>yada-war/src/main/webapp/yada.jsp</exclude>
+        
+                            </excludes>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-site-plugin</artifactId>
+                        <version>3.3</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.maven.doxia</groupId>
+                                <artifactId>doxia-module-markdown</artifactId>
+                                <version>1.4</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.apache.maven.wagon</groupId>
+                                <artifactId>wagon-ssh</artifactId>
+                                <version>1.0-beta-7</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.github.jeluard</groupId>
+                        <artifactId>plantuml-maven-plugin</artifactId>
+                        <version>1.1</version>
+                        <configuration>
+                            <sourceFiles>
+                                <directory>${basedir}</directory>
+                                <includes>
+                                    <include>src/site/uml/*.uml</include>
+                                </includes>
+                            </sourceFiles>
+                            <outputDirectory>${basedir}/src/site/resources/images</outputDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>uml</id>
+                                <phase>pre-site</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>net.sourceforge.plantuml</groupId>
+                                <artifactId>plantuml</artifactId>
+                                <version>8029</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>stub-assembly</id>
+                                <phase>pre-site</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <!-- there are no longer any github source tree changes in this step -->
+                                        <copy overwrite="true" file="readme.md" tofile="src/site/markdown/index.md" />
+        
+                                        <!-- update image refs in index -->
+                                        <replaceregexp byline="true">
+                                            <regexp pattern="(\!\[.+\]\()src/site/resources/(images/.+\))" />
+                                            <substitution expression="\1\2" />
+                                            <fileset dir="${basedir}/src/site/markdown/">
+                                                <include name="index.md" />
+                                            </fileset>
+                                        </replaceregexp>
+        
+                                        <!-- update pure html image refs in index -->
+                                        <replaceregexp byline="true">
+                                            <regexp pattern="(&lt;img src=&quot;)src/site/resources/(images/.+)" />
+                                            <substitution expression="\1\2" />
+                                            <fileset dir="${basedir}/src/site/markdown/">
+                                                <include name="index.md" />
+                                            </fileset>
+                                        </replaceregexp>
+                                    </target>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>html-it</id>
+                                <phase>post-site</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <!-- SITE -->
+        
+                                        <!-- convert .md hrefs into .html -->
+                                        <replaceregexp flags="g" byline="true">
+                                            <regexp pattern="((href=&quot;(src/site/markdown/)?(\w+)\.md(#\w+)?&quot;)+)" />
+                                            <substitution expression="href=&quot;\4.html\5&quot;" />
+                                            <fileset dir="${basedir}/target/">
+                                                <include name="site/*.html" />
+                                            </fileset>
+                                        </replaceregexp>
+        
+                                        <!-- add link for github docs to site -->
+                                        <replaceregexp file="${basedir}/target/site/index.html">
+                                            <regexp pattern="(&lt;div id=&quot;bodyColumn&quot;\s+class=&quot;span9&quot;\s*&gt;)" />
+                                            <substitution expression="\1&lt;p&gt;For the most recent updates to documentation, see &lt;a href=&quot;http://github.com/Novartis/YADA&quot;&gt;https://github.com/Novartis/YADA&lt;/a&gt;.&lt;/p&gt;" />
+                                        </replaceregexp>
+        
+                                        <!-- update image refs in html files -->
+                                        <replaceregexp flags="g" byline="true">
+                                            <regexp pattern="(src=&quot;)\.\./resources/(images/.+)" />
+                                            <substitution expression="\1\2" />
+                                            <fileset dir="${basedir}/target/">
+                                                <include name="site/*.html" />
+                                            </fileset>
+                                        </replaceregexp>
+        
+                                        <!-- mod copyright in html files -->
+                                        <replaceregexp flags="g" byline="true">
+                                            <regexp pattern="All Rights Reserved." />
+                                            <substitution expression="" />
+                                            <fileset dir="${basedir}/target/">
+                                                <include name="site/*.html" />
+                                            </fileset>
+                                        </replaceregexp>
+        
+                                        <!-- add float to icon -->
+                                        <replaceregexp>
+                                            <regexp pattern="(&lt;img src=&quot;images/blox250.png.+)" />
+                                            <substitution expression="&lt;div style=&quot;float:right;margin-top:-43px;&quot;&gt;\1&lt;/div&gt;" />
+                                            <fileset dir="${basedir}/target/">
+                                                <include name="site/*.html" />
+                                            </fileset>
+                                        </replaceregexp>
+        
+                                        <!-- STAGE -->
+        
+                                        <!-- convert .md hrefs into .html -->
+                                        <replaceregexp flags="g" byline="true">
+                                            <regexp pattern="((href=&quot;(src/site/markdown/)?(\w+)\.md(#\w+)?&quot;)+)" />
+                                            <substitution expression="href=&quot;\4.html\5&quot;" />
+                                            <fileset dir="${basedir}/target/">
+                                                <include name="${stagingDirectory}/*.html" />
+                                            </fileset>
+                                        </replaceregexp>
+        
+                                        <!-- insert YAML into index.html STAGING ONLY. staging goes to svn
+                                            for opensource.nibr.com site gets deployed internally -->
+                                        <replaceregexp file="${stagingDirectory}/index.html">
+                                            <regexp pattern="(&lt;body\s.+&gt;)" />
+                                            <substitution expression="\1--- name: YADA abbreviation: YADA projectName: YADA launched: 2015-11-01 icon: images/blox250.png summary: A universal remote control for data. description: | Access any data, at any source, in any format, from any environment, using just a URL, with just one-time configuration. Get data from multiple sources, in different formats, merge the results into one with uniform column names, on-the-fly, using one URL. **YADA** exists to simplify data access and eliminate work. **YADA** is a lightweight framework for data retrieval, searching, storage, and manipulation. **YADA** is an instant web service for your data. **YADA** is a tool to enable efficient development of interfaces and data-processing pipelines. **YADA** is an implementation of [Thin Server Architecture](http://bit.ly/1dhuiRY). **YADA** is an acronym for &quot;Yet Another Data Abstraction.&quot; Its [raisons d'être](http://bit.ly/1SHuiAd) are to enable efficient, non-redundant development of data-dependent applications and utilities, data source querying, data analysis, processing pipelines, extract, transform, and load (ETL) processes, etc. **YADA** does all this while preserving total decoupling between data access and other aspects of application architecture such as user interface. ---" />
+                                        </replaceregexp>
+        
+                                        <!-- add link for github docs stage -->
+                                        <replaceregexp file="${stagingDirectory}/index.html">
+                                            <regexp pattern="(&lt;div id=&quot;bodyColumn&quot;\s+class=&quot;span9&quot;\s*&gt;)" />
+                                            <substitution expression="\1&lt;p&gt;For the most recent updates to documentation, see &lt;a href=&quot;http://github.com/Novartis/YADA&quot;&gt;https://github.com/Novartis/YADA&lt;/a&gt;.&lt;/p&gt;" />
+                                        </replaceregexp>
+        
+                                        <!-- update image refs in html files -->
+                                        <replaceregexp flags="g" byline="true">
+                                            <regexp pattern="(src=&quot;)\.\./resources/(images/.+)" />
+                                            <substitution expression="\1\2" />
+                                            <fileset dir="${basedir}/target/">
+                                                <include name="${stagingDirectory}/*.html" />
+                                            </fileset>
+                                        </replaceregexp>
+        
+                                        <!-- mod copyright in html files -->
+                                        <replaceregexp flags="g" byline="true">
+                                            <regexp pattern="All Rights Reserved." />
+                                            <substitution expression="" />
+                                            <fileset dir="${basedir}/target/">
+                                                <include name="${stagingDirectory}/*.html" />
+                                            </fileset>
+                                        </replaceregexp>
+        
+                                        <!-- add float to icon -->
+                                        <replaceregexp>
+                                            <regexp pattern="(&lt;img src=&quot;images/blox250.png.+)" />
+                                            <substitution expression="&lt;div style=&quot;float:right;margin-top:-43px;&quot;&gt;\1&lt;/div&gt;" />
+                                            <fileset dir="${basedir}/target/">
+                                                <include name="${stagingDirectory}/*.html" />
+                                            </fileset>
+                                        </replaceregexp>
+        
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            
+        </profile>
+    </profiles>
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.5</version>
-				<configuration>
-					<useReleaseProfile>false</useReleaseProfile>
-					<autoVersionSubmodules>true</autoVersionSubmodules>
-					<tagNameFormat>@{project.version}</tagNameFormat>
-					<goals>deploy</goals>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.6</version>
-				<extensions>true</extensions>
-				<configuration>
-					<serverId>ossrh</serverId>
-					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-					<autoReleaseAfterClose>true</autoReleaseAfterClose>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-gpg-plugin</artifactId>
-				<version>1.5</version>
-				<executions>
-					<execution>
-						<id>sign-artifacts</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>com.mycila</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<version>2.11</version>
-				<configuration>
-					<header>${main.basedir}/src/main/resources/license.txt</header>
-					<useDefaultExcludes>true</useDefaultExcludes>
-					<properties>
-						<year>${project.inceptionYear}</year>
-					</properties>
-					<includes>
-						<include>**/*.java</include>
-						<include>**/*.xml</include>
-						<include>**/*.xsl</include>
-						<include>**/*.pl</include>
-						<include>**/*.js</include>
-						<include>**/*.html</include>
-						<include>**/*.css</include>
-						<include>**/*.jsp</include>
-					</includes>
-					<excludes>
-						<exclude>pom.xml</exclude>
-						<exclude>target/**</exclude>
-						<exclude>src/site/**</exclude>
-						<exclude>src/test/resources/conf/**</exclude>
-						<exclude>src/test/resources/test/**</exclude>
-						<exclude>src/main/resources/conf/**</exclude>
-						<exclude>src/main/webapp/META-INF/**</exclude>
-						<exclude>src/main/webapp/WEB-INF/**</exclude>
-						<exclude>src/main/webapp/yada-admin/**</exclude>
-						<exclude>yada-api/src/main/resaurces/utils/r.js</exclude>
-                        <!-- post -->
-                        <exclude>src/main/java/com/novartis/opensource/yada/plugin/SecurityPreprocessor.java</exclude>
-                        <exclude>src/main/java/com/novartis/opensource/yada/plugin/SecurityPluginDetector.java</exclude>
-                        <exclude>src/main/java/com/novartis/opensource/yada/plugin/Authorizer.java</exclude>
-                        <exclude>src/main/java/com/novartis/opensource/yada/plugin/SourceExchanger.java</exclude>
-                        <exclude>src/main/java/com/novartis/opensource/yada/YADASecuritySpec.java</exclude>
-                        <exclude>src/main/java/com/novartis/opensource/yada/plugin/Authorization.java</exclude>
-                        <exclude>src/test/java/com/novartis/opensource/yada/test/pre9/*</exclude>
-						<!-- excluded due to requirement for line feed at end of license -->
-						<exclude>yada-war/src/main/webapp/yada.jsp</exclude>
-
-					</excludes>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
-				<version>3.3</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.maven.doxia</groupId>
-						<artifactId>doxia-module-markdown</artifactId>
-						<version>1.4</version>
-					</dependency>
-					<dependency>
-						<groupId>org.apache.maven.wagon</groupId>
-						<artifactId>wagon-ssh</artifactId>
-						<version>1.0-beta-7</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<plugin>
-				<groupId>com.github.jeluard</groupId>
-				<artifactId>plantuml-maven-plugin</artifactId>
-				<version>1.1</version>
-				<configuration>
-					<sourceFiles>
-						<directory>${basedir}</directory>
-						<includes>
-							<include>src/site/uml/*.uml</include>
-						</includes>
-					</sourceFiles>
-					<outputDirectory>${basedir}/src/site/resources/images</outputDirectory>
-				</configuration>
-				<executions>
-					<execution>
-						<id>uml</id>
-						<phase>pre-site</phase>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>net.sourceforge.plantuml</groupId>
-						<artifactId>plantuml</artifactId>
-						<version>8029</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.6</version>
-				<executions>
-					<execution>
-						<id>stub-assembly</id>
-						<phase>pre-site</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<target>
-								<!-- there are no longer any github source tree changes in this step -->
-								<copy overwrite="true" file="readme.md" tofile="src/site/markdown/index.md" />
-
-								<!-- update image refs in index -->
-								<replaceregexp byline="true">
-									<regexp pattern="(\!\[.+\]\()src/site/resources/(images/.+\))" />
-									<substitution expression="\1\2" />
-									<fileset dir="${basedir}/src/site/markdown/">
-										<include name="index.md" />
-									</fileset>
-								</replaceregexp>
-
-								<!-- update pure html image refs in index -->
-								<replaceregexp byline="true">
-									<regexp pattern="(&lt;img src=&quot;)src/site/resources/(images/.+)" />
-									<substitution expression="\1\2" />
-									<fileset dir="${basedir}/src/site/markdown/">
-										<include name="index.md" />
-									</fileset>
-								</replaceregexp>
-							</target>
-						</configuration>
-					</execution>
-					<execution>
-						<id>html-it</id>
-						<phase>post-site</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<target>
-								<!-- SITE -->
-
-								<!-- convert .md hrefs into .html -->
-								<replaceregexp flags="g" byline="true">
-									<regexp pattern="((href=&quot;(src/site/markdown/)?(\w+)\.md(#\w+)?&quot;)+)" />
-									<substitution expression="href=&quot;\4.html\5&quot;" />
-									<fileset dir="${basedir}/target/">
-										<include name="site/*.html" />
-									</fileset>
-								</replaceregexp>
-
-								<!-- add link for github docs to site -->
-								<replaceregexp file="${basedir}/target/site/index.html">
-									<regexp pattern="(&lt;div id=&quot;bodyColumn&quot;\s+class=&quot;span9&quot;\s*&gt;)" />
-									<substitution expression="\1&lt;p&gt;For the most recent updates to documentation, see &lt;a href=&quot;http://github.com/Novartis/YADA&quot;&gt;https://github.com/Novartis/YADA&lt;/a&gt;.&lt;/p&gt;" />
-								</replaceregexp>
-
-								<!-- update image refs in html files -->
-								<replaceregexp flags="g" byline="true">
-									<regexp pattern="(src=&quot;)\.\./resources/(images/.+)" />
-									<substitution expression="\1\2" />
-									<fileset dir="${basedir}/target/">
-										<include name="site/*.html" />
-									</fileset>
-								</replaceregexp>
-
-								<!-- mod copyright in html files -->
-								<replaceregexp flags="g" byline="true">
-									<regexp pattern="All Rights Reserved." />
-									<substitution expression="" />
-									<fileset dir="${basedir}/target/">
-										<include name="site/*.html" />
-									</fileset>
-								</replaceregexp>
-
-								<!-- add float to icon -->
-								<replaceregexp>
-									<regexp pattern="(&lt;img src=&quot;images/blox250.png.+)" />
-									<substitution expression="&lt;div style=&quot;float:right;margin-top:-43px;&quot;&gt;\1&lt;/div&gt;" />
-									<fileset dir="${basedir}/target/">
-										<include name="site/*.html" />
-									</fileset>
-								</replaceregexp>
-
-								<!-- STAGE -->
-
-								<!-- convert .md hrefs into .html -->
-								<replaceregexp flags="g" byline="true">
-									<regexp pattern="((href=&quot;(src/site/markdown/)?(\w+)\.md(#\w+)?&quot;)+)" />
-									<substitution expression="href=&quot;\4.html\5&quot;" />
-									<fileset dir="${basedir}/target/">
-										<include name="${stagingDirectory}/*.html" />
-									</fileset>
-								</replaceregexp>
-
-								<!-- insert YAML into index.html STAGING ONLY. staging goes to svn
-									for opensource.nibr.com site gets deployed internally -->
-								<replaceregexp file="${stagingDirectory}/index.html">
-									<regexp pattern="(&lt;body\s.+&gt;)" />
-									<substitution expression="\1--- name: YADA abbreviation: YADA projectName: YADA launched: 2015-11-01 icon: images/blox250.png summary: A universal remote control for data. description: | Access any data, at any source, in any format, from any environment, using just a URL, with just one-time configuration. Get data from multiple sources, in different formats, merge the results into one with uniform column names, on-the-fly, using one URL. **YADA** exists to simplify data access and eliminate work. **YADA** is a lightweight framework for data retrieval, searching, storage, and manipulation. **YADA** is an instant web service for your data. **YADA** is a tool to enable efficient development of interfaces and data-processing pipelines. **YADA** is an implementation of [Thin Server Architecture](http://bit.ly/1dhuiRY). **YADA** is an acronym for &quot;Yet Another Data Abstraction.&quot; Its [raisons d'être](http://bit.ly/1SHuiAd) are to enable efficient, non-redundant development of data-dependent applications and utilities, data source querying, data analysis, processing pipelines, extract, transform, and load (ETL) processes, etc. **YADA** does all this while preserving total decoupling between data access and other aspects of application architecture such as user interface. ---" />
-								</replaceregexp>
-
-								<!-- add link for github docs stage -->
-								<replaceregexp file="${stagingDirectory}/index.html">
-									<regexp pattern="(&lt;div id=&quot;bodyColumn&quot;\s+class=&quot;span9&quot;\s*&gt;)" />
-									<substitution expression="\1&lt;p&gt;For the most recent updates to documentation, see &lt;a href=&quot;http://github.com/Novartis/YADA&quot;&gt;https://github.com/Novartis/YADA&lt;/a&gt;.&lt;/p&gt;" />
-								</replaceregexp>
-
-								<!-- update image refs in html files -->
-								<replaceregexp flags="g" byline="true">
-									<regexp pattern="(src=&quot;)\.\./resources/(images/.+)" />
-									<substitution expression="\1\2" />
-									<fileset dir="${basedir}/target/">
-										<include name="${stagingDirectory}/*.html" />
-									</fileset>
-								</replaceregexp>
-
-								<!-- mod copyright in html files -->
-								<replaceregexp flags="g" byline="true">
-									<regexp pattern="All Rights Reserved." />
-									<substitution expression="" />
-									<fileset dir="${basedir}/target/">
-										<include name="${stagingDirectory}/*.html" />
-									</fileset>
-								</replaceregexp>
-
-								<!-- add float to icon -->
-								<replaceregexp>
-									<regexp pattern="(&lt;img src=&quot;images/blox250.png.+)" />
-									<substitution expression="&lt;div style=&quot;float:right;margin-top:-43px;&quot;&gt;\1&lt;/div&gt;" />
-									<fileset dir="${basedir}/target/">
-										<include name="${stagingDirectory}/*.html" />
-									</fileset>
-								</replaceregexp>
-
-							</target>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
+		
 	</build>
 	<reporting>
 		<plugins>
