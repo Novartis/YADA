@@ -60,6 +60,9 @@
 	</modules>
     <profiles>
         <profile>
+            <id>test</id>
+        </profile>
+        <profile>
             <id>default</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
