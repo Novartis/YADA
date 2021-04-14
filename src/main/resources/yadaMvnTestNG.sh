@@ -44,6 +44,7 @@ while getopts "Xtdisx:p:T:r:" opt; do
   case ${opt} in
     r )
       MVN_REPO="-Dmaven.repo.local=$OPTARG"
+      ;;
     i )
       INTERACTIVE=1
       ;;
