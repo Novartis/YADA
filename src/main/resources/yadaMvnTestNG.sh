@@ -14,6 +14,9 @@ printf "Usage: $0 [-T [surefire|failsafe]] [-x surefire|failsafe] [-p test|test_
   -s  deloy snapshot to maven central.  Implies -T \n \
   -i  print command to test webapp interactively. Combine with  '-x failsafe' to debug as well \n \
   -?  show this help \n\n \
+
+  NOTES:
+  The YADA_HOME and YADA_LIB environment variables must be set.
 " 1>&2; exit 1; }
 
 # this option not working currently--has something to do with forking
@@ -107,7 +110,7 @@ MVN_DEPLOYMENT_GOAL=-Ddeployment.goal=start
 LOG=$YADA_SRCDIR/src/main/resources/testng.log
 LOG_STDOUT=-Dlog.stdout=true
 SKIP_LICENSE=-Dlicense.skip=true
-# SKIP_DB_LOAD=-Dskip.db.load=true
+SKIP_DB_LOAD=-Dskip.db.load=true
 SKIP_JAVADOC=-Dmaven.javadoc.skip=true
 SKIP_SOURCE=-Dmaven.source.skip=true
 #TOGGLE_TESTS=-Dtest.toggle=/conf/tmp_TestNG_toggle.properties
