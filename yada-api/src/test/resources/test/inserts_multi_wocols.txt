@@ -1,0 +1,1 @@
+j=[{"q":"YADATEST/test INSERT wo columns", "DATA":[{"YADA_1":"Z","YADA_2":"10","YADA_3":"7.5","YADA_4":"2013-03-04","YADA_5":"2015-09-05 20:44:33","YADA_6":"foo@bar.com"},{"YADA_1":"Y","YADA_2":"9","YADA_3":"7.4","YADA_4":"2013-03-03","YADA_5":"2015-09-05 20:44:32","YADA_6":"bar@baz.com"}]}]

@@ -61,9 +61,9 @@ import org.apache.log4j.Logger;
  * <li>any column mapped ot a JDBC parameter</li>
  * <li>any column referenced by an {@code IN} clause</li>
  * </ul>
- * 
+ *
  * @author David Varon
- * 
+ *
  */
 public class Parser implements StatementVisitor {
   /**
@@ -98,55 +98,55 @@ public class Parser implements StatementVisitor {
 
   /**
    * Constant value equal to: {@value}
-   * 
+   *
    * @since 4.0.0
    */
   public static final String SELECT = "SELECT";
   /**
    * Constant value equal to: {@value}
-   * 
+   *
    * @since 4.0.0
    */
   public static final String UPDATE = "UPDATE";
   /**
    * Constant value equal to: {@value}
-   * 
+   *
    * @since 4.0.0
    */
   public static final String INSERT = "INSERT";
   /**
    * Constant value equal to: {@value}
-   * 
+   *
    * @since 4.0.0
    */
   public static final String DELETE = "DELETE";
   /**
    * Constant value equal to: {@value}
-   * 
+   *
    * @since 4.0.0
    */
   public static final String CALL = "CALL";
   /**
    * Constant value equal to: {@value}
-   * 
+   *
    * @since 4.0.0
    */
   public static final String JDBC = "JDBC";
   /**
    * Constant value equal to: {@value}
-   * 
+   *
    * @since 4.0.0
    */
   public static final String REST = "REST";
   /**
    * Constant value equal to: {@value}
-   * 
+   *
    * @since 4.0.0
    */
   public static final String SOAP = "SOAP";
   /**
    * Constant value equal to: {@value}
-   * 
+   *
    * @since 4.0.0
    */
   public static final String FILE = "FILE";
@@ -210,7 +210,7 @@ public class Parser implements StatementVisitor {
 
   /**
    * Standard mutator of variable
-   * 
+   *
    * @param type the type of query
    * @since 7.1.0
    */
@@ -303,21 +303,29 @@ public class Parser implements StatementVisitor {
         // so add all the columns from the INSERT column list
         List<Expression> expressions = getExpressionDeParser().getExpressions();
         List<Column> columns = insert.getColumns();
-        getColumnList().addAll(columns);
-        for (int i = 0; i < columns.size(); i++) {
-          if (expressions.get(i) instanceof YADAMarkupParameter) {
-            l.debug("Adding JDBC column [" + columns.get(i) + "] to list");
-            getJdbcColumnList().add(columns.get(i));
-          } else if (expressions.get(i) instanceof Function) {
-            Function function = (Function) expressions.get(i);
-            ExpressionList paramList = function.getParameters();
-            for (int j = 0; j < paramList.getExpressions().size(); j++) {
-              if (paramList.getExpressions().get(j) instanceof YADAMarkupParameter) {
-                getJdbcColumnList().add(columns.get(i));
+
+        // if(null == columns)
+        // {
+        //   //TODO support blind inserts (no column list)
+        // }
+        // else
+        // {
+          getColumnList().addAll(columns);
+          for (int i = 0; i < columns.size(); i++) {
+            if (expressions.get(i) instanceof YADAMarkupParameter) {
+              l.debug("Adding JDBC column [" + columns.get(i) + "] to list");
+              getJdbcColumnList().add(columns.get(i));
+            } else if (expressions.get(i) instanceof Function) {
+              Function function = (Function) expressions.get(i);
+              ExpressionList paramList = function.getParameters();
+              for (int j = 0; j < paramList.getExpressions().size(); j++) {
+                if (paramList.getExpressions().get(j) instanceof YADAMarkupParameter) {
+                  getJdbcColumnList().add(columns.get(i));
+                }
               }
             }
           }
-        }
+        // }
       }
     } else {
       l.debug("insert has subselect");
@@ -381,7 +389,7 @@ public class Parser implements StatementVisitor {
   /**
    * Submits the YADA marked-up code from the {@link YADAQuery} to the
    * {@link CCJSqlParserManager}
-   * 
+   *
    * @param code
    *          the YADA markup
    * @throws YADAParserException when the query fails to parse
@@ -404,7 +412,7 @@ public class Parser implements StatementVisitor {
    * {@link net.sf.jsqlparser.parser.CCJSqlParserManager#parse(java.io.Reader)}
    * on the current query. It also builds the data structures used for column
    * indexing
-   * 
+   *
    * @param sql
    *          the statement to parse
    * @return a {@link java.util.Hashtable} containing 3 separate arrays of
@@ -455,7 +463,7 @@ public class Parser implements StatementVisitor {
   }
 
   /**
-   * Recurses through the object hierarchy to enable statement processing by 
+   * Recurses through the object hierarchy to enable statement processing by
    * setting flags, populating lists, etc.
    * @param statement The {@link Statement} object to deparse
    * @since 7.1.0
@@ -469,7 +477,7 @@ public class Parser implements StatementVisitor {
 
   /**
    * Kick off the recursive accept/visit deparsing action
-   * 
+   *
    * @param statementToProcess
    *          the deparsed query
    * @deprecated as of 7.1.0
@@ -488,7 +496,7 @@ public class Parser implements StatementVisitor {
    * Dump column metadata collected by deparsing into indices
    */
   private void addColumnNamesToLists() {
-    YADAExpressionDeParser yedp = getExpressionDeParser(); 
+    YADAExpressionDeParser yedp = getExpressionDeParser();
     getColumnList().addAll(yedp.getColumns());
     getJdbcColumnList().addAll(yedp.getJdbcColumns());
     getInColumnList().addAll(yedp.getInColumnList());
@@ -497,7 +505,7 @@ public class Parser implements StatementVisitor {
 
   /**
    * Standard accessor for variable
-   * 
+   *
    * @return the expression deparser
    */
   private YADAExpressionDeParser getExpressionDeParser() {
@@ -506,7 +514,7 @@ public class Parser implements StatementVisitor {
 
   /**
    * Standard accessor for variable
-   * 
+   *
    * @return the internal string buffer
    */
   private StringBuilder getStringBuffer() {
@@ -515,7 +523,7 @@ public class Parser implements StatementVisitor {
 
   /**
    * Standard accessor for variable
-   * 
+   *
    * @return the column index
    */
   public ArrayList<Column> getColumnList() {
@@ -524,7 +532,7 @@ public class Parser implements StatementVisitor {
 
   /**
    * Standard accessor for variable
-   * 
+   *
    * @return the jdbc column index
    */
   public ArrayList<Column> getJdbcColumnList() {
@@ -533,7 +541,7 @@ public class Parser implements StatementVisitor {
 
   /**
    * Standard accessor for variable
-   * 
+   *
    * @return the "in" column index
    */
   public ArrayList<Column> getInColumnList() {

@@ -120,19 +120,19 @@ public class ServiceTest
   protected static final String LOG_STDOUT = "log.stdout";
   /**
    * Constant equal to:
-   * <code>^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\",){3}(\"[\\-\\s:0-9]+\",*){2}$</code>
+   * <code>^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\",){3}(\"[\\-\\s:0-9]+\",*){2}("[a-z@.]+")$</code>
    */
-  protected static final Pattern CSV = Pattern.compile("^((\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"|null),){3}((\"[\\-\\s:0-9\\.]+\"|null),*){2}(\"foo@bar.com\")?$");
+  protected static final Pattern CSV = Pattern.compile("^((\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"|null),){3}((\"[\\-\\s:0-9\\.]+\"|null),*){2}(\"[a-z\\.@]+\")?$");
   /**
    * Constant equal to:
    * <code>^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"\\t){3}(\"[\\-\\s:0-9]+\"\\t*){2}$</code>
    */
-  protected static final Pattern TSV = Pattern.compile("^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"\\t){3}(\"[\\-\\s:0-9\\.]+\"\\t*){2}(\"foo@bar.com\")?$");
+  protected static final Pattern TSV = Pattern.compile("^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"\\t){3}(\"[\\-\\s:0-9\\.]+\"\\t*){2}(\"[a-z\\.@]+\")?$");
   /**
    * Constant equal to:
    * <code>^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"\\|){3}(\"[\\-\\s:0-9]+\"\\|*){2}$</code>
    */
-  protected static final Pattern PSV = Pattern.compile("^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"\\|){3}(\"[\\-\\s:0-9\\.]+\"\\|*){2}(\"foo@bar.com\")?$");
+  protected static final Pattern PSV = Pattern.compile("^(\"([A-Z]{1,2}(,[A-Z]*)*|[0-9]{1,2}|[0-9\\.]{3})\"\\|){3}(\"[\\-\\s:0-9\\.]+\"\\|*){2}(\"[a-z\\.@]+\")?$");
   /**
    * Constant equal to: {@value}
    */
@@ -2294,6 +2294,7 @@ public class ServiceTest
         }
         else if (lineNum > 0)
         {
+          l.debug(line);
           Matcher m = CSV.matcher(line);
           if (!(line.equals(header) || m.matches()))
           {

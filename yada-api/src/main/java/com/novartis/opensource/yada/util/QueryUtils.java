@@ -253,6 +253,11 @@ public class QueryUtils
 	 * A constant equal to: {@value}
 	 */
 	public static final String QUOTE = "\"";
+	/**
+	 * Instance variable to support lambda in {@link #setPositionalParameterValues(YADAQuery, int)}
+	 * @since 9.3.6
+	 */
+	private ArrayList<String> valsInPosition = new ArrayList<>();
 
 	/**
 	 * Retrieves the adaptor class from the application context given the
@@ -1064,31 +1069,62 @@ public class QueryUtils
 	 */
 	public void setPositionalParameterValues(YADAQuery yq, int row) 
 	{
-	  List<String> valsInPosition = new ArrayList<>();
+	  valsInPosition.clear();
     if (yq.getData().size() > 0)
-    {
-      List<Column> columns = yq.getParameterizedColumnList();
-      Map<String,String[]> data = yq.getDataRow(row);
-      for (int j = 0; j < columns.size(); j++)
-      {
-        String colName = columns.get(j).getColumnName();
-        if(data.containsKey(YADA_COLUMN + (j + 1)))
-          colName = YADA_COLUMN + (j + 1);
-        else if (data.containsKey(colName.toUpperCase()))
-          colName = colName.toUpperCase();
-        else if(data.containsKey(colName.replaceAll("\"", "").toUpperCase()))        
-        	colName = colName.replaceAll("\"", "").toUpperCase();
-        
-        String[] valsForColumn;
-
-        valsForColumn = data.get(colName);
-
-        for (String val : valsForColumn)
+    {      
+      Map<String,String[]> data    = yq.getDataRow(row);      
+      List<Column>         columns = yq.getParameterizedColumnList();
+      
+//      if((null == columns || columns.size() == 0) && yq.getType().contentEquals(Parser.INSERT))
+//      {
+//        data.entrySet().forEach( entry -> {
+//          String[] valsForColumn = entry.getValue();
+//          for (String val : valsForColumn)
+//          {
+//            l.debug("Column [" + String.valueOf(entry.getKey()) + "] has value [" + val + "]");
+//            int col = Integer.valueOf(entry.getKey().substring(5)) - 1;
+//            if(valsInPosition.size() < col)
+//            {
+//              for(int i=valsInPosition.size();i<col;i++)
+//              {
+//                this.valsInPosition.add(i,null);                
+//              }
+//              this.valsInPosition.add(col, val);
+//            }
+//            else if(valsInPosition.size() > 0 && valsInPosition.size() > col && valsInPosition.get(col) == null)
+//            {
+//              this.valsInPosition.set(col, val);
+//            }
+//            else
+//            {
+//              this.valsInPosition.add(val);
+//            }
+//          }
+//        });
+//      }
+//      else
+//      {
+        for (int j = 0; j < columns.size(); j++)
         {
-          l.debug("Column [" + String.valueOf(j + 1) + ": " + columns.get(j) + "] has value [" + val + "]");
-          valsInPosition.add(val);
+          String colName = columns.get(j).getColumnName();
+          if(data.containsKey(YADA_COLUMN + (j + 1)))
+            colName = YADA_COLUMN + (j + 1);
+          else if (data.containsKey(colName.toUpperCase()))
+            colName = colName.toUpperCase();
+          else if(data.containsKey(colName.replaceAll("\"", "").toUpperCase()))        
+          	colName = colName.replaceAll("\"", "").toUpperCase();
+          
+          String[] valsForColumn;
+  
+          valsForColumn = data.get(colName);
+  
+          for (String val : valsForColumn)
+          {
+            l.debug("Column [" + String.valueOf(j + 1) + ": " + columns.get(j) + "] has value [" + val + "]");
+            valsInPosition.add(val);
+          }
         }
-      }
+//      }
     }
     yq.addVals(row, valsInPosition);
 	}
