@@ -48,6 +48,7 @@ import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.truncate.Truncate;
 import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.util.deparser.DeleteDeParser;
+import net.sf.jsqlparser.util.deparser.SelectDeParser;
 
 import org.apache.log4j.Logger;
 
@@ -58,7 +59,7 @@ import org.apache.log4j.Logger;
  * also indexes columns parsed out of statements into 3 categories:
  * <ul>
  * <li>any column referenced</li>
- * <li>any column mapped ot a JDBC parameter</li>
+ * <li>any column mapped to a JDBC parameter</li>
  * <li>any column referenced by an {@code IN} clause</li>
  * </ul>
  * 
@@ -181,10 +182,16 @@ public class Parser implements StatementVisitor {
    */
   private ArrayList<Column> inCols = new ArrayList<>();
   /**
-   * Index of all SQL in clauses in the query
+   * Index of all SQL 'IN' clauses in the query
    * @since 7.1.0
    */
   private Map<Column,InExpression> inExpressionMap = new HashMap<>();
+  /**
+   * Index of all SQL 'VALUES' clauses in the SELECT query
+   * @since 9.3.6
+   */
+  private Map<String,ExpressionList> valuesExpressionMap = new HashMap<>();
+  
   /**
    * Buffer used by jsqlparser to store SQL fragments
    */
@@ -489,10 +496,12 @@ public class Parser implements StatementVisitor {
    */
   private void addColumnNamesToLists() {
     YADAExpressionDeParser yedp = getExpressionDeParser(); 
+    YADASelectDeParser yesp = (YADASelectDeParser) yedp.getSelectVisitor();
     getColumnList().addAll(yedp.getColumns());
     getJdbcColumnList().addAll(yedp.getJdbcColumns());
     getInColumnList().addAll(yedp.getInColumnList());
-    setInExpressionMap(yedp.getInExpressionMap());
+    setInExpressionMap(yedp.getInExpressionMap());   
+    setValuesExpressionMap(yesp.getValuesExpressionMap());
   }
 
   /**
@@ -567,12 +576,31 @@ public class Parser implements StatementVisitor {
   }
 
   /**
+   * Standard accessor
+   * @return the valuesExpressionMap
+   * @since 9.3.6
+   */
+  public Map<String,ExpressionList> getValuesExpressionMap() {
+    return this.valuesExpressionMap;
+  }
+
+  
+  /**
    * Standard mutator
    * @param inExpressionMap the inExpressionMap to set
    * @since 7.1.0
    */
   public void setInExpressionMap(Map<Column,InExpression> inExpressionMap) {
     this.inExpressionMap = inExpressionMap;
+  }
+  
+  /**
+   * Standard mutator
+   * @param valuesExpressionMap the valuesExpressionMap to set
+   * @since 9.3.6
+   */
+  public void setValuesExpressionMap(Map<String,ExpressionList> valuesExpressionMap) {
+    this.valuesExpressionMap = valuesExpressionMap;
   }
 
   @Override
