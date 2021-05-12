@@ -74,940 +74,1040 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 /**
  * For connecting to REST endpoints with YADA.
+ * 
  * @author David Varon
  *
  */
 public class RESTAdaptor extends Adaptor implements Authorization {
 
-	/**
-	 * Local logger handle
-	 */
-	private static Logger l = Logger.getLogger(RESTAdaptor.class);
-	
-	/**
-	 * Constant equal to: {@value}.  The character set name.
-	 * @since 8.7.0
-	 */
-	private final static String PROP_KEYSTORE          = "javax.net.ssl.keyStore";
-	
-	/**
-	 * Constant equal to: {@value}.  The keystore password passed to the jvm.
-	 * @since 8.7.0
-	 */
-	private final static String PROP_KEYSTORE_PASS     = "javax.net.ssl.keyStorePassword";
-	
-	/**
-	 * Constant equal to: {@value}.  The {@code oauth} request parameter property name.
-	 * @since 8.7.0
-	 */
-	private final static String OAUTH_VERSION          = "oauth_version";
-	
-	/**
-	 * Constant equal to: {@value}.  The {@code oauth} request parameter property name.
-	 * @since 8.7.0
-	 */
-	private final static String OAUTH_SIGNATURE_METHOD = "oauth_signature_method";
-	
-	/**
-	 * Constant equal to: {@value}.  The {@code oauth} request parameter property name.
-	 * @since 8.7.0
-	 */
-	private final static String OAUTH_VERIFIER         = "oauth_verifier";
-	
-	/**
-	 * Constant equal to: {@value}.  The {@code oauth} request parameter property name.
-	 * @since 8.7.0
-	 */
-	private final static String OAUTH_PRIVATE_KEY      = "oauth_private_key";
-	
-	/**
-	 * Constant equal to: {@value}.  The {@code oauth} request parameter property name.
-	 * @since 8.7.0
-	 */
-	private final static String OAUTH_CONSUMER_KEY     = "oauth_consumer_key";
-	
-	/**
-	 * Constant equal to: {@value}.  The {@code oauth} request parameter property name.
-	 * @since 8.7.0
-	 */
-	private final static String OAUTH_TOKEN            = "oauth_token";
-	
-	/**
-   * Constant equal to: {@value}.  The {@code oauth2} request parameter property name.
+  /**
+   * Local logger handle
+   */
+  private static Logger l = Logger.getLogger(RESTAdaptor.class);
+
+  /**
+   * Constant equal to: {@value}. The character set name.
+   * 
+   * @since 8.7.0
+   */
+  private final static String PROP_KEYSTORE = "javax.net.ssl.keyStore";
+
+  /**
+   * Constant equal to: {@value}. The keystore password passed to the jvm.
+   * 
+   * @since 8.7.0
+   */
+  private final static String PROP_KEYSTORE_PASS = "javax.net.ssl.keyStorePassword";
+
+  /**
+   * Constant equal to: {@value}. The {@code oauth} request parameter property
+   * name.
+   * 
+   * @since 8.7.0
+   */
+  private final static String OAUTH_VERSION = "oauth_version";
+
+  /**
+   * Constant equal to: {@value}. The {@code oauth} request parameter property
+   * name.
+   * 
+   * @since 8.7.0
+   */
+  private final static String OAUTH_SIGNATURE_METHOD = "oauth_signature_method";
+
+  /**
+   * Constant equal to: {@value}. The {@code oauth} request parameter property
+   * name.
+   * 
+   * @since 8.7.0
+   */
+  private final static String OAUTH_VERIFIER = "oauth_verifier";
+
+  /**
+   * Constant equal to: {@value}. The {@code oauth} request parameter property
+   * name.
+   * 
+   * @since 8.7.0
+   */
+  private final static String OAUTH_PRIVATE_KEY = "oauth_private_key";
+
+  /**
+   * Constant equal to: {@value}. The {@code oauth} request parameter property
+   * name.
+   * 
+   * @since 8.7.0
+   */
+  private final static String OAUTH_CONSUMER_KEY = "oauth_consumer_key";
+
+  /**
+   * Constant equal to: {@value}. The {@code oauth} request parameter property
+   * name.
+   * 
+   * @since 8.7.0
+   */
+  private final static String OAUTH_TOKEN = "oauth_token";
+
+  /**
+   * Constant equal to: {@value}. The {@code oauth2} request parameter property
+   * name.
+   * 
    * @since 9.2.0
    */
-  private final static String OAUTH2_CLIENTID        = "client_id";
+  private final static String OAUTH2_CLIENTID     = "client_id";
   /**
-   * Constant equal to: {@value}.  The {@code oauth2} request parameter property name.
+   * Constant equal to: {@value}. The {@code oauth2} request parameter property
+   * name.
+   * 
    * @since 9.2.0
    */
-  private final static String OAUTH2_SCOPE           = "scope";
+  private final static String OAUTH2_SCOPE        = "scope";
   /**
-   * Constant equal to: {@value}.  The {@code oauth2} request parameter property name.
+   * Constant equal to: {@value}. The {@code oauth2} request parameter property
+   * name.
+   * 
    * @since 9.2.0
    */
-  private final static String OAUTH2_CLIENTSECRET    = "client_secret";
+  private final static String OAUTH2_CLIENTSECRET = "client_secret";
   /**
-   * Constant equal to: {@value}.  The {@code oauth2} request parameter property name.
+   * Constant equal to: {@value}. The {@code oauth2} request parameter property
+   * name.
+   * 
    * @since 9.2.0
    */
-  private final static String OAUTH2_GRANTTYPE       = "grant_type";
+  private final static String OAUTH2_GRANTTYPE    = "grant_type";
   /**
-   * Constant equal to: {@value}.  The {@code oauth2} request parameter property name.
+   * Constant equal to: {@value}. The {@code oauth2} request parameter property
+   * name.
+   * 
    * @since 9.2.0
    */
-  private final static String OAUTH2_TOKENURL       = "token_url";
+  private final static String OAUTH2_TOKENURL     = "token_url";
   /**
-   * Constant equal to: {@value}.  The {@code oauth2} response parameter property name.
+   * Constant equal to: {@value}. The {@code oauth2} response parameter property
+   * name.
+   * 
    * @since 9.2.0
    */
-  private final static String OAUTH2_ACCESSTOKEN    = "access_token";
+  private final static String OAUTH2_ACCESSTOKEN  = "access_token";
   /**
-   * Constant equal to: {@value}.  The {@code oauth2} response parameter property name.
+   * Constant equal to: {@value}. The {@code oauth2} response parameter property
+   * name.
+   * 
    * @since 9.2.0
    */
   private final static String OAUTH2_EXPIRESIN    = "expires_in";
   /**
-   * Constant equal to: {@value}.  The {@code oauth2} response parameter property name.
+   * Constant equal to: {@value}. The {@code oauth2} response parameter property
+   * name.
+   * 
    * @since 9.2.0
    */
   private final static String OAUTH2_TOKENTYPE    = "token_type";
-  
-	
-	
-	
-	/**
-	 * Constant equal to: {@value}
-	 */
-	protected final static String  PARAM_SYMBOL_RX = "([\\/=:~]|%(?:2F|3D|3A|7E))(\\?[idvnt])";
 
-	/**
-	 * Constant equal to: {@value}
-	 * {@link com.novartis.opensource.yada.JSONParams} key for delivery of {@code HTTP POST, PUT, PATCH} body content
-	 * @since 8.5.0
-	 */
-	private final static String YADA_PAYLOAD = "YADA_PAYLOAD";
+  /**
+   * Constant equal to: {@value}
+   */
+  protected final static String PARAM_SYMBOL_RX = "([\\/=:~]|%(?:2F|3D|3A|7E))(\\?[idvnt])";
 
-	/**
-	 * Constant equal to: {@value}. 
-	 * Workaround for requests using {@code HTTP PATCH}
-	 * @since 8.5.0
-	 */
-	private final static String H_X_HTTP_METHOD_OVERRIDE = "X-HTTP-Method-Override";
-	
-	/**
-	 * Constant equal to: {@value}. For retrieving the default keystore.
-	 */
-	private static final String KEYSTORE_TYPE_JKS = "jks";
+  /**
+   * Constant equal to: {@value} {@link com.novartis.opensource.yada.JSONParams}
+   * key for delivery of {@code HTTP POST, PUT, PATCH} body content
+   * 
+   * @since 8.5.0
+   */
+  private final static String YADA_PAYLOAD = "YADA_PAYLOAD";
 
-	/**
-	 * Constant equal to: {@value}. 
-	 * @since 8.7.4
-	 */
-	private static final int HTTP_STATUS_401 = 401;
-	
-	/**
-	 * Constant equal to: {@value}. 
-	 * @since 8.7.4
-	 */
-	private static final int HTTP_STATUS_403 = 403;
-	
-	/** 
-	 * Constant equal to: {@value}. 
+  /**
+   * Constant equal to: {@value}. Workaround for requests using {@code HTTP PATCH}
+   * 
+   * @since 8.5.0
+   */
+  private final static String H_X_HTTP_METHOD_OVERRIDE = "X-HTTP-Method-Override";
+
+  /**
+   * Constant equal to: {@value}. For retrieving the default keystore.
+   */
+  private static final String KEYSTORE_TYPE_JKS = "jks";
+
+  /**
+   * Constant equal to: {@value}.
+   * 
+   * @since 8.7.4
+   */
+  private static final int HTTP_STATUS_401 = 401;
+
+  /**
+   * Constant equal to: {@value}.
+   * 
+   * @since 8.7.4
+   */
+  private static final int HTTP_STATUS_403 = 403;
+
+  /**
+   * Constant equal to: {@value}.
+   * 
    * @since 9.3.4
    */
   private static final int HTTP_STATUS_404 = 404;
 
-	/**
-	 * Variable to hold the proxy server string if necessary
-	 */
-	private String proxy = null;
+  /**
+   * Variable to hold the proxy server string if necessary
+   */
+  private String proxy = null;
 
-	/** 
-	 * Variable to hold the oauth parameters
-	 */
-	private JSONObject oauth = null;
-	
-	/** 
+  /**
+   * Variable to hold the oauth parameters
+   */
+  private JSONObject oauth = null;
+
+  /**
    * Variable to hold the oauth2 parameters
+   * 
    * @since 9.2.0
    */
   private JSONObject oauth2 = null;
-	
-	/**
-	 * Variable denoting the HTTP method
-	 * @since 8.5.0
-	 */
-	private String method = YADARequest.METHOD_GET;
-	
-	/**
-	 * Variable denoting the mimetype of the requested resources, where applicable
-	 * @since 9.0.0
-	 */
-	private String mimeType = "";
-	
-	/**
-	 * Storage for query properties stored in application configuration
-	 * @since 9.3.0
-	 */
-	private Properties props  = null;
 
-	/**
-	 * Default constructor
-	 */
-	public RESTAdaptor() {
-		super();
-		l.debug("Initializing REST JDBCAdaptor");
-	}
+  /**
+   * Variable denoting the HTTP method
+   * 
+   * @since 8.5.0
+   */
+  private String method = YADARequest.METHOD_GET;
 
-	/**
-	 * The yadaReq constructor called by {@link com.novartis.opensource.yada.QueryManager#endowQuery}
-	 * @param yadaReq YADA request configuration
-	 */
-	public RESTAdaptor(YADARequest yadaReq)
-	{
-		super(yadaReq);
-		if(yadaReq.getMethod() != null && !yadaReq.getMethod().equals(YADARequest.METHOD_GET))
-		{
-			this.method = yadaReq.getMethod();
-		}
+  /**
+   * Variable denoting the mimetype of the requested resources, where applicable
+   * 
+   * @since 9.0.0
+   */
+  private String mimeType = "";
 
-		if(yadaReq.getProxy() != null && !yadaReq.getProxy().equals(""))
-		{
-			this.proxy = yadaReq.getProxy();
-		}
-		
-		if(yadaReq.getOAuth() != null)
-		{
-			setOAuth(yadaReq.getOAuth());
-		}
-	}
+  /**
+   * Storage for query properties stored in application configuration
+   * 
+   * @since 9.3.0
+   */
+  private Properties props = null;
 
-	/**
-	 * Standard mutator for variable
-	 * @param oauth the JSONObject store in the {@link YADARequest}
-	 * @since 8.7.1
-	 */
-	private void setOAuth(JSONObject oauth) {
-		this.oauth = oauth;
-	}
-	
-	/**
-	 * Standard mutator for variable which converts {@link String} to {@link JSONObject}
-	 * @param yq The {@link YADAQuery} containing the {@code oauth} or {@code o} parameter
-	 * @since 8.7.1
-	 */
-	private void setOAuth(YADAQuery yq) {
-		this.oauth = new JSONObject(yq.getYADAQueryParamValue(YADARequest.PS_OAUTH)[0]);
-	}
-	
-	/**
+  /**
+   * Default constructor
+   */
+  public RESTAdaptor() {
+    super();
+    l.debug("Initializing RESTAdaptor");
+  }
+
+  /**
+   * The yadaReq constructor called by
+   * {@link com.novartis.opensource.yada.QueryManager#endowQuery}
+   * 
+   * @param yadaReq YADA request configuration
+   */
+  public RESTAdaptor(YADARequest yadaReq) {
+    super(yadaReq);
+    if (yadaReq.getMethod() != null && !yadaReq.getMethod().equals(YADARequest.METHOD_GET))
+    {
+      this.method = yadaReq.getMethod();
+    }
+
+    if (yadaReq.getProxy() != null && !yadaReq.getProxy().equals(""))
+    {
+      this.proxy = yadaReq.getProxy();
+    }
+
+    if (yadaReq.getOAuth() != null)
+    {
+      setOAuth(yadaReq.getOAuth());
+    }
+  }
+
+  /**
    * Standard mutator for variable
+   * 
+   * @param oauth the JSONObject store in the {@link YADARequest}
+   * @since 8.7.1
+   */
+  private void setOAuth(JSONObject oauth) {
+    this.oauth = oauth;
+  }
+
+  /**
+   * Standard mutator for variable which converts {@link String} to
+   * {@link JSONObject}
+   * 
+   * @param yq The {@link YADAQuery} containing the {@code oauth} or {@code o}
+   *           parameter
+   * @since 8.7.1
+   */
+  private void setOAuth(YADAQuery yq) {
+    this.oauth = new JSONObject(yq.getYADAQueryParamValue(YADARequest.PS_OAUTH)[0]);
+  }
+
+  /**
+   * Standard mutator for variable
+   * 
    * @param oauth2 the JSONObject store in the {@link YADARequest}
    * @since 9.2.0
    */
   private void setOAuth2(JSONObject oauth2) {
     this.oauth2 = oauth2;
   }
-  
+
   /**
-   * Standard mutator for variable which converts {@link String} to {@link JSONObject}.
-   * Looks in query configuration first, if not there, looks in app config for o2 config data.
-   * @param yq The {@link YADAQuery} containing the {@code oauth} or {@code o} parameter
+   * Standard mutator for variable which converts {@link String} to
+   * {@link JSONObject}. Looks in query configuration first, if not there, looks
+   * in app config for o2 config data.
+   * 
+   * @param yq The {@link YADAQuery} containing the {@code oauth} or {@code o}
+   *           parameter
    * @since 8.7.1
    */
   private void setOAuth2(YADAQuery yq) {
-    String yqParamValue = yq.getYADAQueryParamValue(YADARequest.PS_OAUTH2)[0];    
+    String yqParamValue = yq.getYADAQueryParamValue(YADARequest.PS_OAUTH2)[0];
     this.setOAuth2(new JSONObject(yqParamValue));
   }
 
-	/**
-	 * Tests if proxy has been set in {@link YADARequest#setProxy(String[])}
-	 * @return {@code true} if {@link #proxy} is not null or an empty {@link String}
-	 */
-	protected boolean hasProxy()
-	{
-		if(this.proxy != null && !this.proxy.equals(""))
-			return true;
-		return false;
-	}
-	
-	/**
-	 * Creates the {@link YADAQueryResult} and adds it to the {@link YADAQuery}
-	 * @param yq The {@link YADAQuery} to process
-	 * @since 8.7.0
-	 */
-	private void setYADAQueryResultForYADAQuery(YADAQuery yq) {
-		yq.setResult();
-		YADAQueryResult yqr    = yq.getResult();
-		yqr.setApp(yq.getApp());
-	}
+  /**
+   * Tests if proxy has been set in {@link YADARequest#setProxy(String[])}
+   * 
+   * @return {@code true} if {@link #proxy} is not null or an empty {@link String}
+   */
+  protected boolean hasProxy() {
+    if (this.proxy != null && !this.proxy.equals(""))
+      return true;
+    return false;
+  }
 
-	/**
-	 * Replaces YADA markup in the url query string with values from the request
-	 * @param yq The {@link YADAQuery} to process
-	 * @param row The current collection of query parameter values
-	 * @return the fully fleshed-out query string
-	 * @since 8.7.0
-	 */
-	private String setPositionalParameterValues(YADAQuery yq, int row) {
-		String          urlStr = yq.getUrl(row);
-		Matcher m = Pattern.compile(PARAM_SYMBOL_RX).matcher(urlStr);
-		StringBuffer sb    = new StringBuffer();
-		int i=0;
-		while(m.find())
-		{		
-			String param = yq.getVals(row).get(i++);
-			String repl  = m.group(1)+param;
-			m.appendReplacement(sb, repl);
-		}
-		m.appendTail(sb);
-		urlStr = sb.toString();
-		l.debug("REST url w/params: ["+urlStr+"]");
-		return urlStr;
-	}
-	
-	/**
-	 * Determines if OAuth or Basic Authentication should be applied given the {@link YADARequest} 
-	 * configuration, and proceeds accordingly. 
-	 * @param yq The query object defined in the {@link YADARequest}
-	 * @param url The REST endpoint
-	 * @return The {@link HttpRequestInitializer} to pass to the {@link HttpRequestFactory}
-	 * @throws YADAQueryConfigurationException if both OAuth and Basic are defined in the request
-	 * @throws YADASecurityException  if authentication fails
-	 * @since 8.7.0
-	 */
-	private HttpRequestInitializer setAuthentication(YADAQuery yq, GenericUrl url) throws YADAQueryConfigurationException, YADASecurityException 
-	{		
-	  if(yq.hasParam(YADARequest.PS_OAUTH2) || yq.hasParam(YADARequest.PL_OAUTH2)
-	      || yq.hasParam(YADARequest.PS_OAUTH) || yq.hasParam(YADARequest.PL_OAUTH))
-	  {
-	    if(url.getUserInfo() != null) 
+  /**
+   * Creates the {@link YADAQueryResult} and adds it to the {@link YADAQuery}
+   * 
+   * @param yq The {@link YADAQuery} to process
+   * @since 8.7.0
+   */
+  private void setYADAQueryResultForYADAQuery(YADAQuery yq) {
+    yq.setResult();
+    YADAQueryResult yqr = yq.getResult();
+    yqr.setApp(yq.getApp());
+  }
+
+  /**
+   * Replaces YADA markup in the url query string with values from the request
+   * 
+   * @param yq  The {@link YADAQuery} to process
+   * @param row The current collection of query parameter values
+   * @return the fully fleshed-out query string
+   * @since 8.7.0
+   */
+  private String setPositionalParameterValues(YADAQuery yq, int row) {
+    String       urlStr = yq.getUrl(row);
+    Matcher      m      = Pattern.compile(PARAM_SYMBOL_RX).matcher(urlStr);
+    StringBuffer sb     = new StringBuffer();
+    int          i      = 0;
+    while (m.find())
+    {
+      String param = yq.getVals(row).get(i++);
+      String repl  = m.group(1) + param;
+      m.appendReplacement(sb, repl);
+    }
+    m.appendTail(sb);
+    urlStr = sb.toString();
+    l.debug("REST url w/params: [" + urlStr + "]");
+    return urlStr;
+  }
+
+  /**
+   * Determines if OAuth or Basic Authentication should be applied given the
+   * {@link YADARequest} configuration, and proceeds accordingly.
+   * 
+   * @param yq  The query object defined in the {@link YADARequest}
+   * @param url The REST endpoint
+   * @return The {@link HttpRequestInitializer} to pass to the
+   *         {@link HttpRequestFactory}
+   * @throws YADAQueryConfigurationException if both OAuth and Basic are defined
+   *                                         in the request
+   * @throws YADASecurityException           if authentication fails
+   * @since 8.7.0
+   */
+  private HttpRequestInitializer setAuthentication(YADAQuery yq, GenericUrl url)
+      throws YADAQueryConfigurationException, YADASecurityException {
+    if (yq.hasParam(YADARequest.PS_OAUTH2) || yq.hasParam(YADARequest.PL_OAUTH2) || yq.hasParam(YADARequest.PS_OAUTH)
+        || yq.hasParam(YADARequest.PL_OAUTH))
+    {
+      if (url.getUserInfo() != null)
       {
-        String msg  = "A query cannot contain both basic and oauth configurations. "
-                    + "When using oauth, make sure the REST data source is not also configured with "
-                    + "basic auth values.";
+        String msg = "A query cannot contain both basic and oauth configurations. "
+            + "When using oauth, make sure the REST data source is not also configured with " + "basic auth values.";
         throw new YADAQueryConfigurationException(msg);
       }
-	    
-	    if(yq.hasParam(YADARequest.PS_OAUTH2) || yq.hasParam(YADARequest.PL_OAUTH2))
-	    {
-	      if(null == this.oauth2) // not in the request
+
+      if (yq.hasParam(YADARequest.PS_OAUTH2) || yq.hasParam(YADARequest.PL_OAUTH2))
+      {
+        if (null == this.oauth2) // not in the request
           setOAuth2(yq);
-        return setAuthenticationOAuth2(url); 
-	    }
-	    else if(yq.hasParam(YADARequest.PS_OAUTH) || yq.hasParam(YADARequest.PL_OAUTH))
-  		{
-  			
-  			if(null == this.oauth) // not in the request
-  				setOAuth(yq);
-  			return setAuthenticationOAuth(url);			
-  		}
-	  }
-		else if(yq.hasParam(YADARequest.PS_HTTPHEADERS) || yq.hasParam(YADARequest.PL_HTTPHEADERS))
-    {
-		  String paramVal = yq.getParam(YADARequest.PS_HTTPHEADERS).get(0).getValue();
-		  if(null == paramVal || "".contentEquals(paramVal))
-		  {
-		    paramVal = yq.getParam(YADARequest.PL_HTTPHEADERS).get(0).getValue();
-		  }
-		  JSONObject auth = new JSONObject(paramVal);		  
-		  return setAuthenticationToken(url, auth.getString("Authorization"));
+        return setAuthenticationOAuth2(url);
+      }
+      else if (yq.hasParam(YADARequest.PS_OAUTH) || yq.hasParam(YADARequest.PL_OAUTH))
+      {
+
+        if (null == this.oauth) // not in the request
+          setOAuth(yq);
+        return setAuthenticationOAuth(url);
+      }
     }
-		else if(url.getUserInfo() != null)
-		{
-			return setAuthenticatonBasic(url);
-		}
-		return null;
-	}
-	
+    else if (yq.hasParam(YADARequest.PS_HTTPHEADERS) || yq.hasParam(YADARequest.PL_HTTPHEADERS))
+    {
+      String paramVal = yq.getParam(YADARequest.PS_HTTPHEADERS).get(0).getValue();
+      if (null == paramVal || "".contentEquals(paramVal))
+      {
+        paramVal = yq.getParam(YADARequest.PL_HTTPHEADERS).get(0).getValue();
+      }
+      JSONObject auth = new JSONObject(paramVal);
+      if (auth.has("Authorization"))
+      {
+        return setAuthenticationToken(url, auth.getString("Authorization"));
+      }
+      else if (url.getUserInfo() != null)
+      {
+        return setAuthenticatonBasic(url);
+      }
+
+    }
+    else if (url.getUserInfo() != null)
+    {
+      return setAuthenticatonBasic(url);
+    }
+    return null;
+  }
+
   /**
-   * Generates a {@link PrivateKey} object from the encoded {@code privateKey}string obtained from the 
-   * {@code JKS} keystore. The provided {@link KeyStore} is designated at application boot time by the JVM's
-   * {@code javax.net.ssl.keyStore} and {@code javax.net.ssl.keyStorePassword} properties.s
-   * under the provided {@code alias} 
+   * Generates a {@link PrivateKey} object from the encoded
+   * {@code privateKey}string obtained from the {@code JKS} keystore. The provided
+   * {@link KeyStore} is designated at application boot time by the JVM's
+   * {@code javax.net.ssl.keyStore} and {@code javax.net.ssl.keyStorePassword}
+   * properties.s under the provided {@code alias}
+   * 
    * @param alias the alias to the private key stored in the YADA keystore
    * @return the private key object
-   * @throws NoSuchAlgorithmException when the JKS keystore can't be loaded
-   * @throws KeyStoreException when there is no {@code JKS} keystore available
-   * @throws IOException when the JKS keystore can't be loaded due to a filesystem issue
-   * @throws CertificateException when the JKS keystore can't be loaded
+   * @throws NoSuchAlgorithmException    when the JKS keystore can't be loaded
+   * @throws KeyStoreException           when there is no {@code JKS} keystore
+   *                                     available
+   * @throws IOException                 when the JKS keystore can't be loaded due
+   *                                     to a filesystem issue
+   * @throws CertificateException        when the JKS keystore can't be loaded
    * @throws UnrecoverableEntryException when the desired entry can't be extracted
- 	 * @since 8.7.0
+   * @since 8.7.0
    */
-  private PrivateKey getPrivateKey(String alias) throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException, UnrecoverableEntryException
-  {
-  	String     ksPath = System.getProperty(PROP_KEYSTORE);
-  	char[]     ksPass = System.getProperty(PROP_KEYSTORE_PASS).toCharArray();
-  	KeyStore.ProtectionParameter ksProtParam = new KeyStore.PasswordProtection(ksPass);
-  	File       ksFile = new File(ksPath);
-  	URL        ksURL  = ksFile.toURI().toURL();
-  	KeyStore   keyStore = KeyStore.getInstance(KEYSTORE_TYPE_JKS);  	
-  	try(InputStream is = ksURL.openStream())
-  	{
-  		keyStore.load(is, null == ksPass ? null : ksPass);
-  	}
-  	KeyStore.PrivateKeyEntry ksEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(alias, ksProtParam);
-  	PrivateKey pk            = ksEntry.getPrivateKey();
-  	
+  private PrivateKey getPrivateKey(String alias) throws NoSuchAlgorithmException, KeyStoreException,
+      CertificateException, IOException, UnrecoverableEntryException {
+    String                       ksPath      = System.getProperty(PROP_KEYSTORE);
+    char[]                       ksPass      = System.getProperty(PROP_KEYSTORE_PASS).toCharArray();
+    KeyStore.ProtectionParameter ksProtParam = new KeyStore.PasswordProtection(ksPass);
+    File                         ksFile      = new File(ksPath);
+    URL                          ksURL       = ksFile.toURI().toURL();
+    KeyStore                     keyStore    = KeyStore.getInstance(KEYSTORE_TYPE_JKS);
+    try (InputStream is = ksURL.openStream())
+    {
+      keyStore.load(is, null == ksPass ? null : ksPass);
+    }
+    KeyStore.PrivateKeyEntry ksEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(alias, ksProtParam);
+    PrivateKey               pk      = ksEntry.getPrivateKey();
+
     return pk;
   }
-  
+
   /**
-   * Creates the {@link Credential} {@link HttpRequestInitializer}. 
-   * This method relies on inclusion of {@link YADARequest#getOAuth2()} which returns 
-   * a {@link JSONObject} containing:
+   * Creates the {@link Credential} {@link HttpRequestInitializer}. This method
+   * relies on inclusion of {@link YADARequest#getOAuth2()} which returns a
+   * {@link JSONObject} containing:
    * 
-   *   <ul>
-   *    <li><code>token_url</code></li>
-   *    <li><code>client_id</code></li>
-   *    <li><code>scope</code></li>
-   *    <li><code>client_secret</code></li>
-   *    <li><code>grant_type</code></li>
-   *   </ul>
-   *   
-   * After retrieval of the request token using the above parameters, the access token will be
-   * stored in the {@link Authorization#YADA_CREDENTIAL_CACHE} using the {@code client_secret} as a key,
-   * using the token expiry as the cache entry ttl.
+   * <ul>
+   * <li><code>token_url</code></li>
+   * <li><code>client_id</code></li>
+   * <li><code>scope</code></li>
+   * <li><code>client_secret</code></li>
+   * <li><code>grant_type</code></li>
+   * </ul>
+   * 
+   * After retrieval of the request token using the above parameters, the access
+   * token will be stored in the {@link Authorization#YADA_CREDENTIAL_CACHE} using
+   * the {@code client_secret} as a key, using the token expiry as the cache entry
+   * ttl.
    * 
    * The cache is checked before requesting a new token.
    * 
    * @param url the desired REST endpoint
    * @return the initializer to pass to the requestFactory
-   * @throws YADASecurityException if the credentials settings fail to result in obtaining a valid token
+   * @throws YADASecurityException if the credentials settings fail to result in
+   *                               obtaining a valid token
    * @since 9.2.0
    */
-  private HttpRequestInitializer setAuthenticationOAuth2(GenericUrl url) throws YADASecurityException
-  {
-    Credential credential = (Credential) getCacheEntry(YADA_CREDENTIAL_CACHE, oauth2.getString(OAUTH2_CLIENTID));    
-    if(credential == null)
-    {            
-      HttpContent            content        = null;
-      HttpRequestFactory     requestFactory = new NetHttpTransport().createRequestFactory();
-      GenericUrl             tokenUrl       = new GenericUrl(oauth2.getString(OAUTH2_TOKENURL));
-      StringBuilder          payload        = new StringBuilder();
+  private HttpRequestInitializer setAuthenticationOAuth2(GenericUrl url) throws YADASecurityException {
+    Credential credential = (Credential) getCacheEntry(YADA_CREDENTIAL_CACHE, oauth2.getString(OAUTH2_CLIENTID));
+    if (credential == null)
+    {
+      HttpContent        content        = null;
+      HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
+      GenericUrl         tokenUrl       = new GenericUrl(oauth2.getString(OAUTH2_TOKENURL));
+      StringBuilder      payload        = new StringBuilder();
       payload.append(String.format("%s=%s", OAUTH2_CLIENTID, oauth2.getString(OAUTH2_CLIENTID)));
       payload.append(String.format("&%s=%s", OAUTH2_SCOPE, oauth2.getString(OAUTH2_SCOPE)));
       payload.append(String.format("&%s=%s", OAUTH2_CLIENTSECRET, oauth2.getString(OAUTH2_CLIENTSECRET)));
       payload.append(String.format("&%s=%s", OAUTH2_GRANTTYPE, oauth2.getString(OAUTH2_GRANTTYPE)));
       content = ByteArrayContent.fromString(null, payload.toString());
-      
+
       try
       {
-         
-        HttpRequest tokenRequest = requestFactory.buildRequest(YADARequest.METHOD_POST, tokenUrl, content);
-        JSONObject tokenResponse = new JSONObject(processResponse(tokenRequest));
-        
+
+        HttpRequest tokenRequest  = requestFactory.buildRequest(YADARequest.METHOD_POST, tokenUrl, content);
+        JSONObject  tokenResponse = new JSONObject(processResponse(tokenRequest));
+
         TokenResponse tr = new TokenResponse();
         tr.setAccessToken(tokenResponse.getString(OAUTH2_ACCESSTOKEN));
         tr.setExpiresInSeconds(tokenResponse.getLong(OAUTH2_EXPIRESIN));
         tr.setScope(oauth2.getString(OAUTH2_SCOPE));
         tr.setTokenType(tokenResponse.getString(OAUTH2_TOKENTYPE));
         credential = new Credential(BearerToken.authorizationHeaderAccessMethod()).setFromTokenResponse(tr);
-        setCacheEntry(YADA_CREDENTIAL_CACHE, oauth2.getString(OAUTH2_CLIENTID), credential, tokenResponse.getInt(OAUTH2_EXPIRESIN));
-      } 
-      catch (IOException | JSONException | YADAAdaptorExecutionException e) 
+        setCacheEntry(YADA_CREDENTIAL_CACHE, oauth2.getString(OAUTH2_CLIENTID), credential,
+            tokenResponse.getInt(OAUTH2_EXPIRESIN));
+      }
+      catch (IOException | JSONException | YADAAdaptorExecutionException e)
       {
-        String msg = "Unable to initialize the POST request for ["+tokenUrl+"]";
-        throw new YADASecurityException(msg,e);
-      }            
+        String msg = "Unable to initialize the POST request for [" + tokenUrl + "]";
+        throw new YADASecurityException(msg, e);
+      }
     }
     return credential;
-    
+
   }
-  
+
   /**
-   * Creates the {@link OAuthParameters} {@link HttpRequestInitializer}. 
-   * This method relies on inclusion of {@link YADARequest#getOAuth()} which returns 
-   * a {@link JSONObject} containing:
+   * Creates the {@link OAuthParameters} {@link HttpRequestInitializer}. This
+   * method relies on inclusion of {@link YADARequest#getOAuth()} which returns a
+   * {@link JSONObject} containing:
    * 
-   *   <ul>
-   *    <li><code>oauth_consumer_key</code></li>
-   *    <li><code>oauth_signature_method</code>. For now, should always equal <code>RSA</code></li>
-   *    <li><code>oauth_token</code></li>
-   *    <li><code>oauth_verifier (secret)</code></li>
-   *    <li><code>oauth_version</code>. For now, should always equal <code>1.0a</code></li>
-   *    <li><code>oauth_private_key</code> which is the <span style="font-style:italic;">alias</span> 
-   *    under which the desired <code>KeyStore.PrivateKeyEntry</code> is stored</li>
-   *   </ul>
-   *    
+   * <ul>
+   * <li><code>oauth_consumer_key</code></li>
+   * <li><code>oauth_signature_method</code>. For now, should always equal
+   * <code>RSA</code></li>
+   * <li><code>oauth_token</code></li>
+   * <li><code>oauth_verifier (secret)</code></li>
+   * <li><code>oauth_version</code>. For now, should always equal
+   * <code>1.0a</code></li>
+   * <li><code>oauth_private_key</code> which is the
+   * <span style="font-style:italic;">alias</span> under which the desired
+   * <code>KeyStore.PrivateKeyEntry</code> is stored</li>
+   * </ul>
+   * 
    * @param url the transformed (conformed) REST endpoint
    * @return the initializer to pass to the request factory
-   * @throws YADASecurityException if there is an issue with the keystore or key entry
-   * @throws YADAQueryConfigurationException if the 'oauth' request param is misconfigured
+   * @throws YADASecurityException           if there is an issue with the
+   *                                         keystore or key entry
+   * @throws YADAQueryConfigurationException if the 'oauth' request param is
+   *                                         misconfigured
    * @since 8.7.0
    */
-	private HttpRequestInitializer setAuthenticationOAuth(GenericUrl url) throws YADASecurityException, YADAQueryConfigurationException 
-	{
+  private HttpRequestInitializer setAuthenticationOAuth(GenericUrl url)
+      throws YADASecurityException, YADAQueryConfigurationException {
     OAuthRsaSigner signer = new OAuthRsaSigner();
-    
-    try 
+
+    try
     {
-			signer.privateKey = getPrivateKey(oauth.getString(OAUTH_PRIVATE_KEY));
-		} 
-    catch (NoSuchAlgorithmException|KeyStoreException|CertificateException|UnrecoverableEntryException|IOException e) 
+      signer.privateKey = getPrivateKey(oauth.getString(OAUTH_PRIVATE_KEY));
+    }
+    catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | UnrecoverableEntryException
+        | IOException e)
     {
-			String msg = "There was a problem loading the KeyStore or obtaining the designated key.";
-			throw new YADASecurityException(msg,e);
-		} 
-    catch (JSONException e) 
+      String msg = "There was a problem loading the KeyStore or obtaining the designated key.";
+      throw new YADASecurityException(msg, e);
+    }
+    catch (JSONException e)
     {
-			String msg = "There was a problem obtaining the private key entry alias from the request. Check the 'oauth' request parameter for the 'oauth_private_key' property.";
-			throw new YADAQueryConfigurationException(msg,e);
-		}
-    
+      String msg = "There was a problem obtaining the private key entry alias from the request. Check the 'oauth' request parameter for the 'oauth_private_key' property.";
+      throw new YADAQueryConfigurationException(msg, e);
+    }
+
     OAuthParameters oauthParams = new OAuthParameters();
-    oauthParams.consumerKey = oauth.getString(OAUTH_CONSUMER_KEY);    
-    oauthParams.signer = signer;
-    oauthParams.signatureMethod = oauth.getString(OAUTH_SIGNATURE_METHOD); 
-    oauthParams.token = oauth.getString(OAUTH_TOKEN);
-    oauthParams.verifier = oauth.getString(OAUTH_VERIFIER);
-    oauthParams.version = oauth.getString(OAUTH_VERSION);
+    oauthParams.consumerKey     = oauth.getString(OAUTH_CONSUMER_KEY);
+    oauthParams.signer          = signer;
+    oauthParams.signatureMethod = oauth.getString(OAUTH_SIGNATURE_METHOD);
+    oauthParams.token           = oauth.getString(OAUTH_TOKEN);
+    oauthParams.verifier        = oauth.getString(OAUTH_VERIFIER);
+    oauthParams.version         = oauth.getString(OAUTH_VERSION);
     oauthParams.computeNonce();
     oauthParams.computeTimestamp();
-    try 
-    
-    {
-			oauthParams.computeSignature(this.method, url);
-		} 
-    catch (GeneralSecurityException e) 
-    {
-			String msg = "Unable to compute signature with the information provided. Check 'oauth' request parameter and key pair.";
-			throw new YADASecurityException(msg, e);
-		}
-    
-    return oauthParams;
-	}
-	
-	/**
-	 * Creates the {@link BasicAuthentication} {@link HttpRequestInitializer}
-	 * @param url the conformed REST endpoint
-	 * @return the initializer to pass to the request factory
-	 * @since 8.7.0
-	 */
-	private HttpRequestInitializer setAuthenticatonBasic(GenericUrl url)  
-	{
-			//TODO issue with '@' sign in pw, must decode first (is this still an issue?)
-			String[] userinfo = url.getUserInfo().split(":");
-			String username = userinfo[0];
-			String password = userinfo[1];
-			BasicAuthentication ba = new BasicAuthentication(username, password);
-			return ba;
-	}
-	
-	/**
-	 * @param url the REST url to process
-	 * @param token the auth token stored with the query
-	 * @return the interceptor to set the auth header
-	 */
-	private HttpRequestInitializer setAuthenticationToken(GenericUrl url, String token)
-	{
-	  class TokenAuthentication implements HttpRequestInitializer, HttpExecuteInterceptor {
-	    
-	    @Override
-      public void initialize(HttpRequest request) throws IOException {
-	      request.setInterceptor((HttpExecuteInterceptor) this);
-	    }
-	    
-	    @Override      
-      public void intercept(HttpRequest request) throws IOException {
-	      if(token.startsWith("Basic "))
-	      {
-	        request.getHeaders().setAuthorization(token);
-	      }
-	      else
-	      {
-	        request.getHeaders().setAuthorization("Bearer "+token);
-	      }
-	    }
-	  };
-	  
-	  return new TokenAuthentication();
-	  
-	}
-	
-	/**
-	 * Looks for cookie strings passed in the request or stored in the {@link YADAQuery} 
-	 * and adds them to the {@link HttpRequest}
-	 * @param yq The YADAQuery object
-	 * @param request The HttpRequest object
-	 * @since 8.7.0
-	 */
-	private void setCookies(YADAQuery yq, HttpRequest request)
-	{
-		if(yq.getCookies() != null && yq.getCookies().size() > 0)
-		{
-		  String cookieStr = "";
-		  for (HttpCookie cookie : yq.getCookies())
-		  {
-		    cookieStr += cookie.getName()+"="+cookie.getValue()+";";
-		  }
-		  HttpHeaders headers = request.getHeaders();
-		  headers.setCookie(cookieStr);
-		  request.setHeaders(headers);
-		}
-	}
-	
-	/**
-	 * Looks for http header strings passed in the request or stored in the {@link YADAQuery}
-	 * and adds them to the {@link HttpRequest}
-	 * @param yq the {@link YADAQuery} object
-	 * @param request the HttpRequest object
-	 * @throws YADAQueryConfigurationException when a header can not be set due to encapsulation, 
-	 * bad arguments or other invocation target error 
-	 * @since 8.7.0
-	 */
-	private void setHeaders(YADAQuery yq, HttpRequest request) throws YADAQueryConfigurationException
-	{
-		if(yq.getHttpHeaders() != null && yq.getHttpHeaders().length() > 0)
-		{
-			HttpHeaders headers = request.getHeaders();
+    try
 
-			l.debug("Processing custom headers...");
-			@SuppressWarnings("unchecked")
-			Iterator<String> keys = yq.getHttpHeaders().keys();
-			while(keys.hasNext())
-			{
-				String name = keys.next();
-				String value = yq.getHttpHeaders().getString(name);
-				l.debug("Custom header: "+name+" : "+value);
-				
-				String method = "set"+name.replace("-","");
-				try 
-				{
-					Class<HttpHeaders> clazz = HttpHeaders.class;
-					Method meth = clazz.getMethod(method, java.lang.String.class);
-					meth.invoke(headers, value);
-				} 
-				catch (NoSuchMethodException|SecurityException e) 
-				{
-					String msg = "There is no method named ["+method+"]. It could be a case issue."
-							       + "Method names are camel-cased, and header names should have initial " 
-							       + " caps, and hyphens instead of spaces."; 
-					l.warn(msg);
-					l.warn("Trying to use generic setter");
-					headers.set(name, value);
-				} 
-				catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) 
-				{
-					String msg = "The ["+name+"] header could not be set.";
-					throw new YADAQueryConfigurationException(msg, e);
-				} 
-				request.setHeaders(headers);
-			}
-		}
-	}
-	
-	/**
-	 * Standard accessor for ivar
-	 * @return the mimetype {@link String}
-	 * @since 9.0.0
-	 */
-	public String getMimeType() {
+    {
+      oauthParams.computeSignature(this.method, url);
+    }
+    catch (GeneralSecurityException e)
+    {
+      String msg = "Unable to compute signature with the information provided. Check 'oauth' request parameter and key pair.";
+      throw new YADASecurityException(msg, e);
+    }
+
+    return oauthParams;
+  }
+
+  /**
+   * Creates the {@link BasicAuthentication} {@link HttpRequestInitializer}
+   * 
+   * @param url the conformed REST endpoint
+   * @return the initializer to pass to the request factory
+   * @since 8.7.0
+   */
+  private HttpRequestInitializer setAuthenticatonBasic(GenericUrl url) {
+    // TODO issue with '@' sign in pw, must decode first (is this still an issue?)
+    String[]            userinfo = url.getUserInfo().split(":");
+    String              username = userinfo[0];
+    String              password = userinfo[1];
+    BasicAuthentication ba       = new BasicAuthentication(username, password);
+    return ba;
+  }
+
+  /**
+   * @param url   the REST url to process
+   * @param token the auth token stored with the query
+   * @return the interceptor to set the auth header
+   */
+  private HttpRequestInitializer setAuthenticationToken(GenericUrl url, String token) {
+    class TokenAuthentication implements HttpRequestInitializer, HttpExecuteInterceptor {
+
+      @Override
+      public void initialize(HttpRequest request) throws IOException {
+        request.setInterceptor((HttpExecuteInterceptor) this);
+      }
+
+      @Override
+      public void intercept(HttpRequest request) throws IOException {
+        if (token.startsWith("Basic "))
+        {
+          request.getHeaders().setAuthorization(token);
+        }
+        else
+        {
+          request.getHeaders().setAuthorization("Bearer " + token);
+        }
+      }
+    }
+    ;
+
+    return new TokenAuthentication();
+
+  }
+
+  /**
+   * Looks for cookie strings passed in the request or stored in the
+   * {@link YADAQuery} and adds them to the {@link HttpRequest}
+   * 
+   * @param yq      The YADAQuery object
+   * @param request The HttpRequest object
+   * @since 8.7.0
+   */
+  private void setCookies(YADAQuery yq, HttpRequest request) {
+    if (yq.getCookies() != null && yq.getCookies().size() > 0)
+    {
+      String cookieStr = "";
+      for (HttpCookie cookie: yq.getCookies())
+      {
+        cookieStr += cookie.getName() + "=" + cookie.getValue() + ";";
+      }
+      HttpHeaders headers = request.getHeaders();
+      headers.setCookie(cookieStr);
+      request.setHeaders(headers);
+    }
+  }
+
+  /**
+   * Looks for http header strings passed in the request or stored in the
+   * {@link YADAQuery} and adds them to the {@link HttpRequest}
+   * 
+   * @param yq      the {@link YADAQuery} object
+   * @param request the HttpRequest object
+   * @throws YADAQueryConfigurationException when a header can not be set due to
+   *                                         encapsulation, bad arguments or other
+   *                                         invocation target error
+   * @since 8.7.0
+   */
+  private void setHeaders(YADAQuery yq, HttpRequest request) throws YADAQueryConfigurationException {
+    if (yq.getHttpHeaders() != null && yq.getHttpHeaders().length() > 0)
+    {
+      HttpHeaders headers = request.getHeaders();
+
+      l.debug("Processing custom headers...");
+      @SuppressWarnings("unchecked")
+      Iterator<String> keys = yq.getHttpHeaders().keys();
+      while (keys.hasNext())
+      {
+        String name  = keys.next();
+        String value = yq.getHttpHeaders().getString(name);
+        l.debug("Custom header: " + name + " : " + value);
+
+        String method = "set" + name.replace("-", "");
+        try
+        {
+          Class<HttpHeaders> clazz = HttpHeaders.class;
+          Method             meth  = clazz.getMethod(method, java.lang.String.class);
+          meth.invoke(headers, value);
+        }
+        catch (NoSuchMethodException | SecurityException e)
+        {
+          String msg = "There is no method named [" + method + "]. It could be a case issue."
+              + "Method names are camel-cased, and header names should have initial "
+              + " caps, and hyphens instead of spaces.";
+          l.warn(msg);
+          l.warn("Trying to use generic setter");
+          headers.set(name, value);
+        }
+        catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
+        {
+          String msg = "The [" + name + "] header could not be set.";
+          throw new YADAQueryConfigurationException(msg, e);
+        }
+        request.setHeaders(headers);
+      }
+    }
+  }
+
+  /**
+   * Standard accessor for ivar
+   * 
+   * @return the mimetype {@link String}
+   * @since 9.0.0
+   */
+  public String getMimeType() {
     return mimeType;
   }
 
   /**
    * Standard mutator for ivar
+   * 
    * @param mimeType the mimeType {@link String} to store
    * @since 9.0.0
    */
   public void setMimeType(String mimeType) {
     this.mimeType = mimeType;
   }
-  
 
   /**
-	 * Returns true if <code>method</code> matches <code>POST</code>, <code>PUT</code>, or <code>PATCH</code>
-	 * @param method the http method of the request to check
-	 * @return true if <code>method</code> matches <code>POST</code>, <code>PUT</code>, or <code>PATCH</code>
-	 * @since 8.7.0
-	 */
-	protected static boolean isPostPutPatch(String method) 
-	{
-		return method.equals(YADARequest.METHOD_POST)
-				|| method.equals(YADARequest.METHOD_PUT)
-				|| method.equals(YADARequest.METHOD_PATCH);
-	}
-	
-	/**
-	 * Reads the response {@link InputStream} and writes it to a {@link String}
-	 * @param request the request object
-	 * @return a String containing the response data
-	 * @throws YADAAdaptorExecutionException when reading the input stream fails
-	 * @throws YADASecurityException when the service returns a 401 or 403
-	 * @since 8.7.0
-	 */ 
-	private String processResponse(HttpRequest request) throws YADAAdaptorExecutionException, YADASecurityException 
-	{
-		String result = "";
-		HttpResponse response = null;
-		try 
-		{
-			response = request.execute();
-		} 
-		catch (HttpResponseException e)
-		{
-		  l.error(e.getStatusCode() + ": " + e.getMessage());
-			int code = e.getStatusCode();
-			if(code == HTTP_STATUS_401 || code == HTTP_STATUS_403)
-			{
-				String msg = "Unauthorized: "+e.getStatusMessage();
-				throw new YADASecurityException(msg,e);
-			}			
-			else if(code == HTTP_STATUS_404)
-			{
-			  throw new YADAAdaptorExecutionException(e.getMessage(), e);
-			}
-		}
-		catch (IOException e) 
-		{
-			String msg = "Unable to execute request.";
-			throw new YADAAdaptorExecutionException(msg,e);
-		}
-		
-		if(null != response && (null == this.getMimeType() || this.getMimeType().contentEquals("")))
-		{
-		  this.setMimeType(response.getContentType());
-		}
-		
-		if(this.getMimeType().startsWith("text") 
-		    || this.getMimeType().matches("application/(?:json|ld\\+json|x-httpd-php|rtf|x-sh|xml).*"))
-		{
-		  try(BufferedReader in = new BufferedReader(new InputStreamReader(response.getContent())))
-	    {
-	      String       inputLine;
-	      while ((inputLine = in.readLine()) != null)
-	      {
-	        result += String.format("%1s%n",inputLine);
-	      }
-	    } 
-	    catch (IOException e) 
-	    {
-	      String msg = "There was a problem reading from the response's input stream";
-	      throw new YADAAdaptorExecutionException(msg, e);
-	    }		  
-		}
-		else if(null != this.getMimeType() && !this.getMimeType().contentEquals(""))
-		{
-		  this.getServiceParameters().setFormat(new String[] { YADARequest.FORMAT_BINARY });		  
-		  try(ByteArrayOutputStream baos = new ByteArrayOutputStream())
-		  {
-		    response.download(baos);
-		    result = String.format("data:%s;base64, %s",this.getMimeType(),Base64.getEncoder().encodeToString(baos.toByteArray()));
-		  }
-      catch (IOException e) 
+   * Returns true if <code>method</code> matches <code>POST</code>,
+   * <code>PUT</code>, or <code>PATCH</code>
+   * 
+   * @param method the http method of the request to check
+   * @return true if <code>method</code> matches <code>POST</code>,
+   *         <code>PUT</code>, or <code>PATCH</code>
+   * @since 8.7.0
+   */
+  protected static boolean isPostPutPatch(String method) {
+    return method.equals(YADARequest.METHOD_POST) || method.equals(YADARequest.METHOD_PUT)
+        || method.equals(YADARequest.METHOD_PATCH);
+  }
+
+  /**
+   * Reads the response {@link InputStream} and writes it to a {@link String}
+   * 
+   * @param request the request object
+   * @return a String containing the response data
+   * @throws YADAAdaptorExecutionException when reading the input stream fails
+   * @throws YADASecurityException         when the service returns a 401 or 403
+   * @since 8.7.0
+   */
+  private String processResponse(HttpRequest request) throws YADAAdaptorExecutionException, YADASecurityException {
+    String       result   = "";
+    HttpResponse response = null;
+    try
+    {
+      response = request.execute();
+    }
+    catch (HttpResponseException e)
+    {
+      l.error(e.getStatusCode() + ": " + e.getMessage());
+      int code = e.getStatusCode();
+      if (code == HTTP_STATUS_401 || code == HTTP_STATUS_403)
+      {
+        String msg = "Unauthorized: " + e.getStatusMessage();
+        throw new YADASecurityException(msg, e);
+      }
+      else if (code == HTTP_STATUS_404)
+      {
+        throw new YADAAdaptorExecutionException(e.getMessage(), e);
+      }
+    }
+    catch (IOException e)
+    {
+      String msg = "Unable to execute request.";
+      throw new YADAAdaptorExecutionException(msg, e);
+    }
+
+    if (null != response && (null == this.getMimeType() || this.getMimeType().contentEquals("")))
+    {
+      this.setMimeType(response.getContentType());
+    }
+
+    if (this.getMimeType().startsWith("text")
+        || this.getMimeType().matches("application/(?:json|ld\\+json|x-httpd-php|rtf|x-sh|xml).*"))
+    {
+      try (BufferedReader in = new BufferedReader(new InputStreamReader(response.getContent())))
+      {
+        String inputLine;
+        while ((inputLine = in.readLine()) != null)
+        {
+          result += String.format("%1s%n", inputLine);
+        }
+      }
+      catch (IOException e)
+      {
+        String msg = "There was a problem reading from the response's input stream";
+        throw new YADAAdaptorExecutionException(msg, e);
+      }
+    }
+    else if (null != this.getMimeType() && !this.getMimeType().contentEquals(""))
+    {
+      this.getServiceParameters().setFormat(new String[] { YADARequest.FORMAT_BINARY });
+      try (ByteArrayOutputStream baos = new ByteArrayOutputStream())
+      {
+        response.download(baos);
+        result = String.format("data:%s;base64, %s", this.getMimeType(),
+            Base64.getEncoder().encodeToString(baos.toByteArray()));
+      }
+      catch (IOException e)
       {
         String msg = "There was a problem reading from the response's input stream or encoding to Base64";
         throw new YADAAdaptorExecutionException(msg, e);
-      }     
-		}
-		l.debug(result);
-		return result;
-	}
-	
-	/**
-	 * Writes the header fields to the console or log while in DEBUG mode
-	 * @param request the current request object
-	 * @since 8.7.0
-	 */
-	private void logRequest(HttpRequest request) {
-		Map<String, Object> map = request.getHeaders();
-		for (Entry<String, Object> entry : map.entrySet()) {
-			l.debug("Key : " + entry.getKey() + " ,Value : " + entry.getValue());
-		}
-	}
-	
-	/**
-	 * Wrapper for {@link HttpRequestFactory#buildRequest(String, GenericUrl, HttpContent)}
-	 * @param yq The {@link YADAQuery} defined by the {@link YADARequest}
-	 * @param payload the request body or null 
-	 * @param url the REST endpoint
-	 * @return the initialized {@link HttpRequest}
-	 * @throws YADAQueryConfigurationException when there is an issue with request construction
-	 * @throws YADASecurityException when authentication fails
-	 */
-	private HttpRequest buildRequest(YADAQuery yq, String payload, GenericUrl url) throws YADAQueryConfigurationException, YADASecurityException
-	{
-		HttpContent            content        = null;
-		HttpRequestInitializer initializer    = setAuthentication(yq, url);
-		HttpRequestFactory     requestFactory = new NetHttpTransport().createRequestFactory(initializer);
-		if(isPostPutPatch(this.method))
-		{			
-			content = ByteArrayContent.fromString(null, payload);
-			if(this.method.equals(YADARequest.METHOD_PATCH))
-				this.method = YADARequest.METHOD_PUT;
-		}
-		
-		try
-		{
-			return requestFactory.buildRequest(this.method, url, content);
-		} 
-		catch (IOException e) 
-		{
-			String msg = "Unable to initialize the "+this.method+" request for ["+url+"]";
-			throw new YADAQueryConfigurationException(msg,e);
-		}
-	}
-	
-	/**
-	 * Gets the input stream from the {@link URLConnection} and stores it in
-	 * the {@link YADAQueryResult} in {@code yq}
-	 * @throws YADASecurityException if authentication fails
-	 * @see com.novartis.opensource.yada.adaptor.Adaptor#execute(com.novartis.opensource.yada.YADAQuery)
-	 */
-	@Override
-	public void execute(YADAQuery yq) throws YADAAdaptorExecutionException, YADASecurityException
-	{
-		//
-		//   THINGS ORGANIZED IN HERE:
-		//   
-		//   Type of request
-		//   		This will determine the 'build' method in the HttpRequestFactory (i.e., buildGet, buildPost, etc)
-		//   
-		//   Type of authentication
-		// 			Basic, Oauth, None
-		// 
-		//   Post content
-		//   Cookies
-		//   Headers
-		//   Proxy (config'd in JVM for now)
-		//
-		
-		// 1) Override method type if necessary
-		if(yq.getHttpHeaders().has(H_X_HTTP_METHOD_OVERRIDE))
-		{			
-			this.method = yq.getHttpHeaders().getString(H_X_HTTP_METHOD_OVERRIDE);
-			l.debug("Resetting method to ["+this.method+"]");
-		}
-		
-		// 2) set 'count' to false until the algo for counting rest response rows is impl.
-		resetCountParameter(yq);
-		
-		// 3) get the data array from the YADAQuery
-		//
-	  // Remember:
-	  // A row is a set of YADA URL parameter values, e.g.,
-	  //
-	  //  x,y,z in this:
-	  //    ...yada/q/queryname/p/x,y,z
-	  //  so 1 row
-	  //
-	  //  or each of {col1:x,col2:y,col3:z} and {col1:a,col2:b,col3:c} in this:
-	  //    ...j=[{qname:queryname,DATA:[{col1:x,col2:y,col3:z},{col1:a,col2:b,col3:c}]}]
-	  //  so 2 rows
-	  //
-		int rows = yq.getData().size() > 0 ? yq.getData().size() : 1;
-			
-		
-		// 4) process the url 
-		String      urlString; 
-		HttpRequest request = null;
-		
-		for(int row=0;row<rows;row++)
-		{
-			
-			// creates result array and assigns it
-			setYADAQueryResultForYADAQuery(yq);
-
-			try
-			{
-
-				// replace yada markup
-				urlString = setPositionalParameterValues(yq,row);
-				
-				// get body content 
-				String payload = null;
-				if(yq.getData().size() > 0 && yq.getDataRow(row).containsKey(YADA_PAYLOAD))
-						payload = yq.getDataRow(row).get(YADA_PAYLOAD)[0];
-				
-				// init url
-				GenericUrl url     = new GenericUrl(urlString);
-				
-				// build request, handling auth if necessary
-				request = buildRequest(yq,payload,url);
-
-				// cookies
-				setCookies(yq,request);
-				
-				// headers
-				setHeaders(yq,request);
-				
-				// inject body content if necessary
-//				handlePostPutPatch(request, yq, row);
-				
-				// debug
-				logRequest(request);
-
-				// process the response
-				String result = processResponse(request);
-				
-				// store the response in the YADAQueryResult
-				yq.getResult().addResult(row, result);
-			}
-			catch (YADAQueryConfigurationException e) 
-			{
-				String msg = "The YADAQuery was configured improperly. Check YADA parameters, especially 'oauth'.";
-				throw new YADAAdaptorExecutionException(msg, e);
-			}
-		}
-	}
-
-	/**
-	 * Constructs a single url string containing the REST endpoint and query string
-	 *
-	 * @param yq the {@link YADAQuery} containing the source code and metadata required to construct an executable query
-	 * @return a string containing the entire REST url
-	 */
-	@Override
-	public String build(YADAQuery yq) {
-	  this.setProps(ConnectionFactory.getConnectionFactory().getWsSourceMap().get(yq.getApp()));
-    List<YADAParam> yqParams = new ArrayList<>();
-    String paramStr = this.getProps().getProperty("params");
-    if(paramStr != null)
-    {
-      JSONArray yqp = new JSONArray(paramStr);
-      for (int i=0; i<yqp.length(); i++)
-      {
-        JSONObject jo = yqp.getJSONObject(i);
-        YADAParam  yp = new YADAParam();      
-        yp.setName(jo.getString("name"));
-        yp.setValue(jo.getString("value"));
-        yp.setRule(jo.getInt("rule"));
-        yqParams.add(yp);
       }
-  	  yq.setYADAQueryParams(yqParams);
     }
-    String conf   = this.getProps().getProperty(ConnectionFactory.YADA_CONF_SOURCE); 
-		String uri    = yq.getYADACode();
-		return conf + uri;
-	}
+    l.debug(result);
+    return result;
+  }
+
+  /**
+   * Writes the header fields to the console or log while in DEBUG mode
+   * 
+   * @param request the current request object
+   * @since 8.7.0
+   */
+  private void logRequest(HttpRequest request) {
+    Map<String, Object> map = request.getHeaders();
+    for (Entry<String, Object> entry: map.entrySet())
+    {
+      l.debug("Key : " + entry.getKey() + " ,Value : " + entry.getValue());
+    }
+  }
+
+  /**
+   * Wrapper for
+   * {@link HttpRequestFactory#buildRequest(String, GenericUrl, HttpContent)}
+   * 
+   * @param yq      The {@link YADAQuery} defined by the {@link YADARequest}
+   * @param payload the request body or null
+   * @param url     the REST endpoint
+   * @return the initialized {@link HttpRequest}
+   * @throws YADAQueryConfigurationException when there is an issue with request
+   *                                         construction
+   * @throws YADASecurityException           when authentication fails
+   */
+  private HttpRequest buildRequest(YADAQuery yq, String payload, GenericUrl url)
+      throws YADAQueryConfigurationException, YADASecurityException {
+    HttpContent            content        = null;
+    HttpRequestInitializer initializer    = setAuthentication(yq, url);
+    HttpRequestFactory     requestFactory = new NetHttpTransport().createRequestFactory(initializer);
+    if (isPostPutPatch(this.method))
+    {
+      content = ByteArrayContent.fromString(null, payload);
+      if (this.method.equals(YADARequest.METHOD_PATCH))
+        this.method = YADARequest.METHOD_PUT;
+    }
+
+    try
+    {
+      return requestFactory.buildRequest(this.method, url, content);
+    }
+    catch (IOException e)
+    {
+      String msg = "Unable to initialize the " + this.method + " request for [" + url + "]";
+      throw new YADAQueryConfigurationException(msg, e);
+    }
+  }
+
+  /**
+   * Gets the input stream from the {@link URLConnection} and stores it in the
+   * {@link YADAQueryResult} in {@code yq}
+   * 
+   * @throws YADASecurityException if authentication fails
+   * @see com.novartis.opensource.yada.adaptor.Adaptor#execute(com.novartis.opensource.yada.YADAQuery)
+   */
+  @Override
+  public void execute(YADAQuery yq) throws YADAAdaptorExecutionException, YADASecurityException {
+    //
+    // THINGS ORGANIZED IN HERE:
+    //
+    // Type of request
+    // This will determine the 'build' method in the HttpRequestFactory (i.e.,
+    // buildGet, buildPost, etc)
+    //
+    // Type of authentication
+    // Basic, Oauth, None
+    //
+    // Post content
+    // Cookies
+    // Headers
+    // Proxy (config'd in JVM for now)
+    //
+
+    // 1) Override method type if necessary
+    if (yq.getHttpHeaders().has(H_X_HTTP_METHOD_OVERRIDE))
+    {
+      this.method = yq.getHttpHeaders().getString(H_X_HTTP_METHOD_OVERRIDE);
+      l.debug("Resetting method to [" + this.method + "]");
+    }
+
+    // 2) set 'count' to false until the algo for counting rest response rows is
+    // impl.
+    resetCountParameter(yq);
+
+    // 3) get the data array from the YADAQuery
+    //
+    // Remember:
+    // A row is a set of YADA URL parameter values, e.g.,
+    //
+    // x,y,z in this:
+    // ...yada/q/queryname/p/x,y,z
+    // so 1 row
+    //
+    // or each of {col1:x,col2:y,col3:z} and {col1:a,col2:b,col3:c} in this:
+    // ...j=[{qname:queryname,DATA:[{col1:x,col2:y,col3:z},{col1:a,col2:b,col3:c}]}]
+    // so 2 rows
+    //
+    int rows = yq.getData().size() > 0 ? yq.getData().size() : 1;
+
+    // 4) process the url
+    String      urlString;
+    HttpRequest request = null;
+
+    for (int row = 0; row < rows; row++)
+    {
+
+      // creates result array and assigns it
+      setYADAQueryResultForYADAQuery(yq);
+
+      try
+      {
+
+        // replace yada markup
+        urlString = setPositionalParameterValues(yq, row);
+
+        // get body content
+        String payload = null;
+        // check for payload in params
+        if (yq.getParam(YADA_PAYLOAD) != null)
+        {
+          payload = yq.getParam(YADA_PAYLOAD).get(0).getValue();
+        }
+        if (yq.getData().size() > 0 && yq.getDataRow(row).containsKey(YADA_PAYLOAD))
+        {
+          if (null == payload)
+          {
+            payload = yq.getDataRow(row).get(YADA_PAYLOAD)[0];
+          }
+          else
+          {
+            payload += yq.getDataRow(row).get(YADA_PAYLOAD)[0];
+          }
+        }
+
+        // init url
+        GenericUrl url = new GenericUrl(urlString);
+
+        // build request, handling auth if necessary
+        request = buildRequest(yq, payload, url);
+
+        // cookies
+        setCookies(yq, request);
+
+        // headers
+        setHeaders(yq, request);
+
+        // inject body content if necessary
+//				handlePostPutPatch(request, yq, row);
+
+        // debug
+        logRequest(request);
+
+        // process the response
+        String result = processResponse(request);
+
+        // store the response in the YADAQueryResult
+        yq.getResult().addResult(row, result);
+      }
+      catch (YADAQueryConfigurationException e)
+      {
+        String msg = "The YADAQuery was configured improperly. Check YADA parameters, especially 'oauth'.";
+        throw new YADAAdaptorExecutionException(msg, e);
+      }
+    }
+  }
+
+  /**
+   * Constructs a single url string containing the REST endpoint and query string
+   *
+   * @param yq the {@link YADAQuery} containing the source code and metadata
+   *           required to construct an executable query
+   * @return a string containing the entire REST url
+   */
+  @Override
+  public String build(YADAQuery yq) {
+    this.setProps(ConnectionFactory.getConnectionFactory().getWsSourceMap().get(yq.getApp()));
+//    List<YADAParam> yqParams = new ArrayList<>();
+//    String          paramStr = this.getProps().getProperty("params");
+//    if (paramStr != null)
+//    {
+//      JSONArray yqp = new JSONArray(paramStr);
+//      for (int i = 0; i < yqp.length(); i++)
+//      {
+//        JSONObject jo = yqp.getJSONObject(i);
+//        YADAParam  yp = new YADAParam();
+//        yp.setName(jo.getString("name"));
+//        yp.setValue(jo.getString("value"));
+//        yp.setRule(jo.getInt("rule"));
+//        yqParams.add(yp);
+//        // override method if param implies such
+//        if(jo.getString("name").contentEquals(YADARequest.PL_METHOD) 
+//            || jo.getString("name").contentEquals(YADARequest.PS_METHOD))
+//        {
+//          this.method = jo.getString("value");
+//        }
+//      }
+//      yq.setYADAQueryParams(yqParams);
+//    }
+    String conf = this.getProps().getProperty(ConnectionFactory.YADA_CONF_SOURCE);
+    String uri  = yq.getYADACode();
+    return conf + uri;
+  }
 
   @Override
   public void authorize(String payload) throws YADASecurityException {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
   public void authorize() throws YADASecurityException {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
   public void authorizeYADARequest(YADARequest yadaReq, String result) throws YADASecurityException {
     // TODO Auto-generated method stub
-    
+
   }
 
   /**
    * Standard accessor for variable
+   * 
    * @return query properties stored in application conf
-   * @since 9.3.0 
+   * @since 9.3.0
    */
   public Properties getProps() {
     return props;
@@ -1015,6 +1115,7 @@ public class RESTAdaptor extends Adaptor implements Authorization {
 
   /**
    * standard mutator for variable
+   * 
    * @param props query properties stored in application conf
    * @since 9.3.0
    */

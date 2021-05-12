@@ -172,8 +172,13 @@ public class YADAUtils {
    * @since 6.2.0
    */
   public final static String   PARAM_FRAG_LEFTJOIN      = "LEFTJOIN";
+  /**
+   * A constant equal to {@value}
+   * @since 9.3.6
+   */
+  public final static String   PARAM_FRAG_RESPONSE      = "RESPONSE";
 	/**
-	 * A contsant {@link String}[] array containing the param name fragment constants of all request-level parameters: 
+	 * A constant {@link String}[] array containing the param name fragment constants of all request-level parameters: 
 	 * <p>
 	 * {@link #PARAM_FRAG_COUNT}, {@link #PARAM_FRAG_FILTERS}, {@link #PARAM_FRAG_PAGESIZE}, {@link #PARAM_FRAG_PAGESTART},
 	 * {@link #PARAM_FRAG_SORTKEY}, {@link #PARAM_FRAG_SORTORDER}, {@link #PARAM_FRAG_METHOD}, {@link #PARAM_FRAG_FORMAT},
@@ -199,7 +204,8 @@ public class YADAUtils {
 		
 		PARAM_FRAG_UPDATE_STATS,
 		PARAM_FRAG_JOIN,
-		PARAM_FRAG_LEFTJOIN
+		PARAM_FRAG_LEFTJOIN,
+		PARAM_FRAG_RESPONSE
 	};
 	
 	/**

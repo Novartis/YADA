@@ -223,6 +223,12 @@ public class ConnectionFactory {
    * @since 8.0.0
    */
   private Map<String, Properties> wsSourceMap = new HashMap<>();
+  
+  /**
+   * Map of {@link String} app to config data
+   * @since 9.3.6
+   */
+  private Map<String, Object> dsConf = new HashMap<>();
 
   /**
    * The singleton instance of the class
@@ -413,6 +419,7 @@ public class ConnectionFactory {
           
           if(src != null)
           {
+            this.getDsConf().put(app, conf);
             if (src.matches(QueryUtils.RX_JDBC))
             {              
               this.createJdbcDataSource(conf);
@@ -735,6 +742,14 @@ public class ConnectionFactory {
    */
   public Map<String, Properties> getWsSourceMap() {
     return this.wsSourceMap;
+  }
+  
+  /**
+   * @return the dsConf
+   * @since 8.0.0
+   */
+  public Map<String, Object> getDsConf() {
+    return this.dsConf;
   }
 
   /**

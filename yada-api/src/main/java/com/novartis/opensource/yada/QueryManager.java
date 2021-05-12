@@ -20,11 +20,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.http.Cookie;
@@ -1046,11 +1049,14 @@ public class QueryManager {
     {
       index = ArrayUtils.indexOf(getJsonParams().getKeys(), yq.getQname());
     }
+    // get request params that pertain to the 
     yq.addRequestParams(this.yadaReq.getRequestParamsForQueries(), index);
+    
+    
     yq.setAdaptorClass(this.qutils.getAdaptorClass(yq.getApp()));
     if (RESTAdaptor.class.equals(yq.getAdaptorClass()))
-    {
-      if (this.yadaReq.hasCookies())
+    {      
+      if (this.getYADAReq().hasCookies())
       {
         for (String cookieName: this.yadaReq.getCookies())
         {
@@ -1063,7 +1069,7 @@ public class QueryManager {
           }
         }
       }
-      if (this.yadaReq.hasHttpHeaders())
+      if (this.getYADAReq().hasHttpHeaders())
       {
         JSONObject       httpHeaders = this.yadaReq.getHttpHeaders();
         @SuppressWarnings("unchecked")
@@ -1073,7 +1079,53 @@ public class QueryManager {
           String name = keys.next();
           yq.addHttpHeader(name, httpHeaders.getString(name));
         }
+      }      
+    }
+    
+    @SuppressWarnings("unchecked")
+    Map<String, Object> conf = (Map<String, Object>) ConnectionFactory.getConnectionFactory().getDsConf().get(yq.getApp());
+    Properties props = new Properties();
+    for(String key : JSONObject.getNames((JSONObject)conf.get(ConnectionFactory.YADA_CONF_PROPS)))
+    {           
+      props.put(key, ((JSONObject)conf.get(ConnectionFactory.YADA_CONF_PROPS)).getString(key));            
+    }
+    List<YADAParam> yqParams = new ArrayList<>();
+    String          paramStr = props.getProperty("params");
+    if (paramStr != null)
+    {
+      JSONArray yqp = new JSONArray(paramStr);
+      for (int i = 0; i < yqp.length(); i++)
+      {
+        JSONObject jo = yqp.getJSONObject(i);
+        YADAParam  yp = new YADAParam();
+        String     paramName = jo.getString("name");
+        String     paramVal  = jo.getString("value");
+        int        paramRule = jo.getInt("rule");
+        
+        for(String frag : YADAUtils.PARAM_FRAGS)
+        {
+          if(paramName.contentEquals(YADARequest.getParamKeyVal("PL_"+frag)) 
+              || paramName.contentEquals(YADARequest.getParamKeyVal("PS_"+frag)))
+          {
+            try
+            {
+              this.getYADAReq().invokeSetter(YADARequest.getParamKeyVal("PS_"+frag), paramVal);
+              break;
+            }
+            catch (YADARequestException e)
+            {
+              String msg = "Could not set request parameter from stored value";
+              throw new YADAQueryConfigurationException(msg, e);
+            }
+          }
+        }
+        
+        yp.setName(paramName);
+        yp.setValue(paramVal);
+        yp.setRule(paramRule);
+        yqParams.add(yp);          
       }
+      yq.setYADAQueryParams(yqParams);
     }
 
     // TODO handle missing params exceptions here, throw YADARequestException
