@@ -14,8 +14,17 @@
  */
 package com.novartis.opensource.yada;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
+import net.sf.jsqlparser.expression.operators.relational.MultiExpressionList;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
+import net.sf.jsqlparser.statement.select.ValuesList;
 import net.sf.jsqlparser.util.deparser.SelectDeParser;
 
 /**
@@ -27,13 +36,29 @@ import net.sf.jsqlparser.util.deparser.SelectDeParser;
 public class YADASelectDeParser extends SelectDeParser {
 
 	/**
-	 * Flog to mark when expression is aliased
+	 * Flag to mark when expression is aliased
 	 */
 	private boolean expressionHasAlias = false;
 	/**
-	 * Flog to mark when expression contains a jdbc parameter symbol
+	 * Flag to mark when expression contains a jdbc parameter symbol
 	 */
 	private boolean hasJdbcParameter   = false;
+	/**
+	 * Flag to mark when select contains JOIN clause
+	 */
+	private boolean statementHasJoins = false;
+	/**
+	 * Flag to marke when select contains VALUES clause
+	 */
+	private boolean hasValues = false;
+	/**
+	 * List of columns associated to VALUES clause 
+	 */
+	private List<String> valueColumns = new ArrayList<>();
+	/**
+	 * List of expressions (markup) in VALUES clause
+	 */
+	private Map<String,ExpressionList> valueExprs = new HashMap<>();
 	
 	/**
 	 * Default no-arg constructor
@@ -57,12 +82,36 @@ public class YADASelectDeParser extends SelectDeParser {
 	@Override
 	public void visit(SelectExpressionItem selectExpressionItem) {
 		super.visit(selectExpressionItem);
-		this.expressionHasAlias = selectExpressionItem.getAlias() != null;
+		this.expressionHasAlias = selectExpressionItem.getAlias() != null;		
 		YADAExpressionDeParser expDeParser = (YADAExpressionDeParser)this.getExpressionVisitor(); 
-		this.hasJdbcParameter   = expDeParser.hasJdbcParameter();
+		this.hasJdbcParameter   = expDeParser.hasJdbcParameter();						
 		((YADAExpressionDeParser)this.getExpressionVisitor()).setInExpression(true);
 		handleSelectExpressionItem(selectExpressionItem);
 	}
+	
+	@Override
+	public void deparseJoin(Join join) {
+	  super.deparseJoin(join);
+	  this.statementHasJoins = true;
+	}
+	
+	@Override
+  public void visit(ValuesList valuesList) {
+    super.visit(valuesList);
+    if(this.statementHasJoins)
+    {
+      // access to valuesList :
+      //  'alias'      : this is the "table" or CTE name of the values set (alias.name) or 'vals'
+      //  'columnNames': array list of column names 'v' (i.e., vals.v)
+      //  'multiExpressionList': the structure is 
+      //      multiExpressionList.exprList[0] = (?v)
+      this.hasValues = true;
+      this.valueColumns.addAll(valuesList.getColumnNames());
+      MultiExpressionList mel = valuesList.getMultiExpressionList();
+//      this.valueExprs.put(key, value);
+    }    
+  }
+
 	
 	/**
 	 * If the column in the expression has an alias and an associated JDBC parameter, the column is added to the 
@@ -106,4 +155,13 @@ public class YADASelectDeParser extends SelectDeParser {
 		((YADAExpressionDeParser)this.getExpressionVisitor()).setHasJdbcParameter(false);
 		this.hasJdbcParameter = false;
 	}
+
+	/**
+	 * Standard accessor
+	 * @return the valueExpressionMap
+	 * @since 9.3.6
+	 */
+  public Map<String, ExpressionList> getValuesExpressionMap() {
+    return this.valueExprs;
+  }
 }
