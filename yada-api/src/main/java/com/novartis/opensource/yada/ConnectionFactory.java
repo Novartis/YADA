@@ -574,6 +574,7 @@ public class ConnectionFactory {
           props.put(YADA_CONF_JDBCURL, conf.get(YADA_CONF_SOURCE));
           for(String key : JSONObject.getNames((JSONObject)conf.get(YADA_CONF_PROPS)))
           {           
+            //TODO decrypt password and store in memory here
             props.put(key, ((JSONObject)conf.get(YADA_CONF_PROPS)).getString(key));            
           }
         }
