@@ -736,7 +736,17 @@ public class YADAQuery {
 		  {
 		    this.keys.get(key).add(param);
 	      if(param.getRule() != 0)
-	        this.immutableKeys.get(key).add(param);
+	      {
+	        if(this.immutableKeys.containsKey(key))
+	        {
+	          this.immutableKeys.get(key).add(param);
+	        }
+	        else
+	        {
+	          List<YADAParam> list = new ArrayList<>();
+	          this.immutableKeys.put(key,list);
+	        }
+	      }
 		  }
 		  else
 		  {
