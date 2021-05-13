@@ -906,6 +906,11 @@ public class YADARequest {
    * A constant equal to: {@value}
    */
   public static final String PL_VIEWLIMIT     = "viewlimit";
+  /**
+   * A constant equal to: {@value}
+   * @since 9.3.6
+   */
+  public static final String YADA_PAYLOAD     = "YADA_PAYLOAD";
 
   // utility vars
   /**
