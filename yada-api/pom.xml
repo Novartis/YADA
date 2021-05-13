@@ -384,6 +384,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
+        <version>3.2.1</version>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -396,6 +397,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.2.0</version>
         <configuration>
           <source>8</source>
         </configuration>
@@ -516,10 +518,10 @@
     </plugins>
   </reporting>
   <dependencies>
-    <dependency>
+    <!-- <dependency>
       <groupId>com.auth0</groupId>
       <artifactId>java-jwt</artifactId>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>com.auth0</groupId>
       <artifactId>java-jwt</artifactId>
@@ -556,11 +558,11 @@
       <artifactId>jsqlparser</artifactId>
       <version>0.9.6.1</version>
     </dependency>
-    <dependency>
+<!--     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
       <version>2.9.2</version>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
