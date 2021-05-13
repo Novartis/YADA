@@ -1744,6 +1744,23 @@ public class YADAQuery {
   public Set<YADAProperty> getProperties() {
     return this.properties;
   }
+  
+  /**
+   * Retrieve a single stored property value
+   * @param name the property name
+   * @param target the property target
+   * @return the property value
+   * @since 9.3.6
+   */
+  public String getProperty(String name, String target)
+  {
+    for(YADAProperty prop : getProperties())
+    {
+      if(prop.getName().contentEquals(name) && prop.getTarget().contentEquals(target))
+        return prop.getValue();      
+    }
+    return null;
+  }
 
   /**
    * Standard mutator for variable
