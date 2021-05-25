@@ -2662,7 +2662,7 @@ public class YADARequest {
    * @param pageSize the number of result "rows" to return
    */
   public void setPagesize(String[] pageSize) {
-    this.setPagesize(pageSize);
+    this.setPageSize(pageSize);
   }
 
 
