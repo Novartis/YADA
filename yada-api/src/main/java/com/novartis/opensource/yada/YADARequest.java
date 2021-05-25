@@ -2657,6 +2657,15 @@ public class YADARequest {
   }
 
   /**
+   * Alias for {@link #setPageSize(String[])}
+   * @since 9.3.6
+   * @param pageSize the number of result "rows" to return
+   */
+  public void setPagesize(String[] pageSize) {
+    this.setPageSize(pageSize);
+  }
+
+  /**
    * @deprecated As of YADA 4.0.0
    * @param pageStart the subset of results
    */
