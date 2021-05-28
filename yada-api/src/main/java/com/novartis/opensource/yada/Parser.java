@@ -45,10 +45,10 @@ import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.merge.Merge;
 import net.sf.jsqlparser.statement.replace.Replace;
 import net.sf.jsqlparser.statement.select.Select;
+import net.sf.jsqlparser.statement.select.ValuesList;
 import net.sf.jsqlparser.statement.truncate.Truncate;
 import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.util.deparser.DeleteDeParser;
-import net.sf.jsqlparser.util.deparser.SelectDeParser;
 
 import org.apache.log4j.Logger;
 
@@ -190,7 +190,7 @@ public class Parser implements StatementVisitor {
    * Index of all SQL 'VALUES' clauses in the SELECT query
    * @since 9.3.6
    */
-  private Map<String,ExpressionList> valuesExpressionMap = new HashMap<>();
+  private ValuesList valuesList;
   
   /**
    * Buffer used by jsqlparser to store SQL fragments
@@ -200,6 +200,12 @@ public class Parser implements StatementVisitor {
    * Local expression deparser
    */
   private YADAExpressionDeParser yedp = new YADAExpressionDeParser();
+  
+  /**
+   * List of columns in {@code VALUES} clause.
+   * @since 9.3.6
+   */
+  private List<String> valuesColumns;
 
   /**
    * @return the type of query, in an array
@@ -496,12 +502,31 @@ public class Parser implements StatementVisitor {
    */
   private void addColumnNamesToLists() {
     YADAExpressionDeParser yedp = getExpressionDeParser(); 
-    YADASelectDeParser yesp = (YADASelectDeParser) yedp.getSelectVisitor();
+    YADASelectDeParser ysdp = (YADASelectDeParser) yedp.getSelectVisitor();
     getColumnList().addAll(yedp.getColumns());
     getJdbcColumnList().addAll(yedp.getJdbcColumns());
     getInColumnList().addAll(yedp.getInColumnList());
     setInExpressionMap(yedp.getInExpressionMap());   
-    setValuesExpressionMap(yesp.getValuesExpressionMap());
+    setValuesList(ysdp.getValuesList());
+    setValuesColumns(ysdp.getValuesColumns());
+  }
+
+  /**
+   * Standard mutator
+   * @param valuesColumns the list of columns in the VALUES clause
+   * @since 9.3.6
+   */
+  private void setValuesColumns(List<String> valuesColumns) {
+    this.valuesColumns = valuesColumns;
+  }
+
+  /**
+   * Standard mutator
+   * @param valuesList VALUES clause in SELECT statement
+   * @since 9.3.6
+   */
+  private void setValuesList(ValuesList valuesList) {
+    this.valuesList = valuesList;
   }
 
   /**
@@ -577,11 +602,11 @@ public class Parser implements StatementVisitor {
 
   /**
    * Standard accessor
-   * @return the valuesExpressionMap
+   * @return the valuesList
    * @since 9.3.6
    */
-  public Map<String,ExpressionList> getValuesExpressionMap() {
-    return this.valuesExpressionMap;
+  public ValuesList getValuesList() {
+    return this.valuesList;
   }
 
   
@@ -595,13 +620,14 @@ public class Parser implements StatementVisitor {
   }
   
   /**
-   * Standard mutator
-   * @param valuesExpressionMap the valuesExpressionMap to set
+   * Standard accessor
+   * @return the list of columns in the values clause
    * @since 9.3.6
    */
-  public void setValuesExpressionMap(Map<String,ExpressionList> valuesExpressionMap) {
-    this.valuesExpressionMap = valuesExpressionMap;
+  public List<String> getValuesColumns() {
+    return this.valuesColumns;
   }
+  
 
   @Override
   public void visit(CreateIndex createIndex) {
@@ -642,4 +668,6 @@ public class Parser implements StatementVisitor {
   public void visit(Merge merge) {
     // nothing to do
   }
+
+  
 }

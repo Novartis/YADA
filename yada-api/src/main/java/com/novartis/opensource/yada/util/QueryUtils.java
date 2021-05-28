@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,9 +44,12 @@ import net.sf.jsqlparser.expression.YADAMarkupParameter;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.expression.operators.relational.ItemsList;
+import net.sf.jsqlparser.expression.operators.relational.MultiExpressionList;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.select.ValuesList;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -54,6 +58,7 @@ import org.apache.log4j.Logger;
 import com.novartis.opensource.yada.ConnectionFactory;
 import com.novartis.opensource.yada.Finder;
 import com.novartis.opensource.yada.Parser;
+import com.novartis.opensource.yada.QueryManager;
 import com.novartis.opensource.yada.YADAConnectionException;
 import com.novartis.opensource.yada.YADAParserException;
 import com.novartis.opensource.yada.YADAQuery;
@@ -178,6 +183,26 @@ public class QueryUtils
    * @since 9.0.3
    */
   public final static String RX_FILE_RM = "^[^<]+<rm$";
+  /**
+   * A constant equal to: {@code \\(?([^)]+)\\)?,?}
+   * @since 9.3.6
+   */
+  public final static Pattern RX_VALUES_PARAM_STRING = Pattern.compile("(\\([^)]+\\),?)");
+  /**
+   * A constant equal to: {@code \\(?([^)]+)\\)?,?}
+   * @since 9.3.6
+   */
+  public final static Pattern RX_VALUES_PARAM_SINGLE = Pattern.compile("\\(?([^),]+)\\)?,?");
+  /**
+   * A constant equal to: {@code \\(?([^)]+)\\)?,?}
+   * @since 9.3.6
+   */
+  public final static Pattern RX_VALUES_PARAM_LEFT = Pattern.compile("\\(?([^),]+),");
+  /**
+   * A constant equal to: {@code \\(?([^)]+)\\)?,?}
+   * @since 9.3.6
+   */
+  public final static Pattern RX_VALUES_PARAM_RIGHT = Pattern.compile("([^(,]+)\\)");
 	/**
 	 * A constant equal to: {@value}
 	 * @since 9.2.0
@@ -567,11 +592,15 @@ public class QueryUtils
 	{
 	  // new method
 		Parser parser = new Parser();
+		
 		parser.parseDeparse(yq.getYADACode());
+		
 		yq.setStatement(parser.getStatement());
 		yq.setType(parser.getStatementType());
     yq.setColumnList(parser.getColumnList());
     yq.setInList(parser.getInColumnList());
+    yq.setValuesList(parser.getValuesList());
+    yq.setValuesColumns(parser.getValuesColumns());
     yq.setParameterizedColumnList(parser.getJdbcColumnList());
     yq.setInExpressionMap(parser.getInExpressionMap());
 	}
@@ -1064,29 +1093,136 @@ public class QueryUtils
 	 */
 	public void setPositionalParameterValues(YADAQuery yq, int row) 
 	{
+	  // the indexed positional value list for the current "row"
 	  List<String> valsInPosition = new ArrayList<>();
+	  
+	  // any subtables in values claused previously processed in the loop below
+	  List<String> processedValuesAliases = new ArrayList<>();
+	  
+	  // only process if there's data
     if (yq.getData().size() > 0)
     {
-      List<Column> columns = yq.getParameterizedColumnList();
+      // get the columns corresponding to jdbc parameters
+      List<Column> paramColumns = yq.getParameterizedColumnList();
+      
+      // get the data for the current "row" 
       Map<String,String[]> data = yq.getDataRow(row);
-      for (int j = 0; j < columns.size(); j++)
+      
+      // iterate over parameterized columns in the query
+//      for (int paramColIndex = 0; paramColIndex < paramColumms.size(); paramColIndex++)
+      int paramColIndex = 0;
+      for(Column column : paramColumns)
       {
-        String colName = columns.get(j).getColumnName();
-        if(data.containsKey(YADA_COLUMN + (j + 1)))
-          colName = YADA_COLUMN + (j + 1);
-        else if (data.containsKey(colName.toUpperCase()))
-          colName = colName.toUpperCase();
-        else if(data.containsKey(colName.replaceAll("\"", "").toUpperCase()))        
-        	colName = colName.replaceAll("\"", "").toUpperCase();
-        
-        String[] valsForColumn;
+//        String paramColName = paramColumns.get(paramColIndex).getColumnName();
 
-        valsForColumn = data.get(colName);
-
-        for (String val : valsForColumn)
+        String paramColName = column.getColumnName();
+        // get table name  
+        Table  table = column.getTable();
+        String tabName = "";        
+        if(table.getAlias() != null 
+            && !table.getAlias().getName().contentEquals(""))
         {
-          l.debug("Column [" + String.valueOf(j + 1) + ": " + columns.get(j) + "] has value [" + val + "]");
-          valsInPosition.add(val);
+          tabName = table.getAlias().getName().trim();
+        }
+        else if(table.getName() != null)
+        {
+          tabName = table.getName().trim();
+        }
+        
+        if(data.containsKey(tabName))
+        {
+          paramColName = tabName;
+        }
+        else if(data.containsKey(tabName.toUpperCase()))
+        {
+          paramColName = tabName.toUpperCase();
+        }
+        // standard params or deliberate names, i.e., REST params        
+        else if(data.containsKey(YADA_COLUMN + (paramColIndex + 1)))
+          paramColName = YADA_COLUMN + (paramColIndex + 1);
+        // named columns in json params
+        else if (data.containsKey(paramColName.toUpperCase()))
+          paramColName = paramColName.toUpperCase();
+        // named columns with quotes
+        else if(data.containsKey(paramColName.replaceAll("\"", "").toUpperCase()))        
+          paramColName = paramColName.replaceAll("\"", "").toUpperCase();
+        
+        // obtain the values for the column
+        String[] valsForColumn;
+        valsForColumn = data.get(paramColName);
+        
+        
+        
+        if(!processedValuesAliases.contains(tabName))        
+        {         
+          // handle VALUE columns         
+          if(yq.getValuesList() != null
+              && yq.getValuesList().getAlias() != null
+              && yq.getValuesList().getAlias().getName().trim().contentEquals(tabName))
+          {
+            String alias = yq.getValuesList().getAlias().getName();
+            if(valsForColumn != null && valsForColumn[0].contains(","))
+            {
+              valsForColumn = String.join(",", Arrays.asList(valsForColumn)).split(",");
+            }
+              
+            /* 
+             * A query such as:
+             *            
+             *   select * from tab a join (values (?v, ?v)) vals(v,w) on a.col1 = vals.v and a.col2 = ?i
+             *   
+             * with standard paramters would contain the following:
+             * 
+             *   YADA_1 = [(A,1),(B,2),(Z,3)]           *   
+             *   YADA_3 = 1
+             *   
+             * with JSONParams, data would be
+             * 
+             *   {"vals":[(A,1),(B,2),(Z,3)],"cols2":1}
+             * 
+             * valsInPosition must result in [A,1,B,2,C,3,1]
+             * 
+             */             
+            // if we haven't processed the values alias yet, do them all
+            for(int valIndex = 0; valIndex < valsForColumn.length; valIndex++)
+            {
+              String val = valsForColumn[valIndex];
+              String cleanVal = "";              
+              Matcher m_paren  = RX_VALUES_PARAM_SINGLE.matcher(val);
+              Matcher m_left   = RX_VALUES_PARAM_LEFT.matcher(val);
+              Matcher m_right  = RX_VALUES_PARAM_RIGHT.matcher(val);
+              if(m_paren.matches())
+              {
+                cleanVal = m_paren.group(1);
+              }
+              else if(m_left.matches())
+              {
+                cleanVal = m_left.group(1);
+              }
+              else if(m_right.matches())
+              {
+                cleanVal = m_right.group(1);
+              }
+              else
+              {
+                // middle of value set 
+                cleanVal = val;
+              }
+              valsInPosition.add(cleanVal);
+            }
+            processedValuesAliases.add(alias);
+                  
+          }
+          else
+          {
+            // add the values in the correct order
+            for (String val : valsForColumn)
+            {
+              l.debug("Column [" + String.valueOf(paramColIndex + 1) + ": " + paramColumns.get(paramColIndex) + "] has value [" + val + "]");
+              valsInPosition.add(val);
+            }
+          }
+          paramColIndex++;
         }
       }
     }
@@ -1299,6 +1435,9 @@ public class QueryUtils
 	 * Uses the metadata collected during {@link Parser#parseDeparse(String)} to
 	 * modify the {@link Statement} by appending positional parameters to IN clause
 	 * expression lists, dynamically, based on the data passed in the request. 
+	 * 
+	 * Also stores the transformed data types, param counts, and SQL corresponding to the row
+	 * so the return value is for illustrative or logging purposes only, in all likelihood.
 	 * @param yq the query to process
 	 * @param row the index of the data array passed for processing
 	 * @return the modified YADA SQL
@@ -1311,6 +1450,9 @@ public class QueryUtils
 	  // Are there "in" columns
 	  if(yq.getInList().size() > 0)
 	  {
+	    //TODO there should be a better way than reparsing to get access to the parser.
+	    //     like aren't the incols and expression map already in the query at this point?
+	    //     Probably just need to store the statement object in the yq
 	    try 
 	    {
 	      parser.parseDeparse(yq.getYADACode());
@@ -1336,7 +1478,7 @@ public class QueryUtils
 	          colName = YADA_COLUMN + (colIndex + 1);
 	        }
 	        else if(dataForRow.containsKey(colName.toUpperCase()))
-	        { // json params uppper case
+	        { // json params upper case
 	          colName = colName.toUpperCase();
 	        }
 	        else if(dataForRow.containsKey(colName.replaceAll("\"", "").toUpperCase()))
@@ -1396,6 +1538,7 @@ public class QueryUtils
 	    }
 	    yq.addDataTypes(row, getDataTypes(parser.getStatement().toString()));
 	    yq.addParamCount(row, yq.getDataTypes(row).length);
+	    yq.addCoreCode(row, parser.getStatement().toString());
 	  }
 	  return parser.getStatement().toString();
 	}
@@ -1571,4 +1714,144 @@ public class QueryUtils
 
 		return coreSql;
 	}
+
+	/**
+	 * Replaces YADA markup in {@code VALUES} clause in {@code SELECT} statement with 
+	 * corresponding parameter values.  Called internally by {@link QueryManager} 
+	 * during {@link QueryManager#prepQueryForExecution} processing.
+	 * @param yq
+   *          the query being processed
+   * @param row
+   *          the index of the list of value lists in the query containing the
+   *          data to evaluate
+ 	 * @return the {@code SQL} string with transformed {@code VALUES} clause 
+	 * @throws YADAParserException when statement parsing fails
+	 */
+  public String processValuesList(YADAQuery yq, int row) throws YADAParserException {
+    
+    // Reparsing happens for each iteration of the data.  This is 
+    // necessary as it's a tradeoff between iterating over the data
+    // then or now, and also parsing the query
+    Parser parser = new Parser();
+        
+    /*
+     * What are all the different scenarios:
+     * 
+     *  - join (values(?v)) vals(v) = 1 column
+     *  - join (values(?v,?v) vals(v,w) = >1 column
+     *  - join (values(?v,'x') vals(v,w) = >1 column with literal
+     */
+    
+    if(yq.getValuesList() != null)
+    {     
+      try 
+      {
+        parser.parseDeparse(yq.getYADACode());
+      } 
+      catch (YADAParserException e) 
+      {
+        String msg = "Unable to reparse statement for VALUES JOIN clause processing.";
+        throw new YADAParserException(msg, e);
+      }
+      ValuesList           valuesList = parser.getValuesList();
+      List<String>         valColumns = valuesList.getColumnNames();
+      Map<String,String[]> dataForRow = yq.getDataRow(row);
+      int                  colIndex   = 0;
+      String               colName    = valColumns.get(colIndex);
+      String               tabName    = valuesList.getAlias().getName();
+      if(colName != null)
+      {
+        
+        if(dataForRow.containsKey(tabName))
+        {
+          colName = tabName;
+        }
+        else if(dataForRow.containsKey(tabName.toUpperCase()))
+        {
+          colName = tabName.toUpperCase();
+        }
+        else if(dataForRow.containsKey(YADA_COLUMN + (colIndex+1)))
+        { 
+          // standard params
+          // TODO I think this means data at end of params list
+          colName = YADA_COLUMN + (colIndex + 1);
+        }
+        else if(dataForRow.containsKey(colName.toUpperCase()))
+        { 
+          // json params upper case
+          colName = colName.toUpperCase();
+        }
+        else if(dataForRow.containsKey(colName.replaceAll("\"", "").toUpperCase()))
+        {
+          // json params, quoted column nams, e.g., postgres names with spaces or mixed case
+          colName = colName.replaceAll("\"", "").toUpperCase();
+        }
+        
+        // length of value array for valColumn.
+        // all we want here are the sets of parens
+        Matcher m = RX_VALUES_PARAM_STRING.matcher(String.join(",",dataForRow.get(colName)));
+        int dataLen = 0;
+        while(m.find())
+        {
+          dataLen++;
+        }
+//        int dataLen = dataForRow.get(colName).length;
+        
+        // special case of comma-separated strings, e.g., ["A,B,C"] (instead of ["A","B","C"]) 
+        if(dataLen == 1)
+        {
+          dataForRow.put(colName, dataForRow.get(colName)[0].split(","));
+          dataLen = dataForRow.get(colName).length;
+        }
+        
+        // special case of standard params without brackets e.g., p=1,2,3,4
+        if(colName.startsWith(YADA_COLUMN)
+            && colIndex == (valColumns.size() - 1) // last index
+            && dataForRow.keySet().size() > valColumns.size()) // more values
+        {
+          StringBuilder valuesVals = new StringBuilder();
+          for(int i=colIndex+1;i<=dataForRow.keySet().size();i++)
+          {
+            if(i > colIndex+1)
+              valuesVals.append(",");
+            String name = YADA_COLUMN + i;
+            int j=0;
+            while(j<dataForRow.get(name).length)
+            { 
+              if(j > 0)
+                valuesVals.append(",");
+              valuesVals.append(dataForRow.get(name)[j++]);
+            }
+          }            
+          dataForRow.put(colName, valuesVals.toString().split(","));
+          dataLen  = dataForRow.get(colName).length;
+        }
+        //TODO this will limit use cases to YADA queries that contain VALUES clauses containing only a single expression list
+        //   i.e., (VALUES (?v,?v,?v...)) vals(x,y,z...) will work 
+        //   but   (VALUES (?v,?v,?v...),(?v,?v,?v...)) vals(x,y,z...) wont work
+        
+        // column list:  [v, w, x]
+        // multiExpressionList = (?v, ?v, 'xyz')
+        // I assume the multiexpressionlist is just a container for the "expressionlist list" 
+        // and entries would take the form (x1,y1,z1),(xn,yn,zn)
+        // so what we're doing here is creating new expression lists and adding them to the 
+        // multiExpressionList.exprList.expressions: [?v, ?v, 'xyz']
+        
+        MultiExpressionList mel      = valuesList.getMultiExpressionList();
+        ExpressionList      el       = mel.getExprList().get(0);
+        List<Expression>    exprList = el.getExpressions(); 
+        // All we need to do here is create a new expression list for each entry in the data row.
+        // TODO BUT, there is a complication with how to pass the data and handle the parameter value mapping 
+        for(int i=0; i<dataLen-1; i++)
+        {
+          List<Expression> neo = new ArrayList<>(exprList);
+          mel.addExpressionList(neo);
+        }
+      }
+      yq.addDataTypes(row, getDataTypes(parser.getStatement().toString()));
+      yq.addParamCount(row, yq.getDataTypes(row).length);
+      yq.addCoreCode(row, parser.getStatement().toString());
+    }
+    return parser.getStatement().toString();
+  }
 }
