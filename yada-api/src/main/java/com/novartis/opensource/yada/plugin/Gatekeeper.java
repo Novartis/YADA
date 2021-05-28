@@ -1039,7 +1039,7 @@ public class Gatekeeper extends AbstractPreprocessor {
       String msg = "Unauthorized. Content policy is not valid.";
       throw new YADASecurityException(msg, e);
     }
-    getYADAQuery().setCoreCode(sql.toString());
+    getYADAQuery().setYADACode(sql.toString());
     this.clearSecurityPolicy();
   }
 

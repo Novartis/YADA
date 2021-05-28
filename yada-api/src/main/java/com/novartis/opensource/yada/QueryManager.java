@@ -20,14 +20,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.http.Cookie;
@@ -733,8 +730,8 @@ public class QueryManager {
    */
   void prepQueryForExecution(YADAQuery yq) throws YADAResourceException, YADAUnsupportedAdaptorException,
       YADAConnectionException, YADARequestException, YADAAdaptorException, YADAParserException {
-
-    String conformedCode = yq.getConformedCode();
+//    yq.addCoreCode(0, yq.getYADACode());
+    String conformedCode = yq.getConformedCode();    
     String wrappedCode   = "";
     int    dataSize      = yq.getData().size() > 0 ? yq.getData().size() : 1;
     if (this.qutils.requiresConnection(yq))
@@ -783,6 +780,7 @@ public class QueryManager {
           if (yq.hasParamValue(YADARequest.PS_FILTERS))
           {
             filters = new JSONObject(yq.getYADAQueryParamValue(YADARequest.PS_FILTERS)[0]);
+            // TODO add filter json schema validation, but not here--in setter 
           }
         }
         catch (JSONException e)
@@ -793,13 +791,20 @@ public class QueryManager {
 
         for (int row = 0; row < dataSize; row++)
         {
+//          int coreCodeIndex = dataSize > 1 ? row : 0; 
+           
           if (yq.getInList() != null && yq.getInList().size() > 0)
-          {
-            conformedCode = this.qutils.getConformedCode(this.qutils.processInList(yq, row));
+          {            
+            this.qutils.processInList(yq, row);
           }
-
+          if (yq.getValuesList() != null)
+          {
+            this.qutils.processValuesList(yq, row);
+          }
+          conformedCode = qutils.getConformedCode(yq.getCoreCode(row));
           if (yq.getType().equals(Parser.SELECT))
           {
+//            conformedCode = qutils.getConformedCode(yq.getCoreCode(row));
             wrappedCode = ((JDBCAdaptor) yq.getAdaptor())
                 .buildSelect(conformedCode, sortKey, sortOrder, firstRow, pageSize, filters).toString();
             String msg = "\n------------------------------------------------------------";
@@ -811,6 +816,7 @@ public class QueryManager {
           }
           else // INSERT, UPDATE, DELETE
           {
+//            conformedCode = qutils.getConformedCode(yq.getCoreCode(row));
             wrappedCode = conformedCode;
             this.requiredCommits.add(yq.getApp());
             String msg = "\n------------------------------------------------------------";
@@ -824,6 +830,7 @@ public class QueryManager {
           storePreparedStatement(yq, wrappedCode, row);
           if (yq.getType().equals(Parser.SELECT) && (count || countOnly))
           {
+//            conformedCode = qutils.getConformedCode(yq.getCoreCode(row));
             wrappedCode = ((JDBCAdaptor) yq.getAdaptor()).buildSelectCount(conformedCode, filters).toString();
             String msg = "\n------------------------------------------------------------";
             msg += "\n   SELECT COUNT statement to execute:";
@@ -1049,11 +1056,12 @@ public class QueryManager {
     {
       index = ArrayUtils.indexOf(getJsonParams().getKeys(), yq.getQname());
     }
-    // get request params that pertain to the 
+    // get request params that pertain to the query
+    // at this point all default source and query params have set in the queries
     yq.addRequestParams(this.yadaReq.getRequestParamsForQueries(), index);
     
-    
     yq.setAdaptorClass(this.qutils.getAdaptorClass(yq.getApp()));
+    
     if (RESTAdaptor.class.equals(yq.getAdaptorClass()))
     {      
       if (this.getYADAReq().hasCookies())
@@ -1082,76 +1090,19 @@ public class QueryManager {
       }      
     }
     
-    @SuppressWarnings("unchecked")
-    Map<String, Object> conf = (Map<String, Object>) ConnectionFactory.getConnectionFactory().getDsConf().get(yq.getApp());
-    Properties props = new Properties();
-    if(conf.containsKey(ConnectionFactory.YADA_CONF_PROPS))
-    {
-      for(String key : JSONObject.getNames((JSONObject)conf.get(ConnectionFactory.YADA_CONF_PROPS)))
-      {           
-        props.put(key, ((JSONObject)conf.get(ConnectionFactory.YADA_CONF_PROPS)).getString(key));            
-      }
-      List<YADAParam> yqParams = new ArrayList<>();
-      String          paramStr = props.getProperty("params");
-      if (paramStr != null)
-      {
-        JSONArray yqp = new JSONArray(paramStr);
-        for (int i = 0; i < yqp.length(); i++)
-        {
-          JSONObject jo = yqp.getJSONObject(i);
-          YADAParam  yp = new YADAParam();
-          String     paramName = jo.getString("name");
-          String     paramVal  = jo.getString("value");
-          int        paramRule = jo.getInt("rule");
-          
-          for(String frag : YADAUtils.PARAM_FRAGS)
-          {
-            if(paramName.contentEquals(YADARequest.getParamKeyVal("PL_"+frag)) 
-                || paramName.contentEquals(YADARequest.getParamKeyVal("PS_"+frag)))
-            {
-              try
-              {
-                this.getYADAReq().invokeSetter(YADARequest.getParamKeyVal("PS_"+frag), paramVal);
-                break;
-              }
-              catch (YADARequestException e)
-              {
-                String msg = "Could not set request parameter from stored value";
-                throw new YADAQueryConfigurationException(msg, e);
-              }
-            }
-          }
-          
-          yp.setName(paramName);
-          yp.setValue(paramVal);
-          yp.setRule(paramRule);
-          
-          List<YADAParam> ypList = yq.getYADAQueryParamsForKey(paramName);
-          if(ypList.size() > 0)
-          {
-            YADAParam existingYp = ypList.get(0);
-            if(existingYp == null)
-              yq.addParam(yp);
-            else if(existingYp.getRule() == YADAParam.OVERRIDEABLE)
-              yq.getParam(paramName).get(0).setValue(paramVal);
-          }
-          else
-          {
-            yq.addParam(yp);
-          }
-        }
-      }
-    }
-    
-
     // TODO handle missing params exceptions here, throw YADARequestException
     // TODO review instances where YADAQueryConfigurationException is thrown
     this.qutils.setProtocol(yq);
     yq.setAdaptor(this.qutils.getAdaptor(yq.getAdaptorClass(), this.yadaReq));
     yq.setConformedCode(this.qutils.getConformedCode(yq.getYADACode()));
+    if(yq.getData().size() == 0)
+    {
+      yq.addCoreCode(0, yq.getYADACode());
+    }
     for (int row = 0; row < yq.getData().size(); row++)
     {
       // TODO perhaps move this functionality to the deparsing step?
+      yq.addCoreCode(row, yq.getYADACode());
       yq.addDataTypes(row, this.qutils.getDataTypes(yq.getYADACode()));
       int paramCount = yq.getDataTypes().get(0).length;
       yq.addParamCount(row, paramCount);

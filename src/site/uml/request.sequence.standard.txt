@@ -7,35 +7,35 @@ skinparam sequence {
   ParticipantBackgroundColor #FED300
   LifelineBorderColor #923222
   ArrowColor #923222
+  GroupBorderThickness 0.5
 }
+
+skinparam shadowing false
 
 actor Client
 Participant yada.jsp
+
 Participant Service
 Participant Response
 Participant Converter
+Participant ConnectionFactory
 Participant YADARequest
 Participant QueryManager
 Participant QueryUtils
 Participant Adaptor
 Participant Finder
-Participant ConnectionFactory
+
 Participant Cache
 Participant YADAQuery
+Participant Parser
 Participant YADAParam
+Participant YADAProperty
 
 database "YADA Index"
 database "Data Source"
-'Participant ResultSet
-'Participant ResultSetForCount
 
 |||
-'Activate Client
-'Activate yada.jsp
-'Activate ConnectionFactory
-'Activate Cache
-'Activate "YADA Index"
-'Activate "Data Source"
+Activate ConnectionFactory
 Client -> yada.jsp
 yada.jsp -> Service : new()
 Activate Service
@@ -47,41 +47,177 @@ Service -> YADARequest : <<YADA Parameter setters>>
 YADARequest --> Service
 Service --> yada.jsp
 yada.jsp -> Service : execute()
+Service --> YADARequest : getMethod()
+YADARequest --> Service
 Service -> QueryManager : new()
 Activate QueryManager
 QueryManager -> QueryUtils : new()
 Activate QueryUtils
+QueryManager -> QueryManager : processRequest()
+QueryManager -> QueryManager : setYADARequest()
+
+group JSONParams or Standard Params, for all queries in request (setQueries(), endowQueries())
+
 QueryManager -> Finder : new()
 Activate Finder
 Finder -> Finder : getQuery()
-Finder -> ConnectionFactory : getCacheConnection()
-ConnectionFactory -> Cache : get()
-Cache -> YADAQuery : get()
+Finder -> Finder : getQueryFromLib()
+note right: loads query json from local repo
+Finder -> YADAQuery : new()
 Activate YADAQuery
+YADAQuery -> YADAQuery : setCoreCode()
+YADAQuery -> YADAQuery : setQname()
+YADAQuery -> YADAQuery : setApp()
+
+YADAQuery -> ConnectionFactory : getConnectionFactory().getDsConf()
+YADAQuery <-- ConnectionFactory
+loop all stored "default" params in conf.json
+YADAQuery -> YADAParam : new()
 Activate YADAParam
-YADAParam --> YADAQuery 
-YADAQuery --> Cache : YADAQuery
-Cache --> Finder : YADAQuery
+YADAParam --> YADAQuery
+Deactivate YADAParam
+end loop
+
+loop all stored "default" params in qname.json
+YADAQuery -> YADAParam : new()
+Activate YADAParam
+YADAParam --> YADAQuery
+Deactivate YADAParam
+end loop
+
+loop all stored properties in qname.json
+YADAQuery -> YADAProperty : new()
+Activate YADAProperty
+'note right: for all stored properties
+YADAProperty --> YADAQuery
+Deactivate YADAProperty
+end loop
+
+YADAQuery --> Finder : YADAQuery
 Finder --> QueryManager : YADAQuery
-Deactivate Finder
-QueryManager -> YADAQuery : getSource, getConformedCode, getData
+
+alt standard params
+QueryManager -> YADARequest : getParams()
+note right: data
+YADARequest --> QueryManager
+QueryManager -> YADAQuery : addData()
 YADAQuery --> QueryManager
-QueryManager -> QueryUtils : processStatement()
-QueryUtils -> YADAQuery : getAdaptorClass(), setType()
-YADAQuery --> QueryUtils
-QueryUtils --> QueryManager
-QueryManager -> YADAQuery : apply parameters
+QueryManager -> YADAQuery : setParameterizedColumns()
 YADAQuery --> QueryManager
+else jsonparams
+QueryManager -> YADAQuery : addAllData()
+YADAQuery --> QueryManager
+QueryManager -> YADAQuery : setParameterizedColumns()
+YADAQuery --> QueryManager
+end
+
+QueryManager -> YADARequest : getRequestParamsForQueries()
+YADARequest --> QueryManager
+
+QueryManager -> QueryUtils : getAdaptorClass()
+QueryUtils -> ConnectionFactory : getConnectionFactory()
+QueryUtils <-- ConnectionFactory 
+QueryUtils -> ConnectionFactory : getAppConnectionType()
+QueryUtils <-- ConnectionFactory : type = REST, JDBC, FILE, SOAP
+QueryManager <-- QueryUtils : adaptor class
+QueryManager -> YADAQuery : setAdaptorClass()
+QueryManager <-- YADAQuery
+
+group is REST
+group has Cookies
+loop all cookies
+QueryManager -> YADAQuery : addCookie()
+QueryManager <-- YADAQuery 
+end
+end
+group has Headers
+loop all headers
+QueryManager -> YADAQuery : addHttpHeader()
+QueryManager <-- YADAQuery
+end
+end
+end
+
+QueryManager -> QueryUtils : setProtocol()
+QueryManager <-- QueryUtils
+
+
+QueryManager -> YADAQuery : getAdaptorClass()
+QueryManager <-- YADAQuery
 QueryManager -> QueryUtils : getAdaptor()
 QueryUtils -> Adaptor : newInstance()
 Activate Adaptor
-QueryManager -> Adaptor : build conformed query
-Adaptor --> QueryManager
+Adaptor <-- QueryUtils
+QueryManager <-- QueryUtils
+QueryManager -> YADAQuery : setAdaptor()
+QueryManager <-- YADAQuery
+
+QueryManager -> YADAQuery : getYADACode()
+QueryManager <-- YADAQuery
+QueryManager -> QueryUtils : getConformedCode()
+QueryManager <-- QueryUtils
+QueryManager -> YADAQuery : setConformedCode()
+QueryManager <-- YADAQuery
+
+loop data rows
+QueryManager -> YADAQuery : addDataTypes
+QueryManager <-- YADAQuery
+QueryManager -> YADAQuery : addParamCounts
+QueryManager <-- YADAQuery
+end loop
+
+QueryManager -> QueryManager : setGlobalHarmonyMaps()
+QueryManager -> QueryManager : setQueryHarmonyMaps()
+
+group QueryManager.prepQueriesForExecution()
+QueryManager -> YADAQuery : getConformedCode
+YADAQuery --> QueryManager
+QueryManager -> QueryUtils : processStatement()
+alt type is JDBC
+QueryUtils -> QueryUtils : processJDBCStatement()
+QueryUtils -> Parser : parseDeparse()
+Activate Parser
+QueryUtils <-- Parser
+Deactivate Parser
+QueryManager <-- QueryUtils
+QueryManager -> QueryUtils : getStatement()
+QueryManager -> QueryUtils : getStatementType()
+QueryManager -> QueryUtils : getColumnList()
+QueryManager -> QueryUtils : getInColumnList()
+QueryManager -> QueryUtils : getValuesExpressionMap()
+QueryManager -> QueryUtils : getJdbcColumnList()
+QueryManager -> QueryUtils : getInExpressionMap()
+QueryManager <-- QueryUtils
+loop rows
+QueryManager -> QueryUtils : processInList
+QueryManager <-- QueryUtils
+QueryManager -> QueryUtils : getConformedCode
+QueryManager <-- QueryUtils
+note bottom: this is where VALUES JOIN processing must occur
+end
+alt SELECT
+QueryManager -> YADAQuery : getAdaptor()
+QueryManager <-- YADAQuery
+QueryManager -> Adaptor : buildSelect()
+QueryManager <-- Adaptor
+else INSERT UPDATE DELETE
+end
+alt statement is not null
+QueryManager -> QueryUtils : setPositionalParameters()
+else
+QueryManager -> QueryUtils : setValsInPosition()
+end
+QueryManager <-- QueryUtils
+else type is REST
+QueryManager <-- QueryUtils
+else type is Filesystem
+QueryManager <-- QueryUtils
+end
+
+end
 
 
-QueryManager -> QueryManager : store conformed query
-QueryManager -> QueryUtils : set query parameter values
-QueryUtils --> QueryManager
+'old
 QueryManager --> Service
 Service -> Service : _execute()
 Service -> Service : engage Bypass and Preprocessors
@@ -112,8 +248,10 @@ Deactivate QueryUtils
 Deactivate YADAQuery
 Deactivate YADAParam
 Deactivate YADARequest
+Deactivate Finder
+Deactivate ConnectionFactory
 yada.jsp --> Client : result
-'Deactivate ConnectionFactory
+
 'Deactivate Cache
 'Deactivate "YADA Index"
 'Deactivate "Data Source"

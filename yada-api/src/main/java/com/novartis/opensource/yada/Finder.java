@@ -572,7 +572,7 @@ public class Finder {
             if (row == 0)
             {
               yq.setVersion("");
-              yq.setCoreCode(rs.getString(YADA_QUERY));
+              yq.setYADACode(rs.getString(YADA_QUERY));
               yq.setSource(rs.getString(YADA_SOURCE));
               yq.setQname(q);
               yq.setApp(rs.getString(YADA_APP));
@@ -623,6 +623,7 @@ public class Finder {
     String    qname = "";
     try
     {
+      //TODO this can possibly be optimized with some caching
       Pattern rx = Pattern.compile(Q_RX);
       Matcher m  = rx.matcher(q);
       if (m.matches())
@@ -649,6 +650,7 @@ public class Finder {
           qname = q;
         }
       }
+      // loads query json from local repo
       String qjson = new String(Files.readAllBytes(Paths.get(qpath)), StandardCharsets.UTF_8);
       yq = new YADAQuery(app, qname, qjson);
     }

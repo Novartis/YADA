@@ -45,6 +45,7 @@ import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.merge.Merge;
 import net.sf.jsqlparser.statement.replace.Replace;
 import net.sf.jsqlparser.statement.select.Select;
+import net.sf.jsqlparser.statement.select.ValuesList;
 import net.sf.jsqlparser.statement.truncate.Truncate;
 import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.util.deparser.DeleteDeParser;
@@ -58,7 +59,7 @@ import org.apache.log4j.Logger;
  * also indexes columns parsed out of statements into 3 categories:
  * <ul>
  * <li>any column referenced</li>
- * <li>any column mapped ot a JDBC parameter</li>
+ * <li>any column mapped to a JDBC parameter</li>
  * <li>any column referenced by an {@code IN} clause</li>
  * </ul>
  * 
@@ -181,10 +182,16 @@ public class Parser implements StatementVisitor {
    */
   private ArrayList<Column> inCols = new ArrayList<>();
   /**
-   * Index of all SQL in clauses in the query
+   * Index of all SQL 'IN' clauses in the query
    * @since 7.1.0
    */
   private Map<Column,InExpression> inExpressionMap = new HashMap<>();
+  /**
+   * Index of all SQL 'VALUES' clauses in the SELECT query
+   * @since 9.3.6
+   */
+  private ValuesList valuesList;
+  
   /**
    * Buffer used by jsqlparser to store SQL fragments
    */
@@ -193,6 +200,12 @@ public class Parser implements StatementVisitor {
    * Local expression deparser
    */
   private YADAExpressionDeParser yedp = new YADAExpressionDeParser();
+  
+  /**
+   * List of columns in {@code VALUES} clause.
+   * @since 9.3.6
+   */
+  private List<String> valuesColumns;
 
   /**
    * @return the type of query, in an array
@@ -489,10 +502,31 @@ public class Parser implements StatementVisitor {
    */
   private void addColumnNamesToLists() {
     YADAExpressionDeParser yedp = getExpressionDeParser(); 
+    YADASelectDeParser ysdp = (YADASelectDeParser) yedp.getSelectVisitor();
     getColumnList().addAll(yedp.getColumns());
     getJdbcColumnList().addAll(yedp.getJdbcColumns());
     getInColumnList().addAll(yedp.getInColumnList());
-    setInExpressionMap(yedp.getInExpressionMap());
+    setInExpressionMap(yedp.getInExpressionMap());   
+    setValuesList(ysdp.getValuesList());
+    setValuesColumns(ysdp.getValuesColumns());
+  }
+
+  /**
+   * Standard mutator
+   * @param valuesColumns the list of columns in the VALUES clause
+   * @since 9.3.6
+   */
+  private void setValuesColumns(List<String> valuesColumns) {
+    this.valuesColumns = valuesColumns;
+  }
+
+  /**
+   * Standard mutator
+   * @param valuesList VALUES clause in SELECT statement
+   * @since 9.3.6
+   */
+  private void setValuesList(ValuesList valuesList) {
+    this.valuesList = valuesList;
   }
 
   /**
@@ -567,6 +601,16 @@ public class Parser implements StatementVisitor {
   }
 
   /**
+   * Standard accessor
+   * @return the valuesList
+   * @since 9.3.6
+   */
+  public ValuesList getValuesList() {
+    return this.valuesList;
+  }
+
+  
+  /**
    * Standard mutator
    * @param inExpressionMap the inExpressionMap to set
    * @since 7.1.0
@@ -574,6 +618,16 @@ public class Parser implements StatementVisitor {
   public void setInExpressionMap(Map<Column,InExpression> inExpressionMap) {
     this.inExpressionMap = inExpressionMap;
   }
+  
+  /**
+   * Standard accessor
+   * @return the list of columns in the values clause
+   * @since 9.3.6
+   */
+  public List<String> getValuesColumns() {
+    return this.valuesColumns;
+  }
+  
 
   @Override
   public void visit(CreateIndex createIndex) {
@@ -614,4 +668,6 @@ public class Parser implements StatementVisitor {
   public void visit(Merge merge) {
     // nothing to do
   }
+
+  
 }

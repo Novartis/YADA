@@ -29,6 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.xml.soap.SOAPConnection;
@@ -36,6 +37,7 @@ import javax.xml.soap.SOAPConnection;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.select.ValuesList;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -80,6 +82,41 @@ public class YADAQuery {
 	 */
 	private static final String PROP_PROTECTED = "protected";
 	/**
+   * Constant equal to {@value}
+   * @since 9.3.6
+   */
+  private static final String PROP_QUERY = "query";
+  /**
+   * Constant equal to {@value}
+   * @since 9.3.6
+   */
+  private static final String PROP_PARAMS = "params";
+  /**
+   * Constant equal to {@value}
+   * @since 9.3.6
+   */
+  private static final String PROP_NAME = "name";
+  /**
+   * Constant equal to {@value}
+   * @since 9.3.6
+   */
+  private static final String PROP_VALUE = "value";
+  /**
+   * Constant equal to {@value}
+   * @since 9.3.6
+   */
+  private static final String PROP_RULE = "rule";
+  /**
+   * Constant equal to {@value}
+   * @since 9.3.6
+   */
+  private static final String PROP_SEC = "spec";
+  /**
+   * Constant equal to {@value}
+   * @since 9.3.6
+   */
+  private static final String PROP_PROPS = "props";
+	/**
 	 * Cached-status indicator
 	 */
 	private boolean isCached = false;
@@ -99,7 +136,7 @@ public class YADAQuery {
 	/**
 	 * The code mapped to the qname, including YADA markup
 	 */
-	private String     coreCode;
+	private String     yadaCode;
 	/**
 	 * The code, stripped of YADA markup
 	 */
@@ -121,8 +158,13 @@ public class YADAQuery {
 	 * A list of properties
 	 * @since 7.1.0
 	 */
-	private Set<YADAProperty>                     properties = new HashSet<>();
+	private List<String>                          coreCode = new ArrayList<>();
 	/**
+   * A list of properties
+   * @since 7.1.0
+   */
+  private Set<YADAProperty>                     properties = new HashSet<>();
+  /**
 	 * The cookies
 	 * @since 5.1.0
 	 */
@@ -148,6 +190,11 @@ public class YADAQuery {
 	 * A list of columns referenced by the query occur in SQL {@code IN} clauses
 	 */
 	private String[]   ins;
+	/**
+   * A list of columns referenced by the query occur in SQL {@code VALUES} clauses
+   * @since 9.3.6
+   */
+  private ValuesList valueList;
 	/**
 	 * The list of columns in sql {@code IN} expressions
 	 */
@@ -264,6 +311,11 @@ public class YADAQuery {
 	 */
 	private int accessCount;
 	/**
+	 * The list of columns in the VALUES clause
+	 * @since 9.3.6
+	 */
+  private List<String> valuesColumns;
+	/**
 	 * Default constructor
 	 */
 	public YADAQuery() {}
@@ -282,24 +334,79 @@ public class YADAQuery {
 	  //TODO pull git commit into constructor args and set in 
 //	  String version = "";	  
 //	  this.setVersion(version);
-    this.setCoreCode(new String(yq.getString("query")));    
+    this.setYADACode(new String(yq.getString(PROP_QUERY)));    
     this.setQname(qname);
     this.setApp(app);
+    
+    //TODO set all properties and default params stored with source
+    @SuppressWarnings("unchecked")
+    
+    // The following sets all properties and default params stored with the source 
+    Map<String, Object> conf = (Map<String, Object>) ConnectionFactory.getConnectionFactory().getDsConf().get(this.getApp());
+    Properties props = new Properties();
+    
+    // if there is a "props" key, extract the properties into a local "props" object
+    if(conf.containsKey(ConnectionFactory.YADA_CONF_PROPS))
+    {
+      for(String key : JSONObject.getNames((JSONObject)conf.get(ConnectionFactory.YADA_CONF_PROPS)))
+      {           
+        props.put(key, ((JSONObject)conf.get(ConnectionFactory.YADA_CONF_PROPS)).getString(key));            
+      }
+      String          paramStr = props.getProperty(PROP_PARAMS);
+      
+      // if there is a "params" property, we need to set request params in the request
+      if (paramStr != null)
+      {
+        JSONArray yqp = new JSONArray(paramStr);
+        for (int i = 0; i < yqp.length(); i++)
+        {
+          // get param values
+          JSONObject jo = yqp.getJSONObject(i);
+          YADAParam  yp = new YADAParam();
+    
+          
+          // store the values, rules, etc
+          yp.setName(jo.getString(PROP_NAME));
+          yp.setValue(jo.getString(PROP_VALUE));
+          yp.setTarget(this.getQname());
+          yp.setRule(jo.getInt(PROP_RULE));
+          yp.setDefault(true);
+          try
+          {
+            JSONObject spec = jo.getJSONObject(PROP_SEC);
+            YADASecuritySpec yss = new YADASecuritySpec(spec);
+            yp.setSecuritySpec(yss);
+          }
+          catch(JSONException e)
+          {
+            l.debug("No sec spec object expressed in param.");
+          }
+          catch (YADAQueryConfigurationException e)
+          {
+            throw e;
+          }
+          // add the parameter
+          this.addParam(yp);                  
+        }
+      }
+    }
+    
+    // following try sets all properties and default params stored with query.   
     try
     {
-      for(int i=0; i< yq.getJSONArray("params").length(); i++)
+      for(int i=0; i< yq.getJSONArray(PROP_PARAMS).length(); i++)
       {
         YADAParam yp = new YADAParam();
-        JSONObject param = yq.getJSONArray("params").getJSONObject(i);
+        JSONObject jo = yq.getJSONArray(PROP_PARAMS).getJSONObject(i);
         yp.setId(i);
-        yp.setName(param.getString("name"));
-        yp.setValue(String.valueOf(param.get("value")));
+        yp.setName(jo.getString(PROP_NAME));
+        yp.setValue(String.valueOf(jo.get(PROP_VALUE)));
         yp.setTarget(this.getQname());
-        yp.setRule(param.getInt("rule"));
+        yp.setRule(jo.getInt(PROP_RULE));
         yp.setDefault(true);
         try
         {
-          JSONObject spec = param.getJSONObject("spec");
+          JSONObject spec = jo.getJSONObject(PROP_SEC);
           YADASecuritySpec yss = new YADASecuritySpec(spec);
           yp.setSecuritySpec(yss);
         }
@@ -311,6 +418,7 @@ public class YADAQuery {
         {
           throw e;
         }
+        // will replace mutable keys only
         this.addParam(yp);      
       }
     }
@@ -322,10 +430,10 @@ public class YADAQuery {
     
     try
     {
-      for(int i=0; i< yq.getJSONArray("props").length(); i++)
+      for(int i=0; i< yq.getJSONArray(PROP_PROPS).length(); i++)
       {      
-        JSONObject prop = yq.getJSONArray("props").getJSONObject(i);
-        YADAProperty yp = new YADAProperty(qname,prop.getString("name"),prop.getString("value"));
+        JSONObject prop = yq.getJSONArray(PROP_PROPS).getJSONObject(i);
+        YADAProperty yp = new YADAProperty(qname,prop.getString(PROP_NAME),prop.getString(PROP_VALUE));
         this.addProperty(yp);
       }
     }
@@ -342,7 +450,7 @@ public class YADAQuery {
 	 */
 	public YADAQuery(YADAQuery yq) {
 //		this.setVersion(new String(yq.getVersion()));
-		this.setCoreCode(new String(yq.getYADACode()));
+		this.setYADACode(new String(yq.getYADACode()));
 		String legacySource = yq.getSource() == null ? "" : yq.getSource();
 		this.setSource(legacySource);
 		this.setQname(new String(yq.getQname()));
@@ -381,9 +489,9 @@ public class YADAQuery {
 	public void setVersion(String version) { this.version = version; }
 	/**
 	 * Standard mutator for variable
-	 * @param coreSql the content of the query
+	 * @param yadaCode the content of the query
 	 */
-	public void setCoreCode(String coreSql) { this.coreCode = coreSql; }
+	public void setYADACode(String yadaCode) { this.yadaCode = yadaCode; }
 	/**
 	 * Standard mutator for variable
 	 * @param yqr the result object stored in the query
@@ -536,6 +644,34 @@ public class YADAQuery {
 		else
 			this.dataTypes.set(row,dataTypesToAdd);
 	}
+	
+	/**
+   * Standard mutator for variable
+	 * @param coreCode the list of query strings
+   * @since 9.3.6
+   */
+  public void setCoreCode(List<String> coreCode) { this.coreCode = coreCode; } 
+  
+  /**
+   * Stores the transformed version of the core query code with yada parameters after 
+   * data-row-dependent transformation of IN and VALUES clauses.  In other words, he list can vary 
+   * if a query contains a function with a dynamic argument list, such as an SQL {@code IN} 
+   * or {@code VALUES} clause.
+   * 
+   * Consequently, query variants are stored in a list indexed to the data-map list.
+   * 
+   * @param row the index of the data map in the list
+   * @param code the transformed YADA code
+   * @since 9.3.6
+   */
+  public void addCoreCode(int row, String code) { 
+    if(this.coreCode.isEmpty() || row >= this.coreCode.size())
+      this.coreCode.add(row, code);
+    else
+      this.coreCode.set(row, code);
+  }
+  
+  
 	
 	/**
 	 * Standard mutator for variable
@@ -775,7 +911,7 @@ public class YADAQuery {
       this.keys.put(key,list);
       if(param.getRule() != YADAParam.OVERRIDEABLE)
       {
-        if(!hasNonOverridableParam(key))
+        if(!hasImmutableParam(key))
         {
           list = new ArrayList<>();
           list.add(param);
@@ -800,7 +936,7 @@ public class YADAQuery {
 		  // if the param is not a plugin param, and it's 
 		  // overrideable, add it. If it is, itself, nonoverridable,
 		  // make a note of that too.
-	    if(!hasNonOverridableParam(key)) // this confirms no immutables (non-overrides)
+	    if(!hasImmutableParam(key)) // this confirms no immutables (non-overrides)
 	    {
 		    this.keys.get(key).add(param);
 	      if(param.getRule() != YADAParam.OVERRIDEABLE)
@@ -835,14 +971,15 @@ public class YADAQuery {
 	 */
 	public void addParam(YADAParam param)
 	{
-		String key = param.getName();
+		String key   = param.getName();
+		String value = param.getValue();
 		if(isPluginParam(key) || isArgumentParam(key))
 		{
-		  List<YADAParam> lp = getYADAQueryParams();
-      String  value  = param.getValue();
+		  List<YADAParam> lp = getYADAQueryParams();      
       String  target = param.getTarget();
       int     rule   = param.getRule();
       boolean add    = true;
+      // have we added this param before?  Don't add it again
       for(YADAParam p : lp)
       {
         if(value.equals(p.getValue()) && target.equals(p.getTarget()) && rule == p.getRule())
@@ -859,10 +996,11 @@ public class YADAQuery {
 		}
 		else
     {
-		  
-	    if(hasNonOverridableParam(key)) 
+	    if(hasImmutableParam(key)) 
       {
-        l.debug("An attempt was made to override a non-overridable default parameter. The original contract was honored.");
+	      String msg = String.format("An attempt was made to override an immutable default parameter."
+	          +" The original contract was honored. [%s = %s]", key, value);
+        l.warn(msg);
       }
       else if(hasParam(key))
       {
@@ -1043,20 +1181,29 @@ public class YADAQuery {
 	/**
 	 * @since 4.0.0
 	 * @param key parameter name to check
-	 * @return boolean true if stored parameter is overridable by url params (rule=1), otherwise false
+	 * @return boolean true if stored parameter is overridable by url params (rule=0), otherwise false
 	 */
 	public boolean hasOverridableParam(String key) {
-		return !hasNonOverridableParam(key) && this.keys.containsKey(key);
+		return !hasImmutableParam(key) && this.keys.containsKey(key);
 	}
 	
 	/**
-	 * @since 4.0.0
-	 * @param key paremeter name to check
+	 * @since 9.3.6
+	 * @param key parameter name to check
 	 * @return boolean true if stored parameter is not overridable by url params (rule=0), otherwise false
 	 */
-	public boolean hasNonOverridableParam(String key) {
+	public boolean hasImmutableParam(String key) {
 		return this.immutableKeys.containsKey(key);
 	}
+	
+	 /**
+   * @since 4.0.0
+   * @param key parameter name to check
+   * @return boolean true if stored parameter is not overridable by url params (rule=0), otherwise false
+   */
+  public boolean hasNonOverridableParam(String key) {
+    return this.immutableKeys.containsKey(key);
+  }
 		
 	/**
 	 * Standard mutator for variable
@@ -1329,7 +1476,7 @@ public class YADAQuery {
 	 * Standard accessor for variable.
 	 * @return a {@link String} containing the query code with YADA markup: {@code v}, {@code d}, {@code i}, and {@code n} 
 	 */
-	public String   getYADACode() { return this.coreCode; }
+	public String   getYADACode() { return this.yadaCode; }
 	/**
 	 * Standard accessor for variable
 	 * @return the 
@@ -1761,7 +1908,18 @@ public class YADAQuery {
     }
     return null;
   }
-
+  
+  /**
+   * @param row the list index
+   * @return the code variant at index {@code row} in the internal list
+   */
+  public String                  getCoreCode(int row) { return getCoreCode().get(row); }
+  /**
+   * Standard accessor for variable
+   * @return the list of data types
+   */
+  public List<String>            getCoreCode() { return this.coreCode; }
+  
   /**
    * Standard mutator for variable
    * @param properties the properties to set
@@ -1810,5 +1968,41 @@ public class YADAQuery {
   	}
   	jo.append("DATA", data);
   	return jo.toString();
+  }
+
+  /**
+   * Standard mutator
+   * @param valuesList the VALUES clause in the SELECT statement
+   * @since 9.3.6
+   */
+  public void setValuesList(ValuesList valuesList) {
+    this.valueList = valuesList;
+  }
+ 
+  /**
+   * Standard accessor
+   * @return the valuesList
+   * @since 9.3.6
+   */
+  public ValuesList getValuesList() {
+    return this.valueList;
+  }
+
+  /**
+   * Standard mutator
+   * @param valuesColumns the list of columns in the VALUES clause
+   * @since 9.3.6
+   */
+  public void setValuesColumns(List<String> valuesColumns) {
+    this.valuesColumns = valuesColumns;    
+  }
+  
+  /**
+   * Standard accessor
+   * @return the list of columns in the VALUES clause
+   * @since 9.3.6
+   */
+  public List<String> getValuesColumns() {
+    return this.valuesColumns;
   }
 }

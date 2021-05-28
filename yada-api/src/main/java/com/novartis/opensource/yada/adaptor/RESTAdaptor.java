@@ -32,10 +32,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
@@ -63,14 +61,12 @@ import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.novartis.opensource.yada.ConnectionFactory;
 import com.novartis.opensource.yada.YADAQuery;
-import com.novartis.opensource.yada.YADAParam;
 import com.novartis.opensource.yada.YADAQueryConfigurationException;
 import com.novartis.opensource.yada.YADAQueryResult;
 import com.novartis.opensource.yada.YADARequest;
 import com.novartis.opensource.yada.YADASecurityException;
 import com.novartis.opensource.yada.plugin.Authorization;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
