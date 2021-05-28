@@ -2665,7 +2665,6 @@ public class YADARequest {
     this.setPageSize(pageSize);
   }
 
-
   /**
    * @deprecated As of YADA 4.0.0
    * @param pageStart the subset of results
@@ -2681,12 +2680,17 @@ public class YADARequest {
    * @param pageStart the subset of results
    */
   public void setPageStart(String[] pageStart) {
-    int i = Integer.valueOf(pageStart[0]);
-    if (i != YADARequest.DEFAULT_START_PAGE)
-    {
-      this.pageStart = i;
-    }
+    int i = Integer.valueOf(pageStart[0]);    
     l.debug(getFormattedDebugString("pageStart", String.valueOf(this.pageStart)));
+  }
+  
+  /**
+   * Alias for {@link #setPageStart(String[])}
+   * @since 9.3.6
+   * @param pageStart the subset of results
+   */
+  public void setPagestart(String[] pageStart) {
+    this.setPageStart(pageStart);     
   }
 
   /**
