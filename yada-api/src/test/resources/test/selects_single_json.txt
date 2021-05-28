@@ -5,6 +5,22 @@ j=[{"qname":"YADATEST/test SELECT VARCHAR with INS","DATA":[{"COL1":"A,B,Z"}]}]
 j=[{"qname":"YADATEST/test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":"10"}]}]
 j=[{"qname":"YADATEST/test SELECT with multiple INS","DATA":[{"COL1":["A","B","Z"],"COL2":10}]}]
 
+# single string with all values, indexed YADA parameter name
+j=[{"q":"YADATEST/test SELECT values join","DATA":[{"YADA_1":["(A,1)","(B,2)","(Z,3)"],"COL2":10}]}]
+j=[{"q":"YADATEST/test SELECT values join one col","DATA":[{"YADA_1":["(A)","(B)","(Z)","(AA)","(BB)"]}]}]
+
+# single string with all values, table alias parameter name
+j=[{"q":"YADATEST/test SELECT values join","DATA":[{"vals":"(A,1),(B,2),(Z,3)","COL2":10}]}]
+j=[{"q":"YADATEST/test SELECT values join one col","DATA":[{"vals":"(A),(B),(Z),(AA),(BB)"}]}]
+
+# array with all values, indexed YADA parameter name
+j=[{"q":"YADATEST/test SELECT values join","DATA":[{"YADA_1":[(A,1),(B,2),(Z,3)],"COL2":10}]}]
+j=[{"q":"YADATEST/test SELECT values join one col","DATA":[{"YADA_1":[(A),(B),(Z),(AA),(BB)]}]}]
+
+# array with all values, table alias parameter name
+j=[{"q":"YADATEST/test SELECT values join","DATA":[{"vals":[(A,1),(B,2),(Z,3)],"COL2":10}]}]
+j=[{"q":"YADATEST/test SELECT values join one col","DATA":[{"vals":[(A),(B),(Z),(AA),(BB)]}]}]
+
 JSONParams=[{"qname":"YADATEST/test SELECT","DATA":[{}]}]
 JSONParams=[{"qname":"YADATEST/test SELECT INTEGER with INS","DATA":[{"COL2":"1,2,3,10"}]}]
 JSONParams=[{"qname":"YADATEST/test SELECT VARCHAR with INS","DATA":[{"COL1":["A","B","Z"]}]}]
